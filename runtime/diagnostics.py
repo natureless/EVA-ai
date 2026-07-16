@@ -16,6 +16,7 @@ from typing import Any
 
 from memory.sqlite_store import SQLiteStore
 from memory.tiered_store import TieredMemoryManager
+from runtime.file_utils import atomic_json_save
 
 
 # ── Data classes ────────────────────────────────────────────
@@ -307,10 +308,7 @@ class RecoveryActions:
             if world_model:
                 data["world_model"] = world_model.to_dict()
             snapshot_path.parent.mkdir(parents=True, exist_ok=True)
-            tmp = snapshot_path.with_suffix(".json.tmp")
-            with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
-            os.replace(tmp, snapshot_path)
+            atomic_json_save(snapshot_path, data)
             return DiagnosticCheck(
                 name="recover_snapshot", passed=True,
                 detail=f"snapshot rebuilt at {snapshot_path}",

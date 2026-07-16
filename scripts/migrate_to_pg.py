@@ -86,7 +86,6 @@ def migrate_table(sqlite_conn, pg_conn, table, batch_size, dry_run):
 TABLES = [
     "events",
     "episodic_memory",
-    "semantic_memory",
     "traces",
     "persona_profiles",
     "memory_items",

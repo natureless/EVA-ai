@@ -41,7 +41,6 @@ class CognitionLoop:
         poll_timeout_sec: float = 0.5,
         result_ttl_sec: float = 60.0,
         context_builder: ContextBuilder | None = None,
-        enable_v02_pipeline: bool = False,
         prediction_tracker: PredictionTracker | None = None,
         self_model_store: SelfModelStore | None = None,
         self_model: dict[str, Any] | None = None,
@@ -64,7 +63,6 @@ class CognitionLoop:
         self.poll_timeout_sec = poll_timeout_sec
         self.result_ttl_sec = result_ttl_sec
         self.context_builder = context_builder
-        self.enable_v02_pipeline = enable_v02_pipeline
         self.prediction_tracker = prediction_tracker
         self.self_model_store = self_model_store
         self.self_model = self_model

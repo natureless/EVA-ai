@@ -1,8 +1,9 @@
 import json
-import os
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any
+
+from runtime.file_utils import atomic_json_save
 
 
 MAX_STATE_HISTORY = 50
@@ -75,10 +76,7 @@ class SelfModelStore:
         return default
 
     def save(self, payload: dict[str, Any]) -> None:
-        tmp_path = self.path.with_suffix(".json.tmp")
-        with tmp_path.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
-        os.replace(tmp_path, self.path)
+        atomic_json_save(self.path, payload)
 
     # ── dynamics helpers ──────────────────────────────────────
 

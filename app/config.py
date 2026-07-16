@@ -30,7 +30,6 @@ class Settings(BaseSettings):
     snapshot_dir: Path = Path("data/snapshots")
     latest_snapshot_path: Path = Path("data/snapshots/latest.json")
     profile_path: Path = Path("data/profile.json")
-    persona_path: Path = Path("data/persona.json")
     self_model_path: Path = Path("data/self_model.json")
 
     tick_interval_sec: float = 0.5
@@ -43,7 +42,6 @@ class Settings(BaseSettings):
     scheduler_snapshot_interval_sec: int = 120
     stagnation_threshold_sec: int = 86400
     reminder_cooldown_sec: int = 43200
-    enable_v02_pipeline: bool = False
     storage_backend: str = "sqlite"     # sqlite | postgresql
     database_url: str = ""              # PostgreSQL connection URL (when backend=postgresql)
 

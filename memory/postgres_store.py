@@ -144,11 +144,6 @@ class PostgresStore(BaseStorageAdapter):
             event_type TEXT NOT NULL, summary TEXT NOT NULL,
             payload TEXT NOT NULL, importance REAL NOT NULL);
 
-        CREATE TABLE IF NOT EXISTS semantic_memory (
-            id TEXT PRIMARY KEY, concept TEXT NOT NULL,
-            description TEXT NOT NULL, related_entities TEXT NOT NULL,
-            created_at TEXT NOT NULL);
-
         CREATE TABLE IF NOT EXISTS traces (
             id TEXT PRIMARY KEY, loop_id TEXT NOT NULL,
             timestamp TEXT NOT NULL, event_type TEXT NOT NULL,

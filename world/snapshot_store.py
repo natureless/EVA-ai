@@ -1,7 +1,8 @@
 import json
-import os
 from pathlib import Path
 from typing import Any
+
+from runtime.file_utils import atomic_json_save
 
 
 class SnapshotStore:
@@ -18,7 +19,4 @@ class SnapshotStore:
 
     def save_latest(self, payload: dict[str, Any]) -> None:
         self.snapshot_dir.mkdir(parents=True, exist_ok=True)
-        tmp_path = self.latest_snapshot_path.with_suffix(".json.tmp")
-        with tmp_path.open("w", encoding="utf-8") as handle:
-            json.dump(payload, handle, ensure_ascii=False, indent=2)
-        os.replace(tmp_path, self.latest_snapshot_path)
+        atomic_json_save(self.latest_snapshot_path, payload)

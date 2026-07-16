@@ -13,12 +13,6 @@ CREATE TABLE IF NOT EXISTS episodic_memory (
     payload TEXT NOT NULL, importance REAL NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS semantic_memory (
-    id TEXT PRIMARY KEY, concept TEXT NOT NULL,
-    description TEXT NOT NULL, related_entities TEXT NOT NULL,
-    created_at TEXT NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS traces (
     id TEXT PRIMARY KEY, loop_id TEXT NOT NULL,
     timestamp TEXT NOT NULL, event_type TEXT NOT NULL,
@@ -59,12 +53,6 @@ CREATE INDEX IF NOT EXISTS idx_memories_salience
     ON memory_items(salience);
 CREATE INDEX IF NOT EXISTS idx_memories_source_event
     ON memory_items(source_event_id);
-
-CREATE TABLE IF NOT EXISTS graph_edges (
-    source TEXT NOT NULL, target TEXT NOT NULL,
-    relation TEXT NOT NULL, weight REAL NOT NULL,
-    updated_at TEXT NOT NULL
-);
 
 -- S2: Working Memory
 CREATE TABLE IF NOT EXISTS working_memory (

@@ -38,7 +38,6 @@ from memory.memory_governor import MemoryGovernor, MemoryRepository
 from memory.profile_store import ProfileStore
 from memory.sqlite_store import SQLiteStore
 from memory.tiered_store import TieredMemoryManager
-from persona.persona_store import PersonaStore
 from persona.repository import PersonaRepository
 from persona.self_model_store import SelfModelStore
 from persona.service import PersonaService
@@ -120,25 +119,21 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
 
 
 def _init_persona(state: dict[str, Any]) -> dict[str, Any]:
-    """Load profile, persona, and self-model from disk."""
+    """Load profile and self-model from disk."""
     profile_store = ProfileStore(Path(settings.profile_path))
-    persona_store = PersonaStore(Path(settings.persona_path))
     self_model_store = SelfModelStore(Path(settings.self_model_path))
 
     profile = profile_store.load_or_init()
-    persona = persona_store.load_or_init()
     self_model = self_model_store.load_or_init()
     state["profile_ready"] = True
     state["persona_ready"] = True
     state["self_model_ready"] = True
-    logger.info("profile, persona, and self-model loaded")
+    logger.info("profile and self-model loaded")
 
     return {
         "profile_store": profile_store,
-        "persona_store": persona_store,
         "self_model_store": self_model_store,
         "profile": profile,
-        "persona": persona,
         "self_model": self_model,
     }
 
@@ -243,7 +238,6 @@ def _init_executors(store: SQLiteStore) -> dict[str, Any]:
 def _build_snapshot_payload(
     world_model: WorldModelGraph,
     profile: dict[str, Any],
-    persona: dict[str, Any],
     self_model: dict[str, Any],
     proactive_state: dict[str, Any],
 ) -> dict[str, Any]:
@@ -251,7 +245,6 @@ def _build_snapshot_payload(
         "version": "0.1",
         "world_model": world_model.to_dict(),
         "profile": profile,
-        "persona": persona,
         "self_model": self_model,
         "proactive_state": proactive_state,
     }
@@ -323,13 +316,14 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
 
     # ── snapshot callback ──
     def save_runtime_snapshot() -> None:
+        persona_profile = persona_service.get_active_persona()
         payload = _build_snapshot_payload(
             world_model=wm,
             profile=persona["profile"],
-            persona=persona["persona"],
             self_model=persona["self_model"],
             proactive_state=world["proactive_state"],
         )
+        payload["persona"] = persona_profile.model_dump(mode="json")
         world["snapshot_store"].save_latest(payload)
         system_state["last_snapshot_at"] = datetime.now(timezone.utc).isoformat()
         logger.debug("snapshot saved")
@@ -360,7 +354,6 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         poll_timeout_sec=settings.queue_poll_timeout_sec,
         result_ttl_sec=settings.result_ttl_sec,
         context_builder=world["context_builder"],
-        enable_v02_pipeline=settings.enable_v02_pipeline,
         prediction_tracker=prediction_tracker,
         self_model_store=persona["self_model_store"],
         self_model=persona["self_model"],
@@ -409,10 +402,8 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         memory_governor=storage["memory_governor"],
         tiered_memory=storage["tiered_memory"],
         profile_store=persona["profile_store"],
-        persona_store=persona["persona_store"],
         self_model_store=persona["self_model_store"],
         profile=persona["profile"],
-        persona=persona["persona"],
         self_model=persona["self_model"],
         persona_repo=persona_repo,
         persona_service=persona_service,

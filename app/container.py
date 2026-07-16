@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from memory.profile_store import ProfileStore
     from memory.sqlite_store import SQLiteStore
     from memory.tiered_store import TieredMemoryManager
-    from persona.persona_store import PersonaStore
     from persona.repository import PersonaRepository
     from persona.self_model_store import SelfModelStore
     from persona.service import PersonaService
@@ -58,10 +57,8 @@ class AppContainer:
 
     # ── persona ──
     profile_store: ProfileStore
-    persona_store: PersonaStore
     self_model_store: SelfModelStore
     profile: dict[str, Any]
-    persona: dict[str, Any]
     self_model: dict[str, Any]
     persona_repo: PersonaRepository
     persona_service: PersonaService

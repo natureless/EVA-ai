@@ -37,7 +37,6 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("EVA_SNAPSHOT_DIR", str(snapshot_dir))
     monkeypatch.setenv("EVA_LATEST_SNAPSHOT_PATH", str(snapshot_dir / "latest.json"))
     monkeypatch.setenv("EVA_PROFILE_PATH", str(data_dir / "profile.json"))
-    monkeypatch.setenv("EVA_PERSONA_PATH", str(data_dir / "persona.json"))
     monkeypatch.setenv("EVA_SELF_MODEL_PATH", str(data_dir / "self_model.json"))
 
     monkeypatch.setenv("EVA_STAGNATION_THRESHOLD_SEC", "1")
