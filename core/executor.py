@@ -18,8 +18,9 @@ import tempfile
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
+from pathlib import Path
 from uuid import uuid4
 
 from memory.sqlite_store import SQLiteStore
@@ -454,29 +455,163 @@ class CodeExecutor(BaseExecutor):
                 }
 
 
-# ── Skeleton Executors (v0.2+) ────────────────────────────
+# ── Browser Executor ─────────────────────────────────────────
+
+DEFAULT_BROWSER_TIMEOUT = 15  # seconds
+DEFAULT_BROWSER_MAX_SIZE = 5 * 1024 * 1024  # 5 MB
+DEFAULT_BROWSER_ALLOWED_SCHEMES = {"http", "https"}
+
 
 class BrowserExecutor(BaseExecutor):
     name = "browser"
-    description = "Web browsing and form interaction (v0.2+)"
+    description = "HTTP GET requests with URL whitelist and size limits"
+
+    def __init__(
+        self,
+        audit_log: ExecutorAuditLog,
+        config: dict | None = None,
+    ) -> None:
+        super().__init__(audit_log, config)
+        cfg = (config or {}).get("executors", {}).get("browser", {})
+        limits = cfg.get("limits", {})
+        self.timeout = _parse_timeout_sec(limits.get("timeout", DEFAULT_BROWSER_TIMEOUT))
+        raw_max = limits.get("max_page_size_mb", 5)
+        self.max_size = int(raw_max * 1024 * 1024) if isinstance(raw_max, (int, float)) else DEFAULT_BROWSER_MAX_SIZE
+        self.allowed_domains: list[str] = cfg.get("allowed_domains", [])
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
-        return ExecutorDecision(allowed=False, reason="browser executor not implemented in v0.1")
+        url = params.get("url", "")
+        if not url:
+            return ExecutorDecision(allowed=False, reason="url is required")
+
+        parsed = urlparse(url) if "://" in url else None
+        if not parsed or parsed.scheme not in DEFAULT_BROWSER_ALLOWED_SCHEMES:
+            return ExecutorDecision(allowed=False, reason=f"only http/https allowed, got: {url[:80]}")
+
+        if self.allowed_domains:
+            hostname = parsed.hostname or ""
+            if not any(
+                hostname == domain or hostname.endswith("." + domain)
+                for domain in self.allowed_domains
+            ):
+                return ExecutorDecision(
+                    allowed=False,
+                    reason=f"domain {hostname} not in whitelist",
+                )
+
+        return ExecutorDecision(allowed=True, reason="boundary check passed")
 
     def _run(self, action: str, params: dict[str, Any]) -> dict[str, Any]:
-        return {"ok": False, "error": "browser executor not implemented in v0.1"}
+        import httpx
+
+        if action != "fetch":
+            return {"ok": False, "error": f"unknown action: {action}"}
+
+        url = params["url"]
+        try:
+            resp = httpx.get(
+                url,
+                timeout=self.timeout,
+                follow_redirects=True,
+                headers={"User-Agent": "EVA/0.1 (cognitive-agent)"},
+            )
+            content_type = resp.headers.get("content-type", "")
+            is_text = "text/" in content_type or "application/json" in content_type or "xml" in content_type
+            body = resp.text[:self.max_size] if is_text else f"[binary: {len(resp.content)} bytes, type={content_type}]"
+            return {
+                "ok": resp.is_success,
+                "status_code": resp.status_code,
+                "headers": dict(resp.headers),
+                "body": body,
+                "size": len(resp.content),
+                "summary": f"HTTP {resp.status_code}, {len(resp.content)} bytes from {url[:100]}",
+            }
+        except Exception as e:
+            return {"ok": False, "error": str(e), "status_code": 0, "body": "", "summary": f"fetch failed: {e}"}
+
+
+# ── API Executor ────────────────────────────────────────────
+
+DEFAULT_API_TIMEOUT = 15
+DEFAULT_API_MAX_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 class APIExecutor(BaseExecutor):
     name = "api"
-    description = "External API calls and webhooks (v0.2+)"
+    description = "HTTP JSON API calls with method/header/body support"
+
+    def __init__(
+        self,
+        audit_log: ExecutorAuditLog,
+        config: dict | None = None,
+    ) -> None:
+        super().__init__(audit_log, config)
+        cfg = (config or {}).get("executors", {}).get("api", {})
+        limits = cfg.get("limits", {})
+        self.timeout = _parse_timeout_sec(limits.get("timeout", DEFAULT_API_TIMEOUT))
+        raw_max = limits.get("max_response_size_mb", 10)
+        self.max_size = int(raw_max * 1024 * 1024) if isinstance(raw_max, (int, float)) else DEFAULT_API_MAX_SIZE
+        self.allowed_domains: list[str] = cfg.get("allowed_domains", [])
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
-        return ExecutorDecision(allowed=False, reason="api executor not implemented in v0.1")
+        url = params.get("url", "")
+        if not url:
+            return ExecutorDecision(allowed=False, reason="url is required")
+
+        method = params.get("method", "GET").upper()
+        if method not in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
+            return ExecutorDecision(allowed=False, reason=f"method {method} not allowed")
+
+        parsed = urlparse(url) if "://" in url else None
+        if not parsed or parsed.scheme not in {"http", "https"}:
+            return ExecutorDecision(allowed=False, reason="only http/https allowed")
+
+        if self.allowed_domains:
+            hostname = parsed.hostname or ""
+            if not any(
+                hostname == domain or hostname.endswith("." + domain)
+                for domain in self.allowed_domains
+            ):
+                return ExecutorDecision(
+                    allowed=False,
+                    reason=f"domain {hostname} not in whitelist",
+                )
+
+        return ExecutorDecision(allowed=True, reason="boundary check passed")
 
     def _run(self, action: str, params: dict[str, Any]) -> dict[str, Any]:
-        return {"ok": False, "error": "api executor not implemented in v0.1"}
+        import httpx
 
+        if action != "call":
+            return {"ok": False, "error": f"unknown action: {action}"}
+
+        url = params["url"]
+        method = params.get("method", "GET").upper()
+        headers = params.get("headers") or {}
+        body = params.get("body")
+
+        try:
+            resp = httpx.request(
+                method, url,
+                headers=headers,
+                json=body if body and method in ("POST", "PUT", "PATCH") else None,
+                timeout=self.timeout,
+                follow_redirects=True,
+            )
+            data = resp.text[:self.max_size]
+            return {
+                "ok": resp.is_success,
+                "status_code": resp.status_code,
+                "headers": dict(resp.headers),
+                "body": data,
+                "size": len(resp.content),
+                "summary": f"HTTP {method} {resp.status_code}, {len(resp.content)} bytes",
+            }
+        except Exception as e:
+            return {"ok": False, "error": str(e), "status_code": 0, "body": "", "summary": f"api call failed: {e}"}
+
+
+# ── Comms Executor (deferred) ────────────────────────────────
 
 class CommsExecutor(BaseExecutor):
     name = "comms"

@@ -73,13 +73,13 @@ class SearchAgent(BaseAgent):
             return f"[search_agent] matches for '{query}' (scanned {files_scanned} files):\n{lines}"
 
         ctx_text = build_context_text(context)
+        system = load_system_prompt(
+            "search",
+            persona_name="EVA",
+            context_summary=ctx_text,
+        )
         messages = [
-            {"role": "system", "content": (
-                "You are EVA's search agent. Summarize file search results concisely.\n"
-                "Format: 1) What was found (2-3 sentences) 2) Key files and their relevance "
-                "3) Suggested next action if applicable.\n"
-                + ctx_text
-            )},
+            {"role": "system", "content": system},
             {"role": "user", "content": (
                 f"Query: {query}\nFiles scanned: {files_scanned}\n"
                 f"{'Results truncated to 20 matches.' if truncated else ''}\n"

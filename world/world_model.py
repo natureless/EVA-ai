@@ -15,6 +15,7 @@ Usage::
 
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
+import threading
 from typing import Any
 
 
@@ -69,6 +70,7 @@ class WorldModelGraph:
     _edges: list[Edge] = field(default_factory=list)
     _dirty_entities: set[str] = field(default_factory=set)
     _dirty_edges: list[Edge] = field(default_factory=list)
+    _lock: threading.RLock = field(default_factory=threading.RLock)
 
     # ── entity ops ─────────────────────────────────────────
 
@@ -80,29 +82,30 @@ class WorldModelGraph:
             raise ValueError(f"Unknown entity type: {entity_type}")
         eid = eid or _make_eid(entity_type, name)
 
-        # merge with existing entity if present
-        existing = self._entities.get(eid)
-        if existing:
-            existing.name = name
-            existing.updated_at = datetime.now(timezone.utc).isoformat()
-            if properties:
-                existing.properties.update(properties)
-            existing.properties.setdefault("status", "active")
+        with self._lock:
+            # merge with existing entity if present
+            existing = self._entities.get(eid)
+            if existing:
+                existing.name = name
+                existing.updated_at = datetime.now(timezone.utc).isoformat()
+                if properties:
+                    existing.properties.update(properties)
+                existing.properties.setdefault("status", "active")
+                self._dirty_entities.add(eid)
+                return eid
+
+            now = datetime.now(timezone.utc).isoformat()
+            props = dict(properties or {})
+            if entity_type == "task":
+                props.setdefault("status", "active")
+                props.setdefault("priority", "medium")
+                props.setdefault("created_at", now)
+            self._entities[eid] = Entity(
+                eid=eid, type=entity_type, name=name,
+                properties=props, updated_at=now,
+            )
             self._dirty_entities.add(eid)
             return eid
-
-        now = datetime.now(timezone.utc).isoformat()
-        props = dict(properties or {})
-        if entity_type == "task":
-            props.setdefault("status", "active")
-            props.setdefault("priority", "medium")
-            props.setdefault("created_at", now)
-        self._entities[eid] = Entity(
-            eid=eid, type=entity_type, name=name,
-            properties=props, updated_at=now,
-        )
-        self._dirty_entities.add(eid)
-        return eid
 
     def get_entity(self, eid: str) -> Entity | None:
         return self._entities.get(eid)
@@ -111,22 +114,24 @@ class WorldModelGraph:
         return [e for e in self._entities.values() if e.type == entity_type]
 
     def remove_entity(self, eid: str) -> bool:
-        if eid in self._entities:
-            del self._entities[eid]
-            self._dirty_entities.discard(eid)
-            return True
-        return False
+        with self._lock:
+            if eid in self._entities:
+                del self._entities[eid]
+                self._dirty_entities.discard(eid)
+                return True
+            return False
 
     # ── edge ops ───────────────────────────────────────────
 
     def link(self, source: str, target: str, relation: str, *, weight: float = 1.0) -> Edge:
-        edge = Edge(
-            source=source, target=target, relation=relation,
-            weight=weight,
-        )
-        self._edges.append(edge)
-        self._dirty_edges.append(edge)
-        return edge
+        with self._lock:
+            edge = Edge(
+                source=source, target=target, relation=relation,
+                weight=weight,
+            )
+            self._edges.append(edge)
+            self._dirty_edges.append(edge)
+            return edge
 
     def get_edges(self, eid: str = "", relation: str = "") -> list[Edge]:
         result = self._edges
@@ -177,19 +182,20 @@ class WorldModelGraph:
 
     def flush(self, s4_store) -> None:
         """Persist dirty entities and edges to S4 WorldModelStore."""
-        for eid in self._dirty_entities:
-            e = self._entities[eid]
-            s4_store.upsert_entity(
-                entity_id=eid, entity_type=e.type,
-                name=e.name, properties=e.properties,
-            )
-        for edge in self._dirty_edges:
-            s4_store.upsert_edge(
-                source=edge.source, target=edge.target,
-                relation=edge.relation, weight=edge.weight,
-            )
-        self._dirty_entities.clear()
-        self._dirty_edges.clear()
+        with self._lock:
+            for eid in self._dirty_entities:
+                e = self._entities[eid]
+                s4_store.upsert_entity(
+                    entity_id=eid, entity_type=e.type,
+                    name=e.name, properties=e.properties,
+                )
+            for edge in self._dirty_edges:
+                s4_store.upsert_edge(
+                    source=edge.source, target=edge.target,
+                    relation=edge.relation, weight=edge.weight,
+                )
+            self._dirty_entities.clear()
+            self._dirty_edges.clear()
 
     def load_from_store(self, s4_store) -> None:
         """Restore graph from S4 WorldModelStore."""
@@ -213,8 +219,13 @@ class WorldModelGraph:
     # ── snapshot compatibility ─────────────────────────────
 
     def to_dict(self) -> dict[str, Any]:
-        """Serializable snapshot compatible with old WorldModel format."""
-        return {
+        """Serializable snapshot compatible with old WorldModel format.
+
+        Acquires the graph lock so snapshot captures a consistent point-in-time
+        even when the cognition loop is concurrently mutating entities/edges.
+        """
+        with self._lock:
+            return {
             "focus": self.focus,
             "mode": self.mode,
             "active_tasks": self.active_tasks,

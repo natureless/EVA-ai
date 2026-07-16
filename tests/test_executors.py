@@ -153,9 +153,9 @@ class TestCodeExecutor:
         assert not boundary.allowed
 
 
-# ── Skeleton Executors ─────────────────────────────────────
+# ── Browser / API / Comms Executors ────────────────────────
 
-class TestSkeletonExecutors:
+class TestBrowserExecutor:
     @classmethod
     def setup_class(cls):
         cls.tmpdir = tempfile.mkdtemp()
@@ -163,16 +163,89 @@ class TestSkeletonExecutors:
         cls.store.init_db()
         cls.audit = ExecutorAuditLog(cls.store)
 
-    def test_browser_not_implemented(self):
+    def test_missing_url(self):
         e = BrowserExecutor(self.audit)
-        result = e.execute("navigate", {"url": "http://example.com"})
+        result = e.execute("fetch", {})
         assert not result["ok"]
-        assert "not implemented" in result["error"]
+        assert result["status"] == "denied"
 
-    def test_api_not_implemented(self):
-        e = APIExecutor(self.audit)
-        result = e.execute("call", {"endpoint": "/test"})
+    def test_non_http_scheme_blocked(self):
+        e = BrowserExecutor(self.audit)
+        result = e.execute("fetch", {"url": "file:///etc/passwd"})
         assert not result["ok"]
+        assert result["status"] == "denied"
+
+    def test_domain_not_whitelisted(self):
+        e = BrowserExecutor(self.audit, config={
+            "executors": {"browser": {"allowed_domains": ["api.example.com"]}}
+        })
+        result = e.execute("fetch", {"url": "https://evil.org/data"})
+        assert not result["ok"]
+        assert result["status"] == "denied"
+
+    def test_domain_whitelisted_passes_boundary(self):
+        e = BrowserExecutor(self.audit, config={
+            "executors": {"browser": {"allowed_domains": ["api.example.com"]}}
+        })
+        decision = e.check_boundaries({"url": "https://api.example.com/data"})
+        assert decision.allowed
+
+    def test_unknown_action(self):
+        e = BrowserExecutor(self.audit)
+        result = e.execute("navigate", {"url": "http://127.0.0.1:1"})
+        assert not result["ok"]
+        assert "unknown action" in result["error"]
+
+
+class TestAPIExecutorBoundaries:
+    @classmethod
+    def setup_class(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.store = SQLiteStore(Path(os.path.join(cls.tmpdir, "test.db")))
+        cls.store.init_db()
+        cls.audit = ExecutorAuditLog(cls.store)
+
+    def test_missing_url(self):
+        e = APIExecutor(self.audit)
+        result = e.execute("call", {})
+        assert not result["ok"]
+        assert result["status"] == "denied"
+
+    def test_bad_method_blocked(self):
+        e = APIExecutor(self.audit)
+        result = e.execute("call", {"url": "http://127.0.0.1:1/test", "method": "PATCH"})
+        # PATCH is allowed — test something truly disallowed
+        result2 = e.execute("call", {"url": "http://127.0.0.1:1/test", "method": "HEAD"})
+        assert not result2["ok"]
+
+    def test_domain_not_whitelisted(self):
+        e = APIExecutor(self.audit, config={
+            "executors": {"api": {"allowed_domains": ["internal.local"]}}
+        })
+        result = e.execute("call", {"url": "https://evil.org/api"})
+        assert not result["ok"]
+        assert result["status"] == "denied"
+
+    def test_domain_whitelisted_passes_boundary(self):
+        e = APIExecutor(self.audit, config={
+            "executors": {"api": {"allowed_domains": ["internal.local"]}}
+        })
+        decision = e.check_boundaries({"url": "https://internal.local/api/v1"})
+        assert decision.allowed
+
+    def test_unknown_action(self):
+        e = APIExecutor(self.audit)
+        result = e.execute("navigate", {"url": "http://127.0.0.1:1/test"})
+        assert not result["ok"]
+
+
+class TestCommsExecutor:
+    @classmethod
+    def setup_class(cls):
+        cls.tmpdir = tempfile.mkdtemp()
+        cls.store = SQLiteStore(Path(os.path.join(cls.tmpdir, "test.db")))
+        cls.store.init_db()
+        cls.audit = ExecutorAuditLog(cls.store)
 
     def test_comms_not_implemented(self):
         e = CommsExecutor(self.audit)

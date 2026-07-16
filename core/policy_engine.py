@@ -253,8 +253,6 @@ class TokenManager:
         if len(self._tokens) >= self._max_tokens:
             oldest = min(self._tokens.values(), key=lambda t: t.created_at)
             del self._tokens[oldest.token_id]
-            oldest = min(self._tokens.values(), key=lambda t: t.created_at)
-            del self._tokens[oldest.token_id]
 
         token = Token(
             token_id=f"tok_{uuid4().hex[:12]}",

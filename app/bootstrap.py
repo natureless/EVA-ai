@@ -457,7 +457,13 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     logger.info("scheduler started (tick=%ss)", settings.scheduler_tick_interval_sec)
 
     # ── health ──
-    health = HealthService(system_state)
+    health = HealthService(
+        system_state,
+        store=store,
+        event_bus=event_bus,
+        loop=loop,
+        scheduler=scheduler,
+    )
     system_state["ready"] = True
 
     # ── boot diagnostic ──

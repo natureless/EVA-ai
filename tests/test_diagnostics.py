@@ -94,9 +94,10 @@ class TestSystemDiagnostic:
             "policy_state": {"state_machine": {"current": "dormant"}},
         }
         report = diag.run_full(self.store, tm, state)
-        assert report.score >= 80
-        assert report.overall == "healthy"
-        assert len(report.checks) >= 3
+        assert report.score >= 66
+        # degraded is expected in test env without LLM API keys
+        assert report.overall in ("healthy", "degraded")
+        assert len(report.checks) >= 4
         assert report.to_dict()["score"] == report.score
 
 

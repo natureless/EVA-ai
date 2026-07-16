@@ -4,7 +4,7 @@ from pathlib import Path
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
-from core.llm_adapter import get_llm, MockLLM
+from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
 
 
@@ -66,13 +66,13 @@ class CodingAgent(BaseAgent):
             return f"[coding_agent]{path_hint}\n{analysis}"
 
         ctx_text = build_context_text(context)
+        system = load_system_prompt(
+            "coding",
+            persona_name="EVA",
+            context_summary=ctx_text,
+        )
         messages = [
-            {"role": "system", "content": (
-                "You are EVA's code analysis agent. Summarize code structure concisely.\n"
-                "Format: 1) What the file does (1-2 sentences) 2) Key structures (classes/functions) "
-                "3) Notable patterns or issues 4) One suggestion if applicable.\n"
-                "Keep it under 300 words.\n" + ctx_text
-            )},
+            {"role": "system", "content": system},
             {"role": "user", "content": (
                 f"File: {meta.get('path', 'inline code')}\n"
                 f"Lines: {meta.get('lines', 0)} (non-empty: {meta.get('non_empty', 0)})\n"

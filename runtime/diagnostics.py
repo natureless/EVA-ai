@@ -237,6 +237,29 @@ class SystemDiagnostic:
             detail=f"events={pending_events} results={pending_results} policy={policy_current}",
         )
 
+    def check_llm(self) -> DiagnosticCheck:
+        """Verify a real LLM provider is configured (not MockLLM fallback)."""
+        try:
+            from core.llm_adapter import get_llm, MockLLM
+            llm = get_llm()
+            if isinstance(llm, MockLLM):
+                return DiagnosticCheck(
+                    name="llm",
+                    passed=False,
+                    detail="no LLM API key configured — using MockLLM (echo mode)",
+                    recommendation="set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable",
+                )
+            return DiagnosticCheck(
+                name="llm",
+                passed=True,
+                detail=f"LLM provider: {llm.provider}",
+            )
+        except Exception as e:
+            return DiagnosticCheck(
+                name="llm", passed=False,
+                detail=str(e), recommendation="check LLM adapter configuration",
+            )
+
     # ── full diagnostic ─────────────────────────────────────
 
     def run_full(
@@ -265,6 +288,9 @@ class SystemDiagnostic:
 
         # 5. Runtime
         checks.append(self.check_runtime(system_state))
+
+        # 6. LLM
+        checks.append(self.check_llm())
 
         # score
         passed = sum(1 for c in checks if c.passed)

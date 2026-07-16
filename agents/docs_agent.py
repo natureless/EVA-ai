@@ -1,7 +1,7 @@
 import logging
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
-from core.llm_adapter import get_llm, MockLLM
+from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
 
 
@@ -50,12 +50,13 @@ class DocsAgent(BaseAgent):
             return f"[docs_agent] document task accepted, preview: {preview}"
 
         ctx_text = build_context_text(context)
+        system = load_system_prompt(
+            "docs",
+            persona_name="EVA",
+            context_summary=ctx_text,
+        )
         messages = [
-            {"role": "system", "content": (
-                "You are EVA's document analysis agent. Summarize documents concisely.\n"
-                "Format: 1) Main topic (1 sentence) 2) Key points (bullet list, max 5) "
-                "3) Action items if any.\nKeep it under 250 words.\n" + ctx_text
-            )},
+            {"role": "system", "content": system},
             {"role": "user", "content": f"Document to summarize:\n{text[:5000]}"},
         ]
         return llm.chat(messages)
