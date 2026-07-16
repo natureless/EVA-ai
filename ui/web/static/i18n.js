@@ -86,6 +86,29 @@ const I18N = {
     "policy.commanded":   { zh: "指令", en: "commanded" },
     "policy.supervised":  { zh: "监督", en: "supervised" },
     "policy.quarantined": { zh: "隔离", en: "quarantined" },
+
+    // ── Navigation ──
+    "nav.settings":       { zh: "设置", en: "Settings" },
+    "nav.backToChat":     { zh: "返回对话", en: "Back to Chat" },
+
+    // ── Avatar states ──
+    "avatar.idle":        { zh: "EVA 已就绪", en: "EVA is here" },
+    "avatar.listening":   { zh: "倾听中...", en: "Listening..." },
+    "avatar.responding":  { zh: "回复中...", en: "Responding..." },
+
+    // ── Chat page ──
+    "chat.emptyState":    { zh: "开始与 EVA 对话", en: "Start a conversation with EVA" },
+    "chat.typing":        { zh: "EVA 正在输入...", en: "EVA is typing..." },
+    "chat.sending":       { zh: "发送中...", en: "Sending..." },
+    "chat.you":           { zh: "你", en: "You" },
+    "chat.eva":           { zh: "EVA", en: "EVA" },
+    "chat.now":           { zh: "刚刚", en: "Just now" },
+    "chat.inputHint":     { zh: "输入消息...", en: "Type a message..." },
+    "chat.offline":       { zh: "SSE 关闭，将使用同步模式", en: "SSE off, using sync mode" },
+
+    // ── Settings page ──
+    "settings.heading":   { zh: "系统仪表盘", en: "System Dashboard" },
+    "settings.autoRefresh": { zh: "自动刷新", en: "Auto Refresh" },
   },
 
   // ── Public API ──

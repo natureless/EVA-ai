@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ app_name }} · 设置</title>
+  <link rel="stylesheet" href="/static/main.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>{{ app_name }} <span class="ver">v0.1</span></h1>
+      <span class="sub" data-i18n="settings.heading">系统仪表盘</span>
+    </div>
+    <div class="topbar-right">
+      <span id="wsIndicator" class="badge disconnected">WS</span>
+      <span id="autoRefresh" class="badge ok" data-i18n="settings.autoRefresh">自动刷新</span>
+      <a href="/" class="icon-btn" data-i18n-title="nav.backToChat" title="返回对话">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
+      </a>
+      <button id="langBtn" class="lang-btn" title="Switch Language / 切换语言">中</button>
+      <button id="themeBtn" class="icon-btn" data-i18n-title="btn.theme" title="切换深色/浅色模式">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-10-10h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="settings-page">
+    <main class="grid">
+      <!-- Policy -->
+      <section class="card">
+        <div class="card-header" data-card="policy">
+          <h2 data-i18n="policy.title">策略</h2>
+          <span id="policyDot" class="dot dormant"></span>
+        </div>
+        <div class="card-body">
+          <div id="policyPanel" class="kv-grid"></div>
+          <div id="policyTimeline" class="timeline-strip"></div>
+        </div>
+      </section>
+
+      <!-- Memory Tiers -->
+      <section class="card">
+        <div class="card-header" data-card="memory">
+          <h2 data-i18n="memory.title">记忆层级</h2>
+          <span id="memSummary" class="badge">--</span>
+        </div>
+        <div class="card-body">
+          <div id="tiersPanel"></div>
+        </div>
+      </section>
+
+      <!-- World Model -->
+      <section class="card">
+        <div class="card-header" data-card="world">
+          <h2 data-i18n="world.title">世界模型</h2>
+          <span id="entityCount" class="badge">0</span>
+        </div>
+        <div class="card-body">
+          <input type="text" class="filter-input" id="entityFilter" data-i18n-placeholder="world.filter" placeholder="筛选实体..." />
+          <div id="worldPanel" class="list-panel"></div>
+        </div>
+      </section>
+
+      <!-- Audit -->
+      <section class="card">
+        <div class="card-header" data-card="audit">
+          <h2 data-i18n="audit.title">审计时间线</h2>
+        </div>
+        <div class="card-body">
+          <div id="auditPanel" class="list-panel"></div>
+        </div>
+      </section>
+
+      <!-- System State -->
+      <section class="card">
+        <div class="card-header" data-card="state">
+          <h2 data-i18n="state.title">系统状态</h2>
+        </div>
+        <div class="card-body">
+          <div id="statePanel" class="kv-grid"></div>
+        </div>
+      </section>
+
+      <!-- Health -->
+      <section class="card">
+        <div class="card-header" data-card="health">
+          <h2 data-i18n="health.title">健康</h2>
+          <span id="healthScore" class="badge ok">--</span>
+        </div>
+        <div class="card-body">
+          <div id="healthComponents" class="comp-list"></div>
+          <div id="healthPanel" class="kv-grid" style="margin-top:8px"></div>
+        </div>
+      </section>
+
+      <!-- WS Events -->
+      <section class="card">
+        <div class="card-header" data-card="ws">
+          <h2 data-i18n="ws.title">WS 事件</h2>
+          <span id="wsEventCount" class="badge">0</span>
+        </div>
+        <div class="card-body">
+          <div id="wsEventPanel" class="list-panel"></div>
+        </div>
+      </section>
+
+      <!-- Agents & Scheduler -->
+      <section class="card">
+        <div class="card-header" data-card="agents">
+          <h2 data-i18n="agents.title">智能体 & 调度器</h2>
+        </div>
+        <div class="card-body">
+          <div id="agentsPanel" class="kv-grid"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/i18n.js"></script>
+  <script src="/static/nav.js"></script>
+  <script src="/static/settings.js"></script>
+</body>
+</html>

@@ -9,9 +9,18 @@ templates = Jinja2Templates(directory=str(settings.template_dir))
 
 
 @router.get("/")
-def dashboard(request: Request):
+def index(request: Request):
     return templates.TemplateResponse(
         request=request,
-        name="dashboard.html",
-        context={"app_name": settings.app_name},
+        name="index.html",
+        context={"app_name": settings.app_name, "page": "chat"},
+    )
+
+
+@router.get("/settings")
+def settings_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="settings.html",
+        context={"app_name": settings.app_name, "page": "settings"},
     )
