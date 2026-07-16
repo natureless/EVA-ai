@@ -32,6 +32,7 @@ from persona.repository import PersonaRepository
 from persona.service import PersonaService
 from persona.self_model_store import SelfModelStore
 from runtime.health import HealthService
+from runtime.diagnostics import SystemDiagnostic, RecoveryActions
 from runtime.logging_setup import configure_logging
 from runtime.result_registry import ResultRegistry
 from runtime.scheduler import RuntimeScheduler
@@ -313,6 +314,21 @@ def bootstrap_system() -> dict:
     system_state["ready"] = True
     logger.info("bootstrap complete - system ready")
 
+    # ── run startup diagnostic ──────────────────────────────
+    diagnostic = SystemDiagnostic().run_full(
+        store, tiered_memory, system_state,
+        snapshot_path=Path(settings.latest_snapshot_path),
+    )
+    system_state["diagnostic"] = diagnostic.to_dict()
+    if diagnostic.overall == "critical":
+        logger.critical("boot diagnostic: score=%d overall=%s issues=%d",
+                        diagnostic.score, diagnostic.overall, len(diagnostic.failed_checks()))
+    elif diagnostic.overall == "degraded":
+        logger.warning("boot diagnostic: score=%d overall=%s issues=%d",
+                       diagnostic.score, diagnostic.overall, len(diagnostic.failed_checks()))
+    else:
+        logger.info("boot diagnostic: score=%d overall=%s", diagnostic.score, diagnostic.overall)
+
     return {
         "settings": settings,
         "system_state": system_state,
@@ -348,6 +364,8 @@ def bootstrap_system() -> dict:
         "executor_audit_log": executor_audit_log,
         "save_runtime_snapshot": save_runtime_snapshot,
         "health": health,
+        "diagnostic": diagnostic,
+        "recovery_actions": RecoveryActions(),
     }
 
 
