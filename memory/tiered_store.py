@@ -22,6 +22,19 @@ from uuid import uuid4
 
 from memory.sqlite_store import SQLiteStore
 
+# ── FTS helpers ──────────────────────────────────────────────
+
+def _fts_sanitize(query: str) -> str:
+    """Sanitize a user query for FTS5 MATCH syntax.
+
+    Strips characters that FTS5 treats as operators (*, ", -, etc.)
+    and wraps each token in quotes so they're searched literally.
+    """
+    cleaned = query.replace('"', "").replace("*", "").replace("-", "")
+    tokens = cleaned.split()
+    return " ".join(f'"{t}"' for t in tokens[:10]) if tokens else cleaned
+
+
 # ── S1: Session Memory ─────────────────────────────────────
 
 @dataclass
@@ -224,6 +237,37 @@ class LongTermMemoryStore:
                WHERE status = 'active'
                ORDER BY created_at DESC LIMIT ?""",
             (limit,),
+        )
+        return [dict(r) for r in rows]
+
+    def search(self, query: str, limit: int = 50) -> list[dict]:
+        """Search long-term memory using FTS5, with LIKE fallback.
+
+        FTS5 handles tokenized search (fast, indexed). Falls back to
+        substring LIKE when FTS5 virtual table is unavailable (e.g.,
+        before migrations run).
+        """
+        try:
+            rows = self.store.fetchall(
+                """SELECT ltm.* FROM long_term_memory ltm
+                   JOIN long_term_memory_fts fts ON ltm.rowid = fts.rowid
+                   WHERE long_term_memory_fts MATCH ?
+                   ORDER BY ltm.importance DESC, ltm.created_at DESC
+                   LIMIT ?""",
+                (_fts_sanitize(query), limit),
+            )
+            if rows:
+                return [dict(r) for r in rows]
+        except Exception:
+            pass
+
+        # fallback: substring LIKE scan
+        rows = self.store.fetchall(
+            """SELECT * FROM long_term_memory
+               WHERE status = 'active' AND content LIKE ?
+               ORDER BY importance DESC, created_at DESC
+               LIMIT ?""",
+            (f"%{query}%", limit),
         )
         return [dict(r) for r in rows]
 
@@ -551,24 +595,30 @@ class TieredMemoryManager:
     # ── recall ──────────────────────────────────────────────
 
     def recall(self, query: str, tiers: list[int] | None = None) -> list[dict]:
-        """Search across specified tiers (default: all)."""
+        """Search across specified tiers (default: all).
+
+        S1: in-memory substring scan (small, fast)
+        S2: SQLite LIKE scan (limited by recent window)
+        S3: FTS5 indexed search with LIKE fallback
+        """
         tiers = tiers or [1, 2, 3]
         results: list[dict] = []
+        q = query.lower()
 
         if 1 in tiers:
             for key, entry in self.s1._store.items():
-                if query.lower() in str(entry.value.get("content", "")).lower():
+                if q in str(entry.value.get("content", "")).lower():
                     results.append({"tier": "S1", "key": key, **entry.value})
 
         if 2 in tiers:
             for row in self.s2.list_recent(limit=100):
-                if query.lower() in row.get("content", "").lower():
+                if q in row.get("content", "").lower():
                     results.append({"tier": "S2", **row})
 
         if 3 in tiers:
-            for row in self.s3.list_recent(limit=100):
-                if query.lower() in row.get("content", "").lower():
-                    results.append({"tier": "S3", **row})
+            rows = self.s3.search(query, limit=100)
+            for row in rows:
+                results.append({"tier": "S3", **row})
 
         return results
 

@@ -16,4 +16,7 @@ class AgentRouter:
             if candidate and candidate.can_handle(task):
                 return name
 
-        return "chat_agent"
+        # safe fallback: pick first agent, or return the preferred name
+        # (orchestrator will surface the error if it's missing)
+        agents = self.registry.list_agents()
+        return agents[0] if agents else preferred_agent

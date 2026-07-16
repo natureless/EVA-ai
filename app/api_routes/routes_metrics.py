@@ -78,4 +78,12 @@ def metrics(request: Request) -> dict:
             "overall": diag.get("overall", "unknown"),
         }
 
+    # ── rate limiter ──
+    try:
+        limiter = request.app.state.rate_limiter
+        if limiter:
+            payload["rate_limiter"] = limiter.stats()
+    except Exception:
+        pass
+
     return payload

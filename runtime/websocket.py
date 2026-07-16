@@ -102,7 +102,3 @@ class WebSocketManager:
             for ws in s:
                 seen.add(id(ws))
         return len(seen)
-
-
-# singleton
-ws_manager = WebSocketManager()

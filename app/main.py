@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import router
 from app.bootstrap import bootstrap_system, shutdown_system
 from app.config import settings
+from runtime.rate_limiter import RateLimitMiddleware, SlidingWindowLimiter
 from runtime.websocket import WebSocketManager
 
 
@@ -38,6 +39,10 @@ app = FastAPI(
 
 app.mount("/static", StaticFiles(directory=str(settings.static_dir)), name="static")
 app.include_router(router)
+
+_rate_limiter = SlidingWindowLimiter()
+app.add_middleware(RateLimitMiddleware, limiter=_rate_limiter)
+app.state.rate_limiter = _rate_limiter
 
 
 @app.websocket("/ws")

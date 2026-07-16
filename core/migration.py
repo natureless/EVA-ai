@@ -87,10 +87,13 @@ class MigrationRunner:
 def _split_sql(sql: str) -> list[str]:
     """Split multi-statement SQL into individual statements.
 
-    Splits on semicolons, strips whitespace, and filters out
-    empty statements and pure comment lines.
+    Handles CREATE TRIGGER blocks (which contain internal semicolons)
+    by buffering lines between CREATE TRIGGER and END;.
     """
     statements = []
+    buffer: list[str] = []
+    in_trigger = False
+
     for raw in sql.split(";"):
         stmt = raw.strip()
         if not stmt:
@@ -99,5 +102,20 @@ def _split_sql(sql: str) -> list[str]:
         lines = [l for l in stmt.splitlines() if l.strip() and not l.strip().startswith("--")]
         if not lines:
             continue
-        statements.append(stmt)
+
+        if in_trigger:
+            buffer.append(stmt)
+            if stmt.strip().upper().startswith("END"):
+                statements.append(";".join(buffer))
+                buffer = []
+                in_trigger = False
+        elif any(line.strip().upper().startswith("CREATE TRIGGER") for line in lines) and "END" not in stmt.upper():
+            buffer.append(stmt)
+            in_trigger = True
+        else:
+            statements.append(stmt)
+
+    if buffer:
+        statements.append(";".join(buffer))
+
     return statements
