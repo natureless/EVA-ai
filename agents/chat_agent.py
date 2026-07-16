@@ -1,15 +1,16 @@
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
+from core.llm_adapter import get_llm, MockLLM
 
 
 class ChatAgent(BaseAgent):
-    """General conversational task handler.
+    """General conversational task handler with LLM and context awareness.
 
-    Echoes user messages. When context is provided via task.payload,
-    includes active tasks, recent memories, and world model entities
-    in the response — enabling cross-session memory chains.
+    Uses an LLM adapter (auto-detected from environment) when available,
+    falling back to deterministic echo mode. Context from memory chains
+    and world model is injected into the system prompt.
     """
     name = "chat_agent"
-    description = "Handle general conversational tasks with context awareness"
+    description = "Handle general conversational tasks with LLM + context"
 
     def can_handle(self, task: AgentTask) -> bool:
         return task.kind == "chat"
@@ -19,49 +20,60 @@ class ChatAgent(BaseAgent):
         context = task.payload.get("context")
 
         if not text:
-            content = "[chat_agent] empty input"
             return AgentResult(
-                ok=True, agent=self.name, content=content,
-                summary=content[:120], meta={"length": 0},
+                ok=True, agent=self.name,
+                content="[chat_agent] empty input",
+                summary="empty input", meta={},
             )
 
-        response = f"[chat_agent] EVA received: {text}"
+        # ── build messages ──────────────────────────────────
+        messages = [{"role": "system", "content": self._build_system(context)}]
+        messages.append({"role": "user", "content": text})
 
-        # ── embed context if available ──────────────────────
-        if context and isinstance(context, dict):
-            ctx_summary = context.get("context_summary", "")
-            active_tasks = context.get("active_tasks", [])
-            memories = context.get("memories", [])
-            entities = context.get("recent_entities", [])
-
-            parts = [response, "", "--- Context ---"]
-
-            if active_tasks:
-                task_names = [t.get("name", "") for t in active_tasks if t.get("name")]
-                parts.append(f"Active tasks ({len(active_tasks)}): " + ", ".join(task_names[:5]))
-
-            if memories:
-                snippets = [
-                    m.get("content", "")[:80] for m in memories[:5]
-                ]
-                parts.append(f"Recent memories ({len(memories)}):")
-                for i, s in enumerate(snippets, 1):
-                    parts.append(f"  {i}. {s}")
-
-            if entities:
-                parts.append(f"Known entities ({len(entities)}): " + ", ".join(entities[:8]))
-
-            response = "\n".join(parts)
+        # ── get LLM ─────────────────────────────────────────
+        llm = get_llm()
+        reply = llm.chat(messages)
 
         return AgentResult(
             ok=True,
             agent=self.name,
-            content=response,
-            summary=response[:120],
+            content=reply,
+            summary=reply[:120],
             meta={
-                "length": len(text),
+                "llm_provider": llm.provider,
                 "has_context": bool(context),
                 "active_tasks_count": len(context.get("active_tasks", [])) if context else 0,
                 "memories_count": len(context.get("memories", [])) if context else 0,
             },
         )
+
+    def _build_system(self, context: dict | None) -> str:
+        base = (
+            "You are EVA, a persistent cognitive assistant with stable identity. "
+            "Be precise, calm, and concise. Do not overclaim certainty. "
+            "Acknowledge what you know and don't know."
+        )
+
+        if not context:
+            return base
+
+        parts = [base, ""]
+
+        summary = context.get("context_summary", "")
+        if summary:
+            parts.append("Current context from memory:")
+            parts.append(summary)
+
+        active_tasks = context.get("active_tasks", [])
+        if active_tasks:
+            task_names = [t.get("name", "") for t in active_tasks if t.get("name")]
+            if task_names:
+                parts.append(f"Active tasks: " + ", ".join(task_names[:5]))
+
+        memories = context.get("memories", [])
+        if memories:
+            parts.append("Relevant past interactions:")
+            for i, m in enumerate(memories[:5], 1):
+                parts.append(f"  {i}. {m.get('content', '')[:120]}")
+
+        return "\n".join(parts)

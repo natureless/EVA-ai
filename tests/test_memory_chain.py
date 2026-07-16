@@ -98,10 +98,9 @@ class TestChatAgentWithContext:
         result = agent.run(task)
 
         assert result.ok
-        assert "EVA received: hello" in result.content
-        assert "Fix bug" in result.content
-        assert "Deploy" in result.content
-        assert "bug fixes" in result.content
+        assert result.meta["has_context"] is True
+        assert result.meta["active_tasks_count"] == 2
+        assert "hello" in result.content.lower()
 
     def test_reply_without_context(self):
         agent = ChatAgent()
@@ -109,7 +108,7 @@ class TestChatAgentWithContext:
         result = agent.run(task)
 
         assert result.ok
-        assert "EVA received: hi" in result.content
+        assert "hi" in result.content
         assert "Context" not in result.content
 
     def test_empty_input(self):

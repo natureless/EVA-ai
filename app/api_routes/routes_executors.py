@@ -117,3 +117,41 @@ async def code_execute(request: Request):
         raise HTTPException(status_code=400, detail="code field required")
     params.setdefault("language", "python")
     return _executor_action(request, "code", "execute", params)
+
+
+# ── Audit Replay ────────────────────────────────────────────
+
+@router.get("/api/executors/audit/replay")
+def audit_replay(
+    request: Request,
+    task_id: str = "",
+    executor_type: str = "",
+    limit: int = 20,
+):
+    """Replay audit trail for a specific task or executor."""
+    container = request.app.state.container
+    audit = container.get("executor_audit_log")
+    if audit is None:
+        return {"items": [], "timeline": []}
+
+    items = audit.query(executor_type=executor_type, limit=limit)
+
+    if task_id:
+        items = [i for i in items if i.get("task_id") == task_id]
+
+    timeline = []
+    for item in items:
+        timeline.append({
+            "timestamp": item.get("timestamp", ""),
+            "executor": item.get("executor_type", ""),
+            "action": item.get("action", ""),
+            "status": item.get("status", ""),
+            "summary": item.get("result_summary", "")[:200],
+            "duration_ms": item.get("duration_ms", 0),
+        })
+
+    return {
+        "items": items,
+        "timeline": sorted(timeline, key=lambda t: t["timestamp"], reverse=True),
+        "total": len(items),
+    }
