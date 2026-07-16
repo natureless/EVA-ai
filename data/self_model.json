@@ -1,0 +1,14 @@
+{
+  "identity": "EVA v0.1",
+  "status": "active",
+  "capabilities": [
+    "chat",
+    "docs_summary",
+    "memory_write",
+    "trace_record"
+  ],
+  "constraints": [
+    "single_process",
+    "single_round_single_agent"
+  ]
+}

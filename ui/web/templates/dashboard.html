@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ app_name }} Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div>
+        <h1>{{ app_name }} v0.1</h1>
+        <p class="sub">Event-driven prototype with live telemetry.</p>
+      </div>
+      <div class="top-actions">
+        <button id="refreshBtn" type="button">Refresh</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card chat-card">
+        <div class="card-header">
+          <h2>Chat</h2>
+        </div>
+        <div id="chatStatus" class="hint">Messages are queued and handled asynchronously.</div>
+        <form id="chatForm" class="chat-form">
+          <textarea id="chatInput" placeholder="Describe the next EVA task..." rows="5"></textarea>
+          <div class="chat-actions">
+            <button type="submit">Send</button>
+          </div>
+        </form>
+        <div class="result-block">
+          <div class="label">Last Reply</div>
+          <pre id="lastReply" class="mono"></pre>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>System State</h2>
+        </div>
+        <div id="statePanel" class="kv-grid"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Recent Memory</h2>
+        </div>
+        <div id="memoryPanel" class="list-panel"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Recent Trace</h2>
+        </div>
+        <div id="tracePanel" class="list-panel"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Recent Events</h2>
+        </div>
+        <div id="eventPanel" class="list-panel"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Agents and Health</h2>
+        </div>
+        <div class="result-block">
+          <div class="label">Agents</div>
+          <pre id="agentsPanel" class="mono"></pre>
+        </div>
+        <div class="result-block">
+          <div class="label">Health</div>
+          <pre id="healthPanel" class="mono"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

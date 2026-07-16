@@ -1,0 +1,187 @@
+import json
+import sqlite3
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Any, Iterable
+
+
+class SQLiteStore:
+    def __init__(self, db_path: Path) -> None:
+        self.db_path = db_path
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    @contextmanager
+    def connection(self):
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            yield conn
+            conn.commit()
+        finally:
+            conn.close()
+
+    def init_db(self) -> None:
+        with self.connection() as conn:
+            cur = conn.cursor()
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS events (
+                    id TEXT PRIMARY KEY,
+                    type TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    timestamp TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    correlation_id TEXT,
+                    status TEXT NOT NULL
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS episodic_memory (
+                    id TEXT PRIMARY KEY,
+                    timestamp TEXT NOT NULL,
+                    event_type TEXT NOT NULL,
+                    summary TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    importance REAL NOT NULL
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS semantic_memory (
+                    id TEXT PRIMARY KEY,
+                    concept TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    related_entities TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS traces (
+                    id TEXT PRIMARY KEY,
+                    loop_id TEXT NOT NULL,
+                    timestamp TEXT NOT NULL,
+                    event_type TEXT NOT NULL,
+                    decision TEXT NOT NULL,
+                    agent TEXT NOT NULL,
+                    result_summary TEXT NOT NULL,
+                    duration_ms INTEGER NOT NULL
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS persona_profiles (
+                    persona_id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    role_definition TEXT NOT NULL,
+                    tone_style TEXT NOT NULL,
+                    hard_constraints TEXT NOT NULL,
+                    soft_preferences TEXT NOT NULL,
+                    value_weights TEXT NOT NULL,
+                    version INTEGER NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    confidence REAL NOT NULL,
+                    source_event_id TEXT
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS memory_items (
+                    id TEXT PRIMARY KEY,
+                    memory_type TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    source_event_id TEXT,
+                    salience REAL NOT NULL DEFAULT 0.0,
+                    confidence REAL NOT NULL DEFAULT 0.5,
+                    ttl_seconds INTEGER,
+                    embedding_ref TEXT,
+                    summary_ref TEXT,
+                    conflict_keys_json TEXT NOT NULL DEFAULT '[]',
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    last_accessed_at TEXT,
+                    status TEXT NOT NULL DEFAULT 'active',
+                    metadata_json TEXT NOT NULL DEFAULT '{}'
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS memory_links (
+                    id TEXT PRIMARY KEY,
+                    from_memory_id TEXT NOT NULL,
+                    to_memory_id TEXT NOT NULL,
+                    relation TEXT NOT NULL,
+                    strength REAL NOT NULL DEFAULT 1.0,
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_memories_type_status
+                ON memory_items(memory_type, status)
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_memories_salience
+                ON memory_items(salience)
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_memories_source_event
+                ON memory_items(source_event_id)
+                """
+            )
+
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS graph_edges (
+                    source TEXT NOT NULL,
+                    target TEXT NOT NULL,
+                    relation TEXT NOT NULL,
+                    weight REAL NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+                """
+            )
+
+    def execute(self, sql: str, params: Iterable[Any] = ()) -> None:
+        with self.connection() as conn:
+            conn.execute(sql, tuple(params))
+
+    def fetchall(self, sql: str, params: Iterable[Any] = ()) -> list[dict[str, Any]]:
+        with self.connection() as conn:
+            rows = conn.execute(sql, tuple(params)).fetchall()
+            return [dict(row) for row in rows]
+
+    def fetchone(self, sql: str, params: Iterable[Any] = ()) -> dict[str, Any] | None:
+        with self.connection() as conn:
+            row = conn.execute(sql, tuple(params)).fetchone()
+            return dict(row) if row else None
+
+    @staticmethod
+    def dumps_json(value: Any) -> str:
+        return json.dumps(value, ensure_ascii=False)
+
+    @staticmethod
+    def loads_json(value: str) -> Any:
+        return json.loads(value)

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  eva:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eva-core
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      EVA_ENV: production
+      EVA_DB_PATH: /app/data/eva.db
+      EVA_LOG_LEVEL: INFO
+      EVA_HOST: 0.0.0.0
+      EVA_PORT: 8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  default:
+    name: eva-network
