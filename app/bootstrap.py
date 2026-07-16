@@ -138,11 +138,15 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
         "S3_long_term": {"max_entries": 10000},
     })
 
+    governor = MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory)
+    # wire reverse bridge so tiered ingest feeds back into governor
+    tiered_memory._governor = governor
+
     return {
         "store": store,
         "memory_api": MemoryAPI(store),
         "memory_repository": MemoryRepository(store),
-        "memory_governor": MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory),
+        "memory_governor": governor,
         "tiered_memory": tiered_memory,
     }
 

@@ -12,15 +12,20 @@ The TieredMemoryManager routes memories by importance:
   importance <  0.6 → S1 only
 """
 
+from __future__ import annotations
+
 import json
 import threading
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from memory.storage_adapter import BaseStorageAdapter
+
+if TYPE_CHECKING:
+    from memory.memory_governor import MemoryGovernor
 
 # ── FTS helpers ──────────────────────────────────────────────
 
@@ -465,6 +470,7 @@ class TieredMemoryManager:
         self,
         store: BaseStorageAdapter,
         config: dict | None = None,
+        governor: MemoryGovernor | None = None,
     ) -> None:
         cfg = config or {}
 
@@ -489,6 +495,7 @@ class TieredMemoryManager:
 
         self.s4 = WorldModelStore(store)
         self.s5 = EventTraceStore(store)
+        self._governor = governor
 
     # ── ingest ──────────────────────────────────────────────
 
@@ -626,7 +633,49 @@ class TieredMemoryManager:
             )
             result["s3"] = mid_s3
 
+        # reverse-bridge: feed into MemoryGovernor for lifecycle management
+        if self._governor and importance >= 0.6:
+            self._push_to_governor(content, importance, source, category, source_event_id)
+
         return result
+
+    def _push_to_governor(
+        self,
+        content: str,
+        importance: float,
+        source: str,
+        category: str,  # noqa: ARG002 — reserved for future governor memory_type mapping
+        source_event_id: str,
+    ) -> None:
+        """Create a MemoryRecord from tiered-ingested content and feed it into the governor."""
+        from uuid import uuid4 as _uuid4
+        from memory.memory_schema import MemoryRecord, MemoryType
+        from memory.importance_scorer import ImportanceFeatures
+
+        record = MemoryRecord(
+            id=str(_uuid4()),
+            memory_type=MemoryType.EPISODIC,
+            content=content,
+            source_event_id=source_event_id or "",
+            confidence=0.7,
+            ttl_seconds=None,
+            conflict_keys=[],
+        )
+
+        features = ImportanceFeatures(
+            user_explicit=source == "user",
+            goal_related=importance >= 0.8,
+            blocker_related=False,
+            persona_related=False,
+            repeated_mentions=0,
+            source_reliability=0.9 if source == "user" else 0.6,
+            emotional_intensity=0.1,
+            age_hours=0.0,
+            self_model_delta=0.0,
+            prediction_error=0.0,
+        )
+
+        self._governor.ingest(record, features)
 
     # ── recall ──────────────────────────────────────────────
 

@@ -1,9 +1,10 @@
+import logging
+import sqlite3
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 from typing import Any
 from uuid import uuid4
-import logging
 
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
@@ -78,6 +79,8 @@ class CognitionLoop:
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
+        self._consecutive_errors = 0
+        self._TRANSIENT_SQLITE = {"database is locked", "database schema is locked", "busy"}
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
@@ -431,13 +434,34 @@ class CognitionLoop:
                     selected_agent,
                     duration_ms,
                 )
+            except sqlite3.OperationalError as e:
+                is_transient = any(tag in str(e).lower() for tag in self._TRANSIENT_SQLITE)
+                if is_transient:
+                    logger.warning("cognition loop transient sqlite error: %s", e)
+                    self._consecutive_errors += 1
+                    if self._consecutive_errors >= 10:
+                        logger.critical("policy: quarantine after %d consecutive transient errors", self._consecutive_errors)
+                        if self.policy_engine:
+                            self.policy_engine.transition("violation_detected")
+                            self.system_state["policy_state"] = self.policy_engine.get_state()
+                        self._consecutive_errors = 0
+                else:
+                    logger.exception("cognition loop sqlite error")
+                    if self.policy_engine:
+                        self.policy_engine.transition("violation_detected")
+                        self.system_state["policy_state"] = self.policy_engine.get_state()
+                        logger.critical("policy: entering quarantine due to sqlite error")
             except Exception:
                 logger.exception("cognition loop error")
-                # ── policy checkpoint C: critical error → quarantine ──
-                if self.policy_engine:
-                    self.policy_engine.transition("violation_detected")
-                    self.system_state["policy_state"] = self.policy_engine.get_state()
-                    logger.critical("policy: entering quarantine due to unhandled error")
+                self._consecutive_errors += 1
+                if self._consecutive_errors >= 3:
+                    if self.policy_engine:
+                        self.policy_engine.transition("violation_detected")
+                        self.system_state["policy_state"] = self.policy_engine.get_state()
+                    logger.critical("policy: quarantine after %d consecutive errors", self._consecutive_errors)
+                    self._consecutive_errors = 0
+            else:
+                self._consecutive_errors = 0
             finally:
                 self.result_registry.cleanup(ttl_sec=self.result_ttl_sec)
                 self.system_state["pending_events"] = self.event_bus.size()

@@ -37,6 +37,7 @@ class HealthService:
             "components": {
                 "db": self._probe_db(),
                 "event_bus": self._probe_event_bus(),
+                "event_persistence": self._probe_event_persistence(),
                 "planner": self.system_state.get("planner_ready", False),
                 "registry": self.system_state.get("registry_ready", False),
                 "result_registry": self.system_state.get("result_registry_ready", False),
@@ -70,10 +71,19 @@ class HealthService:
         if self._event_bus is not None:
             try:
                 depth = self._event_bus.size()
-                return depth >= 0
+                healthy = getattr(self._event_bus, "_persist_healthy", True)
+                return depth >= 0 and healthy
             except Exception:
                 return False
         return self.system_state.get("event_bus_ready", False)
+
+    def _probe_event_persistence(self) -> bool:
+        if self._event_bus is not None:
+            try:
+                return getattr(self._event_bus, "_persist_healthy", True)
+            except Exception:
+                return False
+        return True
 
     def _probe_event_depth(self) -> int:
         if self._event_bus is not None:

@@ -6,6 +6,9 @@ POST /api/executors/file/read     — read file (token required)
 POST /api/executors/file/write    — write file (token required)
 POST /api/executors/file/list     — list directory (token required)
 POST /api/executors/code/execute  — execute code (token required)
+POST /api/executors/comms/log     — log a message via comms executor
+POST /api/executors/comms/notify  — write a notification file
+POST /api/executors/comms/alert   — log + write alert notification
 """
 
 import json
@@ -150,3 +153,41 @@ def audit_replay(
         "timeline": sorted(timeline, key=lambda t: t["timestamp"], reverse=True),
         "total": len(items),
     }
+
+
+# ── Comms Executor Routes ──────────────────────────────────
+
+@router.post("/api/executors/comms/log")
+async def comms_log(request: Request):
+    try:
+        body = await request.body()
+        params = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="invalid JSON body")
+    if not params.get("message"):
+        raise HTTPException(status_code=400, detail="message field required")
+    return _executor_action(request, "comms", "log", params)
+
+
+@router.post("/api/executors/comms/notify")
+async def comms_notify(request: Request):
+    try:
+        body = await request.body()
+        params = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="invalid JSON body")
+    if not params.get("message"):
+        raise HTTPException(status_code=400, detail="message field required")
+    return _executor_action(request, "comms", "notify", params)
+
+
+@router.post("/api/executors/comms/alert")
+async def comms_alert(request: Request):
+    try:
+        body = await request.body()
+        params = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="invalid JSON body")
+    if not params.get("message"):
+        raise HTTPException(status_code=400, detail="message field required")
+    return _executor_action(request, "comms", "alert", params)

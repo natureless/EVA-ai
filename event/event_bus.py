@@ -19,11 +19,17 @@ logger = logging.getLogger("eva.event_bus")
 class EventBus:
     """Thread-safe event bus for publishing and consuming events."""
 
+    _PERSIST_ALERT_THRESHOLD = 25  # warn after this many consecutive failures
+
     def __init__(self, s5_store=None) -> None:
         self._queue: Queue[Event] = Queue()
         self._s5 = s5_store
         self._publish_count = 0
+        self._persist_count = 0
         self._persist_failures = 0
+        self._consecutive_failures = 0
+        self._persist_healthy = True
+        self._alerted = False
 
     def publish(self, event: Event) -> None:
         """Publish an event to the bus and persist to S5 if configured."""
@@ -45,9 +51,26 @@ class EventBus:
                     ),
                 )
                 self._publish_count += 1
+                self._persist_count += 1
+                self._consecutive_failures = 0
+                if not self._persist_healthy:
+                    logger.info("S5 persistence recovered after %d failures", self._persist_failures)
+                    self._persist_healthy = True
+                    self._alerted = False
             except Exception:
+                self._publish_count += 1
                 self._persist_failures += 1
-                logger.debug("event persistence failed (non-fatal)")
+                self._consecutive_failures += 1
+
+                if self._consecutive_failures >= self._PERSIST_ALERT_THRESHOLD and not self._alerted:
+                    self._persist_healthy = False
+                    logger.error(
+                        "S5 persistence degraded: %d/%d failures (last %d consecutive)",
+                        self._persist_failures,
+                        self._publish_count,
+                        self._consecutive_failures,
+                    )
+                    self._alerted = True
 
     def consume(self, timeout: float = 0.5) -> Optional[Event]:
         """Consume an event from the bus with optional timeout."""
@@ -79,6 +102,9 @@ class EventBus:
         return {
             "queue_size": self._queue.qsize(),
             "published": self._publish_count,
+            "persisted": self._persist_count,
             "persist_failures": self._persist_failures,
+            "consecutive_failures": self._consecutive_failures,
+            "persist_healthy": self._persist_healthy,
         }
 

@@ -13,6 +13,7 @@ from agents.base_agent import AgentTask
 AGENT_EXECUTOR_MAP: dict[str, str] = {
     "search_agent": "file",
     "coding_agent": "file",
+    "docs_agent": "file",
 }
 
 
@@ -24,15 +25,11 @@ def task_to_executor_params(
     *,
     task_id: str = "",
 ) -> dict:
-    """Convert an AgentTask into executor.execute(action, params) args.
-
-    Returns dict with keys: action, params (for executor.execute()),
-    token_id (empty if no token needed), task_id.
-    """
+    """Convert an AgentTask into executor.execute(action, params) args."""
     if executor_type == "file":
         return _search_or_code_to_file(task, task_id=task_id)
-
-    # unknown executor — pass through as-is
+    if executor_type == "comms":
+        return _chat_to_comms(task, task_id=task_id)
     return {
         "action": "agent_task",
         "params": {"kind": task.kind, **task.payload},
@@ -67,8 +64,34 @@ def _search_or_code_to_file(task: AgentTask, *, task_id: str) -> dict:
             "task_id": task_id,
         }
 
+    # docs/summarize/chat: text-only, no fs access needed — use cwd as safe default
+    if task.kind in ("summarize", "docs", "chat", "read"):
+        return {
+            "action": "inspect",
+            "params": {
+                "path": payload.get("path") or ".",
+                "kind": task.kind,
+                "text": payload.get("text", ""),
+            },
+            "task_id": task_id,
+        }
+
     return {
         "action": "read",
         "params": {"path": payload.get("path", ""), **payload},
+        "task_id": task_id,
+    }
+
+
+def _chat_to_comms(task: AgentTask, *, task_id: str) -> dict:
+    payload = task.payload or {}
+    text = payload.get("text") or payload.get("content") or ""
+    return {
+        "action": "log",
+        "params": {
+            "message": text,
+            "level": "info",
+            "kind": task.kind,
+        },
         "task_id": task_id,
     }
