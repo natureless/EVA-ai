@@ -89,14 +89,18 @@ class OpenAIAdapter(LLMAdapter):
     def __init__(
         self,
         api_key: str = "",
-        model: str = "gpt-4o-mini",
-        base_url: str = "https://api.openai.com/v1",
-        timeout: float = 30.0,
+        model: str = "",
+        base_url: str = "",
+        timeout: float = 0,
+        temperature: float = 0,
+        max_tokens: int = 0,
     ) -> None:
         self.api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
         self.model = model or os.environ.get("EVA_LLM_MODEL", "gpt-4o-mini")
-        self.base_url = base_url
-        self.timeout = timeout
+        self.base_url = base_url or "https://api.openai.com/v1"
+        self.timeout = timeout or float(os.environ.get("EVA_LLM_TIMEOUT", "30"))
+        self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
+        self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
     def chat(self, messages: list[dict]) -> str:
         if not self.api_key:
@@ -114,8 +118,8 @@ class OpenAIAdapter(LLMAdapter):
                 json={
                     "model": self.model,
                     "messages": messages,
-                    "max_tokens": 1024,
-                    "temperature": 0.7,
+                    "max_tokens": self.max_tokens,
+                    "temperature": self.temperature,
                 },
                 timeout=self.timeout,
             )
@@ -143,11 +147,15 @@ class ClaudeAdapter(LLMAdapter):
         self,
         api_key: str = "",
         model: str = "",
-        timeout: float = 30.0,
+        timeout: float = 0,
+        temperature: float = 0,
+        max_tokens: int = 0,
     ) -> None:
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
         self.model = model or os.environ.get("EVA_LLM_MODEL", DEFAULT_ANTHROPIC_MODEL)
-        self.timeout = timeout
+        self.timeout = timeout or float(os.environ.get("EVA_LLM_TIMEOUT", "30"))
+        self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
+        self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
     def chat(self, messages: list[dict]) -> str:
         if not self.api_key:
@@ -169,7 +177,8 @@ class ClaudeAdapter(LLMAdapter):
 
             kwargs = {
                 "model": self.model,
-                "max_tokens": 1024,
+                "max_tokens": self.max_tokens,
+                "temperature": self.temperature,
                 "messages": user_messages,
             }
             if system:
@@ -192,15 +201,20 @@ def get_llm(
     provider: str = "",
     model: str = "",
     api_key: str = "",
+    temperature: float = 0,
+    max_tokens: int = 0,
 ) -> LLMAdapter:
     """Auto-detect LLM provider from environment or explicit args.
 
     Priority:
     1. Explicit provider arg
-    2. ANTHROPIC_API_KEY env → Claude
-    3. OPENAI_API_KEY env → OpenAI
+    2. ANTHROPIC_API_KEY env -> Claude
+    3. OPENAI_API_KEY env -> OpenAI
     4. EVA_LLM_PROVIDER env (claude|openai)
     5. Mock fallback
+
+    Tuning params (temperature, max_tokens) read from env vars
+    EVA_LLM_TEMPERATURE / EVA_LLM_MAX_TOKENS if not explicitly set.
     """
     if provider:
         provider = provider.lower()
@@ -214,9 +228,43 @@ def get_llm(
             provider = "openai"
 
     if provider in ("claude", "anthropic"):
-        return ClaudeAdapter(api_key=api_key, model=model)
+        return ClaudeAdapter(api_key=api_key, model=model,
+                            temperature=temperature, max_tokens=max_tokens)
     if provider in ("openai",):
-        return OpenAIAdapter(api_key=api_key, model=model)
+        return OpenAIAdapter(api_key=api_key, model=model,
+                            temperature=temperature, max_tokens=max_tokens)
 
     logger.info("no LLM API key configured — using mock (echo mode)")
     return MockLLM()
+
+
+def load_system_prompt(agent_name: str, **kwargs) -> str:
+    """Load the system prompt template for an agent from config/system_prompt.yaml.
+
+    Falls back to built-in defaults if the file is missing.
+    kwargs fill {variable} placeholders in the template.
+    """
+    try:
+        import yaml
+        from pathlib import Path
+        path = Path("config/system_prompt.yaml")
+        if path.exists():
+            with open(path, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f) or {}
+            agents = cfg.get("agents", {})
+            template = agents.get(agent_name, {}).get("system", "")
+            if template:
+                for key, val in kwargs.items():
+                    template = template.replace("{" + key + "}", str(val))
+                return template
+    except Exception as e:
+        logger.debug("failed to load system prompt template: %s", e)
+
+    # built-in fallbacks
+    defaults = {
+        "chat": "You are EVA, a persistent cognitive assistant. Be precise, calm, concise.",
+        "search": "You are EVA's search agent. Summarize file search results concisely.",
+        "coding": "You are EVA's code analysis agent. Summarize code structure concisely.",
+        "docs": "You are EVA's document analysis agent. Summarize documents concisely.",
+    }
+    return defaults.get(agent_name, defaults["chat"])

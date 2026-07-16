@@ -4,7 +4,7 @@ from pathlib import Path
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
-from core.llm_adapter import get_llm, MockLLM
+from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 
 
 logger = logging.getLogger("eva.search_agent")

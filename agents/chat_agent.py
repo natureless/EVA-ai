@@ -1,5 +1,5 @@
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
-from core.llm_adapter import get_llm, MockLLM
+from core.llm_adapter import get_llm, load_system_prompt
 
 
 class ChatAgent(BaseAgent):
@@ -48,32 +48,14 @@ class ChatAgent(BaseAgent):
         )
 
     def _build_system(self, context: dict | None) -> str:
-        base = (
-            "You are EVA, a persistent cognitive assistant with stable identity. "
-            "Be precise, calm, and concise. Do not overclaim certainty. "
-            "Acknowledge what you know and don't know."
+        ctx_summary = context.get("context_summary", "") if context else ""
+        hard_constraints = "- do not fabricate memories\n- do not overclaim certainty"
+
+        return load_system_prompt(
+            "chat",
+            persona_name="EVA",
+            persona_role="persistent cognitive assistant",
+            tone_style="precise, calm, concise",
+            hard_constraints=hard_constraints,
+            context_summary=ctx_summary,
         )
-
-        if not context:
-            return base
-
-        parts = [base, ""]
-
-        summary = context.get("context_summary", "")
-        if summary:
-            parts.append("Current context from memory:")
-            parts.append(summary)
-
-        active_tasks = context.get("active_tasks", [])
-        if active_tasks:
-            task_names = [t.get("name", "") for t in active_tasks if t.get("name")]
-            if task_names:
-                parts.append(f"Active tasks: " + ", ".join(task_names[:5]))
-
-        memories = context.get("memories", [])
-        if memories:
-            parts.append("Relevant past interactions:")
-            for i, m in enumerate(memories[:5], 1):
-                parts.append(f"  {i}. {m.get('content', '')[:120]}")
-
-        return "\n".join(parts)
