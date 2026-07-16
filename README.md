@@ -7,16 +7,15 @@ EVA is an event-driven cognitive agent host designed to be:
 - stateful
 - observable
 
-## Architecture
+## Documentation
 
-EVA is built on two foundational documents:
-
-- **[EVA-VM Architecture v1](docs/eva-vm-architecture.md)** — the system blueprint:
-  host boundary → VM body → container organs → core cognition → memory continuity → policy constitution → action executors
-- **[Information Dynamics Consciousness Model](docs/consciousness_model.md)** —
-  the theoretical framework: L0-L5 consciousness hierarchy, self-referential information loop, experience intensity formula
-
-Core insight: **experience is a self-referential information system modeling its own state changes.**
+| Document | Description |
+|----------|-------------|
+| [EVA-VM Architecture v1](docs/eva-vm-architecture.md) | System blueprint: host→VM→containers→core→memory→policy→action |
+| [Information Dynamics Consciousness Model](docs/consciousness_model.md) | L0-L5 theory: self-referential information loop, experience formula |
+| [API Reference](docs/api-reference.md) | All endpoints by layer (11 sections) |
+| [Operations Runbook](docs/runbook.md) | Deployment, monitoring, recovery, troubleshooting |
+| [Development Guide](DEVELOPMENT.md) | Setup, code standards, testing, adding agents |
 
 ## Features
 
