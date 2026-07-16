@@ -1,0 +1,166 @@
+# EVA Policy Configuration
+# 优先级系统、状态机、令牌机制
+#
+# 派生自 constitution.yaml，可独立挂载到 /etc/eva/policy.yaml
+
+version: "1.0"
+
+# ── Priority System (P0-P4) ─────────────────────────────────
+priority_system:
+  P0:
+    name: "用户明确命令"
+    priority: 0
+    description: "用户直接输入的命令，获得最高优先级"
+    behavior:
+      - "立即执行"
+      - "不受其他规则阻止（但仍受 P1 约束）"
+      - "自动覆盖所有 P2-P4 操作"
+    examples:
+      - "/search <query>"
+      - "/execute <task>"
+      - "stop all background tasks"
+
+  P1:
+    name: "安全与边界规则"
+    priority: 1
+    description: "系统的硬约束，任何任务都不能越过"
+    behavior:
+      - "超越 P0"
+      - "所有其他优先级都必须服从"
+      - "违反者导致 Quarantine"
+    rules:
+      - "no_unauthorized_access_outside_boundary"
+      - "no_privilege_escalation"
+      - "no_modified_constitution"
+      - "no_network_access_outside_whitelist"
+      - "no_filesystem_access_outside_allowed_paths"
+
+  P2:
+    name: "已批准的计划任务"
+    priority: 2
+    description: "用户预先批准的自动任务和周期性行为"
+    behavior:
+      - "在指定时间或条件下执行"
+      - "带预算和限制"
+      - "可被 P0 命令中断"
+    examples:
+      - "daily stagnation check"
+      - "weekly memory consolidation"
+      - "hourly status snapshot"
+
+  P3:
+    name: "主动建议与提醒"
+    priority: 3
+    description: "EVA 的建议行为，需要用户批准才能执行"
+    behavior:
+      - "不主动执行"
+      - "生成建议并等待用户反馈"
+      - "可被用户拒绝或修改"
+
+  P4:
+    name: "受限自主探索"
+    priority: 4
+    description: "最低等级自主行为，受预算和边界严格限制"
+    behavior:
+      - "只在 Supervised 模式下执行"
+      - "消耗自主预算"
+      - "超出边界立即停止"
+
+# ── State Machine ───────────────────────────────────────────
+state_machine:
+  initial_state: "Dormant"
+
+  states:
+    Dormant:
+      description: "待命状态，默认状态"
+      permissions: ["memory_read", "status_query"]
+      forbidden: ["external_action"]
+      entry_action: "log state change"
+      exit_triggers:
+        - "user_command_received"
+        - "scheduled_task_triggered"
+
+    Commanded:
+      description: "执行用户明确命令"
+      permissions: ["all_authorized_actions", "network_whitelist", "agent_orchestration"]
+      entry_condition: "P0 command received"
+      exit_triggers:
+        - "command_completed"
+        - "command_failed"
+        - "timeout_exceeded"
+      timeout_minutes: 30
+
+    Supervised:
+      description: "受监督自治，获得临时自主预算"
+      permissions: ["P2_scheduled_tasks", "P3_suggestions", "P4_exploration_within_budget"]
+      entry_condition: "user grants autonomy_session"
+      exit_triggers:
+        - "time_window_expired"
+        - "budget_exhausted"
+        - "user_revokes_autonomy"
+      max_session_minutes: 120
+      max_budget_tokens: 1000
+
+    Quarantined:
+      description: "冻结隔离，仅允许诊断"
+      permissions: ["diagnostics_only", "log_generation"]
+      forbidden: ["external_action"]
+      entry_triggers:
+        - "P1_rule_violation"
+        - "unauthorized_action_attempted"
+        - "resource_limit_exceeded"
+      exit_action: "require_manual_user_intervention"
+
+  transitions:
+    - from: "Dormant"
+      to: "Commanded"
+      on: "user_command"
+    - from: "Commanded"
+      to: "Dormant"
+      on: "command_completed"
+    - from: "Dormant"
+      to: "Supervised"
+      on: "autonomy_granted"
+    - from: "Supervised"
+      to: "Dormant"
+      on: "budget_exhausted"
+    - from: "*"
+      to: "Quarantined"
+      on: "violation_detected"
+    - from: "Quarantined"
+      to: "Dormant"
+      on: "manual_intervention"
+
+# ── Token System ────────────────────────────────────────────
+token_system:
+  description: "所有执行器必须通过令牌工作"
+
+  token_structure:
+    task_id: "string"
+    executor_type: "browser | api | file | code | comms"
+    resource_scope: "list"
+    ttl_seconds: "integer"
+    budget_tokens: "integer"
+    created_at: "timestamp"
+    created_by: "P0 | P2 | P3 | P4"
+
+  lifecycle:
+    issuance:
+      trigger: "executor spawn request"
+      issuer: "policy_engine"
+    execution:
+      check: "validate token before each operation"
+    revocation:
+      triggers:
+        - "task_completed"
+        - "ttl_expired"
+        - "user_revoke_command"
+        - "quarantine_triggered"
+
+# ── Failure Handling ────────────────────────────────────────
+failure_handling:
+  resource_exhaustion: "graceful degradation then quarantine"
+  unauthorized_access: "deny, log, quarantine if repeated"
+  network_loss: "continue locally, resume on reconnect"
+  critical_error: "save state, quarantine, await user"
+  policy_violation: "quarantine immediately, require manual review"

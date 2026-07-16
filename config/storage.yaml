@@ -1,0 +1,110 @@
+# EVA Storage Configuration
+# 定义记忆五层架构、数据路径、保留策略、备份策略
+
+version: "1.0"
+
+# ── Memory Tiers ────────────────────────────────────────────
+memory_tiers:
+
+  S1_session:
+    description: "当前会话上下文"
+    characteristics:
+      - "短时、高频、可丢弃"
+      - "生命周期 = 单次会话"
+      - "不持久化到磁盘"
+    storage: "in-memory"
+    max_entries: 200
+    ttl_minutes: 30
+
+  S2_working:
+    description: "近期任务、当前目标、活跃状态"
+    characteristics:
+      - "跨请求但不一定永久"
+      - "生命周期 = 数小时到数天"
+    storage: "SQLite"
+    table: "working_memory"
+    max_entries: 500
+    ttl_hours: 72
+    cleanup_interval_minutes: 10
+
+  S3_long_term:
+    description: "用户偏好、长期项目、稳定关系、长期知识"
+    characteristics:
+      - "人格连续性的核心"
+      - "生命周期 = 永久（软删除）"
+    storage: "SQLite"
+    table: "long_term_memory"
+    max_entries: 10000
+    compaction_threshold: 1000
+    compaction_strategy: "merge_similar + summarize"
+
+  S4_world_model:
+    description: "对外部世界和内部任务世界的结构化表示"
+    entities:
+      - "人 (people)"
+      - "任务 (tasks)"
+      - "文件 (files)"
+      - "项目 (projects)"
+      - "依赖 (dependencies)"
+      - "风险 (risks)"
+      - "阻塞点 (blockers)"
+    storage: "SQLite + JSON snapshots"
+    tables:
+      - "world_entities"
+      - "world_edges"
+    snapshot_interval_seconds: 120
+
+  S5_event_trace:
+    description: "所有关键行为的完整记录"
+    characteristics:
+      - "不可删除、不可修改"
+      - "支持审计回放"
+    storage: "SQLite"
+    tables:
+      - "events"
+      - "traces"
+      - "snapshots"
+    retention:
+      critical: "365 days"
+      error: "180 days"
+      warning: "90 days"
+      info: "30 days"
+      debug: "7 days"
+
+# ── Data Paths ──────────────────────────────────────────────
+paths:
+  base: "/data/eva"
+  memory: "/data/eva/memory"
+  world: "/data/eva/world"
+  logs: "/data/eva/logs"
+  snapshots: "/data/eva/snapshots"
+  db: "/data/eva/memory/eva.db"
+  latest_snapshot: "/data/eva/snapshots/latest.json"
+  profiles: "/data/eva/profiles"
+  persona: "/data/eva/persona.json"
+  self_model: "/data/eva/self_model.json"
+
+# ── Backup Strategy ─────────────────────────────────────────
+backup:
+  method: "host-level snapshot + file copy"
+  schedule:
+    full: "daily at 03:00"
+    incremental: "hourly"
+    snapshot: "every 120 seconds (runtime)"
+  retention:
+    daily: 7
+    weekly: 4
+    monthly: 3
+  verification:
+    enabled: true
+    interval: "weekly"
+    method: "restore to staging + integrity check"
+
+# ── Database Configuration ──────────────────────────────────
+database:
+  engine: "sqlite"              # v1: sqlite; v1.5+: postgresql
+  path: "/data/eva/memory/eva.db"
+  max_connections: 1            # SQLite single-writer
+  wal_mode: true
+  foreign_keys: true
+  vacuum_interval_hours: 24

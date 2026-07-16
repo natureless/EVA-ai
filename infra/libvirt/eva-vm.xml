@@ -1,0 +1,114 @@
+<!--
+  EVA-VM libvirt Domain Definition
+  虚拟机定义文件。使用 virsh define eva-vm.xml 注册。
+
+  硬件规格：
+    - 8 GiB RAM
+    - 4 vCPUs (host-passthrough)
+    - 40 GB 虚拟磁盘 (qcow2, virtio)
+    - 网络桥接 (macvtap 或 bridge)
+
+  使用方法：
+    virsh define eva-vm.xml
+    virsh start eva-vm
+    virsh autostart eva-vm
+
+  快照管理：
+    virsh snapshot-create-as eva-vm --name clean-install
+    virsh snapshot-list eva-vm
+    virsh snapshot-revert eva-vm --snapshotname clean-install
+-->
+<domain type="kvm">
+  <name>eva-vm</name>
+  <title>EVA-VM v1 — 人格化认知代理主机</title>
+  <description>
+    EVA 的虚拟机身体。长期驻留、快照可恢复、网络受控。
+    宿主负责边界，VM 负责身体，容器负责器官，Core 负责意识。
+  </description>
+
+  <memory unit="GiB">8</memory>
+  <currentMemory unit="GiB">8</currentMemory>
+  <vcpu placement="static">4</vcpu>
+
+  <os>
+    <type arch="x86_64" machine="q35">hvm</type>
+    <boot dev="hd"/>
+  </os>
+
+  <features>
+    <acpi/>
+    <apic/>
+    <hyperv>
+      <relaxed state="on"/>
+      <vapic state="on"/>
+      <spinlocks state="on" retries="8191"/>
+    </hyperv>
+    <vmport state="off"/>
+  </features>
+
+  <cpu mode="host-passthrough" check="none">
+    <topology sockets="1" dies="1" cores="4" threads="1"/>
+  </cpu>
+
+  <clock offset="utc">
+    <timer name="rtc" tickpolicy="catchup"/>
+    <timer name="pit" tickpolicy="delay"/>
+    <timer name="hpet" present="no"/>
+  </clock>
+
+  <on_poweroff>destroy</on_poweroff>
+  <on_reboot>restart</on_reboot>
+  <on_crash>restart</on_crash>
+
+  <!-- ── 磁盘 ──────────────────────────────────────────── -->
+  <devices>
+    <!-- 系统磁盘 (qcow2, 40GB) -->
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2" cache="writeback" discard="unmap"/>
+      <source file="/var/lib/libvirt/images/eva-vm.qcow2"/>
+      <target dev="vda" bus="virtio"/>
+    </disk>
+
+    <!-- EVA 数据磁盘 (qcow2, 100GB) — 独立于系统盘，便于备份 -->
+    <disk type="file" device="disk">
+      <driver name="qemu" type="qcow2" cache="writeback" discard="unmap"/>
+      <source file="/var/lib/libvirt/images/eva-data.qcow2"/>
+      <target dev="vdb" bus="virtio"/>
+    </disk>
+
+    <!-- cloud-init 配置驱动器 -->
+    <disk type="file" device="cdrom">
+      <driver name="qemu" type="raw"/>
+      <source file="/var/lib/libvirt/images/eva-seed.img"/>
+      <target dev="sda" bus="sata"/>
+      <readonly/>
+    </disk>
+
+    <!-- ── 网络 ──────────────────────────────────────────── -->
+    <!-- 管理网络：宿主 ↔ VM -->
+    <interface type="network">
+      <source network="default"/>
+      <model type="virtio"/>
+    </interface>
+
+    <!-- 桥接网络：VM 出站（受宿主 nftables 控制） -->
+    <interface type="bridge">
+      <source bridge="br-eva"/>
+      <model type="virtio"/>
+      <filterref filter="eva-outbound"/>
+    </interface>
+
+    <!-- ── 控制台 ────────────────────────────────────────── -->
+    <serial type="pty">
+      <target port="0"/>
+    </serial>
+    <console type="pty">
+      <target type="serial" port="0"/>
+    </console>
+
+    <!-- ── 杂项 ──────────────────────────────────────────── -->
+    <memballoon model="virtio">
+      <stats period="10"/>
+    </memballoon>
+  </devices>
+</domain>

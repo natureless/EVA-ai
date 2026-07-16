@@ -1,0 +1,118 @@
+# EVA Executors Configuration
+# 定义五类执行器的权限、禁止项、速率限制、超时
+#
+# 原则：执行器无人格、可替换、低权限、可审计、失败不污染核心
+
+version: "1.0"
+
+executors:
+
+  # ── Browser Executor ──────────────────────────────────────
+  browser:
+    description: "网页浏览、搜索、表单操作"
+    permissions:
+      - "read_web_pages"
+      - "fill_forms"
+      - "click_buttons"
+      - "extract_text"
+      - "navigate_whitelisted_domains"
+    forbidden:
+      - "login_with_user_credentials"
+      - "access_private_data"
+      - "execute_malicious_scripts"
+      - "download_executables"
+    limits:
+      rate: "10 requests per minute"
+      timeout: "30 seconds per request"
+      max_page_size_mb: 50
+    sandbox: "firejail"
+    network_mode: "L1"  # whitelist only
+
+  # ── API Executor ──────────────────────────────────────────
+  api:
+    description: "外部 API 调用、Webhook、服务交互"
+    permissions:
+      - "call_allowed_apis"
+      - "pass_query_parameters"
+      - "send_json_payload"
+      - "receive_responses"
+    forbidden:
+      - "admin_endpoints"
+      - "user_deletion"
+      - "privilege_escalation"
+      - "credential_extraction"
+    limits:
+      rate: "100 requests per minute"
+      timeout: "15 seconds per request"
+      max_response_size_mb: 100
+      concurrent_connections: 10
+    auth_method: "bearer_token"
+
+  # ── File Executor ─────────────────────────────────────────
+  file:
+    description: "读写本地文件、知识库、项目文档"
+    allowed_paths:
+      - "/data/eva"
+      - "/data/eva/memory"
+      - "/data/eva/world"
+      - "/data/eva/logs"
+      - "/tmp/eva"
+    forbidden_paths:
+      - "/etc"
+      - "/root"
+      - "/boot"
+      - "/sys"
+      - "/proc"
+    permissions:
+      - "read_allowed_files"
+      - "write_to_allowed_paths"
+      - "create_new_files"
+      - "list_directories"
+    forbidden:
+      - "modify_config_files"
+      - "delete_critical_files"
+      - "change_permissions"
+      - "access_outside_allowed_paths"
+    limits:
+      max_file_size_mb: 1024
+      max_total_storage_gb: 100
+
+  # ── Code Executor ─────────────────────────────────────────
+  code:
+    description: "运行受限脚本、测试、构建"
+    permissions:
+      - "run_python_scripts"
+      - "run_bash_scripts"
+      - "access_sandboxed_environment"
+      - "install_allowed_packages"
+    forbidden:
+      - "import_system_modules_except_allowed"
+      - "network_access_without_token"
+      - "direct_os_calls"
+      - "modify_host_system"
+    limits:
+      timeout: "60 seconds"
+      memory_limit_mb: 512
+      cpu_limit_percent: 50
+      max_output_size_mb: 10
+    sandboxed: true
+    sandbox_engine: "docker"
+
+  # ── Comms Executor ────────────────────────────────────────
+  comms:
+    description: "消息、邮件、通知"
+    permissions:
+      - "send_messages"
+      - "send_emails"
+      - "trigger_notifications"
+      - "read_message_status"
+    forbidden:
+      - "send_to_unauthorized_recipients"
+      - "impersonate_user"
+      - "send_spam"
+      - "read_user_private_messages"
+    limits:
+      rate: "10 messages per minute"
+      max_recipients_per_message: 5
+    requires_confirmation: true
+    confirmation_timeout_minutes: 5
