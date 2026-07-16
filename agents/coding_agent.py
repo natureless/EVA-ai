@@ -4,168 +4,134 @@ from pathlib import Path
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
+from core.llm_adapter import get_llm, MockLLM
 
 
 logger = logging.getLogger("eva.coding_agent")
 
 
 class CodingAgent(BaseAgent):
-    """Inspect code files and generate summaries.
-    
-    Analyzes Python and text files to extract:
-    - Line counts and structure
-    - Class and function definitions
-    - File previews
-    
-    Includes safeguards for large files and encoding issues.
+    """Code analysis agent with LLM-powered insight generation.
+
+    Parses code files for structure (lines, classes, functions, preview),
+    then uses LLM to produce an intelligent summary with architectural
+    observations and improvement suggestions.
     """
     name = "coding_agent"
-    description = "Inspect a code file or snippet and return a compact summary"
+    description = "Analyze code files and generate intelligent summaries"
 
     def can_handle(self, task: AgentTask) -> bool:
-        """Coding agent handles code-type tasks."""
         return task.kind == "code"
 
     def run(self, task: AgentTask) -> AgentResult:
-        """Summarize code from a file or text input.
-        
-        Args:
-            task: Code task with path or text payload
-            
-        Returns:
-            Result with code summary and metadata
-        """
         try:
             raw = str(task.payload.get("path") or task.payload.get("text") or "").strip()
             if not raw:
-                content = "[coding_agent] no input provided"
-                return AgentResult(
-                    ok=True,
-                    agent=self.name,
-                    content=content,
-                    summary=content[:120],
-                    meta={"lines": 0},
-                )
+                return AgentResult(ok=True, agent=self.name,
+                    content="[coding_agent] no input provided",
+                    summary="no input", meta={"lines": 0})
 
             path = self._extract_path(raw)
             if path:
                 resolved = (settings.base_dir / path).resolve()
                 if resolved.exists():
-                    content, meta = self._summarize_file(resolved)
+                    analysis, meta = self._analyze_file(resolved)
                 else:
                     content = f"[coding_agent] file not found: {resolved}"
-                    logger.warning("file not found: %s", resolved)
-                    meta = {"path": str(resolved), "lines": 0}
+                    return AgentResult(ok=False, agent=self.name,
+                        content=content, summary=content[:120],
+                        meta={"path": str(resolved), "lines": 0})
             else:
-                content, meta = self._summarize_text(raw)
+                analysis, meta = self._analyze_text(raw)
 
-            return AgentResult(
-                ok=True,
-                agent=self.name,
-                content=content,
-                summary=content[:120],
-                meta=meta,
-            )
+            # ── LLM summary ────────────────────────────────
+            context = task.payload.get("context")
+            llm = get_llm()
+            content = self._llm_summarize(llm, analysis, meta, context)
+
+            return AgentResult(ok=True, agent=self.name,
+                content=content, summary=content[:120],
+                meta={**meta, "llm_provider": llm.provider})
+
         except Exception as e:
             logger.exception("coding_agent error: %s", e)
-            content = f"[coding_agent] error: {str(e)}"
-            return AgentResult(
-                ok=False,
-                agent=self.name,
-                content=content,
-                summary=content[:120],
-                meta={"error": type(e).__name__},
-            )
+            return AgentResult(ok=False, agent=self.name,
+                content=f"[coding_agent] error: {str(e)}",
+                summary=str(e)[:120], meta={"error": type(e).__name__})
+
+    def _llm_summarize(self, llm, analysis, meta, context=None):
+        if isinstance(llm, MockLLM):
+            path_hint = f" {meta.get('path', '')}" if meta.get("path") else ""
+            return f"[coding_agent]{path_hint}\n{analysis}"
+
+        ctx_text = ""
+        if context and isinstance(context, dict):
+            tasks = context.get("active_tasks", [])
+            if tasks:
+                ctx_text += "Active tasks: " + ", ".join(
+                    t.get("name","") for t in tasks[:3] if t.get("name")) + "\n"
+
+        messages = [
+            {"role": "system", "content": (
+                "You are EVA's code analysis agent. Summarize code structure concisely.\n"
+                "Format: 1) What the file does (1-2 sentences) 2) Key structures (classes/functions) "
+                "3) Notable patterns or issues 4) One suggestion if applicable.\n"
+                "Keep it under 300 words.\n" + ctx_text
+            )},
+            {"role": "user", "content": (
+                f"File: {meta.get('path', 'inline code')}\n"
+                f"Lines: {meta.get('lines', 0)} (non-empty: {meta.get('non_empty', 0)})\n"
+                f"Classes: {meta.get('classes', [])}\n"
+                f"Functions: {meta.get('functions', [])}\n\n"
+                f"Preview (first 15 lines):\n{analysis[:3000]}"
+            )},
+        ]
+        return llm.chat(messages)
 
     def _extract_path(self, raw: str) -> Path | None:
-        """Extract file path from various input formats.
-        
-        Args:
-            raw: Raw input string
-            
-        Returns:
-            Path object or None if not a file reference
-        """
         lowered = raw.lower()
         for prefix in ("/code", "code:", "inspect:", "review:"):
             if lowered.startswith(prefix):
-                candidate = raw[len(prefix) :].strip()
+                candidate = raw[len(prefix):].strip()
                 if candidate:
                     return Path(candidate)
         candidate = Path(raw)
-        if candidate.suffix:
-            return candidate
-        return None
+        return candidate if candidate.suffix else None
 
-    def _summarize_file(self, path: Path) -> tuple[str, dict]:
-        """Summarize a code file.
-        
-        Args:
-            path: Path to the file
-            
-        Returns:
-            Tuple of (summary_content, metadata)
-        """
+    def _analyze_file(self, path: Path) -> tuple[str, dict]:
         max_size = 256 * 1024
         try:
-            size = path.stat().st_size
-            if size > max_size:
-                content = f"[coding_agent] file too large to summarize: {path} ({size} bytes)"
-                logger.debug("file too large: %s (%s bytes)", path, size)
-                return content, {"path": str(path), "lines": 0, "size": size}
+            if path.stat().st_size > max_size:
+                content = f"file too large ({path.stat().st_size} bytes)"
+                return content, {"path": str(path), "lines": 0, "size": path.stat().st_size}
         except OSError as e:
-            logger.debug("cannot stat file %s: %s", path, e)
-            content = f"[coding_agent] unable to read file: {path}"
-            return content, {"path": str(path), "lines": 0}
+            return f"unable to read: {e}", {"path": str(path), "lines": 0}
 
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError as e:
-            logger.debug("cannot read file %s: %s", path, e)
-            content = f"[coding_agent] unable to read file: {path}"
-            return content, {"path": str(path), "lines": 0}
+            return f"unable to read: {e}", {"path": str(path), "lines": 0}
 
-        summary, meta = self._summarize_text(text)
+        analysis, meta = self._analyze_text(text)
         meta["path"] = str(path)
         meta["size"] = len(text.encode("utf-8", errors="ignore"))
-        content = f"[coding_agent] {path}\n{summary}"
-        return content, meta
+        return analysis, meta
 
-    def _summarize_text(self, text: str) -> tuple[str, dict]:
-        """Extract summary from text content.
-        
-        Args:
-            text: Code text to summarize
-            
-        Returns:
-            Tuple of (summary_content, metadata)
-        """
+    def _analyze_text(self, text: str) -> tuple[str, dict]:
         lines = text.splitlines()
-        total_lines = len(lines)
-        non_empty = sum(1 for line in lines if line.strip())
-
-        classes = []
-        functions = []
+        total, non_empty = len(lines), sum(1 for l in lines if l.strip())
+        classes, functions = [], []
         for line in lines:
-            match_class = re.match(r"^class\s+([A-Za-z_][A-Za-z0-9_]*)", line)
-            if match_class:
-                classes.append(match_class.group(1))
-            match_def = re.match(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)", line)
-            if match_def:
-                functions.append(match_def.group(1))
+            m = re.match(r"^class\s+([A-Za-z_][A-Za-z0-9_]*)", line)
+            if m: classes.append(m.group(1))
+            m = re.match(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)", line)
+            if m: functions.append(m.group(1))
 
         preview = "\n".join(lines[:15])
         summary = (
-            f"lines={total_lines}, non_empty={non_empty}, "
+            f"lines={total}, non_empty={non_empty}, "
             f"classes={len(classes)}, functions={len(functions)}\n"
             f"preview:\n{preview}"
         )
-
-        meta = {
-            "lines": total_lines,
-            "non_empty": non_empty,
-            "classes": classes[:10],
-            "functions": functions[:10],
-        }
-        return summary, meta
-
+        return summary, {"lines": total, "non_empty": non_empty,
+                         "classes": classes[:10], "functions": functions[:10]}
