@@ -48,14 +48,25 @@ class ChatAgent(BaseAgent):
         )
 
     def _build_system(self, context: dict | None) -> str:
+        if context and context.get("persona"):
+            p = context["persona"]
+            persona_name = p.get("name", "EVA")
+            persona_role = p.get("role_definition", "cognitive assistant")
+            tone = p.get("tone_style", "precise, calm, concise")
+            hard = "\n".join(f"- {c}" for c in p.get("hard_constraints", []))
+        else:
+            persona_name = "EVA"
+            persona_role = "persistent cognitive assistant"
+            tone = "precise, calm, concise"
+            hard = "- do not fabricate memories\n- do not overclaim certainty"
+
         ctx_summary = context.get("context_summary", "") if context else ""
-        hard_constraints = "- do not fabricate memories\n- do not overclaim certainty"
 
         return load_system_prompt(
             "chat",
-            persona_name="EVA",
-            persona_role="persistent cognitive assistant",
-            tone_style="precise, calm, concise",
-            hard_constraints=hard_constraints,
+            persona_name=persona_name,
+            persona_role=persona_role,
+            tone_style=tone,
+            hard_constraints=hard,
             context_summary=ctx_summary,
         )

@@ -243,6 +243,11 @@ class FileExecutor(BaseExecutor):
         self.allowed_paths = [Path(p) for p in raw_paths]
         self.max_file_size = cfg.get("limits", {}).get("max_file_size_mb", 1) * 1024 * 1024
         self.max_file_size = self.max_file_size or DEFAULT_MAX_FILE_SIZE
+        # forbidden path patterns from constitution / config
+        raw_forbidden = cfg.get("forbidden_paths", [])
+        self.forbidden_prefixes: list[str] = [
+            p.rstrip("*") for p in raw_forbidden if isinstance(p, str)
+        ]
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
         path_str = params.get("path", "")
@@ -260,6 +265,15 @@ class FileExecutor(BaseExecutor):
                 allowed=False,
                 reason=f"path {target} not in allowed paths",
             )
+
+        # forbidden prefix check
+        target_str = str(target)
+        for prefix in self.forbidden_prefixes:
+            if target_str.startswith(prefix):
+                return ExecutorDecision(
+                    allowed=False,
+                    reason=f"path {target} matches forbidden prefix {prefix}",
+                )
 
         action = params.get("action", params.get("kind", "read"))
         # search/inspect are boundary-only actions (agent does the I/O)
@@ -344,6 +358,18 @@ DEFAULT_CODE_TIMEOUT = 30     # seconds
 DEFAULT_CODE_MAX_OUTPUT = 100 * 1024  # 100 KB
 
 
+def _parse_timeout_sec(value) -> int:
+    """Parse a timeout value that may be an int or a string like '60 seconds'."""
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        import re
+        m = re.match(r"(\d+)", value)
+        if m:
+            return int(m.group(1))
+    return DEFAULT_CODE_TIMEOUT
+
+
 class CodeExecutor(BaseExecutor):
     name = "code"
     description = "Execute sandboxed scripts in a temp directory"
@@ -356,7 +382,7 @@ class CodeExecutor(BaseExecutor):
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("code", {})
         limits = cfg.get("limits", {})
-        self.timeout = limits.get("timeout", DEFAULT_CODE_TIMEOUT) if isinstance(limits.get("timeout"), int) else DEFAULT_CODE_TIMEOUT
+        self.timeout = _parse_timeout_sec(limits.get("timeout", DEFAULT_CODE_TIMEOUT))
         self.max_output = limits.get("max_output_size_mb", 0.1) * 1024 * 1024
         self.max_output = int(self.max_output) if self.max_output > 0 else DEFAULT_CODE_MAX_OUTPUT
         self.allowed_languages = {"python", "bash"}

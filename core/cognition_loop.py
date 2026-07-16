@@ -1,5 +1,6 @@
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
 from typing import Any
 from uuid import uuid4
 import logging
@@ -7,6 +8,7 @@ import logging
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
 from agent_os.agent_task import AGENT_EXECUTOR_MAP
+from agents.base_agent import AgentResult
 from core.context_builder import ContextBuilder
 from core.entity_extractor import entity_extractor
 from core.planner import Planner
@@ -71,6 +73,8 @@ class CognitionLoop:
         self._executors: dict[str, Any] = executors or {}
         self._ws_manager = ws_manager
         self._memory_ingestor = MemoryIngestor(memory_governor, self_model)
+        self._agent_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="eva-agent")
+        self._agent_timeout_sec = poll_timeout_sec * 10 if poll_timeout_sec else 30.0
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -86,6 +90,53 @@ class CognitionLoop:
         self._stop_event.set()
         if self._thread:
             self._thread.join(timeout=3)
+        self._agent_pool.shutdown(wait=False)
+
+    def _execute_agent(self, selected_agent: str, task, agent_exe, token_manager, agent_tok: str):
+        """Run the agent in a thread pool, polling for stop events.
+
+        Returns (AgentResult, duration_ms). On timeout or shutdown, returns an
+        error result so the loop can continue without blocking forever.
+        """
+        future = self._agent_pool.submit(
+            self.orchestrator.execute,
+            selected_agent, task,
+            executor=agent_exe,
+            token_manager=token_manager,
+            token_id=agent_tok,
+        )
+        poll_interval = 0.5
+        elapsed = 0.0
+        while not self._stop_event.is_set():
+            try:
+                return future.result(timeout=poll_interval)
+            except FutureTimeoutError:
+                elapsed += poll_interval
+                if elapsed >= self._agent_timeout_sec:
+                    logger = logging.getLogger("eva.cognition_loop")
+                    logger.error("agent %s timed out after %.0fs", selected_agent, elapsed)
+                    return (
+                        AgentResult(
+                            ok=False, agent=selected_agent,
+                            content=f"[{selected_agent}] timed out after {elapsed:.0f}s",
+                            summary=f"timeout ({elapsed:.0f}s)",
+                            meta={"status": "timeout", "elapsed_sec": elapsed},
+                        ),
+                        int(elapsed * 1000),
+                    )
+
+        # stop_event was set — return cancelled
+        logger = logging.getLogger("eva.cognition_loop")
+        logger.warning("agent %s cancelled due to shutdown", selected_agent)
+        return (
+            AgentResult(
+                ok=False, agent=selected_agent,
+                content=f"[{selected_agent}] cancelled (shutdown)",
+                summary="cancelled",
+                meta={"status": "cancelled"},
+            ),
+            0,
+        )
 
     def _run_forever(self) -> None:
         logger = logging.getLogger("eva.cognition_loop")
@@ -223,11 +274,10 @@ class CognitionLoop:
                                 )
                                 agent_tok = token.token_id
 
-                        result, agent_duration_ms = self.orchestrator.execute(
-                            selected_agent, plan.task,
-                            executor=agent_exe,
-                            token_manager=self.policy_engine.token_manager if self.policy_engine else None,
-                            token_id=agent_tok,
+                        result, agent_duration_ms = self._execute_agent(
+                            selected_agent, plan.task, agent_exe,
+                            self.policy_engine.token_manager if self.policy_engine else None,
+                            agent_tok,
                         )
                         reply = result.content
 

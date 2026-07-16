@@ -62,6 +62,26 @@ def _ensure_dirs() -> None:
     settings.snapshot_dir.mkdir(parents=True, exist_ok=True)
 
 
+def _load_constitution() -> dict[str, Any]:
+    """Load constitution.yaml as the canonical rule source.
+
+    Returns an empty dict if the file is missing or unparseable.
+    This is the base layer — config/*.yaml files can override.
+    """
+    path = Path("constitution.yaml")
+    if not path.exists():
+        logger.warning("constitution.yaml not found — using defaults")
+        return {}
+    try:
+        with path.open("r", encoding="utf-8") as fh:
+            data = yaml.safe_load(fh) or {}
+        logger.info("constitution.yaml loaded (version=%s)", data.get("version", "?"))
+        return data
+    except Exception:
+        logger.exception("failed to load constitution.yaml")
+        return {}
+
+
 def _create_initial_state() -> dict[str, Any]:
     return {
         "ready": False,
@@ -92,6 +112,15 @@ def _create_initial_state() -> dict[str, Any]:
         "last_context_summary": None,
         "agents": [],
     }
+
+
+def _deep_merge(base: dict, override: dict) -> None:
+    """Merge override into base in-place (nested dicts merged, not replaced)."""
+    for key, value in override.items():
+        if key in base and isinstance(base[key], dict) and isinstance(value, dict):
+            _deep_merge(base[key], value)
+        else:
+            base[key] = value
 
 
 # ── subsystem initializers ─────────────────────────────────────────
@@ -200,13 +229,30 @@ def _init_agents(state: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _init_policy() -> PolicyEngine:
-    """Load policy configuration and create PolicyEngine."""
+def _init_policy(constitution: dict[str, Any] | None = None) -> PolicyEngine:
+    """Load policy configuration and create PolicyEngine.
+
+    Merges constitution.yaml (base layer) with config/policy.yaml (override layer).
+    """
+    const = constitution or {}
     policy_config: dict[str, Any] = {}
+
+    # base layer: constitution state_machine
+    const_sm = const.get("state_machine", {})
+    if const_sm:
+        policy_config["state_machine"] = const_sm
+
+    # base layer: constitution priority_system
+    const_ps = const.get("priority_system", {})
+    if const_ps:
+        policy_config["priority_system"] = const_ps
+
+    # override layer: config/policy.yaml
     policy_config_path = Path("config/policy.yaml")
     if policy_config_path.exists():
         with policy_config_path.open("r", encoding="utf-8") as fh:
-            policy_config = yaml.safe_load(fh) or {}
+            override = yaml.safe_load(fh) or {}
+        _deep_merge(policy_config, override)
 
     engine = PolicyEngine(policy_config)
     engine.transition("user_command")
@@ -215,14 +261,44 @@ def _init_policy() -> PolicyEngine:
     return engine
 
 
-def _init_executors(store: SQLiteStore) -> dict[str, Any]:
-    """Initialize the executor framework (file, code, browser, api, comms)."""
+def _init_executors(store: SQLiteStore, constitution: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Initialize the executor framework (file, code, browser, api, comms).
+
+    Merges constitution.yaml boundaries (base layer) with config/executors.yaml (override).
+    """
+    const = constitution or {}
     audit_log = ExecutorAuditLog(store)
     executors_config: dict[str, Any] = {}
+
+    # base layer: constitution boundaries → executor limits
+    boundaries = const.get("boundaries", {})
+    fs_boundary = boundaries.get("filesystem", {})
+    compute_boundary = boundaries.get("compute", {})
+
+    if fs_boundary:
+        executors_config.setdefault("executors", {})
+        executors_config["executors"].setdefault("file", {})
+        file_cfg = executors_config["executors"]["file"]
+        file_cfg.setdefault("limits", {})
+        if fs_boundary.get("max_file_size_mb"):
+            file_cfg["limits"]["max_file_size_mb"] = fs_boundary["max_file_size_mb"]
+        if fs_boundary.get("forbidden_paths"):
+            file_cfg["forbidden_paths"] = fs_boundary["forbidden_paths"]
+
+    if compute_boundary:
+        executors_config.setdefault("executors", {})
+        executors_config["executors"].setdefault("code", {})
+        code_cfg = executors_config["executors"]["code"]
+        code_cfg.setdefault("limits", {})
+        if compute_boundary.get("max_process_duration_minutes"):
+            code_cfg["limits"]["timeout"] = compute_boundary["max_process_duration_minutes"] * 60
+
+    # override layer: config/executors.yaml
     exec_cfg_path = Path("config/executors.yaml")
     if exec_cfg_path.exists():
         with exec_cfg_path.open("r", encoding="utf-8") as fh:
-            executors_config = yaml.safe_load(fh) or {}
+            override = yaml.safe_load(fh) or {}
+        _deep_merge(executors_config, override)
 
     executors = {
         "file": FileExecutor(audit_log, executors_config),
@@ -268,6 +344,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     logger.info("bootstrap start env=%s port=%s", settings.env, settings.port)
 
     system_state = _create_initial_state()
+    constitution = _load_constitution()
 
     # ── storage layer ──
     storage = _init_storage(system_state)
@@ -332,11 +409,11 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     prediction_tracker = PredictionTracker(max_history=50, decay_lambda=0.1)
 
     # ── policy engine ──
-    policy_engine = _init_policy()
+    policy_engine = _init_policy(constitution)
     system_state["policy_state"] = policy_engine.get_state()
 
     # ── executors ──
-    exec_data = _init_executors(store)
+    exec_data = _init_executors(store, constitution)
 
     # ── cognition loop ──
     loop = CognitionLoop(
