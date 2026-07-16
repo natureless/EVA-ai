@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import logging
 from pathlib import Path
+import yaml
 
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.registry import AgentRegistry
@@ -13,6 +14,7 @@ from app.config import settings
 from core.cognition_loop import CognitionLoop
 from core.context_builder import ContextBuilder
 from core.planner import Planner
+from core.policy_engine import PolicyEngine
 from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
 from event.event_bus import EventBus
@@ -209,6 +211,18 @@ def bootstrap_system() -> dict:
 
     prediction_tracker = PredictionTracker(max_history=50, decay_lambda=0.1)
 
+    # Load policy configuration
+    policy_config: dict = {}
+    policy_config_path = Path("config/policy.yaml")
+    if policy_config_path.exists():
+        with policy_config_path.open("r", encoding="utf-8") as fh:
+            policy_config = yaml.safe_load(fh) or {}
+    policy_engine = PolicyEngine(policy_config)
+    policy_engine.transition("user_command")   # enter Commanded on boot
+    policy_engine.transition("command_completed")  # settle to Dormant
+    system_state["policy_state"] = policy_engine.get_state()
+    logger.info("policy engine initialized")
+
     try:
         loop = CognitionLoop(
             event_bus=event_bus,
@@ -229,6 +243,7 @@ def bootstrap_system() -> dict:
             prediction_tracker=prediction_tracker,
             self_model_store=self_model_store,
             self_model=self_model,
+            policy_engine=policy_engine,
         )
         loop.start()
         system_state["loop_ready"] = True
@@ -286,6 +301,7 @@ def bootstrap_system() -> dict:
         "loop": loop,
         "scheduler": scheduler,
         "prediction_tracker": prediction_tracker,
+        "policy_engine": policy_engine,
         "save_runtime_snapshot": save_runtime_snapshot,
         "health": health,
     }

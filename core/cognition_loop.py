@@ -7,6 +7,7 @@ from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
 from core.context_builder import ContextBuilder
 from core.planner import Planner
+from core.policy_engine import PolicyEngine, Verdict
 from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
 from event.event_bus import EventBus
@@ -41,6 +42,7 @@ class CognitionLoop:
         prediction_tracker: PredictionTracker | None = None,
         self_model_store: SelfModelStore | None = None,
         self_model: dict | None = None,
+        policy_engine: PolicyEngine | None = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -60,6 +62,7 @@ class CognitionLoop:
         self.prediction_tracker = prediction_tracker
         self.self_model_store = self_model_store
         self.self_model = self_model
+        self.policy_engine = policy_engine
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -87,6 +90,21 @@ class CognitionLoop:
             loop_id = f"loop_{uuid4().hex[:8]}"
 
             try:
+                # ── policy checkpoint A: event entry guard ──
+                if self.policy_engine:
+                    policy_decision = self.policy_engine.evaluate(
+                        event.type,
+                        context={"source": event.source, "task_id": loop_id},
+                    )
+                    if policy_decision.verdict == Verdict.QUARANTINE:
+                        logger.critical("policy: quarantine triggered — blocking event")
+                        self.system_state["policy_state"] = self.policy_engine.get_state()
+                        continue
+                    if policy_decision.verdict == Verdict.DENY:
+                        logger.warning("policy: event denied — %s", policy_decision.reason)
+                        self.system_state["policy_state"] = self.policy_engine.get_state()
+                        continue
+
                 self.memory_api.append_event(event)
                 plan = self.planner.plan(event)
 
@@ -173,58 +191,78 @@ class CognitionLoop:
                         self.event_bus.publish(reminder_event)
 
                 if plan.decision == "act":
-                    selected_agent = self.agent_router.route(plan.agent, plan.task)
-                    result, agent_duration_ms = self.orchestrator.execute(selected_agent, plan.task)
-                    reply = result.content
+                    # ── policy checkpoint B: priority + token check ──
+                    blocked = False
+                    if self.policy_engine:
+                        pol = self.policy_engine.evaluate(
+                            event.type,
+                            context={
+                                "source": event.source,
+                                "task_id": loop_id,
+                                "executor_type": plan.agent,
+                            },
+                        )
+                        if pol.verdict == Verdict.DENY:
+                            logger.warning("policy: action denied — %s", pol.reason)
+                            result_summary = f"blocked: {pol.reason}"
+                            reply = f"[policy] {pol.reason}"
+                            selected_agent = plan.agent
+                            blocked = True
+
+                    if not blocked:
+                        selected_agent = self.agent_router.route(plan.agent, plan.task)
+                        result, agent_duration_ms = self.orchestrator.execute(selected_agent, plan.task)
+                        reply = result.content
 
                     # ── self-model feedback: prediction error + state recording ──
-                    prev_focus = self.world_model.focus
-                    prev_reply = self.world_model.last_reply
+                    if not blocked:
+                        prev_focus = self.world_model.focus
+                        prev_reply = self.world_model.last_reply
 
-                    self.world_model.apply_agent_result(
-                        reply=reply,
-                        selected_agent=selected_agent,
-                        loop_id=loop_id,
-                    )
-
-                    # compute prediction error if tracker is wired
-                    prediction_error = 0.0
-                    if self.prediction_tracker and prev_focus:
-                        expected = f"agent {selected_agent} responds about {prev_focus[:60]}"
-                        actual = reply[:200] if reply else ""
-                        rec = self.prediction_tracker.record(
-                            focus=prev_focus, expected=expected, actual=actual
-                        )
-                        prediction_error = rec.error
-
-                    # assess self-model delta & record state change
-                    self_model_delta = 0.0
-                    if self.self_model_store and self.self_model is not None:
-                        self.self_model_store.record_state_change(
-                            self.self_model,
-                            change_type="agent_execution",
-                            detail=f"{selected_agent}: {result.summary}",
-                            focus=self.world_model.focus,
+                        self.world_model.apply_agent_result(
+                            reply=reply,
+                            selected_agent=selected_agent,
                             loop_id=loop_id,
                         )
-                        if prediction_error > 0:
-                            self.self_model_store.record_prediction_error(
-                                self.self_model,
-                                error=prediction_error,
-                                focus=self.world_model.focus,
-                            )
-                        self_model_delta = prediction_error
 
-                        perturbation_threshold = 0.6
-                        if prediction_error > perturbation_threshold:
-                            self.self_model_store.record_perturbation(
+                        # compute prediction error if tracker is wired
+                        prediction_error = 0.0
+                        if self.prediction_tracker and prev_focus:
+                            expected = f"agent {selected_agent} responds about {prev_focus[:60]}"
+                            actual = reply[:200] if reply else ""
+                            rec = self.prediction_tracker.record(
+                                focus=prev_focus, expected=expected, actual=actual
+                            )
+                            prediction_error = rec.error
+
+                        # assess self-model delta & record state change
+                        self_model_delta = 0.0
+                        if self.self_model_store and self.self_model is not None:
+                            self.self_model_store.record_state_change(
                                 self.self_model,
-                                cause=f"high prediction error ({prediction_error:.2f}) "
-                                      f"on agent {selected_agent}",
-                                delta_magnitude=prediction_error,
-                                affected_fields=["world_model.focus", "prediction"],
+                                change_type="agent_execution",
+                                detail=f"{selected_agent}: {result.summary}",
+                                focus=self.world_model.focus,
                                 loop_id=loop_id,
                             )
+                            if prediction_error > 0:
+                                self.self_model_store.record_prediction_error(
+                                    self.self_model,
+                                    error=prediction_error,
+                                    focus=self.world_model.focus,
+                                )
+                            self_model_delta = prediction_error
+
+                            perturbation_threshold = 0.6
+                            if prediction_error > perturbation_threshold:
+                                self.self_model_store.record_perturbation(
+                                    self.self_model,
+                                    cause=f"high prediction error ({prediction_error:.2f}) "
+                                          f"on agent {selected_agent}",
+                                    delta_magnitude=prediction_error,
+                                    affected_fields=["world_model.focus", "prediction"],
+                                    loop_id=loop_id,
+                                )
 
                     if event.type == "reminder_trigger":
                         self.world_model.apply_reminder()
@@ -289,6 +327,11 @@ class CognitionLoop:
                 )
             except Exception:
                 logger.exception("cognition loop error")
+                # ── policy checkpoint C: critical error → quarantine ──
+                if self.policy_engine:
+                    self.policy_engine.transition("violation_detected")
+                    self.system_state["policy_state"] = self.policy_engine.get_state()
+                    logger.critical("policy: entering quarantine due to unhandled error")
             finally:
                 self.result_registry.cleanup(ttl_sec=self.result_ttl_sec)
                 self.system_state["pending_events"] = self.event_bus.size()

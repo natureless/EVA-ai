@@ -5,6 +5,7 @@ from app.api_routes.routes_chat import router as chat_router
 from app.api_routes.routes_health import router as health_router
 from app.api_routes.routes_memory import router as memory_router
 from app.api_routes.routes_persona import router as persona_router
+from app.api_routes.routes_policy import router as policy_router
 from app.api_routes.routes_proactive import router as proactive_router
 from app.api_routes.routes_scheduler import router as scheduler_router
 from app.api_routes.routes_snapshot import router as snapshot_router
@@ -18,6 +19,7 @@ router.include_router(chat_router)
 router.include_router(memory_router)
 router.include_router(agents_router)
 router.include_router(persona_router)
+router.include_router(policy_router)
 router.include_router(scheduler_router)
 router.include_router(snapshot_router)
 router.include_router(proactive_router)
