@@ -19,6 +19,7 @@ from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
 from memory.memory_schema import MemoryRecord, MemoryType
 from memory.tiered_store import TieredMemoryManager
+from runtime.websocket import ws_manager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
 from world.world_model import WorldModelGraph
@@ -106,10 +107,12 @@ class CognitionLoop:
                     if policy_decision.verdict == Verdict.QUARANTINE:
                         logger.critical("policy: quarantine triggered — blocking event")
                         self.system_state["policy_state"] = self.policy_engine.get_state()
+                        ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
                         continue
                     if policy_decision.verdict == Verdict.DENY:
                         logger.warning("policy: event denied — %s", policy_decision.reason)
                         self.system_state["policy_state"] = self.policy_engine.get_state()
+                        ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
                         continue
 
                 self.memory_api.append_event(event)
@@ -332,6 +335,11 @@ class CognitionLoop:
                             self.world_model.upsert_entity(
                                 e["type"], e["name"], e.get("properties", {}),
                             )
+                            # broadcast entity creation
+                            ws_manager.broadcast_sync("entity_created", {
+                                "type": e["type"], "name": e["name"],
+                                "properties": e.get("properties", {}),
+                            })
                         for r in relations:
                             self.world_model.link(
                                 r["source"], r["target"], r["relation"],

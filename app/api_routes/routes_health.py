@@ -77,3 +77,9 @@ async def health_recover(request: Request) -> dict:
         "detail": result.detail,
         "recommendation": result.recommendation,
     }
+
+
+@router.get("/health/ws")
+def websocket_stats(request: Request) -> dict:
+    """WebSocket connection statistics."""
+    return request.app.state.container.get("ws_manager", None).stats()
