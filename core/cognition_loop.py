@@ -1,5 +1,6 @@
 import threading
 import time
+from typing import Any
 from uuid import uuid4
 import logging
 
@@ -15,9 +16,8 @@ from core.proactive_engine import ProactiveEngine
 from event.event_bus import EventBus
 from event.event_schema import Event, TraceRecord
 from memory.memory_api import MemoryAPI
-from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
-from memory.memory_schema import MemoryRecord, MemoryType
+from core.memory_ingestor import MemoryIngestor
 from memory.tiered_store import TieredMemoryManager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
@@ -35,19 +35,19 @@ class CognitionLoop:
         orchestrator: AgentOrchestrator,
         result_registry: ResultRegistry,
         proactive_engine: ProactiveEngine,
-        proactive_state: dict,
+        proactive_state: dict[str, Any],
         world_model: WorldModelGraph,
-        system_state: dict,
+        system_state: dict[str, Any],
         poll_timeout_sec: float = 0.5,
         result_ttl_sec: float = 60.0,
         context_builder: ContextBuilder | None = None,
         enable_v02_pipeline: bool = False,
         prediction_tracker: PredictionTracker | None = None,
         self_model_store: SelfModelStore | None = None,
-        self_model: dict | None = None,
+        self_model: dict[str, Any] | None = None,
         policy_engine: PolicyEngine | None = None,
         tiered_memory: TieredMemoryManager | None = None,
-        executors: dict | None = None,
+        executors: dict[str, Any] | None = None,
         ws_manager=None,
     ) -> None:
         self.event_bus = event_bus
@@ -70,8 +70,9 @@ class CognitionLoop:
         self.self_model = self_model
         self.policy_engine = policy_engine
         self.tiered_memory = tiered_memory
-        self._executors: dict = executors or {}
+        self._executors: dict[str, Any] = executors or {}
         self._ws_manager = ws_manager
+        self._memory_ingestor = MemoryIngestor(memory_governor, self_model)
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -132,29 +133,12 @@ class CognitionLoop:
                     self.world_model.apply_user_message(user_text)
                     self.proactive_state["last_user_message_ts"] = now_ts
 
-                    if self.memory_governor:
-                        record = MemoryRecord(
-                            id=str(uuid4()),
-                            memory_type=MemoryType.EPISODIC,
-                            content=user_text,
-                            source_event_id=event.id,
-                            confidence=0.7,
-                            ttl_seconds=None,
-                            conflict_keys=[],
-                        )
-                        features = ImportanceFeatures(
-                            user_explicit=user_text.startswith("/"),
-                            goal_related=self._text_matches_active_tasks(user_text),
-                            blocker_related=False,
-                            persona_related=self._text_matches_persona(user_text),
-                            repeated_mentions=0,
-                            source_reliability=0.9 if event.source == "user" else 0.6,
-                            emotional_intensity=self._estimate_emotional_intensity(user_text),
-                            age_hours=0.0,
-                            self_model_delta=0.0,
-                            prediction_error=0.0,
-                        )
-                        self.memory_governor.ingest(record, features)
+                    self._memory_ingestor.ingest_user_message(
+                        text=user_text,
+                        event_id=event.id,
+                        source=event.source,
+                        active_tasks=self.world_model.active_tasks,
+                    )
 
                     if self.context_builder:
                         user_id = str(event.payload.get("user_id", "default"))
@@ -405,43 +389,3 @@ class CognitionLoop:
                 self.system_state["pending_events"] = self.event_bus.size()
                 self.system_state["pending_results"] = self.result_registry.size()
                 self.event_bus.task_done()
-
-    # ── importance feature helpers ────────────────────────────
-
-    def _text_matches_active_tasks(self, text: str) -> bool:
-        tasks = self.world_model.active_tasks
-        if not tasks:
-            return False
-        text_lower = text.lower()
-        for task in tasks:
-            desc = str(task.get("description", "")).lower()
-            name = str(task.get("name", "")).lower()
-            if desc and desc in text_lower:
-                return True
-            if name and name in text_lower:
-                return True
-        return False
-
-    def _text_matches_persona(self, text: str) -> bool:
-        if not self.self_model:
-            return False
-        text_lower = text.lower()
-        capabilities = self.self_model.get("capabilities", [])
-        for cap in capabilities:
-            if str(cap).lower() in text_lower:
-                return True
-        identity = str(self.self_model.get("identity", "")).lower()
-        if identity and identity in text_lower:
-            return True
-        return False
-
-    @staticmethod
-    def _estimate_emotional_intensity(text: str) -> float:
-        markers_high = ["urgent", "紧急", "asap", "!!!", "critical", "严重"]
-        markers_med = ["worried", "担心", "frustrated", "important", "重要"]
-        text_lower = text.lower()
-        if any(m in text_lower for m in markers_high):
-            return 0.8
-        if any(m in text_lower for m in markers_med):
-            return 0.4
-        return 0.1

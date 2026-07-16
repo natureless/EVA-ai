@@ -170,19 +170,19 @@ class TestBootstrapRecovery:
         c = bootstrap_system()
         from app.bootstrap import shutdown_system
         shutdown_system(c)
-        assert not c["system_state"]["ready"]
+        assert not c.system_state["ready"]
 
     def test_double_bootstrap_no_crash(self):
         c1 = bootstrap_system()
         from app.bootstrap import shutdown_system
         shutdown_system(c1)
         c2 = bootstrap_system()
-        assert c2["system_state"]["ready"]
+        assert c2.system_state["ready"]
         shutdown_system(c2)
 
     def test_diagnostic_after_bootstrap(self):
         c = bootstrap_system()
-        diag = c["diagnostic"]
+        diag = c.diagnostic
         assert diag.score >= 80
         assert diag.overall in ("healthy", "degraded")
         from app.bootstrap import shutdown_system

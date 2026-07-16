@@ -1,11 +1,14 @@
+from typing import Any
+
+
 class HealthService:
-    def __init__(self, system_state: dict) -> None:
+    def __init__(self, system_state: dict[str, Any]) -> None:
         self.system_state = system_state
 
-    def live(self) -> dict:
+    def live(self) -> dict[str, Any]:
         return {"status": "alive"}
 
-    def ready(self) -> dict:
+    def ready(self) -> dict[str, Any]:
         return {
             "status": "ready" if self.system_state.get("ready", False) else "not_ready",
             "components": {

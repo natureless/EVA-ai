@@ -5,6 +5,8 @@ GET  /api/policy/state?detail=true — full state with token list and history
 POST /api/policy/transition   — manual state transition (user confirmation required)
 """
 
+import json
+
 from fastapi import APIRouter, Request, HTTPException
 
 router = APIRouter()
@@ -13,7 +15,7 @@ router = APIRouter()
 @router.get("/api/policy/state")
 async def get_policy_state(request: Request, detail: bool = False):
     container = request.app.state.container
-    policy_engine = container.get("policy_engine")
+    policy_engine = container.policy_engine
     if policy_engine is None:
         raise HTTPException(status_code=503, detail="policy engine not available")
 
@@ -39,12 +41,10 @@ async def trigger_state_transition(request: Request):
     Used to recover from Quarantine or to grant Supervised mode.
     """
     container = request.app.state.container
-    policy_engine = container.get("policy_engine")
+    policy_engine = container.policy_engine
     if policy_engine is None:
         raise HTTPException(status_code=503, detail="policy engine not available")
 
-    # FastAPI body is read from request directly since we don't want pydantic model overhead
-    import json
     try:
         body = await request.body()
         payload = json.loads(body) if body else {}
@@ -63,7 +63,7 @@ async def trigger_state_transition(request: Request):
         )
 
     decision = policy_engine.transition(trigger)
-    container["system_state"]["policy_state"] = policy_engine.get_state()
+    container.system_state["policy_state"] = policy_engine.get_state()
 
     return {
         "ok": decision.verdict == "allow",

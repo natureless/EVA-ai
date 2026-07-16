@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 import logging
-from typing import Callable
+from typing import Any, Callable
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -13,7 +13,7 @@ class RuntimeScheduler:
         self,
         event_bus: EventBus,
         snapshot_save_fn: Callable[[], None],
-        system_state: dict,
+        system_state: dict[str, Any],
         tick_interval_sec: int = 10,
         maintenance_interval_sec: int = 60,
         snapshot_interval_sec: int = 120,

@@ -64,7 +64,7 @@ class PersonaService:
         self.repo.upsert(profile)
         return profile
 
-    def render_system_prompt(self, context: dict) -> str:
+    def render_system_prompt(self, context: dict[str, Any]) -> str:
         persona = context.get("persona") or self.get_active_persona()
         return (
             f"Name: {persona.name}\n"

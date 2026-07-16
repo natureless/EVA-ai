@@ -21,13 +21,10 @@ class ChatRequest(BaseModel):
 def chat(req: ChatRequest, request: Request):
     logger = logging.getLogger("eva.api.chat")
     container = request.app.state.container
-    event_bus = container["event_bus"]
-    system_state = container["system_state"]
-    result_registry = container["result_registry"]
     start = time.perf_counter()
 
     correlation_id = str(uuid4())
-    result_registry.create(correlation_id)
+    container.result_registry.create(correlation_id)
 
     event = Event(
         type="user_message",
@@ -35,11 +32,11 @@ def chat(req: ChatRequest, request: Request):
         payload={"text": req.text},
         correlation_id=correlation_id,
     )
-    event_bus.publish(event)
-    system_state["pending_events"] = event_bus.size()
-    system_state["pending_results"] = result_registry.size()
+    container.event_bus.publish(event)
+    container.system_state["pending_events"] = container.event_bus.size()
+    container.system_state["pending_results"] = container.result_registry.size()
 
-    result = result_registry.wait(
+    result = container.result_registry.wait(
         correlation_id=correlation_id,
         timeout=settings.request_timeout_sec,
     )
@@ -61,8 +58,8 @@ def chat(req: ChatRequest, request: Request):
             },
         )
 
-    result_registry.pop(correlation_id)
-    system_state["pending_results"] = result_registry.size()
+    container.result_registry.pop(correlation_id)
+    container.system_state["pending_results"] = container.result_registry.size()
     wait_ms = int((time.perf_counter() - start) * 1000)
     logger.info(
         "chat completed event_id=%s correlation_id=%s agent=%s wait_ms=%s",
@@ -87,27 +84,25 @@ def chat(req: ChatRequest, request: Request):
 @router.get("/api/state")
 def get_state(request: Request) -> dict:
     container = request.app.state.container
-    system_state = container["system_state"]
-    event_bus = container["event_bus"]
-    result_registry = container["result_registry"]
+    ss = container.system_state
 
-    system_state["pending_events"] = event_bus.size()
-    system_state["pending_results"] = result_registry.size()
+    ss["pending_events"] = container.event_bus.size()
+    ss["pending_results"] = container.result_registry.size()
 
     return {
-        "focus": system_state["focus"],
-        "mode": system_state["mode"],
-        "active_tasks": system_state["active_tasks"],
-        "pending_events": system_state["pending_events"],
-        "pending_results": system_state.get("pending_results", 0),
-        "last_reply": system_state["last_reply"],
-        "last_selected_agent": system_state["last_selected_agent"],
-        "last_loop_id": system_state["last_loop_id"],
-        "last_loop_at": system_state["last_loop_at"],
-        "last_snapshot_at": system_state.get("last_snapshot_at"),
-        "last_proactive_reason": system_state.get("last_proactive_reason"),
-        "last_memory_governor": system_state.get("last_memory_governor"),
-        "last_context_summary": system_state.get("last_context_summary"),
-        "scheduler_running": system_state.get("scheduler_running", False),
-        "agents": system_state.get("agents", []),
+        "focus": ss["focus"],
+        "mode": ss["mode"],
+        "active_tasks": ss["active_tasks"],
+        "pending_events": ss["pending_events"],
+        "pending_results": ss.get("pending_results", 0),
+        "last_reply": ss["last_reply"],
+        "last_selected_agent": ss["last_selected_agent"],
+        "last_loop_id": ss["last_loop_id"],
+        "last_loop_at": ss["last_loop_at"],
+        "last_snapshot_at": ss.get("last_snapshot_at"),
+        "last_proactive_reason": ss.get("last_proactive_reason"),
+        "last_memory_governor": ss.get("last_memory_governor"),
+        "last_context_summary": ss.get("last_context_summary"),
+        "scheduler_running": ss.get("scheduler_running", False),
+        "agents": ss.get("agents", []),
     }

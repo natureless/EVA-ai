@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Request
 import logging
+
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
 
@@ -19,17 +20,15 @@ class PersonaUpdateRequest(BaseModel):
 
 @router.get("/api/persona/active")
 def persona_active(request: Request) -> dict:
-    container = request.app.state.container
-    persona_service = container["persona_service"]
-    profile = persona_service.get_active_persona()
+    profile = request.app.state.container.persona_service.get_active_persona()
     return {"persona": profile.model_dump()}
 
 
 @router.post("/api/persona/update")
 def persona_update(req: PersonaUpdateRequest, request: Request) -> dict:
     logger = logging.getLogger("eva.api.persona")
-    container = request.app.state.container
-    persona_service = container["persona_service"]
-    profile = persona_service.update_profile(req.model_dump(exclude_unset=True))
+    profile = request.app.state.container.persona_service.update_profile(
+        req.model_dump(exclude_unset=True)
+    )
     logger.info("persona updated version=%s", profile.version)
     return {"persona": profile.model_dump()}

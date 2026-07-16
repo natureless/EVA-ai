@@ -1,29 +1,22 @@
 version: '3.8'
 
 # EVA-VM v1 Docker Compose
-# 常驻核心容器：eva-core + dashboard + memory-db + scheduler + audit-agent
-#
-# 数据目录结构：
-#   /data/eva/
-#   ├── memory/     # 记忆层 SQLite/Postgres
-#   ├── world/      # 世界模型数据
-#   ├── logs/       # 应用日志
-#   └── snapshots/  # 快照归档
+# Single-container deployment — bootstrap.py initializes all subsystems:
+#   cognition loop, scheduler, memory store, audit log, executor framework
 
 services:
-  # ── 认知核心 ──────────────────────────────────────────
-  eva-core:
+  eva:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: eva-core
+    container_name: eva
     ports:
       - "8000:8000"
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
-      - ./config:/etc/eva:ro
-      - ./constitution.yaml:/etc/eva/constitution.yaml:ro
+      - ./config:/app/config:ro
+      - ./constitution.yaml:/app/constitution.yaml:ro
     environment:
       EVA_ENV: production
       EVA_DB_PATH: /app/data/eva.db
@@ -31,104 +24,12 @@ services:
       EVA_HOST: 0.0.0.0
       EVA_PORT: 8000
     restart: unless-stopped
-    networks:
-      - eva-internal
     healthcheck:
-      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health/live').raise_for_status()"]
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://localhost:8000/health/live')"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
     labels:
       eva.component: "core"
-      eva.description: "Cognitive loop & agent orchestration"
-
-  # ── Dashboard ─────────────────────────────────────────
-  dashboard:
-    image: eva-core:latest   # 复用同一镜像，通过 CMD 分离
-    container_name: eva-dashboard
-    command: ["python", "-c", "from app.main import app; import uvicorn; uvicorn.run(app, host='0.0.0.0', port=3000)"]
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./config:/etc/eva:ro
-    environment:
-      EVA_ENV: production
-      EVA_DB_PATH: /app/data/eva.db
-      EVA_HOST: 0.0.0.0
-      EVA_PORT: 3000
-    restart: unless-stopped
-    networks:
-      - eva-internal
-    depends_on:
-      eva-core:
-        condition: service_healthy
-    labels:
-      eva.component: "dashboard"
-      eva.description: "Web monitoring dashboard"
-
-  # ── Scheduler ─────────────────────────────────────────
-  scheduler:
-    image: eva-core:latest
-    container_name: eva-scheduler
-    command: ["python", "-c",
-      "from runtime.scheduler import RuntimeScheduler; import time; s = RuntimeScheduler(...); s.start(); time.sleep(999999)"]
-    volumes:
-      - ./data:/app/data
-      - ./config:/etc/eva:ro
-    environment:
-      EVA_DB_PATH: /app/data/eva.db
-      EVA_SCHEDULER_TICK_INTERVAL_SEC: 10
-      EVA_SCHEDULER_MAINTENANCE_INTERVAL_SEC: 60
-      EVA_SCHEDULER_SNAPSHOT_INTERVAL_SEC: 120
-    restart: unless-stopped
-    networks:
-      - eva-internal
-    depends_on:
-      eva-core:
-        condition: service_healthy
-    labels:
-      eva.component: "scheduler"
-      eva.description: "Periodic tasks & proactive engine"
-
-  # ── 记忆数据库 ────────────────────────────────────────
-  memory-db:
-    image: eva-core:latest
-    container_name: eva-memory-db
-    command: ["python", "-c",
-      "from memory.sqlite_store import SQLiteStore; from pathlib import Path; s = SQLiteStore(Path('/app/data/eva.db')); s.init_db(); import time; time.sleep(999999)"]
-    volumes:
-      - ./data:/app/data
-    restart: unless-stopped
-    networks:
-      - eva-internal
-    labels:
-      eva.component: "memory-db"
-      eva.description: "SQLite memory store (future: PostgreSQL)"
-
-  # ── 审计代理 ──────────────────────────────────────────
-  audit-agent:
-    image: eva-core:latest
-    container_name: eva-audit-agent
-    command: ["python", "-c",
-      "import logging; logger = logging.getLogger('eva.audit'); logger.info('audit-agent running'); import time; time.sleep(999999)"]
-    volumes:
-      - ./logs:/app/logs
-      - ./data:/app/data
-    restart: unless-stopped
-    networks:
-      - eva-internal
-    depends_on:
-      eva-core:
-        condition: service_healthy
-    labels:
-      eva.component: "audit-agent"
-      eva.description: "Audit log consumer & replay engine"
-
-networks:
-  eva-internal:
-    name: eva-internal
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.28.0.0/16
+      eva.description: "EVA cognitive agent host — all-in-one"

@@ -14,6 +14,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from memory.sqlite_store import SQLiteStore
+from memory.tiered_store import TieredMemoryManager
+
 
 # ── Data classes ────────────────────────────────────────────
 
@@ -202,7 +205,7 @@ class SystemDiagnostic:
                 detail=str(e), recommendation="check tiered_memory manager",
             )
 
-    def check_runtime(self, system_state: dict) -> DiagnosticCheck:
+    def check_runtime(self, system_state: dict[str, Any]) -> DiagnosticCheck:
         pending_events = int(system_state.get("pending_events", 0))
         pending_results = int(system_state.get("pending_results", 0))
         policy_state = system_state.get("policy_state", {})
@@ -237,9 +240,9 @@ class SystemDiagnostic:
 
     def run_full(
         self,
-        store,
-        tiered_memory,
-        system_state: dict,
+        store: SQLiteStore,
+        tiered_memory: TieredMemoryManager | None,
+        system_state: dict[str, Any],
         *,
         snapshot_path: Path | None = None,
     ) -> DiagnosticReport:

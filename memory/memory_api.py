@@ -1,6 +1,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Any
 from uuid import uuid4
 
 from event.event_schema import Event, TraceRecord
@@ -106,7 +107,7 @@ class MemoryAPI:
         self,
         event_type: str,
         summary: str,
-        payload: dict,
+        payload: dict[str, Any],
         importance: float = 0.5,
     ) -> str:
         """Store an episodic memory entry.

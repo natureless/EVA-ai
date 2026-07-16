@@ -22,8 +22,8 @@ class ProactiveEngine:
     def evaluate_stagnation(
         self,
         *,
-        world_model: dict,
-        proactive_state: dict,
+        world_model: dict[str, Any],
+        proactive_state: dict[str, Any],
         now_ts: float,
     ) -> ProactiveDecision:
         focus = str(world_model.get("focus", "")).strip()

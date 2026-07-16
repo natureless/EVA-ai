@@ -20,7 +20,6 @@ async def lifespan(app: FastAPI):
     logger.info("application startup")
     ws_manager = WebSocketManager()
     container = bootstrap_system(ws_manager=ws_manager)
-    container["ws_manager"] = ws_manager
     app.state.container = container
     try:
         yield
@@ -43,7 +42,7 @@ app.include_router(router)
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws):
-    ws_manager = app.state.container["ws_manager"]
+    ws_manager = app.state.container.ws_manager
     channel = ws.query_params.get("channel", "")
     await ws_manager.connect(ws, channel=channel)
     try:

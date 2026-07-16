@@ -9,6 +9,7 @@ POST /api/executors/code/execute  — execute code (token required)
 """
 
 import json
+
 from fastapi import APIRouter, Request, HTTPException
 
 router = APIRouter()
@@ -16,8 +17,7 @@ router = APIRouter()
 
 @router.get("/api/executors")
 def list_executors(request: Request):
-    container = request.app.state.container
-    execs = container.get("executors", {})
+    execs = request.app.state.container.executors
     return {
         "executors": [
             {"name": e.name, "description": e.description}
@@ -33,8 +33,7 @@ def audit_log(
     limit: int = 50,
     status: str = "",
 ):
-    container = request.app.state.container
-    audit = container.get("executor_audit_log")
+    audit = request.app.state.container.executor_audit_log
     if audit is None:
         return {"items": [], "summary": {"total": 0}}
     items = audit.query(executor_type=executor_type, limit=limit, status=status)
@@ -49,27 +48,24 @@ def _executor_action(
     request: Request,
     executor_name: str,
     action: str,
-    params: dict,
-) -> dict:
+    params: dict[str, object],
+) -> dict[str, object]:
     container = request.app.state.container
-    execs = container.get("executors", {})
-    executor = execs.get(executor_name)
+    executor = container.executors.get(executor_name)
     if executor is None:
         raise HTTPException(status_code=404, detail=f"executor '{executor_name}' not found")
 
     token_manager = None
-    policy_engine = container.get("policy_engine")
-    if policy_engine:
-        token_manager = policy_engine.token_manager
+    if container.policy_engine:
+        token_manager = container.policy_engine.token_manager
 
-    result = executor.execute(
+    return executor.execute(
         action=action,
         params=params,
         task_id=params.get("task_id", ""),
         token_id=params.get("token_id", ""),
         token_manager=token_manager,
     )
-    return result
 
 
 @router.post("/api/executors/file/read")
@@ -129,8 +125,7 @@ def audit_replay(
     limit: int = 20,
 ):
     """Replay audit trail for a specific task or executor."""
-    container = request.app.state.container
-    audit = container.get("executor_audit_log")
+    audit = request.app.state.container.executor_audit_log
     if audit is None:
         return {"items": [], "timeline": []}
 

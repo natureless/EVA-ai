@@ -6,6 +6,7 @@ Used by the cognition loop to auto-populate the WorldModelGraph.
 """
 
 import re
+from typing import Any
 
 
 # ── Task extraction patterns ────────────────────────────────
@@ -274,7 +275,7 @@ class EntityExtractor:
         return False
 
 
-def _eid(entity: dict) -> str:
+def _eid(entity: dict[str, Any]) -> str:
     slug = entity["name"].lower().replace(" ", "_").replace("-", "_")[:60]
     return f"{entity['type']}_{slug}"
 
