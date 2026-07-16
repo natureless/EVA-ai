@@ -7,6 +7,7 @@ from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
 from core.context_builder import ContextBuilder
 from core.planner import Planner
+from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
 from event.event_bus import EventBus
 from event.event_schema import Event, TraceRecord
@@ -14,6 +15,7 @@ from memory.memory_api import MemoryAPI
 from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
 from memory.memory_schema import MemoryRecord, MemoryType
+from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
 from world.world_model import WorldModel
 
@@ -36,6 +38,9 @@ class CognitionLoop:
         result_ttl_sec: float = 60.0,
         context_builder: ContextBuilder | None = None,
         enable_v02_pipeline: bool = False,
+        prediction_tracker: PredictionTracker | None = None,
+        self_model_store: SelfModelStore | None = None,
+        self_model: dict | None = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -52,6 +57,9 @@ class CognitionLoop:
         self.result_ttl_sec = result_ttl_sec
         self.context_builder = context_builder
         self.enable_v02_pipeline = enable_v02_pipeline
+        self.prediction_tracker = prediction_tracker
+        self.self_model_store = self_model_store
+        self.self_model = self_model
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -89,28 +97,31 @@ class CognitionLoop:
                 now_ts = time.time()
 
                 if event.type == "user_message":
-                    self.world_model.apply_user_message(str(event.payload.get("text", "")))
+                    user_text = str(event.payload.get("text", ""))
+                    self.world_model.apply_user_message(user_text)
                     self.proactive_state["last_user_message_ts"] = now_ts
 
                     if self.memory_governor:
                         record = MemoryRecord(
                             id=str(uuid4()),
                             memory_type=MemoryType.EPISODIC,
-                            content=str(event.payload.get("text", "")),
+                            content=user_text,
                             source_event_id=event.id,
                             confidence=0.7,
                             ttl_seconds=None,
                             conflict_keys=[],
                         )
                         features = ImportanceFeatures(
-                            user_explicit=False,
-                            goal_related=False,
+                            user_explicit=user_text.startswith("/"),
+                            goal_related=self._text_matches_active_tasks(user_text),
                             blocker_related=False,
-                            persona_related=False,
+                            persona_related=self._text_matches_persona(user_text),
                             repeated_mentions=0,
                             source_reliability=0.9 if event.source == "user" else 0.6,
-                            emotional_intensity=0.0,
+                            emotional_intensity=self._estimate_emotional_intensity(user_text),
                             age_hours=0.0,
+                            self_model_delta=0.0,
+                            prediction_error=0.0,
                         )
                         self.memory_governor.ingest(record, features)
 
@@ -118,7 +129,7 @@ class CognitionLoop:
                         user_id = str(event.payload.get("user_id", "default"))
                         ctx = self.context_builder.build(
                             user_id=user_id,
-                            text=str(event.payload.get("text", "")),
+                            text=user_text,
                         )
                         world_ctx = ctx.get("world_context") or {}
                         self.system_state["last_context_summary"] = {
@@ -165,11 +176,55 @@ class CognitionLoop:
                     selected_agent = self.agent_router.route(plan.agent, plan.task)
                     result, agent_duration_ms = self.orchestrator.execute(selected_agent, plan.task)
                     reply = result.content
+
+                    # ── self-model feedback: prediction error + state recording ──
+                    prev_focus = self.world_model.focus
+                    prev_reply = self.world_model.last_reply
+
                     self.world_model.apply_agent_result(
                         reply=reply,
                         selected_agent=selected_agent,
                         loop_id=loop_id,
                     )
+
+                    # compute prediction error if tracker is wired
+                    prediction_error = 0.0
+                    if self.prediction_tracker and prev_focus:
+                        expected = f"agent {selected_agent} responds about {prev_focus[:60]}"
+                        actual = reply[:200] if reply else ""
+                        rec = self.prediction_tracker.record(
+                            focus=prev_focus, expected=expected, actual=actual
+                        )
+                        prediction_error = rec.error
+
+                    # assess self-model delta & record state change
+                    self_model_delta = 0.0
+                    if self.self_model_store and self.self_model is not None:
+                        self.self_model_store.record_state_change(
+                            self.self_model,
+                            change_type="agent_execution",
+                            detail=f"{selected_agent}: {result.summary}",
+                            focus=self.world_model.focus,
+                            loop_id=loop_id,
+                        )
+                        if prediction_error > 0:
+                            self.self_model_store.record_prediction_error(
+                                self.self_model,
+                                error=prediction_error,
+                                focus=self.world_model.focus,
+                            )
+                        self_model_delta = prediction_error
+
+                        perturbation_threshold = 0.6
+                        if prediction_error > perturbation_threshold:
+                            self.self_model_store.record_perturbation(
+                                self.self_model,
+                                cause=f"high prediction error ({prediction_error:.2f}) "
+                                      f"on agent {selected_agent}",
+                                delta_magnitude=prediction_error,
+                                affected_fields=["world_model.focus", "prediction"],
+                                loop_id=loop_id,
+                            )
 
                     if event.type == "reminder_trigger":
                         self.world_model.apply_reminder()
@@ -239,3 +294,43 @@ class CognitionLoop:
                 self.system_state["pending_events"] = self.event_bus.size()
                 self.system_state["pending_results"] = self.result_registry.size()
                 self.event_bus.task_done()
+
+    # ── importance feature helpers ────────────────────────────
+
+    def _text_matches_active_tasks(self, text: str) -> bool:
+        tasks = self.world_model.active_tasks
+        if not tasks:
+            return False
+        text_lower = text.lower()
+        for task in tasks:
+            desc = str(task.get("description", "")).lower()
+            name = str(task.get("name", "")).lower()
+            if desc and desc in text_lower:
+                return True
+            if name and name in text_lower:
+                return True
+        return False
+
+    def _text_matches_persona(self, text: str) -> bool:
+        if not self.self_model:
+            return False
+        text_lower = text.lower()
+        capabilities = self.self_model.get("capabilities", [])
+        for cap in capabilities:
+            if str(cap).lower() in text_lower:
+                return True
+        identity = str(self.self_model.get("identity", "")).lower()
+        if identity and identity in text_lower:
+            return True
+        return False
+
+    @staticmethod
+    def _estimate_emotional_intensity(text: str) -> float:
+        markers_high = ["urgent", "紧急", "asap", "!!!", "critical", "严重"]
+        markers_med = ["worried", "担心", "frustrated", "important", "重要"]
+        text_lower = text.lower()
+        if any(m in text_lower for m in markers_high):
+            return 0.8
+        if any(m in text_lower for m in markers_med):
+            return 0.4
+        return 0.1

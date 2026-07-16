@@ -13,6 +13,7 @@ from app.config import settings
 from core.cognition_loop import CognitionLoop
 from core.context_builder import ContextBuilder
 from core.planner import Planner
+from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
 from event.event_bus import EventBus
 from memory.memory_api import MemoryAPI
@@ -206,6 +207,8 @@ def bootstrap_system() -> dict:
         system_state["last_snapshot_at"] = datetime.now(timezone.utc).isoformat()
         logger.debug("snapshot saved")
 
+    prediction_tracker = PredictionTracker(max_history=50, decay_lambda=0.1)
+
     try:
         loop = CognitionLoop(
             event_bus=event_bus,
@@ -223,6 +226,9 @@ def bootstrap_system() -> dict:
             result_ttl_sec=settings.result_ttl_sec,
             context_builder=context_builder,
             enable_v02_pipeline=settings.enable_v02_pipeline,
+            prediction_tracker=prediction_tracker,
+            self_model_store=self_model_store,
+            self_model=self_model,
         )
         loop.start()
         system_state["loop_ready"] = True
@@ -279,6 +285,7 @@ def bootstrap_system() -> dict:
         "orchestrator": orchestrator,
         "loop": loop,
         "scheduler": scheduler,
+        "prediction_tracker": prediction_tracker,
         "save_runtime_snapshot": save_runtime_snapshot,
         "health": health,
     }

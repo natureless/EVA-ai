@@ -7,6 +7,10 @@ EVA v0.1 is a single-node, event-driven cognition prototype designed to be:
 - stateful
 - observable
 
+EVA's architecture is grounded in the [Information Dynamics Consciousness Model](docs/consciousness_model.md),
+which defines a layered framework from physical change (L0) to meta-cognition (L5).
+The core insight: **experience is a self-referential information system modeling its own state changes.**
+
 ## Features
 
 ### Core Capabilities

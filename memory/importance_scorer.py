@@ -12,6 +12,9 @@ class ImportanceFeatures:
     source_reliability: float = 0.5
     emotional_intensity: float = 0.0
     age_hours: float = 0.0
+    # ── experience intensity (consciousness-model aligned) ──
+    self_model_delta: float = 0.0
+    prediction_error: float = 0.0
 
 
 class ImportanceScorer:
@@ -30,6 +33,10 @@ class ImportanceScorer:
         score += min(f.repeated_mentions, 5) * 0.04
         score += 0.10 * f.source_reliability
         score += 0.10 * f.emotional_intensity
+
+        # experience intensity: self-model perturbation + prediction error
+        score += 0.15 * max(0.0, min(1.0, f.self_model_delta))
+        score += 0.10 * max(0.0, min(1.0, f.prediction_error))
 
         decay = exp(-f.age_hours / 24 / 14)
         score *= decay + 0.25
