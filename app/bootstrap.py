@@ -22,6 +22,7 @@ from memory.memory_api import MemoryAPI
 from memory.memory_governor import MemoryGovernor, MemoryRepository
 from memory.profile_store import ProfileStore
 from memory.sqlite_store import SQLiteStore
+from memory.tiered_store import TieredMemoryManager
 from persona.persona_store import PersonaStore
 from persona.repository import PersonaRepository
 from persona.service import PersonaService
@@ -121,6 +122,13 @@ def bootstrap_system() -> dict:
     memory_api = MemoryAPI(store)
     memory_repository = MemoryRepository(store)
     memory_governor = MemoryGovernor(memory_repository)
+
+    # init tiered memory manager (S1-S5)
+    tiered_memory = TieredMemoryManager(store, config={
+        "S1_session": {"max_entries": 200, "ttl_minutes": 30},
+        "S2_working": {"max_entries": 500, "ttl_hours": 72},
+        "S3_long_term": {"max_entries": 10000},
+    })
     persona_repo = PersonaRepository(store)
     persona_service = PersonaService(persona_repo)
     context_builder = ContextBuilder(persona_service=persona_service)
@@ -244,6 +252,7 @@ def bootstrap_system() -> dict:
             self_model_store=self_model_store,
             self_model=self_model,
             policy_engine=policy_engine,
+            tiered_memory=tiered_memory,
         )
         loop.start()
         system_state["loop_ready"] = True
@@ -302,6 +311,7 @@ def bootstrap_system() -> dict:
         "scheduler": scheduler,
         "prediction_tracker": prediction_tracker,
         "policy_engine": policy_engine,
+        "tiered_memory": tiered_memory,
         "save_runtime_snapshot": save_runtime_snapshot,
         "health": health,
     }

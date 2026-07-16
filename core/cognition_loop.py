@@ -16,6 +16,7 @@ from memory.memory_api import MemoryAPI
 from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
 from memory.memory_schema import MemoryRecord, MemoryType
+from memory.tiered_store import TieredMemoryManager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
 from world.world_model import WorldModel
@@ -43,6 +44,7 @@ class CognitionLoop:
         self_model_store: SelfModelStore | None = None,
         self_model: dict | None = None,
         policy_engine: PolicyEngine | None = None,
+        tiered_memory: TieredMemoryManager | None = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -63,6 +65,7 @@ class CognitionLoop:
         self.self_model_store = self_model_store
         self.self_model = self_model
         self.policy_engine = policy_engine
+        self.tiered_memory = tiered_memory
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -283,6 +286,18 @@ class CognitionLoop:
                         },
                         importance=0.7 if event.type == "reminder_trigger" else 0.6,
                     )
+
+                    # ── tiered memory (S1-S3) ─────────────────
+                    if self.tiered_memory and not blocked:
+                        imp = 0.7 if event.type == "reminder_trigger" else 0.6
+                        self.tiered_memory.ingest(
+                            reply if reply else result_summary,
+                            importance=imp,
+                            source=selected_agent,
+                            category=event.type,
+                            tags=[selected_agent, event.type],
+                            source_event_id=event.id,
+                        )
 
                 duration_ms = int((time.perf_counter() - start) * 1000)
 

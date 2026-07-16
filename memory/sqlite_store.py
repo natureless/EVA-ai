@@ -164,6 +164,79 @@ class SQLiteStore:
                 """
             )
 
+            # ── S2: Working Memory ──────────────────────────
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS working_memory (
+                    id TEXT PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    summary TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    priority INTEGER NOT NULL DEFAULT 2,
+                    tags_json TEXT NOT NULL DEFAULT '[]',
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_wm_expires
+                   ON working_memory(expires_at)"""
+            )
+
+            # ── S3: Long-term Memory ────────────────────────
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS long_term_memory (
+                    id TEXT PRIMARY KEY,
+                    content TEXT NOT NULL,
+                    category TEXT NOT NULL DEFAULT 'general',
+                    embedding_ref TEXT NOT NULL DEFAULT '',
+                    importance REAL NOT NULL DEFAULT 0.5,
+                    source_event_id TEXT NOT NULL DEFAULT '',
+                    status TEXT NOT NULL DEFAULT 'active',
+                    created_at TEXT NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_ltm_category_status
+                   ON long_term_memory(category, status)"""
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_ltm_importance
+                   ON long_term_memory(importance)"""
+            )
+
+            # ── S4: World Model ─────────────────────────────
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS world_entities (
+                    id TEXT PRIMARY KEY,
+                    type TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    properties_json TEXT NOT NULL DEFAULT '{}',
+                    updated_at TEXT NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_we_type
+                   ON world_entities(type)"""
+            )
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS world_edges (
+                    source TEXT NOT NULL,
+                    target TEXT NOT NULL,
+                    relation TEXT NOT NULL,
+                    weight REAL NOT NULL DEFAULT 1.0,
+                    updated_at TEXT NOT NULL,
+                    PRIMARY KEY (source, target, relation)
+                )
+                """
+            )
+
     def execute(self, sql: str, params: Iterable[Any] = ()) -> None:
         with self.connection() as conn:
             conn.execute(sql, tuple(params))

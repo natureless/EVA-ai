@@ -23,3 +23,50 @@ def recent_events(request: Request, limit: int = 20) -> dict:
     container = request.app.state.container
     memory_api = container["memory_api"]
     return {"items": memory_api.get_recent_events(limit=limit)}
+
+
+# ── Tiered Memory Endpoints ─────────────────────────────────
+
+@router.get("/api/memory/tiers")
+def memory_tiers(request: Request) -> dict:
+    """Statistics for all five memory tiers."""
+    container = request.app.state.container
+    tm = container.get("tiered_memory")
+    if tm is None:
+        return {"error": "tiered memory not available"}
+    return tm.stats()
+
+
+@router.get("/api/memory/working")
+def working_memory(request: Request, limit: int = 50) -> dict:
+    """Recent S2 working memory entries."""
+    container = request.app.state.container
+    tm = container.get("tiered_memory")
+    if tm is None:
+        return {"items": []}
+    return {"items": tm.s2.list_recent(limit=limit)}
+
+
+@router.get("/api/memory/longterm")
+def longterm_memory(request: Request, limit: int = 50, category: str = "") -> dict:
+    """S3 long-term memory entries."""
+    container = request.app.state.container
+    tm = container.get("tiered_memory")
+    if tm is None:
+        return {"items": []}
+    if category:
+        return {"items": tm.s3.list_by_category(category, limit=limit)}
+    return {"items": tm.s3.list_recent(limit=limit)}
+
+
+@router.get("/api/memory/world")
+def world_model(request: Request, entity_type: str = "", limit: int = 100) -> dict:
+    """S4 world model: entities and edges."""
+    container = request.app.state.container
+    tm = container.get("tiered_memory")
+    if tm is None:
+        return {"entities": [], "edges": []}
+    return {
+        "entities": tm.s4.list_entities(entity_type=entity_type if entity_type else "", limit=limit),
+        "edges": tm.s4.list_edges(limit=limit),
+    }
