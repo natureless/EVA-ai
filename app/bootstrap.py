@@ -358,8 +358,13 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     # ── world layer ──
     world = _init_world(system_state, storage["tiered_memory"], persona_service)
 
+    # ── restore S1 session memory from S2 ──
+    restored = storage["tiered_memory"].s1.restore_from_s2(storage["tiered_memory"].s2)
+    if restored:
+        logger.info("restored %d session entries from S2", restored)
+
     # ── messaging ──
-    event_bus = EventBus()
+    event_bus = EventBus(s5_store=storage["tiered_memory"].s5)
     system_state["event_bus_ready"] = True
     logger.info("event bus initialized")
 
@@ -526,6 +531,11 @@ def shutdown_system(container: AppContainer) -> None:
         if container.loop:
             container.loop.stop()
             logger.info("cognition loop stopped")
+
+        # dump S1 session memory to S2 for persistence across restarts
+        if container.tiered_memory:
+            count = container.tiered_memory.s1.dump_to_s2(container.tiered_memory.s2)
+            logger.info("S1 session memory dumped to S2 (%d entries)", count)
 
         container.save_runtime_snapshot()
         logger.info("snapshot saved on shutdown")

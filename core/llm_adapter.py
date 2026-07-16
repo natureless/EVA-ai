@@ -27,6 +27,10 @@ class LLMAdapter(ABC):
     def chat(self, messages: list[dict]) -> str:
         ...
 
+    def chat_stream(self, messages: list[dict]):
+        """Yield tokens one at a time. Default: yield entire response at once."""
+        yield self.chat(messages)
+
     @property
     @abstractmethod
     def provider(self) -> str:
@@ -132,6 +136,50 @@ class OpenAIAdapter(LLMAdapter):
             logger.error("OpenAI request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
 
+    def chat_stream(self, messages: list[dict]):
+        if not self.api_key:
+            yield MockLLM().chat(messages)
+            return
+
+        try:
+            import httpx
+            with httpx.stream(
+                "POST",
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": self.model,
+                    "messages": messages,
+                    "max_tokens": self.max_tokens,
+                    "temperature": self.temperature,
+                    "stream": True,
+                },
+                timeout=self.timeout,
+            ) as resp:
+                if resp.status_code != 200:
+                    yield f"[EVA] API error {resp.status_code}"
+                    return
+                for line in resp.iter_lines():
+                    if line.startswith("data: "):
+                        data_str = line[6:]
+                        if data_str.strip() == "[DONE]":
+                            return
+                        try:
+                            import json as _json
+                            chunk = _json.loads(data_str)
+                            delta = chunk["choices"][0].get("delta", {})
+                            content = delta.get("content", "")
+                            if content:
+                                yield content
+                        except Exception:
+                            continue
+        except Exception as e:
+            logger.error("OpenAI stream failed: %s", e)
+            yield f"[EVA] LLM unavailable: {e}"
+
     @property
     def provider(self) -> str:
         return f"openai/{self.model}"
@@ -189,6 +237,39 @@ class ClaudeAdapter(LLMAdapter):
         except Exception as e:
             logger.error("Claude API request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
+
+    def chat_stream(self, messages: list[dict]):
+        if not self.api_key:
+            yield MockLLM().chat(messages)
+            return
+
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=self.api_key)
+
+            system = ""
+            user_messages = []
+            for m in messages:
+                if m["role"] == "system" and not system:
+                    system = m["content"]
+                else:
+                    user_messages.append(m)
+
+            kwargs = {
+                "model": self.model,
+                "max_tokens": self.max_tokens,
+                "temperature": self.temperature,
+                "messages": user_messages,
+            }
+            if system:
+                kwargs["system"] = system
+
+            with client.messages.stream(**kwargs) as stream:
+                for text in stream.text_stream:
+                    yield text
+        except Exception as e:
+            logger.error("Claude stream failed: %s", e)
+            yield f"[EVA] LLM unavailable: {e}"
 
     @property
     def provider(self) -> str:

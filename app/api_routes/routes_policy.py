@@ -55,7 +55,11 @@ async def trigger_state_transition(request: Request):
     if not trigger:
         raise HTTPException(status_code=400, detail="missing 'trigger' field")
 
-    allowed_triggers = {"manual_intervention", "autonomy_granted", "user_revoke"}
+    allowed_triggers = {
+        "manual_intervention", "autonomy_granted", "user_revoke",
+        "user_command", "command_completed", "command_failed",
+        "scheduled_task", "timeout",
+    }
     if trigger not in allowed_triggers:
         raise HTTPException(
             status_code=400,

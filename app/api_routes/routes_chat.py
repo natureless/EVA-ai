@@ -1,9 +1,10 @@
 from uuid import uuid4
 import logging
 import time
+import asyncio
 
 from fastapi import APIRouter, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.config import settings
@@ -79,6 +80,95 @@ def chat(req: ChatRequest, request: Request):
         "loop_id": result.get("loop_id", ""),
         "duration_ms": result.get("duration_ms", 0),
     }
+
+
+@router.post("/api/chat/stream")
+async def chat_stream(req: ChatRequest, request: Request):
+    """SSE streaming endpoint that yields tokens as server-sent events.
+
+    Connects directly to the LLM for low-latency streaming, then publishes
+    the completed response through the event bus for memory/entity extraction.
+    """
+    logger = logging.getLogger("eva.api.chat_stream")
+    container = request.app.state.container
+
+    try:
+        from core.llm_adapter import get_llm, load_system_prompt
+        llm = get_llm()
+    except Exception:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"detail": "LLM not available"},
+        )
+
+    ctx = {}
+    if container.context_builder:
+        try:
+            ctx = container.context_builder.build(user_id="default", text=req.text)
+        except Exception:
+            pass
+
+    persona = ctx.get("persona", {})
+    ctx_summary = ctx.get("context_summary", "")
+
+    system = load_system_prompt(
+        "chat",
+        persona_name=persona.get("name", "EVA"),
+        persona_role=persona.get("role_definition", "cognitive assistant"),
+        tone_style=persona.get("tone_style", "precise, calm, concise"),
+        hard_constraints="\n".join(f"- {c}" for c in persona.get("hard_constraints", [])),
+        context_summary=ctx_summary,
+    )
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": req.text},
+    ]
+
+    async def event_generator():
+        full_reply = ""
+        try:
+            loop = asyncio.get_event_loop()
+            gen = llm.chat_stream(messages)
+            for token in await loop.run_in_executor(None, _drain_generator, gen):
+                full_reply += token
+                yield f"data: {_sse_escape(token)}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            logger.exception("stream error")
+            yield f"data: [ERROR: {_sse_escape(str(e))}]\n\n"
+        finally:
+            # publish completed response through event bus for memory/entities
+            try:
+                correlation_id = str(uuid4())
+                container.result_registry.create(correlation_id)
+                event = Event(
+                    type="user_message",
+                    source="user",
+                    payload={"text": req.text, "streamed_reply": full_reply},
+                    correlation_id=correlation_id,
+                )
+                container.event_bus.publish(event)
+                container.system_state["pending_events"] = container.event_bus.size()
+            except Exception:
+                logger.exception("failed to publish post-stream event")
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+def _drain_generator(gen):
+    return list(gen)
+
+
+def _sse_escape(text: str) -> str:
+    return text.replace("\n", "\\n").replace("\r", "")
 
 
 @router.get("/api/state")

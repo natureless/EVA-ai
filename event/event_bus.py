@@ -1,20 +1,53 @@
+"""Thread-safe event bus with optional persistence.
+
+When an S5 store reference is provided, every publish() also writes the
+event to the events table. Consume/task_done semantics remain in-memory
+for performance — the database write is fire-and-forget durability.
+"""
+
+import json
+import logging
+from datetime import datetime, timezone
 from queue import Empty, Queue
 from typing import Optional
 
 from event.event_schema import Event
 
+logger = logging.getLogger("eva.event_bus")
+
 
 class EventBus:
     """Thread-safe event bus for publishing and consuming events."""
-    
-    def __init__(self) -> None:
+
+    def __init__(self, s5_store=None) -> None:
         self._queue: Queue[Event] = Queue()
+        self._s5 = s5_store
+        self._publish_count = 0
+        self._persist_failures = 0
 
     def publish(self, event: Event) -> None:
-        """Publish an event to the bus."""
+        """Publish an event to the bus and persist to S5 if configured."""
         if event is None:
             raise ValueError("Cannot publish None event")
         self._queue.put(event)
+
+        # fire-and-forget persistence to S5 event trace
+        if self._s5 is not None and hasattr(self._s5, "store"):
+            try:
+                self._s5.store.execute(
+                    """INSERT INTO events (id, type, source, payload_json, correlation_id, created_at)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (
+                        event.id, event.type, event.source,
+                        json.dumps(event.payload, ensure_ascii=False),
+                        event.correlation_id,
+                        datetime.now(timezone.utc).isoformat(),
+                    ),
+                )
+                self._publish_count += 1
+            except Exception:
+                self._persist_failures += 1
+                logger.debug("event persistence failed (non-fatal)")
 
     def consume(self, timeout: float = 0.5) -> Optional[Event]:
         """Consume an event from the bus with optional timeout."""
@@ -41,4 +74,11 @@ class EventBus:
             except Empty:
                 break
         return items
+
+    def stats(self) -> dict:
+        return {
+            "queue_size": self._queue.qsize(),
+            "published": self._publish_count,
+            "persist_failures": self._persist_failures,
+        }
 

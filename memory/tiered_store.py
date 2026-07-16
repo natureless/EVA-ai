@@ -99,6 +99,42 @@ class SessionMemory:
                 "miss_count": self._miss_count,
             }
 
+    def dump_to_s2(self, s2_store) -> int:
+        """Flush all S1 entries to S2 working memory so context survives restart."""
+        count = 0
+        with self._lock:
+            for entry in self._store.values():
+                try:
+                    s2_store.put(
+                        str(entry.value.get("content", "")),
+                        summary=str(entry.value.get("content", ""))[:200],
+                        source=str(entry.value.get("source", "session")),
+                        tags=["s1_dump"],
+                    )
+                    count += 1
+                except Exception:
+                    pass
+        return count
+
+    def restore_from_s2(self, s2_store) -> int:
+        """Reload recently dumped S1 entries from S2 on startup."""
+        count = 0
+        try:
+            for row in s2_store.list_recent(limit=200):
+                content = row.get("content", "")
+                if content:
+                    mid = f"s1_{uuid4().hex[:8]}"
+                    self.put(mid, {
+                        "content": content,
+                        "importance": 0.6,
+                        "source": row.get("source", ""),
+                        "ts": time.time(),
+                    })
+                    count += 1
+        except Exception:
+            pass
+        return count
+
 
 # ── S2: Working Memory ─────────────────────────────────────
 

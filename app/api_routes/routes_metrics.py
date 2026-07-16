@@ -29,6 +29,10 @@ def metrics(request: Request) -> dict:
         "pending_events": container.event_bus.size(),
         "pending_results": container.result_registry.size(),
     }
+    try:
+        payload["event_bus"] = container.event_bus.stats()
+    except Exception:
+        payload["event_bus"] = {}
 
     # ── memory ──
     try:

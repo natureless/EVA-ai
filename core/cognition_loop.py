@@ -365,7 +365,13 @@ class CognitionLoop:
 
                     # ── world model: entity extraction → graph → S4 ──
                     if not blocked and reply and self.world_model:
-                        entities, relations = entity_extractor.extract_from_reply(reply)
+                        try:
+                            future = self._agent_pool.submit(
+                                entity_extractor.extract_from_reply, reply
+                            )
+                            entities, relations = future.result(timeout=5.0)
+                        except FutureTimeoutError:
+                            entities, relations = [], []
                         for e in entities:
                             self.world_model.upsert_entity(
                                 e["type"], e["name"], e.get("properties", {}),
