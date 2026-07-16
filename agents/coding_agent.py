@@ -5,9 +5,10 @@ from pathlib import Path
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
 from core.llm_adapter import get_llm, MockLLM
+from core.llm_helpers import build_context_text
 
 
-logger = logging.getLogger("eva.coding_agent")
+logger = logging.getLogger(__name__)
 
 
 class CodingAgent(BaseAgent):
@@ -64,13 +65,7 @@ class CodingAgent(BaseAgent):
             path_hint = f" {meta.get('path', '')}" if meta.get("path") else ""
             return f"[coding_agent]{path_hint}\n{analysis}"
 
-        ctx_text = ""
-        if context and isinstance(context, dict):
-            tasks = context.get("active_tasks", [])
-            if tasks:
-                ctx_text += "Active tasks: " + ", ".join(
-                    t.get("name","") for t in tasks[:3] if t.get("name")) + "\n"
-
+        ctx_text = build_context_text(context)
         messages = [
             {"role": "system", "content": (
                 "You are EVA's code analysis agent. Summarize code structure concisely.\n"

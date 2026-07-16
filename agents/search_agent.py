@@ -5,9 +5,10 @@ from pathlib import Path
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
+from core.llm_helpers import build_context_text
 
 
-logger = logging.getLogger("eva.search_agent")
+logger = logging.getLogger(__name__)
 
 
 class SearchAgent(BaseAgent):
@@ -71,17 +72,7 @@ class SearchAgent(BaseAgent):
             lines = "\n".join(raw_output.splitlines()[:20])
             return f"[search_agent] matches for '{query}' (scanned {files_scanned} files):\n{lines}"
 
-        ctx_text = ""
-        if context and isinstance(context, dict):
-            tasks = context.get("active_tasks", [])
-            memories = context.get("memories", [])
-            if tasks:
-                ctx_text += "Active tasks: " + ", ".join(
-                    t.get("name","") for t in tasks[:3] if t.get("name")) + "\n"
-            if memories:
-                ctx_text += "Recent context: " + "; ".join(
-                    m.get("content","")[:80] for m in memories[:2]) + "\n"
-
+        ctx_text = build_context_text(context)
         messages = [
             {"role": "system", "content": (
                 "You are EVA's search agent. Summarize file search results concisely.\n"

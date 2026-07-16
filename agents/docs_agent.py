@@ -2,9 +2,10 @@ import logging
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, MockLLM
+from core.llm_helpers import build_context_text
 
 
-logger = logging.getLogger("eva.docs_agent")
+logger = logging.getLogger(__name__)
 
 
 class DocsAgent(BaseAgent):
@@ -48,13 +49,7 @@ class DocsAgent(BaseAgent):
             preview = text[:160]
             return f"[docs_agent] document task accepted, preview: {preview}"
 
-        ctx_text = ""
-        if context and isinstance(context, dict):
-            tasks = context.get("active_tasks", [])
-            if tasks:
-                ctx_text += "Active tasks: " + ", ".join(
-                    t.get("name","") for t in tasks[:3] if t.get("name")) + "\n"
-
+        ctx_text = build_context_text(context)
         messages = [
             {"role": "system", "content": (
                 "You are EVA's document analysis agent. Summarize documents concisely.\n"
