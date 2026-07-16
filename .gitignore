@@ -41,6 +41,7 @@ ENV/
 
 # Project specific
 data/*.db
+data/*.db-*
 data/eva.db
 data/snapshots/
 logs/
