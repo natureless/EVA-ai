@@ -32,7 +32,7 @@ from runtime.logging_setup import configure_logging
 from runtime.result_registry import ResultRegistry
 from runtime.scheduler import RuntimeScheduler
 from world.snapshot_store import SnapshotStore
-from world.world_model import WorldModel
+from world.world_model import WorldModelGraph
 
 
 def ensure_dirs() -> None:
@@ -77,7 +77,7 @@ def create_initial_state() -> dict:
 
 def build_snapshot_payload(
     *,
-    world_model: WorldModel,
+    world_model: WorldModelGraph,
     profile: dict,
     persona: dict,
     self_model: dict,
@@ -155,11 +155,16 @@ def bootstrap_system() -> dict:
     )
     snapshot = snapshot_store.load_latest()
     if snapshot and isinstance(snapshot, dict) and "world_model" in snapshot:
-        world_model = WorldModel.from_dict(snapshot["world_model"])
-        logger.info("snapshot loaded from %s", settings.latest_snapshot_path)
+        world_model = WorldModelGraph.from_dict(snapshot["world_model"])
+        world_model.load_from_store(tiered_memory.s4)
+        logger.info("snapshot loaded from %s (entities=%d, edges=%d)",
+                    settings.latest_snapshot_path,
+                    world_model.entity_count, world_model.edge_count)
     else:
-        world_model = WorldModel()
-        logger.info("no snapshot found; using defaults")
+        world_model = WorldModelGraph()
+        world_model.load_from_store(tiered_memory.s4)
+        logger.info("no snapshot found; loaded %d entities, %d edges from S4",
+                    world_model.entity_count, world_model.edge_count)
     system_state["snapshot_ready"] = True
 
     proactive_state = snapshot.get("proactive_state", {}) if snapshot else {}

@@ -6,6 +6,7 @@ import logging
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
 from core.context_builder import ContextBuilder
+from core.entity_extractor import entity_extractor
 from core.planner import Planner
 from core.policy_engine import PolicyEngine, Verdict
 from core.prediction import PredictionTracker
@@ -19,7 +20,7 @@ from memory.memory_schema import MemoryRecord, MemoryType
 from memory.tiered_store import TieredMemoryManager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
-from world.world_model import WorldModel
+from world.world_model import WorldModelGraph
 
 
 class CognitionLoop:
@@ -34,7 +35,7 @@ class CognitionLoop:
         result_registry: ResultRegistry,
         proactive_engine: ProactiveEngine,
         proactive_state: dict,
-        world_model: WorldModel,
+        world_model: WorldModelGraph,
         system_state: dict,
         poll_timeout_sec: float = 0.5,
         result_ttl_sec: float = 60.0,
@@ -298,6 +299,21 @@ class CognitionLoop:
                             tags=[selected_agent, event.type],
                             source_event_id=event.id,
                         )
+
+                    # ── world model: entity extraction → graph → S4 ──
+                    if not blocked and reply and self.world_model:
+                        entities, relations = entity_extractor.extract_from_reply(reply)
+                        for e in entities:
+                            self.world_model.upsert_entity(
+                                e["type"], e["name"], e.get("properties", {}),
+                            )
+                        for r in relations:
+                            self.world_model.link(
+                                r["source"], r["target"], r["relation"],
+                                weight=r.get("weight", 1.0),
+                            )
+                        if self.tiered_memory:
+                            self.world_model.flush(self.tiered_memory.s4)
 
                 duration_ms = int((time.perf_counter() - start) * 1000)
 
