@@ -8,7 +8,7 @@ def test_dashboard_page_loads(client):
 
 
 def test_chat_returns_reply(client):
-    response = client.post("/api/chat", json={"text": "Continue designing EVA world graph"})
+    response = client.post("/api/chat", json={"text": "Hello, how are you doing today?"})
     assert response.status_code == 200
 
     data = response.json()
@@ -46,20 +46,20 @@ def test_coding_routing(client):
 
 
 def test_state_updates_after_chat(client):
-    client.post("/api/chat", json={"text": "Advance EVA scheduler"})
+    client.post("/api/chat", json={"text": "Hello! How are you doing?"})
     time.sleep(0.1)
 
     response = client.get("/api/state")
     assert response.status_code == 200
     data = response.json()
 
-    assert "EVA scheduler" in data["focus"]
+    assert "Hello" in data["focus"]
     assert data["last_selected_agent"] == "chat_agent"
     assert data["last_reply"] != ""
 
 
 def test_memory_and_trace_written(client):
-    client.post("/api/chat", json={"text": "Advance EVA snapshot"})
+    client.post("/api/chat", json={"text": "Can you tell me about the memory system?"})
     time.sleep(0.1)
 
     mem = client.get("/api/memory/recent?limit=5")

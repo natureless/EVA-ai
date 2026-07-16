@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from memory.memory_governor import MemoryGovernor, MemoryRepository
     from memory.profile_store import ProfileStore
     from memory.sqlite_store import SQLiteStore
+    from memory.storage_adapter import BaseStorageAdapter
     from memory.tiered_store import TieredMemoryManager
     from persona.repository import PersonaRepository
     from persona.self_model_store import SelfModelStore
@@ -49,7 +50,7 @@ class AppContainer:
     system_state: dict[str, Any]
 
     # ── storage ──
-    store: SQLiteStore
+    store: BaseStorageAdapter
     memory_api: MemoryAPI
     memory_repository: MemoryRepository
     memory_governor: MemoryGovernor

@@ -6,10 +6,7 @@ Usage — when EVA_STORAGE_BACKEND=postgresql::
 
 Connection pooling via psycopg2.ThreadedConnectionPool.
 Schema is identical to SQLite's — CREATE TABLE IF NOT EXISTS.
-
-v0.1 status: skeleton. Key methods are functional stubs that raise
-NotImplementedError with clear upgrade path. Tests run against SQLite
-in all cases.
+All BaseStorageAdapter methods are fully implemented.
 
 Dependencies (optional)::
     pip install psycopg2-binary

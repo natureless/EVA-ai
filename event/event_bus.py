@@ -35,13 +35,13 @@ class EventBus:
         if self._s5 is not None and hasattr(self._s5, "store"):
             try:
                 self._s5.store.execute(
-                    """INSERT INTO events (id, type, source, payload_json, correlation_id, created_at)
-                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    """INSERT OR IGNORE INTO events (id, type, source, timestamp, payload, correlation_id, status)
+                       VALUES (?, ?, ?, ?, ?, ?, 'captured')""",
                     (
                         event.id, event.type, event.source,
+                        datetime.now(timezone.utc).isoformat(),
                         json.dumps(event.payload, ensure_ascii=False),
                         event.correlation_id,
-                        datetime.now(timezone.utc).isoformat(),
                     ),
                 )
                 self._publish_count += 1

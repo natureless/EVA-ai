@@ -27,6 +27,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     )
     (static_dir / "app.js").write_text("console.log('test');", encoding="utf-8")
     (static_dir / "styles.css").write_text("body{}", encoding="utf-8")
+    (static_dir / "i18n.js").write_text("const I18N={_lang:'zh',_dict:{},t(k){return k;},lang(){return 'zh';},setLang(){},toggle(){},applyDOM(){}};", encoding="utf-8")
 
     monkeypatch.setenv("EVA_DATA_DIR", str(data_dir))
     monkeypatch.setenv("EVA_LOG_DIR", str(logs_dir))

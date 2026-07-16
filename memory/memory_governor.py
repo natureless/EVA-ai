@@ -2,17 +2,20 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Iterable, Optional
+from typing import TYPE_CHECKING, Iterable, Optional
 
 from memory.importance_scorer import ImportanceFeatures, ImportanceScorer
 from memory.memory_compactor import MemoryCompactor, MemoryDecayPolicy
 from memory.memory_conflict_resolver import MemoryConflictResolver
 from memory.memory_schema import MemoryRecord, MemoryStatus, MemoryType
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
+
+if TYPE_CHECKING:
+    from memory.tiered_store import TieredMemoryManager
 
 
 class MemoryRepository:
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
 
     def upsert(self, record: MemoryRecord) -> None:
@@ -128,8 +131,13 @@ class MemoryRepository:
 
 
 class MemoryGovernor:
-    def __init__(self, repository: MemoryRepository) -> None:
+    def __init__(
+        self,
+        repository: MemoryRepository,
+        tiered_memory: TieredMemoryManager | None = None,
+    ) -> None:
         self.repository = repository
+        self.tiered_memory = tiered_memory
         self.importance = ImportanceScorer()
         self.conflict_resolver = MemoryConflictResolver()
         self.compactor = MemoryCompactor()
@@ -148,6 +156,20 @@ class MemoryGovernor:
         record = self.conflict_resolver.resolve(record, conflicts)
 
         self.repository.upsert(record)
+
+        # bridge to tiered memory — high-salience memories flow into S2/S3
+        if self.tiered_memory and record.salience >= 0.6:
+            try:
+                self.tiered_memory.ingest(
+                    record.content,
+                    importance=record.salience,
+                    source=record.memory_type.value,
+                    category=record.memory_type.value,
+                    source_event_id=record.source_event_id or "",
+                )
+            except Exception:
+                pass
+
         return record
 
     def access(self, memory_id: str) -> Optional[MemoryRecord]:

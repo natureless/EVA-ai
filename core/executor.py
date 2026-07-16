@@ -23,7 +23,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 from uuid import uuid4
 
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
 
 logger = logging.getLogger("eva.executor")
 
@@ -47,7 +47,7 @@ class AuditEntry:
 class ExecutorAuditLog:
     """Immutable audit trail for all executor operations."""
 
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
 
     def record(
@@ -611,14 +611,86 @@ class APIExecutor(BaseExecutor):
             return {"ok": False, "error": str(e), "status_code": 0, "body": "", "summary": f"api call failed: {e}"}
 
 
-# ── Comms Executor (deferred) ────────────────────────────────
+# ── Comms Executor ──────────────────────────────────────────
+
+DEFAULT_COMMS_DIR = str(Path(tempfile.gettempdir()) / "eva" / "notifications")
+
 
 class CommsExecutor(BaseExecutor):
     name = "comms"
-    description = "Messaging, email, notifications (v0.2+)"
+    description = "Log messages, write notifications, and emit alerts"
+
+    def __init__(
+        self,
+        audit_log: ExecutorAuditLog,
+        config: dict | None = None,
+    ) -> None:
+        super().__init__(audit_log, config)
+        cfg = (config or {}).get("executors", {}).get("comms", {})
+        self.output_dir = Path(cfg.get("output_dir", DEFAULT_COMMS_DIR))
+        self.allowed_levels = {"debug", "info", "warning", "error", "critical"}
+        self.allowed_actions = {"log", "notify", "alert"}
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
-        return ExecutorDecision(allowed=False, reason="comms executor not implemented in v0.1")
+        action = params.get("action", params.get("kind", "log"))
+        if action not in self.allowed_actions:
+            return ExecutorDecision(
+                allowed=False,
+                reason=f"action '{action}' not allowed (allowed: {sorted(self.allowed_actions)})",
+            )
+
+        level = str(params.get("level", "info")).lower()
+        if level not in self.allowed_levels:
+            return ExecutorDecision(
+                allowed=False,
+                reason=f"level '{level}' not allowed (allowed: {sorted(self.allowed_levels)})",
+            )
+
+        message = str(params.get("message", params.get("content", "")))
+        if not message.strip():
+            return ExecutorDecision(allowed=False, reason="message is required")
+
+        max_len = 10_000
+        if len(message) > max_len:
+            return ExecutorDecision(
+                allowed=False,
+                reason=f"message exceeds max length ({max_len} chars)",
+            )
+
+        return ExecutorDecision(allowed=True, reason="boundary check passed")
 
     def _run(self, action: str, params: dict[str, Any]) -> dict[str, Any]:
-        return {"ok": False, "error": "comms executor not implemented in v0.1"}
+        message = str(params.get("message", params.get("content", "")))
+        level = str(params.get("level", "info")).lower()
+        title = str(params.get("title", params.get("subject", "EVA Notification")))
+
+        results: dict[str, Any] = {"ok": True, "actions": []}
+
+        if action in ("log", "alert"):
+            log_func = getattr(logger, level, logger.info)
+            log_func("comms: %s", message[:500])
+            results["actions"].append("logged")
+            results["logged"] = True
+
+        if action in ("notify", "alert"):
+            try:
+                self.output_dir.mkdir(parents=True, exist_ok=True)
+                ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+                filename = f"notify_{ts}_{uuid4().hex[:8]}.txt"
+                filepath = self.output_dir / filename
+                lines = [
+                    f"Title: {title}",
+                    f"Level: {level.upper()}",
+                    f"Timestamp: {datetime.now(timezone.utc).isoformat()}",
+                    f"",
+                    message,
+                ]
+                filepath.write_text("\n".join(lines), encoding="utf-8")
+                results["actions"].append("written")
+                results["path"] = str(filepath)
+            except Exception as e:
+                results["actions"].append("write_failed")
+                results["write_error"] = str(e)
+
+        results["summary"] = f"comms {action}: {message[:150]}"
+        return results

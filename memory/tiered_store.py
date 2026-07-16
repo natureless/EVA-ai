@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from typing import Any
 from uuid import uuid4
 
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
 
 # ── FTS helpers ──────────────────────────────────────────────
 
@@ -141,7 +141,7 @@ class SessionMemory:
 class WorkingMemoryStore:
     """SQLite-backed working memory with configurable TTL."""
 
-    def __init__(self, store: SQLiteStore, max_entries: int = 500, ttl_hours: int = 72) -> None:
+    def __init__(self, store: BaseStorageAdapter, max_entries: int = 500, ttl_hours: int = 72) -> None:
         self.store = store
         self.max_entries = max_entries
         self.ttl_hours = ttl_hours
@@ -225,7 +225,7 @@ class WorkingMemoryStore:
 class LongTermMemoryStore:
     """SQLite-backed permanent memory with soft-delete."""
 
-    def __init__(self, store: SQLiteStore, max_entries: int = 10000) -> None:
+    def __init__(self, store: BaseStorageAdapter, max_entries: int = 10000) -> None:
         self.store = store
         self.max_entries = max_entries
 
@@ -348,7 +348,7 @@ class LongTermMemoryStore:
 class WorldModelStore:
     """Structured world representation: entities + typed edges."""
 
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
 
     # -- entities -------------------------------------------------------------
@@ -429,7 +429,7 @@ class WorldModelStore:
 class EventTraceStore:
     """Read-only view over existing events, traces, and snapshots tables."""
 
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
 
     def count_events(self) -> int:
@@ -463,7 +463,7 @@ class TieredMemoryManager:
 
     def __init__(
         self,
-        store: SQLiteStore,
+        store: BaseStorageAdapter,
         config: dict | None = None,
     ) -> None:
         cfg = config or {}

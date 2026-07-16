@@ -142,7 +142,7 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
         "store": store,
         "memory_api": MemoryAPI(store),
         "memory_repository": MemoryRepository(store),
-        "memory_governor": MemoryGovernor(MemoryRepository(store)),
+        "memory_governor": MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory),
         "tiered_memory": tiered_memory,
     }
 

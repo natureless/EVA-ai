@@ -5,7 +5,7 @@ from typing import Any
 from uuid import uuid4
 
 from event.event_schema import Event, TraceRecord
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
 
 
 logger = logging.getLogger("eva.memory_api")
@@ -40,7 +40,7 @@ class MemoryAPI:
     - Traces: Execution traces from cognition loop
     """
 
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         """Initialize memory API with a SQLite store.
         
         Args:
@@ -57,7 +57,7 @@ class MemoryAPI:
         try:
             self.store.execute(
                 """
-                INSERT INTO events (id, type, source, timestamp, payload, correlation_id, status)
+                INSERT OR IGNORE INTO events (id, type, source, timestamp, payload, correlation_id, status)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
