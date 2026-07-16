@@ -19,7 +19,6 @@ from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
 from memory.memory_schema import MemoryRecord, MemoryType
 from memory.tiered_store import TieredMemoryManager
-from runtime.websocket import ws_manager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
 from world.world_model import WorldModelGraph
@@ -49,6 +48,7 @@ class CognitionLoop:
         policy_engine: PolicyEngine | None = None,
         tiered_memory: TieredMemoryManager | None = None,
         executors: dict | None = None,
+        ws_manager=None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -71,6 +71,7 @@ class CognitionLoop:
         self.policy_engine = policy_engine
         self.tiered_memory = tiered_memory
         self._executors: dict = executors or {}
+        self._ws_manager = ws_manager
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -107,12 +108,14 @@ class CognitionLoop:
                     if policy_decision.verdict == Verdict.QUARANTINE:
                         logger.critical("policy: quarantine triggered — blocking event")
                         self.system_state["policy_state"] = self.policy_engine.get_state()
-                        ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
+                        if self._ws_manager:
+                            self._ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
                         continue
                     if policy_decision.verdict == Verdict.DENY:
                         logger.warning("policy: event denied — %s", policy_decision.reason)
                         self.system_state["policy_state"] = self.policy_engine.get_state()
-                        ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
+                        if self._ws_manager:
+                            self._ws_manager.broadcast_sync("policy_state", self.system_state["policy_state"])
                         continue
 
                 self.memory_api.append_event(event)
@@ -336,7 +339,8 @@ class CognitionLoop:
                                 e["type"], e["name"], e.get("properties", {}),
                             )
                             # broadcast entity creation
-                            ws_manager.broadcast_sync("entity_created", {
+                            if self._ws_manager:
+                                self._ws_manager.broadcast_sync("entity_created", {
                                 "type": e["type"], "name": e["name"],
                                 "properties": e.get("properties", {}),
                             })

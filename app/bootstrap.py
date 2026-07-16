@@ -98,7 +98,7 @@ def build_snapshot_payload(
     }
 
 
-def bootstrap_system() -> dict:
+def bootstrap_system(ws_manager=None) -> dict:
     """Initialize the EVA system with all components.
     
     Sets up directories, logging, database, event bus, agents, and schedulers.
@@ -286,6 +286,7 @@ def bootstrap_system() -> dict:
             policy_engine=policy_engine,
             tiered_memory=tiered_memory,
             executors=executors,
+            ws_manager=ws_manager,
         )
         loop.start()
         system_state["loop_ready"] = True

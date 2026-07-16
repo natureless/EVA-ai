@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import router
 from app.bootstrap import bootstrap_system, shutdown_system
 from app.config import settings
-from runtime.websocket import ws_manager
+from runtime.websocket import WebSocketManager
 
 
 logger = logging.getLogger("eva.app")
@@ -18,7 +18,8 @@ logger = logging.getLogger("eva.app")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("application startup")
-    container = bootstrap_system()
+    ws_manager = WebSocketManager()
+    container = bootstrap_system(ws_manager=ws_manager)
     container["ws_manager"] = ws_manager
     app.state.container = container
     try:
@@ -42,6 +43,7 @@ app.include_router(router)
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws):
+    ws_manager = app.state.container["ws_manager"]
     channel = ws.query_params.get("channel", "")
     await ws_manager.connect(ws, channel=channel)
     try:

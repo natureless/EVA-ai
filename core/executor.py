@@ -220,11 +220,10 @@ class BaseExecutor(ABC):
 # ── File Executor ──────────────────────────────────────────
 
 DEFAULT_FILE_ALLOWED = [
-    str(Path.cwd()),          # project root
+    str(Path.cwd().resolve()),
     str(Path.home() / "Documents"),
     str(Path.home() / "Downloads"),
-    "/tmp/eva",
-    "/data/eva",
+    str(Path(tempfile.gettempdir()) / "eva"),
 ]
 DEFAULT_MAX_FILE_SIZE = 1024 * 1024  # 1 MB
 
