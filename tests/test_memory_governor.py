@@ -12,7 +12,7 @@ from memory.sqlite_store import SQLiteStore
 
 
 def build_repo():
-    tmp = TemporaryDirectory()
+    tmp = TemporaryDirectory(ignore_cleanup_errors=True)
     store = SQLiteStore(Path(tmp.name) / "test.db")
     store.init_db()
     repo = MemoryRepository(store)
