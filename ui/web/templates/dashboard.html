@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,69 +11,103 @@
     <header class="topbar">
       <div>
         <h1>{{ app_name }} v0.1</h1>
-        <p class="sub">Live telemetry &middot; WebSocket &middot; REST</p>
+        <p class="sub">Live telemetry &middot; WebSocket &middot; REST &middot; SSE</p>
       </div>
       <div class="top-actions">
         <span id="wsIndicator" class="badge disconnected">WS</span>
         <span id="autoRefresh" class="badge ok">Live</span>
+        <button id="themeBtn" class="icon-btn" title="Toggle dark/light mode">&#9788;</button>
         <button id="refreshBtn" type="button">Refresh</button>
       </div>
     </header>
 
     <main class="grid">
-      <!-- row 1 -->
+      <!-- Chat + Stream -->
       <section class="card chat-card">
-        <div class="card-header"><h2>Chat</h2></div>
-        <form id="chatForm" class="chat-form">
-          <textarea id="chatInput" placeholder="Send a message..." rows="3"></textarea>
-          <button type="submit">Send</button>
-        </form>
-        <div class="result-block">
-          <div class="label">Reply <span id="replyMeta" class="dim"></span></div>
-          <pre id="lastReply" class="mono"></pre>
+        <div class="card-header" data-card="chat"><h2>Chat</h2><span class="hint">POST /api/chat</span></div>
+        <div class="card-body">
+          <form id="chatForm" class="chat-form">
+            <textarea id="chatInput" placeholder="Send a message..." rows="3"></textarea>
+            <div class="chat-toolbar">
+              <div class="toggle-row">
+                <label class="toggle-switch"><input type="checkbox" id="streamToggle"><span class="slider"></span></label>
+                <span>SSE Stream</span>
+              </div>
+              <button type="submit" id="sendBtn">Send</button>
+            </div>
+          </form>
+          <div class="result-block">
+            <div class="label">Reply <span id="replyMeta" class="dim"></span></div>
+            <pre id="lastReply" class="mono"></pre>
+          </div>
         </div>
       </section>
 
+      <!-- Policy -->
       <section class="card">
-        <div class="card-header"><h2>Policy</h2><span id="policyDot" class="dot dormant"></span></div>
-        <div id="policyPanel" class="kv-grid"></div>
+        <div class="card-header" data-card="policy"><h2>Policy</h2><span id="policyDot" class="dot dormant"></span></div>
+        <div class="card-body">
+          <div id="policyPanel" class="kv-grid"></div>
+          <div id="policyTimeline" class="timeline-strip"></div>
+        </div>
       </section>
 
+      <!-- Memory Tiers -->
       <section class="card">
-        <div class="card-header"><h2>Memory Tiers</h2></div>
-        <div id="tiersPanel" class="kv-grid"></div>
+        <div class="card-header" data-card="memory"><h2>Memory Tiers</h2><span id="memSummary" class="badge">--</span></div>
+        <div class="card-body">
+          <div id="tiersPanel"></div>
+        </div>
       </section>
 
-      <!-- row 2 -->
+      <!-- World Model -->
       <section class="card">
-        <div class="card-header"><h2>World Model</h2><span id="entityCount" class="badge">0</span></div>
-        <div id="worldPanel" class="list-panel"></div>
+        <div class="card-header" data-card="world"><h2>World Model</h2><span id="entityCount" class="badge">0</span></div>
+        <div class="card-body">
+          <input type="text" class="filter-input" id="entityFilter" placeholder="Filter entities..." />
+          <div id="worldPanel" class="list-panel"></div>
+        </div>
       </section>
 
+      <!-- Audit -->
       <section class="card">
-        <div class="card-header"><h2>Audit Timeline</h2></div>
-        <div id="auditPanel" class="list-panel"></div>
+        <div class="card-header" data-card="audit"><h2>Audit Timeline</h2></div>
+        <div class="card-body">
+          <div id="auditPanel" class="list-panel"></div>
+        </div>
       </section>
 
+      <!-- System State -->
       <section class="card">
-        <div class="card-header"><h2>System State</h2></div>
-        <div id="statePanel" class="kv-grid"></div>
+        <div class="card-header" data-card="state"><h2>System State</h2></div>
+        <div class="card-body">
+          <div id="statePanel" class="kv-grid"></div>
+        </div>
       </section>
 
-      <!-- row 3 -->
+      <!-- Health -->
       <section class="card">
-        <div class="card-header"><h2>Health</h2><span id="healthScore" class="badge healthy">--</span></div>
-        <div id="healthPanel" class="kv-grid"></div>
+        <div class="card-header" data-card="health"><h2>Health</h2><span id="healthScore" class="badge healthy">--</span></div>
+        <div class="card-body">
+          <div id="healthComponents" class="comp-list"></div>
+          <div id="healthPanel" class="kv-grid" style="margin-top:8px"></div>
+        </div>
       </section>
 
+      <!-- WS Events -->
       <section class="card">
-        <div class="card-header"><h2>WS Events</h2></div>
-        <div id="wsEventPanel" class="list-panel"></div>
+        <div class="card-header" data-card="ws"><h2>WS Events</h2><span id="wsEventCount" class="badge">0</span></div>
+        <div class="card-body">
+          <div id="wsEventPanel" class="list-panel"></div>
+        </div>
       </section>
 
+      <!-- Agents & Scheduler -->
       <section class="card">
-        <div class="card-header"><h2>Agents & Scheduler</h2></div>
-        <div id="agentsPanel" class="kv-grid"></div>
+        <div class="card-header" data-card="agents"><h2>Agents & Scheduler</h2></div>
+        <div class="card-body">
+          <div id="agentsPanel" class="kv-grid"></div>
+        </div>
       </section>
     </main>
   </div>

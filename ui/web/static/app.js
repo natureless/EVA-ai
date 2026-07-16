@@ -1,31 +1,42 @@
-// EVA Dashboard — reactive telemetry with WebSocket + REST
+// EVA Dashboard — reactive telemetry with WebSocket + REST + SSE streaming
 const $ = (id) => document.getElementById(id);
 
-// ── panels ──────────────────────────────────────────────
-const chatForm   = $("chatForm");
-const chatInput  = $("chatInput");
-const lastReply  = $("lastReply");
-const replyMeta  = $("replyMeta");
-const refreshBtn = $("refreshBtn");
-const wsIndicator = $("wsIndicator");
-const autoRefresh = $("autoRefresh");
-const policyDot   = $("policyDot");
-const healthScore = $("healthScore");
-const entityCount = $("entityCount");
-const wsEventPanel = $("wsEventPanel");
+// ── DOM refs ────────────────────────────────────────────
+const chatForm      = $("chatForm");
+const chatInput     = $("chatInput");
+const lastReply     = $("lastReply");
+const replyMeta     = $("replyMeta");
+const sendBtn       = $("sendBtn");
+const streamToggle  = $("streamToggle");
+const refreshBtn    = $("refreshBtn");
+const themeBtn      = $("themeBtn");
+const wsIndicator   = $("wsIndicator");
+const autoRefresh   = $("autoRefresh");
+const policyDot     = $("policyDot");
+const healthScore   = $("healthScore");
+const entityCount   = $("entityCount");
+const memSummary    = $("memSummary");
+const wsEventCount  = $("wsEventCount");
+const wsEventPanel  = $("wsEventPanel");
+const entityFilter  = $("entityFilter");
+
+let _allEntities = [];
+let streamingAbort = null;
 
 // ── helpers ─────────────────────────────────────────────
 function esc(v) {
   return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
-
 async function GET(url) {
   const r = await fetch(url);
   return r.ok ? r.json() : null;
 }
 
 function kv(target, data) {
-  if (!data || Object.keys(data).length === 0) { target.innerHTML = '<div class="dim">--</div>'; return; }
+  if (!data || Object.keys(data).length === 0) {
+    target.innerHTML = '<div class="empty-state">No data</div>';
+    return;
+  }
   target.innerHTML = Object.entries(data).map(([k,v]) => {
     const d = typeof v === "object" ? esc(JSON.stringify(v)) : esc(v);
     return `<div class="kv-key">${esc(k)}</div><div class="kv-value">${d}</div>`;
@@ -33,60 +44,141 @@ function kv(target, data) {
 }
 
 function list(target, items, fmt) {
-  if (!items || items.length === 0) { target.innerHTML = '<div class="dim">No data</div>'; return; }
+  if (!items || items.length === 0) {
+    target.innerHTML = '<div class="empty-state">No data</div>';
+    return;
+  }
   target.innerHTML = items.map(fmt).join("");
+}
+
+function progressRows(target, rows) {
+  target.innerHTML = rows.map(r => `
+    <div class="progress-row">
+      <div class="prog-label"><span>${esc(r.label)}</span><span>${esc(r.used)}/${esc(r.max)}</span></div>
+      <div class="progress-bar"><div class="fill ${r.color||'accent'}" style="width:${r.pct}%"></div></div>
+    </div>`).join("");
+}
+
+function compHealth(target, comps) {
+  target.innerHTML = Object.entries(comps).map(([k,v]) => {
+    const cls = typeof v === "boolean" ? (v ? "up" : "down") : "down";
+    return `<div class="comp-row">
+      <span><span class="comp-dot ${cls}"></span>${esc(k)}</span>
+      <span class="dim">${v ? "up" : "down"}</span>
+    </div>`;
+  }).join("");
+}
+
+// ── Theme toggle ────────────────────────────────────────
+function loadTheme() {
+  const t = localStorage.getItem("eva-theme") || "light";
+  document.documentElement.setAttribute("data-theme", t);
+  themeBtn.innerHTML = t === "dark" ? "&#9789;" : "&#9788;";
+}
+themeBtn.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("eva-theme", next);
+  themeBtn.innerHTML = next === "dark" ? "&#9789;" : "&#9788;";
+});
+loadTheme();
+
+// ── Card collapse ──────────────────────────────────────
+document.querySelectorAll(".card-header").forEach(h => {
+  h.addEventListener("click", (e) => {
+    if (e.target.closest("button") || e.target.closest("input") || e.target.closest("label")) return;
+    h.parentElement.classList.toggle("collapsed");
+  });
+});
+
+// ── Entity filter ──────────────────────────────────────
+if (entityFilter) {
+  entityFilter.addEventListener("input", () => {
+    const q = entityFilter.value.toLowerCase();
+    renderEntities(q ? _allEntities.filter(e =>
+      e.name.toLowerCase().includes(q) || e.type.toLowerCase().includes(q)
+    ) : _allEntities);
+  });
+}
+function renderEntities(entities) {
+  entityCount.textContent = entities.length;
+  list($("worldPanel"), entities, e => `
+    <div class="item">
+      <span class="tag ${e.type}">${esc(e.type)}</span>
+      <span class="item-title">${esc(e.name)}</span>
+      <span class="dim">${esc((e.updated_at||"").slice(0,16))}</span>
+    </div>`);
 }
 
 // ── REST refresh ────────────────────────────────────────
 async function refreshAll() {
   try {
-    // memory tiers
+    // ── memory tiers ──
     const tiers = await GET("/api/memory/tiers");
     if (tiers) {
-      const s1=tiers.S1_session, s2=tiers.S2_working, s3=tiers.S3_long_term, s4=tiers.S4_world_model, s5=tiers.S5_event_trace;
-      kv($("tiersPanel"), {
-        "S1 Session": `${s1.entries}/${s1.max_entries}  hits=${s1.hit_count}`,
-        "S2 Working": `${s2.entries}/${s2.max_entries}  ttl=${s2.ttl_hours}h`,
-        "S3 Long-term": `${s3.entries_active} active / ${s3.entries_archived} archived`,
-        "S4 World": `${s4.entities} entities / ${s4.edges} edges`,
-        "S5 Events": `${s5.events} events / ${s5.traces} traces`,
-      });
+      const s1=tiers.S1_session, s2=tiers.S2_working, s3=tiers.S3_long_term,
+            s4=tiers.S4_world_model, s5=tiers.S5_event_trace;
+      const totalMem = (s3.entries_active||0) + (s2.entries||0) + (s1.entries||0);
+      memSummary.textContent = `${totalMem} entries`;
+      progressRows($("tiersPanel"), [
+        { label:"S1 Session",   used:s1.entries, max:s1.max_entries, pct:Math.round(s1.entries/s1.max_entries*100), color:"blue" },
+        { label:"S2 Working",   used:s2.entries, max:s2.max_entries, pct:Math.round(s2.entries/s2.max_entries*100), color:"accent" },
+        { label:"S3 Long-term", used:s3.entries_active, max:s3.max_entries, pct:Math.round(s3.entries_active/s3.max_entries*100), color:"green" },
+        { label:"S4 Entities",  used:s4.entities, max:"--", pct:Math.min(s4.entities||0,100), color:"yellow" },
+        { label:"S4 Edges",     used:s4.edges,    max:"--", pct:Math.min(s4.edges||0,100), color:"yellow" },
+        { label:"S5 Events",    used:s5.events,   max:"--",  pct:Math.min(s5.events||0,100), color:"green" },
+      ]);
     }
 
-    // world model entities
-    const world = await GET("/api/memory/world?limit=30");
+    // ── world model ──
+    const world = await GET("/api/memory/world?limit=50");
     if (world) {
-      entityCount.textContent = world.entities.length;
-      list($("worldPanel"), world.entities, e => `
-        <div class="item">
-          <span class="tag ${e.type}">${esc(e.type)}</span>
-          <span class="item-title">${esc(e.name)}</span>
-          <span class="dim">updated ${esc((e.updated_at||"").slice(0,16))}</span>
-        </div>`);
+      _allEntities = world.entities || [];
+      renderEntities(_allEntities);
     }
 
-    // policy
+    // ── policy ──
     const policy = await GET("/api/policy/state");
     if (policy) {
-      const cls = policy.state === "quarantined" ? "quarantined" : policy.state === "dormant" ? "dormant" : "commanded";
+      const cls = policy.state === "quarantined" ? "quarantined"
+        : policy.state === "supervised" ? "supervised"
+        : policy.state === "dormant" ? "dormant" : "commanded";
       policyDot.className = `dot ${cls}`;
       kv($("policyPanel"), {
         State: policy.state,
         "Since (s)": policy.state_since_seconds,
-        "History": policy.history_size,
-        "Tokens": policy.active_tokens,
+        "History size": policy.history_size,
+        "Active tokens": policy.active_tokens,
       });
     }
 
-    // health
+    // ── policy detail (for timeline) ──
+    const policyDetail = await GET("/api/policy/state?detail=true");
+    if (policyDetail && policyDetail.state_machine && policyDetail.state_machine.history) {
+      const hist = policyDetail.state_machine.history.slice(-30);
+      $("policyTimeline").innerHTML = hist.map(h => {
+        const tc = h.to === "quarantined" ? "quarantined"
+          : h.to === "supervised" ? "supervised"
+          : h.to === "commanded" ? "commanded" : "dormant";
+        return `<span class="timeline-dot ${tc}" title="${esc(h.from)}→${esc(h.to)} via ${esc(h.trigger)}"></span>`;
+      }).join("");
+    }
+
+    // ── health ──
     const diag = await GET("/health/diagnostic");
     if (diag) {
       healthScore.textContent = `${diag.score}% ${diag.overall}`;
       healthScore.className = `badge ${diag.overall}`;
       kv($("healthPanel"), { Score: diag.score, Overall: diag.overall, Failed: diag.failed_count });
+      // component-level health from /health/ready
+      const ready = await GET("/health/ready");
+      if (ready && ready.components) {
+        compHealth($("healthComponents"), ready.components);
+      }
     }
 
-    // system state
+    // ── system state ──
     const state = await GET("/api/state");
     if (state) {
       kv($("statePanel"), {
@@ -99,18 +191,18 @@ async function refreshAll() {
       });
     }
 
-    // audit
+    // ── audit ──
     const audit = await GET("/api/executors/audit/replay?limit=15");
     if (audit && audit.timeline) {
       list($("auditPanel"), audit.timeline.slice(0, 10), item => `
         <div class="item">
           <span class="tag ${item.status}">${esc(item.status)}</span>
           <span class="item-title">${esc(item.executor)} / ${esc(item.action)}</span>
-          <span class="dim">${esc(item.timestamp)}  ${item.duration_ms}ms</span>
+          <span class="dim">${esc(item.timestamp)} ${item.duration_ms}ms</span>
         </div>`);
     }
 
-    // agents
+    // ── agents ──
     const agents = await GET("/api/agents");
     const jobs = await GET("/api/scheduler/jobs");
     if (agents) {
@@ -124,6 +216,93 @@ async function refreshAll() {
     console.error("refresh error", e);
   }
 }
+
+// ── SSE Streaming ──────────────────────────────────────
+async function sendChatStream(text) {
+  lastReply.textContent = "";
+  replyMeta.textContent = "streaming...";
+  lastReply.parentElement.classList.add("streaming");
+
+  if (streamingAbort) streamingAbort.abort();
+  const ctrl = new AbortController();
+  streamingAbort = ctrl;
+
+  try {
+    const r = await fetch("/api/chat/stream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+      signal: ctrl.signal,
+    });
+    const reader = r.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    let full = "";
+    const start = performance.now();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() || "";
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = line.slice(6);
+        if (data === "[DONE]") {
+          const dur = Math.round(performance.now() - start);
+          replyMeta.textContent = `streamed in ${dur}ms`;
+          break;
+        }
+        if (data.startsWith("[ERROR:")) {
+          full += data;
+          lastReply.textContent = full;
+          replyMeta.textContent = "stream error";
+          break;
+        }
+        full += data;
+        lastReply.textContent = full;
+      }
+    }
+    lastReply.parentElement.classList.remove("streaming");
+    setTimeout(refreshAll, 300);
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      lastReply.textContent = `Error: ${err.message}`;
+      replyMeta.textContent = "error";
+    }
+    lastReply.parentElement.classList.remove("streaming");
+  }
+}
+
+// ── Chat form ───────────────────────────────────────────
+chatForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = chatInput.value.trim();
+  if (!text) return;
+  chatInput.value = "";
+  sendBtn.disabled = true;
+
+  if (streamToggle.checked) {
+    await sendChatStream(text);
+  } else {
+    try {
+      const r = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const result = await r.json();
+      lastReply.textContent = result.reply || "";
+      replyMeta.textContent = `agent=${result.selected_agent} loop=${result.loop_id} ${result.duration_ms||0}ms`;
+      setTimeout(refreshAll, 300);
+    } catch (err) {
+      lastReply.textContent = `Error: ${err.message}`;
+      replyMeta.textContent = "error";
+    }
+  }
+  sendBtn.disabled = false;
+});
 
 // ── WebSocket ────────────────────────────────────────────
 let wsReconnectTimer = null;
@@ -145,8 +324,8 @@ function connectWS() {
       if (data.pong) return;
       wsEvents.unshift(data);
       if (wsEvents.length > 50) wsEvents.length = 50;
+      wsEventCount.textContent = wsEvents.length;
 
-      // render WS events
       list(wsEventPanel, wsEvents.slice(0, 8), event => `
         <div class="item">
           <span class="tag channel">${esc(event.channel)}</span>
@@ -154,15 +333,16 @@ function connectWS() {
           <span class="dim">${new Date((event.ts||0)*1000).toLocaleTimeString()}</span>
         </div>`);
 
-      // policy real-time update
       if (data.channel === "policy_state" && data.payload) {
         const p = data.payload.state_machine || data.payload;
         if (p.current) {
-          policyDot.className = `dot ${p.current}`;
+          const cls = p.current === "quarantined" ? "quarantined"
+            : p.current === "supervised" ? "supervised"
+            : p.current === "commanded" ? "commanded" : "dormant";
+          policyDot.className = `dot ${cls}`;
         }
       }
 
-      // entity count bump
       if (data.channel === "entity_created") {
         const n = parseInt(entityCount.textContent) || 0;
         entityCount.textContent = n + 1;
@@ -178,35 +358,13 @@ function connectWS() {
     wsIndicator.className = "badge disconnected";
     autoRefresh.textContent = "REST";
     autoRefresh.className = "badge";
-    // reconnect in 3s
     if (!wsReconnectTimer) wsReconnectTimer = setInterval(connectWS, 3000);
   };
   ws.onerror = () => ws.close();
 }
 connectWS();
 
-// ── Chat ─────────────────────────────────────────────────
-chatForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
-  chatInput.value = "";
-  try {
-    const r = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
-    });
-    const result = await r.json();
-    lastReply.textContent = result.reply || "";
-    replyMeta.textContent = `agent=${result.selected_agent} loop=${result.loop_id} ${result.duration_ms||0}ms`;
-    setTimeout(refreshAll, 300);
-  } catch (err) {
-    lastReply.textContent = `Error: ${err.message}`;
-  }
-});
-
 // ── init ─────────────────────────────────────────────────
 refreshBtn.addEventListener("click", refreshAll);
 refreshAll();
-setInterval(refreshAll, 8000);  // REST polling every 8s (WS covers real-time)
+setInterval(refreshAll, 8000);
