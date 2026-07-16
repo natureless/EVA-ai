@@ -36,7 +36,12 @@ class LLMAdapter(ABC):
 # ── Mock (no-API-key fallback) ──────────────────────────────
 
 class MockLLM(LLMAdapter):
-    """Deterministic echo — used when no API key is configured."""
+    """Deterministic structured output — used when no API key is configured.
+
+    Produces task-like structured replies that exercise the entity
+    extraction pipeline. Real LLM replaces this automatically when
+    API keys are configured.
+    """
 
     def chat(self, messages: list[dict]) -> str:
         last = messages[-1]["content"] if messages else ""
@@ -48,9 +53,30 @@ class MockLLM(LLMAdapter):
                 context_hint = " [context-aware]"
                 break
 
-        if context_hint:
-            return f"[EVA mock{context_hint}] received: {last[:200]}"
-        return f"[EVA mock{context_hint}] {last[:200]}"
+        base = f"[EVA mock{context_hint}] received: {last[:120]}"
+
+        # produce structured output for task-oriented messages
+        task_kw = ("fix", "bug", "deploy", "implement", "add", "create", "build")
+        user_lower = last.lower()
+        if any(kw in user_lower for kw in task_kw):
+            if "implement" in user_lower:
+                action = "Implement"
+            elif "fix" in user_lower:
+                action = "Fix"
+            elif "deploy" in user_lower:
+                action = "Deploy"
+            else:
+                action = "Add"
+            task_name = last[:80].strip()
+            base += (
+                f"\n\nI'll help with that. Here's the plan:\n"
+                f"- [ ] {action} the feature: {task_name}\n"
+                f"- [ ] Write tests for the changes\n"
+                f"- [ ] Review, document, and verify\n\n"
+                f"Priority: high | Deadline: within 2 days"
+            )
+
+        return base
 
     @property
     def provider(self) -> str:
