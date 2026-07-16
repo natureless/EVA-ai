@@ -406,7 +406,8 @@ const AvatarController = {
     this._wrapper.style.transition = "transform var(--transition-zoom)";
     this._wrapper.style.transformOrigin = "50% 15%";
     this._wrapper.style.transform = "scale(2.5) translateY(0)";
-    this._wrapper.classList.remove("listening");
+    this._wrapper.classList.remove("listening", "responding");
+    this._wrapper.classList.add("idle");
     this._svg && this._svg.classList.remove("responding");
     this._stopMouth();
     this._setParticles("calm");
@@ -420,6 +421,7 @@ const AvatarController = {
     this._wrapper.style.transition = "transform 400ms cubic-bezier(0.4, 0, 0.2, 1)";
     this._wrapper.style.transformOrigin = "50% 15%";
     this._wrapper.style.transform = "scale(2.8) translateY(2px)";
+    this._wrapper.classList.remove("idle", "responding");
     this._wrapper.classList.add("listening");
     this._updateLabel("avatar.listening");
   },
@@ -432,7 +434,8 @@ const AvatarController = {
     this._wrapper.offsetHeight;
     this._wrapper.style.transition = "transform var(--transition-zoom)";
     this._wrapper.style.transform = "scale(1.0) translateY(0)";
-    this._wrapper.classList.remove("listening");
+    this._wrapper.classList.remove("listening", "idle");
+    this._wrapper.classList.add("responding");
     this._svg && this._svg.classList.add("responding");
     this._startMouth();
     this._setParticles("active");
@@ -477,23 +480,34 @@ const AvatarController = {
   _initParticles() {
     const c = this._particleCanvas;
     if (!c) return;
+    this._resizeCanvas();
+    this._spawnParticles(10);
+    window.addEventListener("resize", () => this._resizeCanvas());
+  },
+
+  _resizeCanvas() {
+    const c = this._particleCanvas;
+    if (!c || !c.parentElement) return;
     const rect = c.parentElement.getBoundingClientRect();
     c.width = rect.width;
     c.height = rect.height;
-    this._spawnParticles(10);
   },
 
   _spawnParticles(count) {
     const c = this._particleCanvas;
     if (!c) return;
     for (let i = 0; i < count; i++) {
+      const hue = Math.random() < 0.6 ? "accent" : (Math.random() < 0.5 ? "teal" : "white");
       this._particles.push({
         x: Math.random() * c.width,
-        y: c.height * 0.3 + Math.random() * c.height * 0.5,
-        r: 1 + Math.random() * 2,
+        y: c.height * 0.25 + Math.random() * c.height * 0.55,
+        r: 0.8 + Math.random() * 2.8,
         speed: 0.3 + Math.random() * 0.8,
-        drift: (Math.random() - 0.5) * 0.4,
+        drift: (Math.random() - 0.5) * 0.5,
         opacity: Math.random() * 0.5,
+        hue,
+        shape: Math.random() < 0.3 ? "diamond" : "circle",
+        glow: Math.random() < 0.25,
       });
     }
   },
@@ -518,23 +532,47 @@ const AvatarController = {
 
     const style = getComputedStyle(document.documentElement);
     const accentColor = style.getPropertyValue("--accent").trim() || "#0f766e";
+    const accentLight = style.getPropertyValue("--accent-light").trim() || "#ccfbf1";
 
     for (const p of this._particles) {
       p.y -= p.speed;
       p.x += p.drift;
-      p.opacity -= 0.002;
-      if (p.y < 0 || p.opacity <= 0) {
-        p.y = h * 0.3 + Math.random() * h * 0.5;
+      p.opacity -= 0.0015;
+      if (p.y < -10 || p.opacity <= 0) {
+        p.y = h * 0.25 + Math.random() * h * 0.55;
         p.x = Math.random() * w;
         p.opacity = 0.3 + Math.random() * 0.4;
       }
 
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = accentColor;
+      const color = p.hue === "accent" ? accentColor
+        : p.hue === "teal" ? "#2dd4bf"
+        : accentLight;
+
+      ctx.save();
       ctx.globalAlpha = p.opacity;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+
+      if (p.glow) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 6;
+      }
+
+      if (p.shape === "diamond") {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - p.r);
+        ctx.lineTo(p.x + p.r * 0.7, p.y);
+        ctx.lineTo(p.x, p.y + p.r);
+        ctx.lineTo(p.x - p.r * 0.7, p.y);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+
+      ctx.restore();
     }
 
     this._particleRAF = requestAnimationFrame(() => this._particleLoop());

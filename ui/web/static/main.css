@@ -64,6 +64,7 @@ body {
   padding: 10px 20px; background: var(--card-bg); border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow); height: 52px; flex-shrink: 0;
   transition: background var(--transition), border var(--transition);
+  backdrop-filter: blur(8px);
 }
 .topbar-left { display: flex; align-items: baseline; gap: 8px; }
 .topbar-left h1 { font-size: 18px; font-weight: 700; color: var(--header); }
@@ -107,8 +108,18 @@ body {
   display: flex; align-items: center; justify-content: center;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, var(--card-bg) 0%, var(--bg) 70%);
+  background:
+    radial-gradient(ellipse at 50% 30%, var(--card-bg) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, var(--accent-light) 0%, transparent 40%),
+    var(--bg);
   border-right: 1px solid var(--border);
+}
+
+[data-theme="dark"] .avatar-panel {
+  background:
+    radial-gradient(ellipse at 50% 30%, #252530 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, rgba(45, 212, 191, 0.08) 0%, transparent 45%),
+    var(--bg);
 }
 
 .avatar-container {
@@ -129,8 +140,18 @@ body {
   display: block;
 }
 
+.avatar-wrapper.idle {
+  animation: avatar-breathe 4s ease-in-out infinite;
+}
+
 .avatar-wrapper.listening {
-  filter: drop-shadow(0 0 8px var(--accent));
+  filter:
+    drop-shadow(0 0 8px var(--accent))
+    drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 30%, transparent));
+}
+
+.avatar-wrapper.responding {
+  animation: avatar-sway 3.5s ease-in-out infinite;
 }
 
 .avatar-state-label {
@@ -162,6 +183,12 @@ body {
   scroll-behavior: smooth;
 }
 
+/* Custom scrollbar */
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.chat-messages::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
 .chat-empty {
   flex: 1; display: flex; align-items: center; justify-content: center;
 }
@@ -182,15 +209,30 @@ body {
 .message-bubble {
   padding: 10px 16px; border-radius: 16px; line-height: 1.55;
   font-size: 13px; word-break: break-word; white-space: pre-wrap;
-  animation: message-in 200ms ease-out;
+  animation: message-in 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .message-row.user .message-bubble {
   background: var(--accent); color: #fff;
   border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+  transition: box-shadow 200ms ease;
+}
+.message-row.user .message-bubble:hover {
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 .message-row.eva .message-bubble {
   background: var(--card-bg); border: 1px solid var(--border);
   border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+.message-row.eva .message-bubble:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-color: var(--dim);
+}
+
+[data-theme="dark"] .message-row.user .message-bubble {
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .message-time {
@@ -219,7 +261,7 @@ body {
 .chat-input-area {
   border-top: 1px solid var(--border);
   padding: 14px 20px;
-  background: var(--card-bg);
+  background: linear-gradient(to top, var(--card-bg), color-mix(in srgb, var(--card-bg) 97%, var(--bg)));
 }
 .chat-form { display: flex; flex-direction: column; gap: 8px; }
 .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
@@ -229,21 +271,23 @@ body {
   border: 1px solid var(--border); border-radius: var(--radius);
   background: var(--bg); color: var(--text);
   font-family: inherit; line-height: 1.45;
-  transition: border var(--transition); max-height: 120px;
+  transition: border 200ms ease, box-shadow 200ms ease; max-height: 120px;
 }
 .chat-input-row textarea:focus {
   outline: none; border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-light);
+  box-shadow: 0 0 0 3px var(--accent-light);
 }
 
 .send-btn {
   padding: 10px 20px; font-size: 13px; font-weight: 600; white-space: nowrap;
   background: var(--accent); color: #fff; border: none;
   border-radius: var(--radius); cursor: pointer;
-  transition: background var(--transition);
+  transition: background var(--transition), transform 100ms ease, box-shadow 200ms ease;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 25%, transparent);
 }
-.send-btn:hover { background: var(--accent-hover); }
-.send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.send-btn:hover { background: var(--accent-hover); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 40%, transparent); }
+.send-btn:active { transform: scale(0.97); }
+.send-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 .chat-toolbar { display: flex; align-items: center; gap: 12px; font-size: 12px; }
 
@@ -271,7 +315,17 @@ body {
   height: calc(100vh - 52px);
   overflow-y: auto;
   padding: 16px;
+  scroll-behavior: smooth;
 }
+
+.settings-page::-webkit-scrollbar { width: 5px; }
+.settings-page::-webkit-scrollbar-track { background: transparent; }
+.settings-page::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+.settings-page::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+.list-panel { max-height: 240px; overflow-y: auto; font-size: 12px; }
+.list-panel::-webkit-scrollbar { width: 4px; }
+.list-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 .settings-page .page-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -293,16 +347,17 @@ body {
 .card {
   background: var(--card-bg); border: 1px solid var(--border);
   border-radius: var(--radius); box-shadow: var(--shadow);
-  transition: background var(--transition), border var(--transition), box-shadow var(--transition);
+  transition: background var(--transition), border var(--transition), box-shadow var(--transition), transform 200ms ease;
 }
-.card:hover { box-shadow: var(--shadow-md); }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 
 .card-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 14px; cursor: pointer; user-select: none;
   border-bottom: 1px solid transparent;
-  transition: border var(--transition);
+  transition: border var(--transition), background 150ms ease;
 }
+.card-header:hover { background: color-mix(in srgb, var(--accent-light) 30%, transparent); }
 .card:not(.collapsed) .card-header { border-bottom-color: var(--border); }
 .card-header h2 { font-size: 13px; font-weight: 600; color: var(--header); }
 
