@@ -259,11 +259,15 @@ class FileExecutor(BaseExecutor):
         if not allowed:
             return ExecutorDecision(
                 allowed=False,
-                reason=f"path {target} not in allowed paths: {[str(p) for p in self.allowed_paths]}",
+                reason=f"path {target} not in allowed paths",
             )
 
+        action = params.get("action", params.get("kind", "read"))
+        # search/inspect are boundary-only actions (agent does the I/O)
+        if action in ("search", "inspect"):
+            return ExecutorDecision(allowed=True, reason="boundary check passed")
+
         # file size check (for read)
-        action = params.get("action", "read")
         if action == "read" and target.is_file():
             size = target.stat().st_size
             if size > self.max_file_size:

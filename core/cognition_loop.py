@@ -5,6 +5,7 @@ import logging
 
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.router import AgentRouter
+from agent_os.agent_task import AGENT_EXECUTOR_MAP
 from core.context_builder import ContextBuilder
 from core.entity_extractor import entity_extractor
 from core.planner import Planner
@@ -46,6 +47,7 @@ class CognitionLoop:
         self_model: dict | None = None,
         policy_engine: PolicyEngine | None = None,
         tiered_memory: TieredMemoryManager | None = None,
+        executors: dict | None = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -67,6 +69,7 @@ class CognitionLoop:
         self.self_model = self_model
         self.policy_engine = policy_engine
         self.tiered_memory = tiered_memory
+        self._executors: dict = executors or {}
 
         self._stop_event = threading.Event()
         self._thread: threading.Thread | None = None
@@ -215,7 +218,27 @@ class CognitionLoop:
 
                     if not blocked:
                         selected_agent = self.agent_router.route(plan.agent, plan.task)
-                        result, agent_duration_ms = self.orchestrator.execute(selected_agent, plan.task)
+
+                        # ── agent → executor routing ──────────
+                        agent_exe = None
+                        agent_tok = ""
+                        if self._executors:
+                            exe_type = AGENT_EXECUTOR_MAP.get(selected_agent)
+                            agent_exe = self._executors.get(exe_type) if exe_type else None
+                            if agent_exe and self.policy_engine:
+                                tm = self.policy_engine.token_manager
+                                token = tm.issue(
+                                    loop_id, exe_type or "agent",
+                                    ttl_seconds=300, budget_tokens=10,
+                                )
+                                agent_tok = token.token_id
+
+                        result, agent_duration_ms = self.orchestrator.execute(
+                            selected_agent, plan.task,
+                            executor=agent_exe,
+                            token_manager=self.policy_engine.token_manager if self.policy_engine else None,
+                            token_id=agent_tok,
+                        )
                         reply = result.content
 
                     # ── self-model feedback: prediction error + state recording ──

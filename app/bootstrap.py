@@ -278,6 +278,7 @@ def bootstrap_system() -> dict:
             self_model=self_model,
             policy_engine=policy_engine,
             tiered_memory=tiered_memory,
+            executors=executors,
         )
         loop.start()
         system_state["loop_ready"] = True

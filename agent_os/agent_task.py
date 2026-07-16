@@ -1,0 +1,74 @@
+"""Agent task to executor parameter conversion.
+
+Maps agent task kinds to executor actions and parameters,
+enabling agents that access external resources (filesystem, code
+execution) to route through the executor framework for token
+validation, boundary checking, and audit logging.
+"""
+
+from agents.base_agent import AgentTask
+
+# ── Agent → Executor mapping ───────────────────────────────
+
+AGENT_EXECUTOR_MAP: dict[str, str] = {
+    "search_agent": "file",
+    "coding_agent": "file",
+}
+
+
+# ── Task conversion ────────────────────────────────────────
+
+def task_to_executor_params(
+    task: AgentTask,
+    executor_type: str,
+    *,
+    task_id: str = "",
+) -> dict:
+    """Convert an AgentTask into executor.execute(action, params) args.
+
+    Returns dict with keys: action, params (for executor.execute()),
+    token_id (empty if no token needed), task_id.
+    """
+    if executor_type == "file":
+        return _search_or_code_to_file(task, task_id=task_id)
+
+    # unknown executor — pass through as-is
+    return {
+        "action": "agent_task",
+        "params": {"kind": task.kind, **task.payload},
+        "task_id": task_id,
+    }
+
+
+def _search_or_code_to_file(task: AgentTask, *, task_id: str) -> dict:
+    payload = task.payload or {}
+
+    if task.kind == "search":
+        query = payload.get("query") or payload.get("text") or ""
+        root = payload.get("root") or "."
+        return {
+            "action": "search",
+            "params": {
+                "path": root,
+                "query": query,
+                "kind": "search",
+            },
+            "task_id": task_id,
+        }
+
+    if task.kind == "code":
+        file_path = payload.get("path") or ""
+        return {
+            "action": "inspect",
+            "params": {
+                "path": file_path,
+                "kind": "code",
+            },
+            "task_id": task_id,
+        }
+
+    return {
+        "action": "read",
+        "params": {"path": payload.get("path", ""), **payload},
+        "task_id": task_id,
+    }
