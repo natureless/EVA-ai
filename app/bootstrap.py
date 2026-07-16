@@ -13,6 +13,10 @@ from agents.search_agent import SearchAgent
 from app.config import settings
 from core.cognition_loop import CognitionLoop
 from core.context_builder import ContextBuilder
+from core.executor import (
+    ExecutorAuditLog, FileExecutor, CodeExecutor,
+    BrowserExecutor, APIExecutor, CommsExecutor,
+)
 from core.planner import Planner
 from core.policy_engine import PolicyEngine
 from core.prediction import PredictionTracker
@@ -236,6 +240,22 @@ def bootstrap_system() -> dict:
     system_state["policy_state"] = policy_engine.get_state()
     logger.info("policy engine initialized")
 
+    # init executor framework
+    executor_audit_log = ExecutorAuditLog(store)
+    executors_config: dict = {}
+    exec_cfg_path = Path("config/executors.yaml")
+    if exec_cfg_path.exists():
+        with exec_cfg_path.open("r", encoding="utf-8") as fh:
+            executors_config = yaml.safe_load(fh) or {}
+    executors = {
+        "file": FileExecutor(executor_audit_log, executors_config),
+        "code": CodeExecutor(executor_audit_log, executors_config),
+        "browser": BrowserExecutor(executor_audit_log, executors_config),
+        "api": APIExecutor(executor_audit_log, executors_config),
+        "comms": CommsExecutor(executor_audit_log, executors_config),
+    }
+    logger.info("executor framework initialized (%d executors)", len(executors))
+
     try:
         loop = CognitionLoop(
             event_bus=event_bus,
@@ -317,6 +337,8 @@ def bootstrap_system() -> dict:
         "prediction_tracker": prediction_tracker,
         "policy_engine": policy_engine,
         "tiered_memory": tiered_memory,
+        "executors": executors,
+        "executor_audit_log": executor_audit_log,
         "save_runtime_snapshot": save_runtime_snapshot,
         "health": health,
     }

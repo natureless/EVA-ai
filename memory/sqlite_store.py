@@ -237,6 +237,32 @@ class SQLiteStore:
                 """
             )
 
+            # ── Executor Audit ──────────────────────────────
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS executor_audit (
+                    id TEXT PRIMARY KEY,
+                    executor_type TEXT NOT NULL,
+                    action TEXT NOT NULL,
+                    task_id TEXT NOT NULL,
+                    token_id TEXT NOT NULL DEFAULT '',
+                    parameters_json TEXT NOT NULL DEFAULT '{}',
+                    result_summary TEXT NOT NULL DEFAULT '',
+                    duration_ms INTEGER NOT NULL DEFAULT 0,
+                    status TEXT NOT NULL,
+                    timestamp TEXT NOT NULL
+                )
+                """
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_audit_type_status
+                   ON executor_audit(executor_type, status)"""
+            )
+            cur.execute(
+                """CREATE INDEX IF NOT EXISTS idx_audit_timestamp
+                   ON executor_audit(timestamp)"""
+            )
+
     def execute(self, sql: str, params: Iterable[Any] = ()) -> None:
         with self.connection() as conn:
             conn.execute(sql, tuple(params))
