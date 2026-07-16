@@ -2,9 +2,19 @@ import json
 import logging
 import time as _time
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
+
+# Load .env before any other module reads os.environ
+try:
+    from dotenv import load_dotenv
+    _env_path = Path(__file__).resolve().parent.parent / ".env"
+    if _env_path.exists():
+        load_dotenv(_env_path)
+except ImportError:
+    pass
 
 from app.api import router
 from app.bootstrap import bootstrap_system, shutdown_system

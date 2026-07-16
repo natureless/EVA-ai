@@ -247,7 +247,7 @@ class SystemDiagnostic:
                     name="llm",
                     passed=False,
                     detail="no LLM API key configured — using MockLLM (echo mode)",
-                    recommendation="set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable",
+                    recommendation="set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable",
                 )
             return DiagnosticCheck(
                 name="llm",

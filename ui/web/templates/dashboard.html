@@ -1,43 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="zh-CN" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ app_name }} Dashboard</title>
+  <title>{{ app_name }} 控制面板</title>
   <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
   <div class="page">
     <header class="topbar">
       <div>
-        <h1>{{ app_name }} v0.1</h1>
-        <p class="sub">Live telemetry &middot; WebSocket &middot; REST &middot; SSE</p>
+        <h1>{{ app_name }} <span class="ver">v0.1</span></h1>
+        <p class="sub" data-i18n="app.subtitle">实时遥测 · WebSocket · REST · SSE</p>
       </div>
       <div class="top-actions">
         <span id="wsIndicator" class="badge disconnected">WS</span>
-        <span id="autoRefresh" class="badge ok">Live</span>
-        <button id="themeBtn" class="icon-btn" title="Toggle dark/light mode">&#9788;</button>
-        <button id="refreshBtn" type="button">Refresh</button>
+        <span id="autoRefresh" class="badge ok" data-i18n="ws.rest">REST</span>
+        <button id="langBtn" class="lang-btn" title="Switch Language / 切换语言">中</button>
+        <button id="themeBtn" class="icon-btn" title="切换深色/浅色模式">&#9788;</button>
+        <button id="refreshBtn" type="button" data-i18n="btn.refresh">刷新</button>
       </div>
     </header>
 
     <main class="grid">
       <!-- Chat + Stream -->
       <section class="card chat-card">
-        <div class="card-header" data-card="chat"><h2>Chat</h2><span class="hint">POST /api/chat</span></div>
+        <div class="card-header" data-card="chat">
+          <h2 data-i18n="chat.title">对话</h2>
+          <span class="hint" data-i18n="chat.hint">POST /api/chat</span>
+        </div>
         <div class="card-body">
           <form id="chatForm" class="chat-form">
-            <textarea id="chatInput" placeholder="Send a message..." rows="3"></textarea>
+            <textarea id="chatInput" data-i18n-placeholder="chat.placeholder" placeholder="发送消息..." rows="3"></textarea>
             <div class="chat-toolbar">
               <div class="toggle-row">
                 <label class="toggle-switch"><input type="checkbox" id="streamToggle"><span class="slider"></span></label>
-                <span>SSE Stream</span>
+                <span data-i18n="chat.sse">SSE 流式</span>
               </div>
-              <button type="submit" id="sendBtn">Send</button>
+              <button type="submit" id="sendBtn" data-i18n="chat.send">发送</button>
             </div>
           </form>
           <div class="result-block">
-            <div class="label">Reply <span id="replyMeta" class="dim"></span></div>
+            <div class="label"><span data-i18n="chat.reply">回复</span> <span id="replyMeta" class="dim"></span></div>
             <pre id="lastReply" class="mono"></pre>
           </div>
         </div>
@@ -45,7 +49,10 @@
 
       <!-- Policy -->
       <section class="card">
-        <div class="card-header" data-card="policy"><h2>Policy</h2><span id="policyDot" class="dot dormant"></span></div>
+        <div class="card-header" data-card="policy">
+          <h2 data-i18n="policy.title">策略</h2>
+          <span id="policyDot" class="dot dormant"></span>
+        </div>
         <div class="card-body">
           <div id="policyPanel" class="kv-grid"></div>
           <div id="policyTimeline" class="timeline-strip"></div>
@@ -54,7 +61,10 @@
 
       <!-- Memory Tiers -->
       <section class="card">
-        <div class="card-header" data-card="memory"><h2>Memory Tiers</h2><span id="memSummary" class="badge">--</span></div>
+        <div class="card-header" data-card="memory">
+          <h2 data-i18n="memory.title">记忆层级</h2>
+          <span id="memSummary" class="badge">--</span>
+        </div>
         <div class="card-body">
           <div id="tiersPanel"></div>
         </div>
@@ -62,16 +72,21 @@
 
       <!-- World Model -->
       <section class="card">
-        <div class="card-header" data-card="world"><h2>World Model</h2><span id="entityCount" class="badge">0</span></div>
+        <div class="card-header" data-card="world">
+          <h2 data-i18n="world.title">世界模型</h2>
+          <span id="entityCount" class="badge">0</span>
+        </div>
         <div class="card-body">
-          <input type="text" class="filter-input" id="entityFilter" placeholder="Filter entities..." />
+          <input type="text" class="filter-input" id="entityFilter" data-i18n-placeholder="world.filter" placeholder="筛选实体..." />
           <div id="worldPanel" class="list-panel"></div>
         </div>
       </section>
 
       <!-- Audit -->
       <section class="card">
-        <div class="card-header" data-card="audit"><h2>Audit Timeline</h2></div>
+        <div class="card-header" data-card="audit">
+          <h2 data-i18n="audit.title">审计时间线</h2>
+        </div>
         <div class="card-body">
           <div id="auditPanel" class="list-panel"></div>
         </div>
@@ -79,7 +94,9 @@
 
       <!-- System State -->
       <section class="card">
-        <div class="card-header" data-card="state"><h2>System State</h2></div>
+        <div class="card-header" data-card="state">
+          <h2 data-i18n="state.title">系统状态</h2>
+        </div>
         <div class="card-body">
           <div id="statePanel" class="kv-grid"></div>
         </div>
@@ -87,7 +104,10 @@
 
       <!-- Health -->
       <section class="card">
-        <div class="card-header" data-card="health"><h2>Health</h2><span id="healthScore" class="badge healthy">--</span></div>
+        <div class="card-header" data-card="health">
+          <h2 data-i18n="health.title">健康</h2>
+          <span id="healthScore" class="badge healthy">--</span>
+        </div>
         <div class="card-body">
           <div id="healthComponents" class="comp-list"></div>
           <div id="healthPanel" class="kv-grid" style="margin-top:8px"></div>
@@ -96,7 +116,10 @@
 
       <!-- WS Events -->
       <section class="card">
-        <div class="card-header" data-card="ws"><h2>WS Events</h2><span id="wsEventCount" class="badge">0</span></div>
+        <div class="card-header" data-card="ws">
+          <h2 data-i18n="ws.title">WS 事件</h2>
+          <span id="wsEventCount" class="badge">0</span>
+        </div>
         <div class="card-body">
           <div id="wsEventPanel" class="list-panel"></div>
         </div>
@@ -104,7 +127,9 @@
 
       <!-- Agents & Scheduler -->
       <section class="card">
-        <div class="card-header" data-card="agents"><h2>Agents & Scheduler</h2></div>
+        <div class="card-header" data-card="agents">
+          <h2 data-i18n="agents.title">智能体 & 调度器</h2>
+        </div>
         <div class="card-body">
           <div id="agentsPanel" class="kv-grid"></div>
         </div>
@@ -112,6 +137,7 @@
     </main>
   </div>
 
+  <script src="/static/i18n.js"></script>
   <script src="/static/app.js"></script>
 </body>
 </html>

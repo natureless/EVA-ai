@@ -1,8 +1,9 @@
-"""LLM adapter — provider-agnostic interface for OpenAI and Claude APIs.
+"""LLM adapter — provider-agnostic interface for OpenAI, Claude, and DeepSeek APIs.
 
 Supports:
 - OpenAI: gpt-4o-mini, gpt-4o, etc. (via OPENAI_API_KEY)
 - Claude: claude-sonnet-4-6, claude-haiku-4-5, etc. (via ANTHROPIC_API_KEY)
+- DeepSeek: deepseek-chat, deepseek-reasoner (via DEEPSEEK_API_KEY)
 - Mock: deterministic echo for testing (when no API key configured)
 
 Usage::
@@ -290,9 +291,10 @@ def get_llm(
     Priority:
     1. Explicit provider arg
     2. ANTHROPIC_API_KEY env -> Claude
-    3. OPENAI_API_KEY env -> OpenAI
-    4. EVA_LLM_PROVIDER env (claude|openai)
-    5. Mock fallback
+    3. DEEPSEEK_API_KEY env -> DeepSeek (via OpenAI-compatible API)
+    4. OPENAI_API_KEY env -> OpenAI
+    5. EVA_LLM_PROVIDER env (claude|openai|deepseek)
+    6. Mock fallback
 
     Tuning params (temperature, max_tokens) read from env vars
     EVA_LLM_TEMPERATURE / EVA_LLM_MAX_TOKENS if not explicitly set.
@@ -305,12 +307,21 @@ def get_llm(
     if not provider:
         if os.environ.get("ANTHROPIC_API_KEY"):
             provider = "claude"
+        elif os.environ.get("DEEPSEEK_API_KEY"):
+            provider = "deepseek"
         elif os.environ.get("OPENAI_API_KEY"):
             provider = "openai"
 
     if provider in ("claude", "anthropic"):
         return ClaudeAdapter(api_key=api_key, model=model,
                             temperature=temperature, max_tokens=max_tokens)
+    if provider == "deepseek":
+        return OpenAIAdapter(
+            api_key=api_key or os.environ.get("DEEPSEEK_API_KEY", ""),
+            model=model or os.environ.get("EVA_LLM_MODEL", "deepseek-chat"),
+            base_url="https://api.deepseek.com/v1",
+            temperature=temperature, max_tokens=max_tokens,
+        )
     if provider in ("openai",):
         return OpenAIAdapter(api_key=api_key, model=model,
                             temperature=temperature, max_tokens=max_tokens)
