@@ -1,169 +1,212 @@
-const statePanel = document.getElementById("statePanel");
-const memoryPanel = document.getElementById("memoryPanel");
-const tracePanel = document.getElementById("tracePanel");
-const eventPanel = document.getElementById("eventPanel");
-const agentsPanel = document.getElementById("agentsPanel");
-const healthPanel = document.getElementById("healthPanel");
-const chatForm = document.getElementById("chatForm");
-const chatInput = document.getElementById("chatInput");
-const chatStatus = document.getElementById("chatStatus");
-const lastReply = document.getElementById("lastReply");
-const refreshBtn = document.getElementById("refreshBtn");
+// EVA Dashboard — reactive telemetry with WebSocket + REST
+const $ = (id) => document.getElementById(id);
 
-async function fetchJSON(url, options = {}) {
-  const res = await fetch(url, options);
-  if (!res.ok) {
-    throw new Error(`${res.status} ${res.statusText}`);
-  }
-  return await res.json();
+// ── panels ──────────────────────────────────────────────
+const chatForm   = $("chatForm");
+const chatInput  = $("chatInput");
+const lastReply  = $("lastReply");
+const replyMeta  = $("replyMeta");
+const refreshBtn = $("refreshBtn");
+const wsIndicator = $("wsIndicator");
+const autoRefresh = $("autoRefresh");
+const policyDot   = $("policyDot");
+const healthScore = $("healthScore");
+const entityCount = $("entityCount");
+const wsEventPanel = $("wsEventPanel");
+
+// ── helpers ─────────────────────────────────────────────
+function esc(v) {
+  return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+async function GET(url) {
+  const r = await fetch(url);
+  return r.ok ? r.json() : null;
 }
 
-function renderKV(target, data) {
-  const rows = Object.entries(data).map(([key, value]) => {
-    const display = typeof value === "object"
-      ? escapeHtml(JSON.stringify(value, null, 2))
-      : escapeHtml(value);
-    return `
-      <div class="kv-key">${escapeHtml(key)}</div>
-      <div class="kv-value">${display}</div>
-    `;
-  });
-  target.innerHTML = rows.join("");
+function kv(target, data) {
+  if (!data || Object.keys(data).length === 0) { target.innerHTML = '<div class="dim">--</div>'; return; }
+  target.innerHTML = Object.entries(data).map(([k,v]) => {
+    const d = typeof v === "object" ? esc(JSON.stringify(v)) : esc(v);
+    return `<div class="kv-key">${esc(k)}</div><div class="kv-value">${d}</div>`;
+  }).join("");
 }
 
-function renderList(target, items, formatter) {
-  if (!items || items.length === 0) {
-    target.innerHTML = `<div class="item"><div class="item-body">No data yet.</div></div>`;
-    return;
-  }
-  target.innerHTML = items.map(formatter).join("");
+function list(target, items, fmt) {
+  if (!items || items.length === 0) { target.innerHTML = '<div class="dim">No data</div>'; return; }
+  target.innerHTML = items.map(fmt).join("");
 }
 
-function renderMemoryItem(item) {
-  return `
-    <div class="item">
-      <div class="item-title">${escapeHtml(item.summary)}</div>
-      <div class="item-meta">
-        ${escapeHtml(item.timestamp)} - ${escapeHtml(item.event_type)} - importance=${escapeHtml(item.importance)}
-      </div>
-      <div class="item-body">${escapeHtml(JSON.stringify(item.payload, null, 2))}</div>
-    </div>
-  `;
-}
-
-function renderTraceItem(item) {
-  return `
-    <div class="item">
-      <div class="item-title">${escapeHtml(item.loop_id)}</div>
-      <div class="item-meta">
-        ${escapeHtml(item.timestamp)} - event=${escapeHtml(item.event_type)} - agent=${escapeHtml(item.agent)} - ${escapeHtml(item.duration_ms)}ms
-      </div>
-      <div class="item-body">decision=${escapeHtml(item.decision)}\nsummary=${escapeHtml(item.result_summary)}</div>
-    </div>
-  `;
-}
-
-function renderEventItem(item) {
-  return `
-    <div class="item">
-      <div class="item-title">${escapeHtml(item.type)}</div>
-      <div class="item-meta">
-        ${escapeHtml(item.timestamp)} - source=${escapeHtml(item.source)} - status=${escapeHtml(item.status)}
-      </div>
-      <div class="item-body">${escapeHtml(JSON.stringify(item.payload, null, 2))}</div>
-    </div>
-  `;
-}
-
+// ── REST refresh ────────────────────────────────────────
 async function refreshAll() {
   try {
-    const [state, memory, trace, agents, events, live, ready, jobs] = await Promise.all([
-      fetchJSON("/api/state"),
-      fetchJSON("/api/memory/recent?limit=10"),
-      fetchJSON("/api/debug/trace?limit=10"),
-      fetchJSON("/api/agents"),
-      fetchJSON("/api/events/recent?limit=10"),
-      fetchJSON("/health/live"),
-      fetchJSON("/health/ready"),
-      fetchJSON("/api/scheduler/jobs"),
-    ]);
+    // memory tiers
+    const tiers = await GET("/api/memory/tiers");
+    if (tiers) {
+      const s1=tiers.S1_session, s2=tiers.S2_working, s3=tiers.S3_long_term, s4=tiers.S4_world_model, s5=tiers.S5_event_trace;
+      kv($("tiersPanel"), {
+        "S1 Session": `${s1.entries}/${s1.max_entries}  hits=${s1.hit_count}`,
+        "S2 Working": `${s2.entries}/${s2.max_entries}  ttl=${s2.ttl_hours}h`,
+        "S3 Long-term": `${s3.entries_active} active / ${s3.entries_archived} archived`,
+        "S4 World": `${s4.entities} entities / ${s4.edges} edges`,
+        "S5 Events": `${s5.events} events / ${s5.traces} traces`,
+      });
+    }
 
-    renderKV(statePanel, {
-      focus: state.focus,
-      mode: state.mode,
-      pending_events: state.pending_events,
-      pending_results: state.pending_results,
-      scheduler_running: state.scheduler_running,
-      last_selected_agent: state.last_selected_agent,
-      last_loop_id: state.last_loop_id,
-      last_loop_at: state.last_loop_at,
-      last_snapshot_at: state.last_snapshot_at,
-      last_proactive_reason: state.last_proactive_reason,
-    });
+    // world model entities
+    const world = await GET("/api/memory/world?limit=30");
+    if (world) {
+      entityCount.textContent = world.entities.length;
+      list($("worldPanel"), world.entities, e => `
+        <div class="item">
+          <span class="tag ${e.type}">${esc(e.type)}</span>
+          <span class="item-title">${esc(e.name)}</span>
+          <span class="dim">updated ${esc((e.updated_at||"").slice(0,16))}</span>
+        </div>`);
+    }
 
-    lastReply.textContent = state.last_reply || "";
+    // policy
+    const policy = await GET("/api/policy/state");
+    if (policy) {
+      const cls = policy.state === "quarantined" ? "quarantined" : policy.state === "dormant" ? "dormant" : "commanded";
+      policyDot.className = `dot ${cls}`;
+      kv($("policyPanel"), {
+        State: policy.state,
+        "Since (s)": policy.state_since_seconds,
+        "History": policy.history_size,
+        "Tokens": policy.active_tokens,
+      });
+    }
 
-    renderList(memoryPanel, memory.items, renderMemoryItem);
-    renderList(tracePanel, trace.items, renderTraceItem);
-    renderList(eventPanel, events.items, renderEventItem);
+    // health
+    const diag = await GET("/health/diagnostic");
+    if (diag) {
+      healthScore.textContent = `${diag.score}% ${diag.overall}`;
+      healthScore.className = `badge ${diag.overall}`;
+      kv($("healthPanel"), { Score: diag.score, Overall: diag.overall, Failed: diag.failed_count });
+    }
 
-    agentsPanel.textContent = JSON.stringify(agents, null, 2);
-    healthPanel.textContent = JSON.stringify({ live, ready, scheduler_jobs: jobs.jobs }, null, 2);
+    // system state
+    const state = await GET("/api/state");
+    if (state) {
+      kv($("statePanel"), {
+        focus: esc(state.focus||"idle"),
+        mode: state.mode,
+        pending_events: state.pending_events,
+        pending_results: state.pending_results,
+        last_agent: state.last_selected_agent,
+        last_loop: state.last_loop_at,
+      });
+    }
 
-    chatStatus.textContent = "System refreshed.";
-    chatStatus.className = "hint ok";
-  } catch (err) {
-    chatStatus.textContent = `Refresh failed: ${err.message}`;
-    chatStatus.className = "hint error";
+    // audit
+    const audit = await GET("/api/executors/audit/replay?limit=15");
+    if (audit && audit.timeline) {
+      list($("auditPanel"), audit.timeline.slice(0, 10), item => `
+        <div class="item">
+          <span class="tag ${item.status}">${esc(item.status)}</span>
+          <span class="item-title">${esc(item.executor)} / ${esc(item.action)}</span>
+          <span class="dim">${esc(item.timestamp)}  ${item.duration_ms}ms</span>
+        </div>`);
+    }
+
+    // agents
+    const agents = await GET("/api/agents");
+    const jobs = await GET("/api/scheduler/jobs");
+    if (agents) {
+      kv($("agentsPanel"), {
+        Agents: agents.agents?.join(", ") || "--",
+        "Scheduler Jobs": jobs?.jobs?.length || 0,
+      });
+    }
+
+  } catch (e) {
+    console.error("refresh error", e);
   }
 }
 
+// ── WebSocket ────────────────────────────────────────────
+let wsReconnectTimer = null;
+const wsEvents = [];
+
+function connectWS() {
+  const proto = location.protocol === "https:" ? "wss:" : "ws:";
+  const ws = new WebSocket(`${proto}//${location.host}/ws`);
+  ws.onopen = () => {
+    wsIndicator.textContent = "WS";
+    wsIndicator.className = "badge ok";
+    autoRefresh.textContent = "Live";
+    autoRefresh.className = "badge ok";
+    if (wsReconnectTimer) { clearInterval(wsReconnectTimer); wsReconnectTimer = null; }
+  };
+  ws.onmessage = (evt) => {
+    try {
+      const data = JSON.parse(evt.data);
+      if (data.pong) return;
+      wsEvents.unshift(data);
+      if (wsEvents.length > 50) wsEvents.length = 50;
+
+      // render WS events
+      list(wsEventPanel, wsEvents.slice(0, 8), event => `
+        <div class="item">
+          <span class="tag channel">${esc(event.channel)}</span>
+          <span class="item-title">${esc(JSON.stringify(event.payload).slice(0, 80))}</span>
+          <span class="dim">${new Date((event.ts||0)*1000).toLocaleTimeString()}</span>
+        </div>`);
+
+      // policy real-time update
+      if (data.channel === "policy_state" && data.payload) {
+        const p = data.payload.state_machine || data.payload;
+        if (p.current) {
+          policyDot.className = `dot ${p.current}`;
+        }
+      }
+
+      // entity count bump
+      if (data.channel === "entity_created") {
+        const n = parseInt(entityCount.textContent) || 0;
+        entityCount.textContent = n + 1;
+        entityCount.className = "badge pulse";
+        setTimeout(() => { entityCount.className = "badge"; }, 800);
+      }
+    } catch (e) {
+      console.error("ws parse error", e);
+    }
+  };
+  ws.onclose = () => {
+    wsIndicator.textContent = "WS";
+    wsIndicator.className = "badge disconnected";
+    autoRefresh.textContent = "REST";
+    autoRefresh.className = "badge";
+    // reconnect in 3s
+    if (!wsReconnectTimer) wsReconnectTimer = setInterval(connectWS, 3000);
+  };
+  ws.onerror = () => ws.close();
+}
+connectWS();
+
+// ── Chat ─────────────────────────────────────────────────
 chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const text = chatInput.value.trim();
   if (!text) return;
-
+  chatInput.value = "";
   try {
-    chatStatus.textContent = "Message processing...";
-    chatStatus.className = "hint";
-
-    const result = await fetchJSON("/api/chat", {
+    const r = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
     });
-
-    chatInput.value = "";
-
-    if (result.completed) {
-      lastReply.textContent = result.reply || "";
-      chatStatus.textContent = `Completed · agent=${result.selected_agent} · loop=${result.loop_id}`;
-      chatStatus.className = "hint ok";
-    } else {
-      chatStatus.textContent = "Queued but timed out waiting for result.";
-      chatStatus.className = "hint";
-    }
-
-    setTimeout(refreshAll, 150);
-    setTimeout(refreshAll, 800);
+    const result = await r.json();
+    lastReply.textContent = result.reply || "";
+    replyMeta.textContent = `agent=${result.selected_agent} loop=${result.loop_id} ${result.duration_ms||0}ms`;
+    setTimeout(refreshAll, 300);
   } catch (err) {
-    chatStatus.textContent = `Send failed: ${err.message}`;
-    chatStatus.className = "hint error";
+    lastReply.textContent = `Error: ${err.message}`;
   }
 });
 
+// ── init ─────────────────────────────────────────────────
 refreshBtn.addEventListener("click", refreshAll);
-
 refreshAll();
-setInterval(refreshAll, 5000);
+setInterval(refreshAll, 8000);  // REST polling every 8s (WS covers real-time)

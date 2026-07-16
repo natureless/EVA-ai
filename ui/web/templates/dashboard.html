@@ -11,71 +11,69 @@
     <header class="topbar">
       <div>
         <h1>{{ app_name }} v0.1</h1>
-        <p class="sub">Event-driven prototype with live telemetry.</p>
+        <p class="sub">Live telemetry &middot; WebSocket &middot; REST</p>
       </div>
       <div class="top-actions">
+        <span id="wsIndicator" class="badge disconnected">WS</span>
+        <span id="autoRefresh" class="badge ok">Live</span>
         <button id="refreshBtn" type="button">Refresh</button>
       </div>
     </header>
 
     <main class="grid">
+      <!-- row 1 -->
       <section class="card chat-card">
-        <div class="card-header">
-          <h2>Chat</h2>
-        </div>
-        <div id="chatStatus" class="hint">Messages are queued and handled asynchronously.</div>
+        <div class="card-header"><h2>Chat</h2></div>
         <form id="chatForm" class="chat-form">
-          <textarea id="chatInput" placeholder="Describe the next EVA task..." rows="5"></textarea>
-          <div class="chat-actions">
-            <button type="submit">Send</button>
-          </div>
+          <textarea id="chatInput" placeholder="Send a message..." rows="3"></textarea>
+          <button type="submit">Send</button>
         </form>
         <div class="result-block">
-          <div class="label">Last Reply</div>
+          <div class="label">Reply <span id="replyMeta" class="dim"></span></div>
           <pre id="lastReply" class="mono"></pre>
         </div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <h2>System State</h2>
-        </div>
+        <div class="card-header"><h2>Policy</h2><span id="policyDot" class="dot dormant"></span></div>
+        <div id="policyPanel" class="kv-grid"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header"><h2>Memory Tiers</h2></div>
+        <div id="tiersPanel" class="kv-grid"></div>
+      </section>
+
+      <!-- row 2 -->
+      <section class="card">
+        <div class="card-header"><h2>World Model</h2><span id="entityCount" class="badge">0</span></div>
+        <div id="worldPanel" class="list-panel"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header"><h2>Audit Timeline</h2></div>
+        <div id="auditPanel" class="list-panel"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header"><h2>System State</h2></div>
         <div id="statePanel" class="kv-grid"></div>
       </section>
 
+      <!-- row 3 -->
       <section class="card">
-        <div class="card-header">
-          <h2>Recent Memory</h2>
-        </div>
-        <div id="memoryPanel" class="list-panel"></div>
+        <div class="card-header"><h2>Health</h2><span id="healthScore" class="badge healthy">--</span></div>
+        <div id="healthPanel" class="kv-grid"></div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <h2>Recent Trace</h2>
-        </div>
-        <div id="tracePanel" class="list-panel"></div>
+        <div class="card-header"><h2>WS Events</h2></div>
+        <div id="wsEventPanel" class="list-panel"></div>
       </section>
 
       <section class="card">
-        <div class="card-header">
-          <h2>Recent Events</h2>
-        </div>
-        <div id="eventPanel" class="list-panel"></div>
-      </section>
-
-      <section class="card">
-        <div class="card-header">
-          <h2>Agents and Health</h2>
-        </div>
-        <div class="result-block">
-          <div class="label">Agents</div>
-          <pre id="agentsPanel" class="mono"></pre>
-        </div>
-        <div class="result-block">
-          <div class="label">Health</div>
-          <pre id="healthPanel" class="mono"></pre>
-        </div>
+        <div class="card-header"><h2>Agents & Scheduler</h2></div>
+        <div id="agentsPanel" class="kv-grid"></div>
       </section>
     </main>
   </div>
