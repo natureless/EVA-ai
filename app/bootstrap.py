@@ -135,7 +135,6 @@ def bootstrap_system() -> dict:
     })
     persona_repo = PersonaRepository(store)
     persona_service = PersonaService(persona_repo)
-    context_builder = ContextBuilder(persona_service=persona_service)
 
     profile_store = ProfileStore(Path(settings.profile_path))
     persona_store = PersonaStore(Path(settings.persona_path))
@@ -174,6 +173,13 @@ def bootstrap_system() -> dict:
     proactive_state = snapshot.get("proactive_state", {}) if snapshot else {}
     proactive_state.setdefault("last_user_message_ts", None)
     proactive_state.setdefault("last_reminder_ts", None)
+
+    # context builder — after world_model and tiered_memory are ready
+    context_builder = ContextBuilder(
+        persona_service=persona_service,
+        tiered_memory=tiered_memory,
+        world_model=world_model,
+    )
 
     event_bus = EventBus()
     system_state["event_bus_ready"] = True

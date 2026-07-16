@@ -279,7 +279,7 @@ class SQLiteStore:
 
     @staticmethod
     def dumps_json(value: Any) -> str:
-        return json.dumps(value, ensure_ascii=False)
+        return json.dumps(value, ensure_ascii=False, default=str)
 
     @staticmethod
     def loads_json(value: str) -> Any:

@@ -1,3 +1,10 @@
+"""Context builder — assembles relevant history for each cognition event.
+
+V2 (enable_v02_pipeline): gathers context from persona, tiered memory (S2+S3),
+world model (S4), and assembles a structured context dict + summary string
+that agents can use to produce historically-grounded responses.
+"""
+
 from typing import Any
 
 
@@ -6,44 +13,50 @@ class ContextBuilder:
         self,
         *,
         persona_service=None,
-        memory_service=None,
-        user_model_service=None,
-        world_model_service=None,
+        tiered_memory=None,
+        world_model=None,
     ) -> None:
         self.persona_service = persona_service
-        self.memory_service = memory_service
-        self.user_model_service = user_model_service
-        self.world_model_service = world_model_service
+        self.tiered_memory = tiered_memory
+        self.world_model = world_model
 
     def build(self, *, user_id: str, text: str) -> dict[str, Any]:
         persona = (
-            self.persona_service.get_active_persona()
+            self.persona_service.get_active_persona().model_dump()
             if self.persona_service
             else None
         )
-        memories = (
-            self.memory_service.retrieve(text, top_k=5) if self.memory_service else []
-        )
-        user_profile = (
-            self.user_model_service.get_user_profile(user_id)
-            if self.user_model_service
-            else None
-        )
-        user_state = (
-            self.user_model_service.infer_current_state(user_id)
-            if self.user_model_service
-            else None
-        )
-        world_context = (
-            self.world_model_service.get_active_context(text)
-            if self.world_model_service
-            else {"nodes": [], "edges": []}
-        )
+
+        # ── recall from tiered memory (S2 + S3) ─────────────
+        memories: list[dict] = []
+        if self.tiered_memory and text.strip():
+            memories = self.tiered_memory.recall(text, tiers=[2, 3])
+            memories = memories[:10]
+
+        # ── world model: active tasks + recent entities ──────
+        active_tasks: list[dict] = []
+        recent_entities: list[str] = []
+        if self.world_model:
+            active_tasks = self.world_model.active_tasks[:10]
+            recent_entities = self.world_model.recent_entities[:10]
+
+        # ── build summary ────────────────────────────────────
+        parts = []
+        if active_tasks:
+            names = [t.get("name", "") for t in active_tasks if t.get("name")]
+            parts.append(f"Active tasks ({len(active_tasks)}): " + ", ".join(names[:5]))
+        if memories:
+            snippets = [m.get("content", "")[:60] for m in memories[:3]]
+            parts.append(f"Recent memories ({len(memories)}): " + "; ".join(snippets))
+        if recent_entities:
+            parts.append(f"Entities ({len(recent_entities)}): " + ", ".join(recent_entities[:5]))
+
+        context_summary = "\n".join(parts) if parts else ""
 
         return {
             "persona": persona,
             "memories": memories,
-            "user_profile": user_profile,
-            "user_state": user_state,
-            "world_context": world_context,
+            "active_tasks": active_tasks,
+            "recent_entities": recent_entities,
+            "context_summary": context_summary,
         }

@@ -150,18 +150,20 @@ class CognitionLoop:
                         )
                         self.memory_governor.ingest(record, features)
 
-                    if self.enable_v02_pipeline and self.context_builder:
+                    if self.context_builder:
                         user_id = str(event.payload.get("user_id", "default"))
                         ctx = self.context_builder.build(
                             user_id=user_id,
                             text=user_text,
                         )
-                        world_ctx = ctx.get("world_context") or {}
+                        # inject context into task for agent consumption
+                        plan.task.payload["context"] = ctx
                         self.system_state["last_context_summary"] = {
                             "persona_loaded": bool(ctx.get("persona")),
                             "memory_items": len(ctx.get("memories") or []),
-                            "world_nodes": len(world_ctx.get("nodes") or []),
-                            "world_edges": len(world_ctx.get("edges") or []),
+                            "active_tasks": len(ctx.get("active_tasks", [])),
+                            "entities": len(ctx.get("recent_entities", [])),
+                            "summary": ctx.get("context_summary", ""),
                         }
 
                 if event.type == "maintenance":
