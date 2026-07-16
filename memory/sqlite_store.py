@@ -5,8 +5,10 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterable
 
+from memory.storage_adapter import BaseStorageAdapter
 
-class SQLiteStore:
+
+class SQLiteStore(BaseStorageAdapter):
     """Thread-safe SQLite store with WAL mode and connection pooling.
 
     WAL (Write-Ahead Logging) allows concurrent reads during writes,

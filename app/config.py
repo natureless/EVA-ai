@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     stagnation_threshold_sec: int = 86400
     reminder_cooldown_sec: int = 43200
     enable_v02_pipeline: bool = False
+    storage_backend: str = "sqlite"     # sqlite | postgresql
+    database_url: str = ""              # PostgreSQL connection URL (when backend=postgresql)
 
     @field_validator("port")
     @classmethod
