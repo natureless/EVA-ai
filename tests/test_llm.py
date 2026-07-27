@@ -17,7 +17,7 @@ class TestLLMAdapter:
         """When no API key is set, returns MockLLM."""
         # Save and clear env
         saved = {}
-        for key in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "EVA_LLM_PROVIDER"):
+        for key in ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY", "EVA_LLM_PROVIDER"):
             saved[key] = os.environ.pop(key, None)
 
         try:

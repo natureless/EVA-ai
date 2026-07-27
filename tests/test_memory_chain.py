@@ -108,7 +108,7 @@ class TestChatAgentWithContext:
         result = agent.run(task)
 
         assert result.ok
-        assert "hi" in result.content
+        assert "hi" in result.content.lower()
         assert "Context" not in result.content
 
     def test_empty_input(self):

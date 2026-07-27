@@ -312,6 +312,10 @@ def get_llm(
         elif os.environ.get("OPENAI_API_KEY"):
             provider = "openai"
 
+    if provider == "mock":
+        logger.info("mock LLM provider requested")
+        return MockLLM()
+
     if provider in ("claude", "anthropic"):
         return ClaudeAdapter(api_key=api_key, model=model,
                             temperature=temperature, max_tokens=max_tokens)

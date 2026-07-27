@@ -1,9 +1,25 @@
 import importlib
+import os
 import sys
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _force_mock_llm():
+    """Remove all real API keys from environment for the entire test session.
+
+    The .env file's DEEPSEEK_API_KEY leaks into tests that instantiate agents
+    directly (without the ``client`` fixture). This session-scoped fixture runs
+    once before any tests and strips every known key so get_llm() always falls
+    back to MockLLM.
+    """
+    for key in ("DEEPSEEK_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+        os.environ.pop(key, None)
+    os.environ["EVA_LLM_PROVIDER"] = "mock"
+    yield
 
 
 @pytest.fixture
@@ -21,8 +37,12 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     static_dir.mkdir(parents=True, exist_ok=True)
     snapshot_dir.mkdir(parents=True, exist_ok=True)
 
-    (template_dir / "dashboard.html").write_text(
+    (template_dir / "index.html").write_text(
         "<html><body><h1>{{ app_name }}</h1></body></html>",
+        encoding="utf-8",
+    )
+    (template_dir / "settings.html").write_text(
+        "<html><body><h1>Settings</h1></body></html>",
         encoding="utf-8",
     )
     (static_dir / "app.js").write_text("console.log('test');", encoding="utf-8")
@@ -47,6 +67,11 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("EVA_SCHEDULER_SNAPSHOT_INTERVAL_SEC", "60")
     monkeypatch.setenv("EVA_REQUEST_TIMEOUT_SEC", "5")
     monkeypatch.setenv("EVA_RESULT_TTL_SEC", "10")
+
+    # Force mock LLM for all tests — clear real API keys from .env
+    for api_key_var in ("DEEPSEEK_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
+        monkeypatch.delenv(api_key_var, raising=False)
+    monkeypatch.setenv("EVA_LLM_PROVIDER", "mock")
 
     for mod in [
         "app.config",

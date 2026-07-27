@@ -55,7 +55,7 @@ class TestAgentTaskConversion:
         assert AGENT_EXECUTOR_MAP["search_agent"] == "file"
         assert AGENT_EXECUTOR_MAP["coding_agent"] == "file"
         assert "chat_agent" not in AGENT_EXECUTOR_MAP
-        assert "docs_agent" not in AGENT_EXECUTOR_MAP
+        assert AGENT_EXECUTOR_MAP["docs_agent"] == "file"
 
 
 # ── Orchestrator with Executor ─────────────────────────────
@@ -153,5 +153,5 @@ class TestAgentExecutorMapping:
     def test_chat_not_mapped(self):
         assert "chat_agent" not in AGENT_EXECUTOR_MAP
 
-    def test_docs_not_mapped(self):
-        assert "docs_agent" not in AGENT_EXECUTOR_MAP
+    def test_docs_mapped_to_file(self):
+        assert AGENT_EXECUTOR_MAP["docs_agent"] == "file"
