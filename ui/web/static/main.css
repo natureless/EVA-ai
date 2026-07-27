@@ -128,7 +128,6 @@ body {
 }
 
 .avatar-wrapper {
-  transition: transform var(--transition-zoom);
   will-change: transform;
   transform-origin: 50% 15%;
   transform: scale(2.5) translateY(0);
@@ -141,17 +140,15 @@ body {
 }
 
 .avatar-wrapper.idle {
-  animation: avatar-breathe 4s ease-in-out infinite;
+  /* transforms handled by JS animation loop */
 }
 
 .avatar-wrapper.listening {
-  filter:
-    drop-shadow(0 0 8px var(--accent))
-    drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 30%, transparent));
+  /* filter applied inline by JS */
 }
 
 .avatar-wrapper.responding {
-  animation: avatar-sway 3.5s ease-in-out infinite;
+  /* transforms handled by JS animation loop */
 }
 
 .avatar-state-label {
@@ -469,33 +466,12 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes avatar-breathe {
-  0%, 100% { transform: scale(2.5) translateY(0); }
-  50%      { transform: scale(2.5) translateY(-4px); }
-}
-
-@keyframes avatar-sway {
-  0%, 100% { transform: scale(1.0) rotate(0deg); }
-  25%      { transform: scale(1.0) rotate(0.5deg); }
-  75%      { transform: scale(1.0) rotate(-0.5deg); }
-}
-
 @keyframes avatar-blink-keyframes {
   0%, 90%, 100% { transform: scaleY(1); }
   95%           { transform: scaleY(0.05); }
 }
 
-@keyframes particle-float {
-  0%   { transform: translateY(0) translateX(0); opacity: 0; }
-  20%  { opacity: 0.6; }
-  80%  { opacity: 0.6; }
-  100% { transform: translateY(-120px) translateX(30px); opacity: 0; }
-}
-
-@keyframes listening-pulse {
-  0%, 100% { filter: drop-shadow(0 0 4px var(--accent)); }
-  50%      { filter: drop-shadow(0 0 14px var(--accent)); }
-}
+/* Hide canvas in reduced-motion */
 
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE

@@ -1,4 +1,5 @@
 // EVA Avatar — ice-blue twin-tails techwear character + zoom state machine + particle canvas
+// Animation system: unified JS RAF loop (no CSS keyframe transform conflicts)
 const AvatarController = {
   _state: "idle",
   _wrapper: null,
@@ -10,9 +11,13 @@ const AvatarController = {
   _rightIris: null,
   _particleCanvas: null,
   _particles: [],
-  _particleRAF: null,
+  _animRAF: null,
   _mouthTimer: null,
-  _eyeRAF: null,
+  _mouthShapeIdx: 0,
+  _mouseX: 0, _mouseY: 0,
+  _targetMouseX: 0, _targetMouseY: 0,
+  _entranceDone: false,
+  _idlePhase: 0,
 
   init(containerId, canvasId) {
     this._wrapper = document.getElementById(containerId);
@@ -27,10 +32,379 @@ const AvatarController = {
     this._leftIris = this._svg.getElementById("eva-left-iris");
     this._rightIris = this._svg.getElementById("eva-right-iris");
 
+    this._bindMouseTracking();
     this._initParticles();
-    this._particleLoop();
-    this._eyeLoop();
-    this._setIdle();
+    this._entranceAnimation();
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // ENTRANCE — fade in + gentle scale-up
+  // ═══════════════════════════════════════════════════════════
+  _entranceAnimation() {
+    this._wrapper.style.transition = "none";
+    this._wrapper.style.transformOrigin = "50% 15%";
+    this._wrapper.style.transform = "scale(1.8)";
+    this._wrapper.style.opacity = "0";
+    this._svg.style.opacity = "0";
+
+    // Stagger: wrapper opacity → svg scale → settle
+    requestAnimationFrame(() => {
+      this._wrapper.style.transition = "opacity 500ms ease-out";
+      this._wrapper.style.opacity = "1";
+    });
+
+    setTimeout(() => {
+      this._wrapper.style.transition = "transform 800ms cubic-bezier(0.16, 1, 0.3, 1)";
+      this._wrapper.style.transform = "scale(2.5) translateY(0)";
+      this._svg.style.transition = "opacity 400ms ease-out";
+      this._svg.style.opacity = "1";
+    }, 200);
+
+    setTimeout(() => {
+      this._wrapper.style.transition = "none";
+      this._entranceDone = true;
+      this._setIdle();
+    }, 1000);
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // MOUSE TRACKING — for eye following
+  // ═══════════════════════════════════════════════════════════
+  _bindMouseTracking() {
+    const panel = document.getElementById("avatarPanel");
+    const target = panel || document;
+    target.addEventListener("mousemove", (e) => {
+      const rect = this._wrapper.getBoundingClientRect();
+      const originX = rect.left + rect.width / 2;
+      const originY = rect.top + rect.height * 0.15;
+      this._targetMouseX = (e.clientX - originX) / (rect.width * 0.4);
+      this._targetMouseY = (e.clientY - originY) / (rect.height * 0.4);
+      this._targetMouseX = Math.max(-1, Math.min(1, this._targetMouseX));
+      this._targetMouseY = Math.max(-1, Math.min(1, this._targetMouseY));
+    });
+    target.addEventListener("mouseleave", () => {
+      this._targetMouseX = 0;
+      this._targetMouseY = 0;
+    });
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // UNIFIED ANIMATION LOOP — all per-frame transform updates
+  // ═══════════════════════════════════════════════════════════
+  _startAnimLoop() {
+    if (this._animRAF) return;
+    const loop = (ts) => {
+      this._animStep(ts);
+      this._particleStep();
+      this._eyeStep();
+      this._animRAF = requestAnimationFrame(loop);
+    };
+    this._animRAF = requestAnimationFrame(loop);
+  },
+
+  _animStep(ts) {
+    if (!this._entranceDone) return;
+    const t = ts / 1000;
+
+    if (this._state === "idle") {
+      const breathe = Math.sin(t * 1.57) * -3; // 4s period
+      // Subtle float: breathe + micro-sway
+      const microSway = Math.sin(t * 0.9) * 0.15;
+      this._wrapper.style.transform = `scale(2.5) translateY(${breathe}px) rotate(${microSway}deg)`;
+    } else if (this._state === "listening") {
+      // Gentle head tilt oscillation
+      const tilt = Math.sin(t * 2.2) * 2.5;
+      const microBreath = Math.sin(t * 1.9) * -1;
+      this._wrapper.style.transform = `scale(2.8) translateY(${2 + microBreath}px) rotate(${tilt}deg)`;
+    } else if (this._state === "responding") {
+      // Full-body sway
+      const sway = Math.sin(t * 1.8) * 0.6;
+      const bounce = Math.abs(Math.sin(t * 2.4)) * 1.5;
+      this._wrapper.style.transform = `scale(1.0) translateY(${bounce}px) rotate(${sway}deg)`;
+    }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // STATE MACHINE
+  // ═══════════════════════════════════════════════════════════
+
+  _setIdle() {
+    this._state = "idle";
+    if (!this._wrapper || !this._entranceDone) return;
+    this._wrapper.style.transition = "transform 500ms cubic-bezier(0.4, 0, 0.2, 1), filter 500ms ease";
+    this._wrapper.style.transformOrigin = "50% 15%";
+    this._wrapper.style.transform = "scale(2.5) translateY(0)";
+    this._wrapper.style.filter = "";
+    this._wrapper.classList.remove("listening", "responding");
+    this._wrapper.classList.add("idle");
+    this._svg && this._svg.classList.remove("responding");
+    this._stopMouth();
+    this._setParticles("calm");
+    this._updateLabel("avatar.idle");
+
+    // After transition ends, hand over to RAF loop
+    clearTimeout(this._transitionTimer);
+    this._transitionTimer = setTimeout(() => {
+      this._wrapper.style.transition = "none";
+    }, 520);
+    this._startAnimLoop();
+  },
+
+  setListening() {
+    if (this._state === "responding") return;
+    this._state = "listening";
+    if (!this._wrapper || !this._entranceDone) return;
+    this._wrapper.style.transition = "transform 400ms cubic-bezier(0.4, 0, 0.2, 1), filter 400ms ease";
+    this._wrapper.style.transformOrigin = "50% 15%";
+    this._wrapper.style.transform = "scale(2.8) translateY(2px)";
+    this._wrapper.style.filter =
+      "drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 30%, transparent))";
+    this._wrapper.classList.remove("idle", "responding");
+    this._wrapper.classList.add("listening");
+    this._updateLabel("avatar.listening");
+
+    clearTimeout(this._transitionTimer);
+    this._transitionTimer = setTimeout(() => {
+      this._wrapper.style.transition = "none";
+    }, 420);
+    this._startAnimLoop();
+  },
+
+  setResponding() {
+    this._state = "responding";
+    if (!this._wrapper || !this._entranceDone) return;
+    // Snap origin, then animate zoom out
+    this._wrapper.style.transition = "none";
+    this._wrapper.style.transformOrigin = "50% 45%";
+    this._wrapper.offsetHeight; // force reflow
+    this._wrapper.style.transition = "transform 600ms cubic-bezier(0.4, 0, 0.2, 1), filter 400ms ease";
+    this._wrapper.style.transform = "scale(1.0) translateY(0)";
+    this._wrapper.style.filter = "";
+    this._wrapper.classList.remove("listening", "idle");
+    this._wrapper.classList.add("responding");
+    this._svg && this._svg.classList.add("responding");
+    this._startMouth();
+    this._setParticles("active");
+    this._burstParticles(10);
+    this._updateLabel("avatar.responding");
+
+    clearTimeout(this._transitionTimer);
+    this._transitionTimer = setTimeout(() => {
+      this._wrapper.style.transition = "none";
+    }, 620);
+    this._startAnimLoop();
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // MOUTH — 4-frame cycle for natural speech look
+  // ═══════════════════════════════════════════════════════════
+  _MOUTH_SHAPES: [
+    { d: "M209 156 Q214 154 220 154 Q226 154 231 156", opacity: "0.55" },       // closed
+    { d: "M207 153 Q214 158 220 160 Q226 158 233 153", opacity: "0.6" },        // half
+    { d: "M205 150 Q214 163 220 165 Q226 163 235 150", opacity: "0.65" },       // open
+    { d: "M203 148 Q214 164 220 168 Q226 164 237 148", opacity: "0.7" },        // wide
+  ],
+
+  mouthCycle() {
+    if (!this._mouthPath) return;
+    this._mouthShapeIdx = (this._mouthShapeIdx + 1) % this._MOUTH_SHAPES.length;
+    const shape = this._MOUTH_SHAPES[this._mouthShapeIdx];
+    this._mouthPath.setAttribute("d", shape.d);
+    this._mouthPath.setAttribute("opacity", shape.opacity);
+  },
+
+  _startMouth() {
+    this._stopMouth();
+    this._mouthShapeIdx = 0;
+    this._mouthTimer = setInterval(() => this.mouthCycle(), 240);
+  },
+
+  _stopMouth() {
+    if (this._mouthTimer) { clearInterval(this._mouthTimer); this._mouthTimer = null; }
+    if (this._mouthPath) {
+      this._mouthPath.setAttribute("d", "M209 156 Q214 154 220 154 Q226 154 231 156");
+      this._mouthPath.setAttribute("opacity", "0.55");
+      this._mouthShapeIdx = 0;
+    }
+  },
+
+  _updateLabel(key) {
+    const el = document.getElementById("avatarStateLabel");
+    if (el && I18N) { el.textContent = I18N.t(key); }
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // EYE TRACKING — smooth follow of mouse position
+  // ═══════════════════════════════════════════════════════════
+  _eyeStep() {
+    if (!this._leftIris || !this._rightIris) return;
+
+    if (this._state !== "idle" && this._state !== "listening") {
+      this._leftIris.setAttribute("transform", "translate(0,0)");
+      this._rightIris.setAttribute("transform", "translate(0,0)");
+      return;
+    }
+
+    // Smooth lerp toward target
+    this._mouseX += (this._targetMouseX - this._mouseX) * 0.08;
+    this._mouseY += (this._targetMouseY - this._mouseY) * 0.08;
+
+    const clamp = (v) => Math.max(-2.5, Math.min(2.5, v));
+    const dx = clamp(this._mouseX * 3);
+    const dy = clamp(this._mouseY * 2.5);
+
+    this._leftIris.setAttribute("transform", `translate(${dx},${dy})`);
+    this._rightIris.setAttribute("transform", `translate(${dx},${dy})`);
+  },
+
+  // ═══════════════════════════════════════════════════════════
+  // PARTICLE SYSTEM — ambient energy motes
+  // ═══════════════════════════════════════════════════════════
+
+  _initParticles() {
+    const c = this._particleCanvas;
+    if (!c) return;
+    this._resizeCanvas();
+    this._spawnParticles(12);
+    window.addEventListener("resize", () => this._resizeCanvas());
+  },
+
+  _resizeCanvas() {
+    const c = this._particleCanvas;
+    if (!c || !c.parentElement) return;
+    const rect = c.parentElement.getBoundingClientRect();
+    c.width = rect.width;
+    c.height = rect.height;
+  },
+
+  _spawnParticles(count) {
+    const c = this._particleCanvas;
+    if (!c) return;
+    for (let i = 0; i < count; i++) {
+      const hueRoll = Math.random();
+      const hue = hueRoll < 0.5 ? "accent" : hueRoll < 0.75 ? "teal" : "white";
+      this._particles.push({
+        x: Math.random() * c.width,
+        y: c.height * 0.2 + Math.random() * c.height * 0.6,
+        r: 0.6 + Math.random() * 2.5,
+        speed: 0.2 + Math.random() * 1.0,
+        drift: (Math.random() - 0.5) * 0.6,
+        opacity: 0.15 + Math.random() * 0.45,
+        fadeRate: 0.0008 + Math.random() * 0.002,
+        hue,
+        shape: Math.random() < 0.25 ? "diamond" : "circle",
+        glow: Math.random() < 0.3,
+        life: Math.random(),
+      });
+    }
+  },
+
+  _burstParticles(count) {
+    const c = this._particleCanvas;
+    if (!c) return;
+    const cx = c.width / 2;
+    const cy = c.height * 0.45;
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 100;
+      this._particles.push({
+        x: cx + Math.cos(angle) * 10,
+        y: cy + Math.sin(angle) * 10,
+        r: 1.5 + Math.random() * 3.5,
+        speed: -1.5 - Math.random() * 2.5,
+        drift: Math.cos(angle) * 2,
+        opacity: 0.7 + Math.random() * 0.3,
+        fadeRate: 0.008 + Math.random() * 0.015,
+        hue: Math.random() < 0.5 ? "teal" : "accent",
+        shape: "circle",
+        glow: true,
+        life: 1,
+        burst: true,
+      });
+    }
+  },
+
+  _setParticles(mode) {
+    const target = mode === "active" ? 45 : 12;
+    const diff = target - this._particles.length;
+    if (diff > 0) this._spawnParticles(diff);
+    if (diff < 0) this._particles.length = target;
+    this._particles.forEach(p => {
+      if (!p.burst) {
+        p.speed = mode === "active" ? 0.4 + Math.random() * 1.8 : 0.2 + Math.random() * 1.0;
+      }
+    });
+  },
+
+  _particleStep() {
+    const c = this._particleCanvas;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    const w = c.width, h = c.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const style = getComputedStyle(document.documentElement);
+    const accentColor = style.getPropertyValue("--accent").trim() || "#0f766e";
+    const accentLight = style.getPropertyValue("--accent-light").trim() || "#ccfbf1";
+
+    const len = this._particles.length;
+    for (let i = len - 1; i >= 0; i--) {
+      const p = this._particles[i];
+      p.y -= p.speed;
+      p.x += p.drift;
+      p.opacity -= p.fadeRate;
+      p.life -= p.fadeRate;
+
+      if (p.y < -20 || p.opacity <= 0 || (p.burst && p.life <= 0)) {
+        this._particles.splice(i, 1);
+        continue;
+      }
+
+      let color;
+      if (p.hue === "accent") color = accentColor;
+      else if (p.hue === "teal") color = "#2dd4bf";
+      else color = accentLight;
+
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+
+      if (p.glow) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = p.burst ? 10 : 5;
+      }
+
+      if (p.shape === "diamond") {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - p.r);
+        ctx.lineTo(p.x + p.r * 0.7, p.y);
+        ctx.lineTo(p.x, p.y + p.r);
+        ctx.lineTo(p.x - p.r * 0.7, p.y);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    // Replenish ambient particles if below target
+    const target = this._state === "responding" ? 45 : 12;
+    const nonBurst = this._particles.filter(p => !p.burst).length;
+    if (nonBurst < target && Math.random() < 0.3) {
+      this._spawnParticles(1);
+    }
+  },
+
+  destroy() {
+    if (this._animRAF) cancelAnimationFrame(this._animRAF);
+    if (this._mouthTimer) clearInterval(this._mouthTimer);
+    this._animRAF = null;
   },
 
   // ═══════════════════════════════════════════════════════════
@@ -558,208 +932,5 @@ const AvatarController = {
   <path d="M292 200 Q304 230 310 270 Q314 300 312 325"
         fill="none" stroke="#d0ddf0" stroke-width="1.8" stroke-linecap="round" opacity="0.3"/>
 </svg>`;
-  },
-
-  // ═══════════════════════════════════════════════════════════
-  // STATE MACHINE
-  // ═══════════════════════════════════════════════════════════
-
-  _setIdle() {
-    this._state = "idle";
-    if (!this._wrapper) return;
-    this._wrapper.style.transition = "transform var(--transition-zoom)";
-    this._wrapper.style.transformOrigin = "50% 15%";
-    this._wrapper.style.transform = "scale(2.5) translateY(0)";
-    this._wrapper.classList.remove("listening", "responding");
-    this._wrapper.classList.add("idle");
-    this._svg && this._svg.classList.remove("responding");
-    this._stopMouth();
-    this._setParticles("calm");
-    this._updateLabel("avatar.idle");
-  },
-
-  setListening() {
-    if (this._state === "responding") return;
-    this._state = "listening";
-    if (!this._wrapper) return;
-    this._wrapper.style.transition = "transform 400ms cubic-bezier(0.4, 0, 0.2, 1)";
-    this._wrapper.style.transformOrigin = "50% 15%";
-    this._wrapper.style.transform = "scale(2.8) translateY(2px)";
-    this._wrapper.classList.remove("idle", "responding");
-    this._wrapper.classList.add("listening");
-    this._updateLabel("avatar.listening");
-  },
-
-  setResponding() {
-    this._state = "responding";
-    if (!this._wrapper) return;
-    this._wrapper.style.transition = "none";
-    this._wrapper.style.transformOrigin = "50% 45%";
-    this._wrapper.offsetHeight;
-    this._wrapper.style.transition = "transform var(--transition-zoom)";
-    this._wrapper.style.transform = "scale(1.0) translateY(0)";
-    this._wrapper.classList.remove("listening", "idle");
-    this._wrapper.classList.add("responding");
-    this._svg && this._svg.classList.add("responding");
-    this._startMouth();
-    this._setParticles("active");
-    this._updateLabel("avatar.responding");
-  },
-
-  mouthCycle() {
-    if (!this._mouthPath) return;
-    const open = this._mouthPath.dataset.open === "1";
-    if (open) {
-      this._mouthPath.setAttribute("d", "M209 156 Q214 154 220 154 Q226 154 231 156");
-      this._mouthPath.setAttribute("opacity", "0.55");
-    } else {
-      this._mouthPath.setAttribute("d", "M207 152 Q214 162 220 164 Q226 162 233 152");
-      this._mouthPath.setAttribute("opacity", "0.65");
-    }
-    this._mouthPath.dataset.open = open ? "0" : "1";
-  },
-
-  _startMouth() {
-    this._stopMouth();
-    this._mouthTimer = setInterval(() => this.mouthCycle(), 280);
-  },
-
-  _stopMouth() {
-    if (this._mouthTimer) { clearInterval(this._mouthTimer); this._mouthTimer = null; }
-    if (this._mouthPath) {
-      this._mouthPath.setAttribute("d", "M209 156 Q214 154 220 154 Q226 154 231 156");
-      this._mouthPath.dataset.open = "0";
-    }
-  },
-
-  _updateLabel(key) {
-    const el = document.getElementById("avatarStateLabel");
-    if (el && I18N) { el.textContent = I18N.t(key); }
-  },
-
-  // ═══════════════════════════════════════════════════════════
-  // PARTICLE SYSTEM (Canvas)
-  // ═══════════════════════════════════════════════════════════
-
-  _initParticles() {
-    const c = this._particleCanvas;
-    if (!c) return;
-    this._resizeCanvas();
-    this._spawnParticles(10);
-    window.addEventListener("resize", () => this._resizeCanvas());
-  },
-
-  _resizeCanvas() {
-    const c = this._particleCanvas;
-    if (!c || !c.parentElement) return;
-    const rect = c.parentElement.getBoundingClientRect();
-    c.width = rect.width;
-    c.height = rect.height;
-  },
-
-  _spawnParticles(count) {
-    const c = this._particleCanvas;
-    if (!c) return;
-    for (let i = 0; i < count; i++) {
-      const hue = Math.random() < 0.6 ? "accent" : (Math.random() < 0.5 ? "teal" : "white");
-      this._particles.push({
-        x: Math.random() * c.width,
-        y: c.height * 0.25 + Math.random() * c.height * 0.55,
-        r: 0.8 + Math.random() * 2.8,
-        speed: 0.3 + Math.random() * 0.8,
-        drift: (Math.random() - 0.5) * 0.5,
-        opacity: Math.random() * 0.5,
-        hue,
-        shape: Math.random() < 0.3 ? "diamond" : "circle",
-        glow: Math.random() < 0.25,
-      });
-    }
-  },
-
-  _setParticles(mode) {
-    const target = mode === "active" ? 40 : 10;
-    const diff = target - this._particles.length;
-    if (diff > 0) this._spawnParticles(diff);
-    if (diff < 0) this._particles.length = target;
-    this._particles.forEach(p => {
-      p.speed = mode === "active" ? 0.6 + Math.random() * 1.5 : 0.3 + Math.random() * 0.8;
-    });
-  },
-
-  _particleLoop() {
-    const c = this._particleCanvas;
-    if (!c) { this._particleRAF = requestAnimationFrame(() => this._particleLoop()); return; }
-    const ctx = c.getContext("2d");
-    const w = c.width, h = c.height;
-
-    ctx.clearRect(0, 0, w, h);
-
-    const style = getComputedStyle(document.documentElement);
-    const accentColor = style.getPropertyValue("--accent").trim() || "#0f766e";
-    const accentLight = style.getPropertyValue("--accent-light").trim() || "#ccfbf1";
-
-    for (const p of this._particles) {
-      p.y -= p.speed;
-      p.x += p.drift;
-      p.opacity -= 0.0015;
-      if (p.y < -10 || p.opacity <= 0) {
-        p.y = h * 0.25 + Math.random() * h * 0.55;
-        p.x = Math.random() * w;
-        p.opacity = 0.3 + Math.random() * 0.4;
-      }
-
-      const color = p.hue === "accent" ? accentColor
-        : p.hue === "teal" ? "#2dd4bf"
-        : accentLight;
-
-      ctx.save();
-      ctx.globalAlpha = p.opacity;
-
-      if (p.glow) {
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 6;
-      }
-
-      if (p.shape === "diamond") {
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y - p.r);
-        ctx.lineTo(p.x + p.r * 0.7, p.y);
-        ctx.lineTo(p.x, p.y + p.r);
-        ctx.lineTo(p.x - p.r * 0.7, p.y);
-        ctx.closePath();
-        ctx.fillStyle = color;
-        ctx.fill();
-      } else {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = color;
-        ctx.fill();
-      }
-
-      ctx.restore();
-    }
-
-    this._particleRAF = requestAnimationFrame(() => this._particleLoop());
-  },
-
-  _eyeLoop() {
-    if (!this._leftIris || !this._rightIris) return;
-    if (this._state !== "idle") {
-      this._leftIris.setAttribute("transform", "translate(0,0)");
-      this._rightIris.setAttribute("transform", "translate(0,0)");
-    } else {
-      const t = Date.now() / 1000;
-      const dx = Math.sin(t * 1.3) * 1.5 + Math.sin(t * 0.7) * 0.5;
-      const dy = Math.cos(t * 1.1) * 1.0 + Math.cos(t * 0.9) * 0.4;
-      this._leftIris.setAttribute("transform", `translate(${dx},${dy})`);
-      this._rightIris.setAttribute("transform", `translate(${dx},${dy})`);
-    }
-    this._eyeRAF = requestAnimationFrame(() => this._eyeLoop());
-  },
-
-  destroy() {
-    if (this._particleRAF) cancelAnimationFrame(this._particleRAF);
-    if (this._mouthTimer) clearInterval(this._mouthTimer);
-    if (this._eyeRAF) cancelAnimationFrame(this._eyeRAF);
   },
 };

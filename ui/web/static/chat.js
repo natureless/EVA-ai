@@ -36,6 +36,7 @@ const Chat = {
       sendBtn.disabled = true;
       sendBtn.textContent = "...";
 
+      this._sending = true;
       this._addMessage("user", text);
       AvatarController.setResponding();
 
@@ -47,6 +48,7 @@ const Chat = {
         await this._sendSync(text);
       }
 
+      this._sending = false;
       sendBtn.disabled = false;
       sendBtn.textContent = I18N ? I18N.t("chat.send") : "Send";
     });
@@ -68,7 +70,7 @@ const Chat = {
     });
 
     input.addEventListener("blur", () => {
-      if (AvatarController._state === "listening") {
+      if (AvatarController._state === "listening" && !this._sending) {
         AvatarController._setIdle();
       }
     });
