@@ -116,6 +116,12 @@ const Chat = {
 
     // Build message list HTML
     container.innerHTML = this._messages.map((m, i) => {
+      if (m.role === "eva" && m.text === "...") {
+        return `<div class="message-row eva">
+          <span class="message-sender">${I18N ? I18N.t("chat.eva") : "EVA"}</span>
+          <div class="typing-indicator"><span></span><span></span><span></span></div>
+        </div>`;
+      }
       const isUser = m.role === "user";
       const senderLabel = isUser
         ? (I18N ? I18N.t("chat.you") : "You")
