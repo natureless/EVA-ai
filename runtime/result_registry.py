@@ -47,6 +47,14 @@ class ResultRegistry:
             item = self._pending.pop(correlation_id, None)
             return item.payload if item else None
 
+    def peek(self, correlation_id: str) -> dict[str, Any] | None:
+        """Return the payload without removing it, or None if not fulfilled."""
+        with self._lock:
+            item = self._pending.get(correlation_id)
+            if item is None:
+                return None
+            return item.payload
+
     def cleanup(self, ttl_sec: float = 60.0) -> int:
         now = time.time()
         removed = 0

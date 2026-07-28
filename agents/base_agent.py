@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Callable
 
 
 @dataclass
@@ -67,15 +67,33 @@ class BaseAgent(ABC):
     @abstractmethod
     def run(self, task: AgentTask) -> AgentResult:
         """Execute the task.
-        
+
         Args:
             task: The task to execute
-            
+
         Returns:
             Result object with execution outcome
-            
+
         Raises:
             Exception: May raise various exceptions on failure
         """
         raise NotImplementedError
+
+    def run_stream(self, task: AgentTask, on_token: Callable[[str], None]) -> AgentResult:
+        """Execute task with per-token streaming via callback.
+
+        The default implementation calls ``run()`` and emits the full
+        result through ``on_token`` once. Override in agents that can
+        produce incremental tokens (e.g. via an LLM streaming API).
+
+        Args:
+            task: The task to execute
+            on_token: Called for each token (or once with full content)
+
+        Returns:
+            Result object with execution outcome
+        """
+        result = self.run(task)
+        on_token(result.content)
+        return result
 

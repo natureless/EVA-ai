@@ -141,6 +141,69 @@ class CognitionLoop:
             0,
         )
 
+    def _execute_agent_stream(
+        self, selected_agent: str, task, correlation_id: str,
+    ) -> tuple[AgentResult, int]:
+        """Run the agent with per-token WS broadcast, polling for stop events.
+
+        Each token is broadcast via ``chat_token`` channel so SSE/WS clients
+        receive incremental output. The final result is NOT broadcast here —
+        the caller handles ``chat_reply`` broadcast.
+        """
+        ws = self._ws_manager
+
+        def _on_token(token: str) -> None:
+            if ws:
+                ws.broadcast_sync("chat_token", {
+                    "task_id": correlation_id,
+                    "token": token,
+                })
+
+        future = self._agent_pool.submit(
+            self.orchestrator.execute_stream,
+            selected_agent, task, _on_token,
+        )
+        poll_interval = 0.5
+        elapsed = 0.0
+        while not self._stop_event.is_set():
+            try:
+                return future.result(timeout=poll_interval)
+            except FutureTimeoutError:
+                elapsed += poll_interval
+                if elapsed >= self._agent_timeout_sec:
+                    logger = logging.getLogger("eva.cognition_loop")
+                    logger.error("agent %s stream timed out after %.0fs", selected_agent, elapsed)
+                    error_msg = f"[{selected_agent}] stream timed out after {elapsed:.0f}s"
+                    if ws:
+                        ws.broadcast_sync("chat_reply", {
+                            "task_id": correlation_id,
+                            "ok": False,
+                            "reply": error_msg,
+                            "selected_agent": selected_agent,
+                            "error": "timeout",
+                        })
+                    return (
+                        AgentResult(
+                            ok=False, agent=selected_agent,
+                            content=error_msg,
+                            summary=f"timeout ({elapsed:.0f}s)",
+                            meta={"status": "timeout", "elapsed_sec": elapsed},
+                        ),
+                        int(elapsed * 1000),
+                    )
+
+        logger = logging.getLogger("eva.cognition_loop")
+        logger.warning("agent %s stream cancelled due to shutdown", selected_agent)
+        return (
+            AgentResult(
+                ok=False, agent=selected_agent,
+                content=f"[{selected_agent}] cancelled (shutdown)",
+                summary="cancelled",
+                meta={"status": "cancelled"},
+            ),
+            0,
+        )
+
     def _run_forever(self) -> None:
         logger = logging.getLogger("eva.cognition_loop")
         while not self._stop_event.is_set():
@@ -263,26 +326,45 @@ class CognitionLoop:
                     if not blocked:
                         selected_agent = self.agent_router.route(plan.agent, plan.task)
 
-                        # ── agent → executor routing ──────────
-                        agent_exe = None
-                        agent_tok = ""
-                        if self._executors:
-                            exe_type = AGENT_EXECUTOR_MAP.get(selected_agent)
-                            agent_exe = self._executors.get(exe_type) if exe_type else None
-                            if agent_exe and self.policy_engine:
-                                tm = self.policy_engine.token_manager
-                                token = tm.issue(
-                                    loop_id, exe_type or "agent",
-                                    ttl_seconds=300, budget_tokens=10,
-                                )
-                                agent_tok = token.token_id
+                        # ── streaming mode: bypass executor, tokens via WS ──
+                        if event.payload.get("stream") and event.correlation_id:
+                            result, agent_duration_ms = self._execute_agent_stream(
+                                selected_agent, plan.task, event.correlation_id,
+                            )
+                            reply = result.content
+                        else:
+                            # ── agent → executor routing ──────────
+                            agent_exe = None
+                            agent_tok = ""
+                            if self._executors:
+                                exe_type = AGENT_EXECUTOR_MAP.get(selected_agent)
+                                agent_exe = self._executors.get(exe_type) if exe_type else None
+                                if agent_exe and self.policy_engine:
+                                    tm = self.policy_engine.token_manager
+                                    token = tm.issue(
+                                        loop_id, exe_type or "agent",
+                                        ttl_seconds=300, budget_tokens=10,
+                                    )
+                                    agent_tok = token.token_id
 
-                        result, agent_duration_ms = self._execute_agent(
-                            selected_agent, plan.task, agent_exe,
-                            self.policy_engine.token_manager if self.policy_engine else None,
-                            agent_tok,
-                        )
-                        reply = result.content
+                            result, agent_duration_ms = self._execute_agent(
+                                selected_agent, plan.task, agent_exe,
+                                self.policy_engine.token_manager if self.policy_engine else None,
+                                agent_tok,
+                            )
+                            reply = result.content
+
+                        # ── WS broadcast: push result to connected clients ──
+                        if self._ws_manager and event.correlation_id:
+                            self._ws_manager.broadcast_sync("chat_reply", {
+                                "task_id": event.correlation_id,
+                                "ok": result.ok,
+                                "reply": reply,
+                                "selected_agent": selected_agent,
+                                "loop_id": loop_id,
+                                "duration_ms": agent_duration_ms,
+                                "event_id": event.id,
+                            })
 
                     # ── self-model feedback: prediction error + state recording ──
                     if not blocked:

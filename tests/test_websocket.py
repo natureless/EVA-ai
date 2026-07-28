@@ -8,7 +8,7 @@ class TestWebSocketManager:
         stats = mgr.stats()
         assert stats["total_connections"] == 0
         assert stats["messages_sent"] == 0
-        assert len(stats["channels"]) == 4
+        assert len(stats["channels"]) == 6
 
     def test_broadcast_sync_no_clients(self):
         from runtime.websocket import WebSocketManager

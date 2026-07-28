@@ -347,6 +347,9 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     )
     logger.info("bootstrap start env=%s port=%s", settings.env, settings.port)
 
+    if ws_manager:
+        ws_manager.capture_loop()
+
     system_state = _create_initial_state()
     constitution = _load_constitution()
 

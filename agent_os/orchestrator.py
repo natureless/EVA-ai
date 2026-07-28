@@ -1,4 +1,5 @@
 import time
+from typing import Callable
 
 from agents.base_agent import AgentResult, AgentTask
 from agent_os.registry import AgentRegistry
@@ -37,6 +38,27 @@ class AgentOrchestrator:
         # ── direct path: agent.run() ────────────────────────
         start = time.perf_counter()
         result = agent.run(task)
+        duration_ms = int((time.perf_counter() - start) * 1000)
+        return result, duration_ms
+
+    def execute_stream(
+        self,
+        agent_name: str,
+        task: AgentTask,
+        on_token: Callable[[str], None],
+    ) -> tuple[AgentResult, int]:
+        """Execute an agent task with per-token streaming callback.
+
+        Calls ``agent.run_stream(task, on_token)`` instead of
+        ``agent.run(task)``. Executor gating is NOT supported in
+        stream mode — streaming bypasses the executor safety gate.
+        """
+        agent = self.registry.get(agent_name)
+        if agent is None:
+            raise ValueError(f"Agent not found: {agent_name}")
+
+        start = time.perf_counter()
+        result = agent.run_stream(task, on_token)
         duration_ms = int((time.perf_counter() - start) * 1000)
         return result, duration_ms
 

@@ -1,3 +1,5 @@
+from typing import Callable
+
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, load_system_prompt
 
@@ -39,6 +41,42 @@ class ChatAgent(BaseAgent):
             agent=self.name,
             content=reply,
             summary=reply[:120],
+            meta={
+                "llm_provider": llm.provider,
+                "has_context": bool(context),
+                "active_tasks_count": len(context.get("active_tasks", [])) if context else 0,
+                "memories_count": len(context.get("memories", [])) if context else 0,
+            },
+        )
+
+    def run_stream(self, task: AgentTask, on_token: Callable[[str], None]) -> AgentResult:
+        """Execute with per-token streaming via LLM chat_stream."""
+        text = str(task.payload.get("text", "")).strip()
+        context = task.payload.get("context")
+
+        if not text:
+            result = AgentResult(
+                ok=True, agent=self.name,
+                content="[chat_agent] empty input",
+                summary="empty input", meta={},
+            )
+            on_token(result.content)
+            return result
+
+        messages = [{"role": "system", "content": self._build_system(context)}]
+        messages.append({"role": "user", "content": text})
+
+        llm = get_llm()
+        full_reply = ""
+        for token in llm.chat_stream(messages):
+            full_reply += token
+            on_token(token)
+
+        return AgentResult(
+            ok=True,
+            agent=self.name,
+            content=full_reply,
+            summary=full_reply[:120],
             meta={
                 "llm_provider": llm.provider,
                 "has_context": bool(context),

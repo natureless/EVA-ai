@@ -1,5 +1,7 @@
 import time
 
+import pytest
+
 
 def test_dashboard_page_loads(client):
     response = client.get("/")
@@ -7,8 +9,34 @@ def test_dashboard_page_loads(client):
     assert "EVA" in response.text
 
 
+# ── unified async endpoint ──────────────────────────────────
+
+def test_chat_async_returns_task_id(client):
+    """POST /api/chat returns immediately with task_id (no blocking)."""
+    response = client.post("/api/chat", json={"text": "Hello!"})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["accepted"] is True
+    assert "task_id" in data
+    assert "event_id" in data
+
+    # Poll for result
+    task_id = data["task_id"]
+    for _ in range(20):
+        r2 = client.get(f"/api/chat/result/{task_id}")
+        r2_data = r2.json()
+        if r2_data.get("completed"):
+            assert "reply" in r2_data
+            assert r2_data["selected_agent"] == "chat_agent"
+            return
+        time.sleep(0.15)
+    pytest.fail("timed out waiting for chat result")
+
+
 def test_chat_returns_reply(client):
-    response = client.post("/api/chat", json={"text": "Hello, how are you doing today?"})
+    """Legacy sync endpoint returns completed reply."""
+    response = client.post("/api/chat/sync", json={"text": "Hello, how are you doing today?"})
     assert response.status_code == 200
 
     data = response.json()
@@ -19,7 +47,7 @@ def test_chat_returns_reply(client):
 
 
 def test_docs_routing(client):
-    response = client.post("/api/chat", json={"text": "Please summarize this document"})
+    response = client.post("/api/chat/sync", json={"text": "Please summarize this document"})
     assert response.status_code == 200
 
     data = response.json()
@@ -28,7 +56,7 @@ def test_docs_routing(client):
 
 
 def test_search_routing(client):
-    response = client.post("/api/chat", json={"text": "/search EVA"})
+    response = client.post("/api/chat/sync", json={"text": "/search EVA"})
     assert response.status_code == 200
 
     data = response.json()
@@ -37,7 +65,7 @@ def test_search_routing(client):
 
 
 def test_coding_routing(client):
-    response = client.post("/api/chat", json={"text": "/code README.md"})
+    response = client.post("/api/chat/sync", json={"text": "/code README.md"})
     assert response.status_code == 200
 
     data = response.json()
@@ -46,7 +74,7 @@ def test_coding_routing(client):
 
 
 def test_state_updates_after_chat(client):
-    client.post("/api/chat", json={"text": "Hello! How are you doing?"})
+    client.post("/api/chat/sync", json={"text": "Hello! How are you doing?"})
     time.sleep(0.1)
 
     response = client.get("/api/state")
@@ -59,7 +87,7 @@ def test_state_updates_after_chat(client):
 
 
 def test_memory_and_trace_written(client):
-    client.post("/api/chat", json={"text": "Can you tell me about the memory system?"})
+    client.post("/api/chat/sync", json={"text": "Can you tell me about the memory system?"})
     time.sleep(0.1)
 
     mem = client.get("/api/memory/recent?limit=5")

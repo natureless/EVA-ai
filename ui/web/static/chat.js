@@ -1,14 +1,95 @@
-// EVA Chat — message history, SSE streaming, avatar state control
+// EVA Chat — WebSocket-backed message delivery, SSE streaming, avatar state control
 const Chat = {
   _messages: [],
   _streamAbort: null,
+  _ws: null,
+  _wsReconnectTimer: null,
+  _pendingTasks: {},  // task_id → {resolve, timeout}
 
   init() {
     this._messages = [];
+    this._connectWS();
     this._bindForm();
     this._bindTextarea();
     this._bindMobileAvatar();
     window.addEventListener("lang-changed", () => this._rerenderMessages());
+  },
+
+  // ── WebSocket connection ────────────────────────────────
+  _connectWS() {
+    const proto = location.protocol === "https:" ? "wss:" : "ws:";
+    const url = `${proto}//${location.host}/ws`;
+
+    const ws = new WebSocket(url);
+    this._ws = ws;
+
+    ws.onopen = () => {
+      this._wsReconnectTimer = null;
+    };
+
+    ws.onmessage = (e) => {
+      try {
+        const msg = JSON.parse(e.data);
+        this._onWSMessage(msg);
+      } catch (_) { /* ignore malformed */ }
+    };
+
+    ws.onclose = () => {
+      // Reconnect after 3s if not intentionally closed
+      if (!this._wsReconnectTimer) {
+        this._wsReconnectTimer = setTimeout(() => this._connectWS(), 3000);
+      }
+    };
+
+    ws.onerror = () => {
+      ws.close();
+    };
+  },
+
+  _onWSMessage(msg) {
+    const { channel, payload } = msg;
+    if (!payload) return;
+
+    // chat_token: per-token streaming from cognition loop
+    if (channel === "chat_token") {
+      const taskId = payload.task_id;
+      if (!taskId) return;
+      // Accumulate token for the pending task
+      const pending = this._pendingTasks[taskId];
+      if (pending && pending.onToken) {
+        pending.fullReply += payload.token;
+        pending.onToken(pending.fullReply);
+        AvatarController.mouthCycle();
+      }
+    }
+
+    // chat_reply: final result from cognition loop
+    if (channel === "chat_reply") {
+      const taskId = payload.task_id;
+      if (!taskId) return;
+      const pending = this._pendingTasks[taskId];
+      if (pending) {
+        delete this._pendingTasks[taskId];
+        if (pending.mode === "sync") {
+          // Sync mode: receive full reply at once
+          const reply = payload.reply || "(no reply)";
+          this._updateLastEvaMessage(reply);
+          // Simulate mouth movement
+          let cycles = 0;
+          const simMouth = setInterval(() => {
+            AvatarController.mouthCycle();
+            if (++cycles > 6) clearInterval(simMouth);
+          }, 280);
+        }
+        // Settle avatar after reply
+        clearTimeout(pending._settleTimer);
+        pending._settleTimer = setTimeout(() => {
+          if (AvatarController._state === "responding") {
+            AvatarController._setIdle();
+          }
+        }, 1000);
+      }
+    }
   },
 
   // ── Form handling ─────────────────────────────────────
@@ -19,7 +100,6 @@ const Chat = {
 
     if (!form || !input || !sendBtn) return;
 
-    // Enter to send (shift+enter for newline)
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
@@ -45,7 +125,7 @@ const Chat = {
       if (useStream) {
         await this._sendStream(text);
       } else {
-        await this._sendSync(text);
+        await this._sendViaWS(text);
       }
 
       this._sending = false;
@@ -59,7 +139,6 @@ const Chat = {
     const input = document.getElementById("chatInput");
     if (!input) return;
 
-    // Auto-resize
     input.addEventListener("input", () => {
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
@@ -93,7 +172,6 @@ const Chat = {
   },
 
   _updateLastEvaMessage(text) {
-    // Update or append EVA message (used during streaming)
     const last = this._messages[this._messages.length - 1];
     if (last && last.role === "eva") {
       last.text = text;
@@ -116,8 +194,7 @@ const Chat = {
 
     if (empty) empty.style.display = "none";
 
-    // Build message list HTML
-    container.innerHTML = this._messages.map((m, i) => {
+    container.innerHTML = this._messages.map((m) => {
       if (m.role === "eva" && m.text === "...") {
         return `<div class="message-row eva">
           <span class="message-sender">${I18N ? I18N.t("chat.eva") : "EVA"}</span>
@@ -137,12 +214,10 @@ const Chat = {
       </div>`;
     }).join("");
 
-    // Scroll to bottom
     container.scrollTop = container.scrollHeight;
   },
 
   _rerenderMessages() {
-    // Called when language changes to update sender labels and times
     this._renderMessages();
   },
 
@@ -162,13 +237,44 @@ const Chat = {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   },
 
-  // ── SSE Streaming ─────────────────────────────────────
+  // ── WebSocket sync mode ───────────────────────────────
+  async _sendViaWS(text) {
+    // Show typing indicator
+    this._messages.push({ role: "eva", text: "...", time: Date.now() });
+    this._renderMessages();
+
+    try {
+      const r = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      const ack = await r.json();
+      const taskId = ack.task_id;
+      if (!taskId) throw new Error("No task_id returned");
+
+      // Register pending task — reply arrives via WS chat_reply
+      this._pendingTasks[taskId] = {
+        mode: "sync",
+        fullReply: "",
+        _settleTimer: null,
+      };
+    } catch (err) {
+      this._updateLastEvaMessage(`Error: ${err.message}`);
+      setTimeout(() => {
+        if (AvatarController._state === "responding") {
+          AvatarController._setIdle();
+        }
+      }, 1000);
+    }
+  },
+
+  // ── SSE Streaming (unified pipeline via /api/chat/stream) ──
   async _sendStream(text) {
     if (this._streamAbort) this._streamAbort.abort();
     const ctrl = new AbortController();
     this._streamAbort = ctrl;
 
-    // Show typing indicator as an EVA placeholder
     this._messages.push({ role: "eva", text: "...", time: Date.now() });
     this._renderMessages();
 
@@ -194,16 +300,13 @@ const Chat = {
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
           const data = line.slice(6);
-          if (data === "[DONE]") {
-            break;
-          }
+          if (data === "[DONE]") break;
           if (data.startsWith("[ERROR:")) {
             full = data;
             break;
           }
           full += data;
           this._updateLastEvaMessage(full);
-          // Trigger mouth animation on each token
           AvatarController.mouthCycle();
         }
       }
@@ -216,39 +319,6 @@ const Chat = {
       }
     } finally {
       this._streamAbort = null;
-      // Return to idle after a short pause
-      setTimeout(() => {
-        if (AvatarController._state === "responding") {
-          AvatarController._setIdle();
-        }
-      }, 1000);
-    }
-  },
-
-  // ── Synchronous (REST) chat ───────────────────────────
-  async _sendSync(text) {
-    this._messages.push({ role: "eva", text: "...", time: Date.now() });
-    this._renderMessages();
-
-    try {
-      const r = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const result = await r.json();
-      this._updateLastEvaMessage(result.reply || "(no reply)");
-
-      // Simulate mouth movement for sync responses
-      let cycles = 0;
-      const simMouth = setInterval(() => {
-        AvatarController.mouthCycle();
-        cycles++;
-        if (cycles > 6) clearInterval(simMouth);
-      }, 280);
-    } catch (err) {
-      this._updateLastEvaMessage(`Error: ${err.message}`);
-    } finally {
       setTimeout(() => {
         if (AvatarController._state === "responding") {
           AvatarController._setIdle();
