@@ -1,50 +1,34 @@
 from dataclasses import dataclass
 
-from agents.base_agent import AgentTask, AgentResult
+from agents.base_agent import AgentTask
 from event.event_schema import Event
 
 
-# ── LLM intent → agent mapping ──────────────────────────────
+# ── Explicit command prefixes ──────────────────────────────
 
-_INTENT_AGENT_MAP: dict[str, str] = {
-    "search": "search_agent",
-    "code": "coding_agent",
-    "summarize": "docs_agent",
-    "chat": "chat_agent",
-}
+_COMMANDS: list[tuple[tuple[str, ...], str, str]] = [
+    # (prefixes, agent_name, task_kind)
+    (("/search", "search:", "find:", "lookup:"), "search_agent", "search"),
+    (("/code", "code:", "inspect:", "review:"), "coding_agent", "code"),
+]
 
-# Keywords that indicate the user wants to search/query files or code
-_FILE_SEARCH_HINTS = {
+# Keyword sets for file-operation agents — only route when these
+# appear AND the LLM supports the routing decision.
+_SEARCH_KEYWORDS = {
     "find", "search", "grep", "file", "dir", "path",
-    "folder", "code", "locate", "lookup", "where is",
+    "folder", "locate", "lookup", "where is",
     "搜索", "查找", "寻找", "文件",
 }
 
+_CODE_KEYWORDS = {
+    "inspect", "review code", "analyze code", "check file",
+    "read file", "open file", "show file", "refactor", "patch",
+    "审查", "重构", "查看代码",
+}
 
-def _classify_with_llm(text: str) -> str | None:
-    """Use LLM to classify user intent into an agent label.
-
-    Returns an agent name string, or None if classification fails.
-    Uses a lightweight 1-token prompt — fast and cheap.
-    """
-    try:
-        from core.llm_adapter import get_llm, MockLLM
-        llm = get_llm()
-        if isinstance(llm, MockLLM):
-            return None
-
-        prompt = (
-            "Classify this message into ONE word: chat, search, code, summarize.\n"
-            "- chat: conversation, questions, greetings, general knowledge, facts, help requests\n"
-            "- search: find files by name, grep for patterns, locate code in the project\n"
-            "- code: analyze code structure, inspect file contents, review source code\n"
-            "- summarize: summarize documents, extract text insights from long content\n"
-            f"\nMessage: \"{text[:500]}\"\nLabel:"
-        )
-        label = llm.chat([{"role": "user", "content": prompt}]).strip().lower()
-        return _INTENT_AGENT_MAP.get(label)
-    except Exception:
-        return None
+_DOCS_KEYWORDS = {
+    "summarize", "summary", "extract from", "summarise",
+}
 
 
 @dataclass
@@ -65,75 +49,52 @@ class Planner:
     """Plans how to handle incoming events.
 
     Routes events to appropriate agents based on event type and content.
-    Supports command prefixes for specialized agents and keyword matching.
+    Uses explicit command prefixes and keyword matching — no LLM
+    classification to avoid misrouting and latency.
     """
 
     def plan(self, event: Event) -> Plan:
-        """Create a plan for handling the given event.
-
-        Args:
-            event: The event to plan for
-
-        Returns:
-            A Plan object specifying decision, agent, and task
-        """
+        """Create a plan for handling the given event."""
         if event.type == "user_message":
-            text = str(event.payload.get("text", "")).lower()
             raw_text = str(event.payload.get("text", "")).strip()
+            text = raw_text.lower()
 
             # 1. Explicit command prefixes — fast, deterministic
-            if self._matches_command(text, "/search", "search:", "find:", "lookup:"):
+            for prefixes, agent_name, kind in _COMMANDS:
+                if self._matches_command(text, *prefixes):
+                    return Plan(
+                        decision="act",
+                        agent=agent_name,
+                        task=AgentTask(kind=kind, payload={"text": raw_text}),
+                    )
+
+            # 2. Keyword-triggered file operations — only for clear file intent
+            if _text_contains(text, _SEARCH_KEYWORDS):
                 return Plan(
                     decision="act",
                     agent="search_agent",
                     task=AgentTask(kind="search", payload={"text": raw_text}),
                 )
 
-            if self._matches_command(text, "/code", "code:", "inspect:", "review:"):
+            if _text_contains(text, _CODE_KEYWORDS):
                 return Plan(
                     decision="act",
                     agent="coding_agent",
                     task=AgentTask(kind="code", payload={"text": raw_text}),
                 )
 
-            # 2. LLM semantic classification (skipped for MockLLM)
-            llm_agent = _classify_with_llm(raw_text)
-
-            # Guard: only route LLM "search" classification when text
-            # actually contains file/project keywords — prevents the LLM
-            # from routing general knowledge questions to the file agent.
-            wants_files = any(hint in text for hint in _FILE_SEARCH_HINTS)
-            if llm_agent == "search_agent" and wants_files:
-                return Plan(
-                    decision="act",
-                    agent="search_agent",
-                    task=AgentTask(kind="search", payload={"text": raw_text}),
-                )
-            if llm_agent == "coding_agent":
-                return Plan(
-                    decision="act",
-                    agent="coding_agent",
-                    task=AgentTask(kind="code", payload={"text": raw_text}),
-                )
-            if llm_agent == "docs_agent":
+            if _text_contains(text, _DOCS_KEYWORDS):
                 return Plan(
                     decision="act",
                     agent="docs_agent",
-                    task=AgentTask(kind="summarize", payload={"text": event.payload.get("text", "")}),
+                    task=AgentTask(kind="summarize", payload={"text": raw_text}),
                 )
 
-            # 3. Keyword hints (fast fallback when LLM unavailable)
-            if any(keyword in text for keyword in ["summary", "docs", "document", "summarize"]):
-                return Plan(
-                    decision="act",
-                    agent="docs_agent",
-                    task=AgentTask(kind="summarize", payload={"text": event.payload.get("text", "")}),
-                )
-
+            # 3. Everything else → chat_agent
             return Plan(
                 decision="act",
                 agent="chat_agent",
-                task=AgentTask(kind="chat", payload={"text": event.payload.get("text", "")}),
+                task=AgentTask(kind="chat", payload={"text": raw_text}),
             )
 
         if event.type == "reminder_trigger":
@@ -178,13 +139,8 @@ class Planner:
 
     @staticmethod
     def _matches_command(text: str, *prefixes: str) -> bool:
-        """Check if text starts with any of the given prefixes.
-
-        Args:
-            text: Text to check
-            prefixes: Command prefixes to match
-
-        Returns:
-            True if text starts with any prefix
-        """
         return any(text.startswith(prefix) for prefix in prefixes)
+
+
+def _text_contains(text: str, keywords: set[str]) -> bool:
+    return any(kw in text for kw in keywords)
