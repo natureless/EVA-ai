@@ -19,11 +19,13 @@ const Chat = {
     const proto = location.protocol === "https:" ? "wss:" : "ws:";
     const url = `${proto}//${location.host}/ws`;
 
+    this._setWsIndicator("connecting");
     const ws = new WebSocket(url);
     this._ws = ws;
 
     ws.onopen = () => {
       this._wsReconnectTimer = null;
+      this._setWsIndicator("connected");
     };
 
     ws.onmessage = (e) => {
@@ -34,6 +36,7 @@ const Chat = {
     };
 
     ws.onclose = () => {
+      this._setWsIndicator("disconnected");
       // Reconnect after 3s if not intentionally closed
       if (!this._wsReconnectTimer) {
         this._wsReconnectTimer = setTimeout(() => this._connectWS(), 3000);
@@ -41,8 +44,16 @@ const Chat = {
     };
 
     ws.onerror = () => {
+      this._setWsIndicator("disconnected");
       ws.close();
     };
+  },
+
+  _setWsIndicator(state) {
+    const el = document.getElementById("wsIndicator");
+    if (!el) return;
+    el.className = `badge ${state}`;
+    el.title = { connected: "WebSocket connected", connecting: "WebSocket connecting…", disconnected: "WebSocket disconnected — reconnecting" }[state] || state;
   },
 
   _onWSMessage(msg) {
@@ -271,11 +282,15 @@ const Chat = {
       // Blank line
       if (trimmed === "") { i++; continue; }
 
-      // Restore fenced code block
+      // Restore fenced code block (with copy button)
       if (_isFence(line)) {
         const idx = parseInt(trimmed.match(/^\x00F(\d+)\x00$/)[1]);
         const f = fences[idx];
-        out.push(`<pre class="chat-code-block"><code>${f.code}</code></pre>`);
+        const langLabel = f.lang ? `<span class="code-lang">${f.lang}</span>` : "";
+        out.push(
+          `<div class="chat-code-wrap">${langLabel}<button class="code-copy-btn" onclick="Chat._copyCode(this)">Copy</button>`
+          + `<pre class="chat-code-block"><code>${f.code}</code></pre></div>`
+        );
         i++; continue;
       }
 
@@ -365,6 +380,18 @@ const Chat = {
     if (diffMin < 1) return I18N ? I18N.t("chat.now") : "Just now";
     if (diffMin < 60) return `${diffMin}m ago`;
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  },
+
+  _copyCode(btn) {
+    const code = btn.closest(".chat-code-wrap")?.querySelector("code");
+    if (!code) return;
+    navigator.clipboard.writeText(code.textContent).then(() => {
+      btn.textContent = "✓";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+    }).catch(() => {
+      btn.textContent = "Failed";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1500);
+    });
   },
 
   // ── WebSocket sync mode ───────────────────────────────

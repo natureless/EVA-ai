@@ -30,6 +30,14 @@ class SlidingWindowLimiter:
 
     Each key (e.g. client IP) gets a ring of timestamps. On each
     check, we expire old entries and count remaining.
+
+    Persistence: windows are in-memory only — they reset on every
+    process restart. This is intentional for a single-process
+    deployment: the attack surface is per-restart, and a persistent
+    backend (Redis) would add a heavy infrastructure dependency.
+    If you need cross-restart or multi-process enforcement, replace
+    `_windows` with a Redis sorted-set backend (ZADD / ZRANGEBYSCORE
+    / ZREMRANGEBYSCORE in a pipeline) and lock with a Lua script.
     """
 
     def __init__(self, config: RateLimitConfig | None = None) -> None:
