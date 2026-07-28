@@ -13,6 +13,13 @@ _INTENT_AGENT_MAP: dict[str, str] = {
     "chat": "chat_agent",
 }
 
+# Keywords that indicate the user wants to search/query files or code
+_FILE_SEARCH_HINTS = {
+    "find", "search", "grep", "file", "dir", "path",
+    "folder", "code", "locate", "lookup", "where is",
+    "搜索", "查找", "寻找", "文件",
+}
+
 
 def _classify_with_llm(text: str) -> str | None:
     """Use LLM to classify user intent into an agent label.
@@ -28,10 +35,10 @@ def _classify_with_llm(text: str) -> str | None:
 
         prompt = (
             "Classify this message into ONE word: chat, search, code, summarize.\n"
-            "- chat: conversation, questions, greetings, general talk\n"
-            "- search: find files, search content, look up information\n"
-            "- code: analyze code, inspect files, review source\n"
-            "- summarize: summarize documents, extract text insights\n"
+            "- chat: conversation, questions, greetings, general knowledge, facts, help requests\n"
+            "- search: find files by name, grep for patterns, locate code in the project\n"
+            "- code: analyze code structure, inspect file contents, review source code\n"
+            "- summarize: summarize documents, extract text insights from long content\n"
             f"\nMessage: \"{text[:500]}\"\nLabel:"
         )
         label = llm.chat([{"role": "user", "content": prompt}]).strip().lower()
@@ -43,7 +50,7 @@ def _classify_with_llm(text: str) -> str | None:
 @dataclass
 class Plan:
     """Represents a decision made by the planner about how to handle an event.
-    
+
     Attributes:
         decision: Action decision ('act', 'observe', 'ignore')
         agent: Agent to route to
@@ -56,17 +63,17 @@ class Plan:
 
 class Planner:
     """Plans how to handle incoming events.
-    
+
     Routes events to appropriate agents based on event type and content.
     Supports command prefixes for specialized agents and keyword matching.
     """
 
     def plan(self, event: Event) -> Plan:
         """Create a plan for handling the given event.
-        
+
         Args:
             event: The event to plan for
-            
+
         Returns:
             A Plan object specifying decision, agent, and task
         """
@@ -91,7 +98,12 @@ class Planner:
 
             # 2. LLM semantic classification (skipped for MockLLM)
             llm_agent = _classify_with_llm(raw_text)
-            if llm_agent == "search_agent":
+
+            # Guard: only route LLM "search" classification when text
+            # actually contains file/project keywords — prevents the LLM
+            # from routing general knowledge questions to the file agent.
+            wants_files = any(hint in text for hint in _FILE_SEARCH_HINTS)
+            if llm_agent == "search_agent" and wants_files:
                 return Plan(
                     decision="act",
                     agent="search_agent",
@@ -167,13 +179,12 @@ class Planner:
     @staticmethod
     def _matches_command(text: str, *prefixes: str) -> bool:
         """Check if text starts with any of the given prefixes.
-        
+
         Args:
             text: Text to check
             prefixes: Command prefixes to match
-            
+
         Returns:
             True if text starts with any prefix
         """
         return any(text.startswith(prefix) for prefix in prefixes)
-

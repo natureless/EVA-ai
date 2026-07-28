@@ -326,6 +326,8 @@ class CognitionLoop:
 
                     if not blocked:
                         selected_agent = self.agent_router.route(plan.agent, plan.task)
+                        logger.debug("routing: plan.agent=%s selected_agent=%s task.kind=%s",
+                                     plan.agent, selected_agent, plan.task.kind)
 
                         # ── streaming mode: bypass executor, tokens via WS ──
                         if event.payload.get("stream") and event.correlation_id:

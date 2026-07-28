@@ -206,6 +206,18 @@ body {
 }
 .message-row.user .message-bubble code { background: rgba(255,255,255,0.2); }
 
+/* Markdown lists inside messages */
+.message-bubble ul.chat-list {
+  margin: 4px 0; padding-left: 16px; list-style: disc;
+}
+.message-bubble ul.chat-list li {
+  margin: 2px 0; line-height: 1.5;
+}
+.message-bubble .chat-list-item {
+  margin: 2px 0; line-height: 1.5;
+}
+.message-bubble strong { font-weight: 600; }
+
 [data-theme="dark"] .message-row.eva .message-bubble:hover {
   background: color-mix(in srgb, var(--card-bg) 95%, #fff);
   border-color: #444;

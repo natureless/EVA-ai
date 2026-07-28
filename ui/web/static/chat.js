@@ -190,10 +190,10 @@ const Chat = {
         ? (I18N ? I18N.t("chat.you") : "You")
         : (I18N ? I18N.t("chat.eva") : "EVA");
       const timeStr = this._formatTime(m.time);
-      const text = this._escapeHtml(m.text);
+      const html = isUser ? this._escapeHtml(m.text) : this._renderMarkdown(m.text);
       return `<div class="message-row ${isUser ? "user" : "eva"}">
         <span class="message-sender">${senderLabel}</span>
-        <div class="message-bubble">${text}</div>
+        <div class="message-bubble">${html}</div>
         <span class="message-time">${timeStr}</span>
       </div>`;
     }).join("");
@@ -210,6 +210,63 @@ const Chat = {
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;");
+  },
+
+  // Lightweight markdown → HTML for LLM replies (bold, lists, paragraphs)
+  _renderMarkdown(s) {
+    let html = this._escapeHtml(s);
+
+    // Bold: **text** → <strong>text</strong>
+    html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+
+    // Inline code: `text` → <code>text</code>
+    html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+
+    // Split into lines, group consecutive list items
+    const lines = html.split("\n");
+    const out = [];
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      // Unordered list items: "- text" or "  - text"
+      if (/^\s*-\s/.test(trimmed)) {
+        if (!inList) {
+          out.push('<ul class="chat-list">');
+          inList = true;
+        }
+        const item = trimmed.replace(/^\s*-\s*/, "");
+        out.push(`<li>${item || "&nbsp;"}</li>`);
+        continue;
+      }
+
+      // Close list if we were in one
+      if (inList) {
+        out.push("</ul>");
+        inList = false;
+      }
+
+      // Numbered list: "1. text"
+      if (/^\s*\d+\.\s/.test(trimmed)) {
+        const item = trimmed.replace(/^\s*\d+\.\s*/, "");
+        out.push(`<div class="chat-list-item"><span>${item || "&nbsp;"}</span></div>`);
+        continue;
+      }
+
+      // Blank line → paragraph break
+      if (trimmed === "") {
+        out.push("<br>");
+        continue;
+      }
+
+      out.push(line);
+    }
+
+    if (inList) out.push("</ul>");
+
+    return out.join("\n");
   },
 
   _formatTime(ts) {
