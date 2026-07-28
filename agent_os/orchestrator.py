@@ -1,5 +1,5 @@
 import time
-from typing import Callable
+from typing import Any, Callable
 
 from agents.base_agent import AgentResult, AgentTask
 from agent_os.registry import AgentRegistry
@@ -14,8 +14,8 @@ class AgentOrchestrator:
         agent_name: str,
         task: AgentTask,
         *,
-        executor=None,
-        token_manager=None,
+        executor: Any = None,
+        token_manager: Any = None,
         token_id: str = "",
     ) -> tuple[AgentResult, int]:
         """Execute an agent task, optionally gated by an executor.
@@ -63,8 +63,8 @@ class AgentOrchestrator:
         return result, duration_ms
 
     def _execute_gated(
-        self, agent, agent_name: str, task: AgentTask,
-        executor, token_manager, token_id: str,
+        self, agent: Any, agent_name: str, task: AgentTask,
+        executor: Any, token_manager: Any, token_id: str,
     ) -> tuple[AgentResult, int]:
         from agent_os.agent_task import task_to_executor_params
 

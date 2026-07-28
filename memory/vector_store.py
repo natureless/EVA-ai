@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
@@ -20,10 +21,10 @@ class VectorStore:
         self._id_to_idx: dict[str, int] = {}
         self._idx_to_id: dict[int, str] = {}
         self._next_idx = 0
-        self._index = None  # created lazily on first add
+        self._index: Any = None  # faiss.Index — created lazily on first add
 
     @property
-    def _faiss_index(self):
+    def _faiss_index(self) -> Any:
         if self._index is None:
             import faiss
             self._index = faiss.IndexFlatIP(self._dim)

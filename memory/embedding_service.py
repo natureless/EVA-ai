@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from typing import Any, Optional
 import numpy as np
 
 logger = logging.getLogger("eva.embedding")
@@ -20,7 +20,7 @@ class EmbeddingService:
         self._dim = 384  # all-MiniLM-L6-v2 output dimension
 
     @property
-    def model(self):
+    def model(self) -> Any:
         if self._model is None:
             from sentence_transformers import SentenceTransformer
 
@@ -36,13 +36,13 @@ class EmbeddingService:
         """Return (n, dim) float32 array."""
         if not texts:
             return np.empty((0, self._dim), dtype=np.float32)
-        return self.model.encode(
+        return self.model.encode(  # type: ignore[no-any-return]
             texts, batch_size=batch_size, show_progress_bar=False,
         )
 
     def encode_single(self, text: str) -> np.ndarray:
         """Return (dim,) float32 array for a single text."""
-        return self.encode([text])[0]
+        return self.encode([text])[0]  # type: ignore[no-any-return]
 
     @classmethod
     def singleton(cls, model_name: str = "all-MiniLM-L6-v2") -> EmbeddingService:

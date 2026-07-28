@@ -6,6 +6,10 @@ execution) to route through the executor framework for token
 validation, boundary checking, and audit logging.
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 from agents.base_agent import AgentTask
 
 # ── Agent → Executor mapping ───────────────────────────────
@@ -24,7 +28,7 @@ def task_to_executor_params(
     executor_type: str,
     *,
     task_id: str = "",
-) -> dict:
+) -> dict[str, Any]:
     """Convert an AgentTask into executor.execute(action, params) args."""
     if executor_type == "file":
         return _search_or_code_to_file(task, task_id=task_id)
@@ -37,7 +41,7 @@ def task_to_executor_params(
     }
 
 
-def _search_or_code_to_file(task: AgentTask, *, task_id: str) -> dict:
+def _search_or_code_to_file(task: AgentTask, *, task_id: str) -> dict[str, Any]:
     payload = task.payload or {}
 
     if task.kind == "search":
@@ -83,7 +87,7 @@ def _search_or_code_to_file(task: AgentTask, *, task_id: str) -> dict:
     }
 
 
-def _chat_to_comms(task: AgentTask, *, task_id: str) -> dict:
+def _chat_to_comms(task: AgentTask, *, task_id: str) -> dict[str, Any]:
     payload = task.payload or {}
     text = payload.get("text") or payload.get("content") or ""
     return {

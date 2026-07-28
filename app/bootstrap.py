@@ -41,7 +41,7 @@ from memory.tiered_store import TieredMemoryManager
 from persona.repository import PersonaRepository
 from persona.self_model_store import SelfModelStore
 from persona.service import PersonaService
-from runtime.diagnostics import RecoveryActions, SystemDiagnostic
+from runtime.diagnostics import DiagnosticReport, RecoveryActions, SystemDiagnostic
 from runtime.health import HealthService
 from runtime.logging_setup import configure_logging
 from runtime.result_registry import ResultRegistry
@@ -119,7 +119,7 @@ def _create_initial_state() -> dict[str, Any]:
     }
 
 
-def _deep_merge(base: dict, override: dict) -> None:
+def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> None:
     """Merge override into base in-place (nested dicts merged, not replaced)."""
     for key, value in override.items():
         if key in base and isinstance(base[key], dict) and isinstance(value, dict):
@@ -660,7 +660,7 @@ def shutdown_system(container: AppContainer) -> None:
 
 # ── internal helpers ───────────────────────────────────────────────
 
-def _log_diagnostic(diagnostic: SystemDiagnostic) -> None:
+def _log_diagnostic(diagnostic: DiagnosticReport) -> None:
     if diagnostic.overall == "critical":
         logger.critical("boot diagnostic: score=%d overall=%s issues=%d",
                         diagnostic.score, diagnostic.overall,

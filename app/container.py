@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from persona.repository import PersonaRepository
     from persona.self_model_store import SelfModelStore
     from persona.service import PersonaService
-    from runtime.diagnostics import RecoveryActions, SystemDiagnostic
+    from runtime.diagnostics import DiagnosticReport, RecoveryActions
     from runtime.health import HealthService
     from runtime.result_registry import ResultRegistry
     from runtime.scheduler import RuntimeScheduler
@@ -93,7 +93,7 @@ class AppContainer:
     executor_audit_log: ExecutorAuditLog | None = None
     save_runtime_snapshot: Callable[[], None] = field(default=lambda: None)
     health: HealthService | None = None
-    diagnostic: SystemDiagnostic | None = None
+    diagnostic: DiagnosticReport | None = None
     recovery_actions: RecoveryActions | None = None
     github_poller: Any = None
     embedding_service: Any = None

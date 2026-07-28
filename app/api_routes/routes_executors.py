@@ -12,6 +12,7 @@ POST /api/executors/comms/alert   — log + write alert notification
 """
 
 import json
+from typing import Any
 
 from fastapi import APIRouter, Request, HTTPException
 
@@ -19,7 +20,7 @@ router = APIRouter()
 
 
 @router.get("/api/executors")
-def list_executors(request: Request):
+def list_executors(request: Request) -> dict[str, Any]:
     execs = request.app.state.container.executors
     return {
         "executors": [
@@ -35,7 +36,7 @@ def audit_log(
     executor_type: str = "",
     limit: int = 50,
     status: str = "",
-):
+) -> dict[str, Any]:
     audit = request.app.state.container.executor_audit_log
     if audit is None:
         return {"items": [], "summary": {"total": 0}}
@@ -62,7 +63,7 @@ def _executor_action(
     if container.policy_engine:
         token_manager = container.policy_engine.token_manager
 
-    return executor.execute(
+    return executor.execute(  # type: ignore[no-any-return]
         action=action,
         params=params,
         task_id=params.get("task_id", ""),
@@ -72,7 +73,7 @@ def _executor_action(
 
 
 @router.post("/api/executors/file/read")
-async def file_read(request: Request):
+async def file_read(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -83,7 +84,7 @@ async def file_read(request: Request):
 
 
 @router.post("/api/executors/file/write")
-async def file_write(request: Request):
+async def file_write(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -96,7 +97,7 @@ async def file_write(request: Request):
 
 
 @router.post("/api/executors/file/list")
-async def file_list(request: Request):
+async def file_list(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -106,7 +107,7 @@ async def file_list(request: Request):
 
 
 @router.post("/api/executors/code/execute")
-async def code_execute(request: Request):
+async def code_execute(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -126,7 +127,7 @@ def audit_replay(
     task_id: str = "",
     executor_type: str = "",
     limit: int = 20,
-):
+) -> dict[str, Any]:
     """Replay audit trail for a specific task or executor."""
     audit = request.app.state.container.executor_audit_log
     if audit is None:
@@ -158,7 +159,7 @@ def audit_replay(
 # ── Comms Executor Routes ──────────────────────────────────
 
 @router.post("/api/executors/comms/log")
-async def comms_log(request: Request):
+async def comms_log(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -170,7 +171,7 @@ async def comms_log(request: Request):
 
 
 @router.post("/api/executors/comms/notify")
-async def comms_notify(request: Request):
+async def comms_notify(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}
@@ -182,7 +183,7 @@ async def comms_notify(request: Request):
 
 
 @router.post("/api/executors/comms/alert")
-async def comms_alert(request: Request):
+async def comms_alert(request: Request) -> dict[str, Any]:
     try:
         body = await request.body()
         params = json.loads(body) if body else {}

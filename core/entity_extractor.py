@@ -5,6 +5,8 @@ Parses both raw format (/task:, TODO:) and LLM-structured output
 Used by the cognition loop to auto-populate the WorldModelGraph.
 """
 
+from __future__ import annotations
+
 import re
 from typing import Any
 
@@ -81,8 +83,8 @@ class EntityExtractor:
     priority markers, deadlines, and completion status.
     """
 
-    def extract_entities(self, text: str) -> list[dict]:
-        entities: list[dict] = []
+    def extract_entities(self, text: str) -> list[dict[str, Any]]:
+        entities: list[dict[str, Any]] = []
         seen: set[str] = set()
 
         # ── explicit task markers ────────────────────────────
@@ -174,12 +176,12 @@ class EntityExtractor:
         return entities
 
     def extract_relations(
-        self, entities: list[dict], text: str
-    ) -> list[dict]:
+        self, entities: list[dict[str, Any]], text: str
+    ) -> list[dict[str, Any]]:
         if not entities or len(entities) < 2:
             return []
 
-        relations: list[dict] = []
+        relations: list[dict[str, Any]] = []
 
         # user → task
         for e in entities:
@@ -232,7 +234,7 @@ class EntityExtractor:
 
         return relations
 
-    def extract_from_reply(self, reply: str) -> tuple[list[dict], list[dict]]:
+    def extract_from_reply(self, reply: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
         entities = self.extract_entities(reply)
         relations = self.extract_relations(entities, reply)
         return entities, relations

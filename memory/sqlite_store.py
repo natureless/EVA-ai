@@ -30,7 +30,7 @@ class SQLiteStore(BaseStorageAdapter):
             conn.execute("PRAGMA cache_size=-8000")  # 8MB cache
             conn.execute("PRAGMA busy_timeout=2000")  # 2s busy wait
             self._local.conn = conn
-        return self._local.conn
+        return self._local.conn  # type: ignore[no-any-return]
 
     def close(self) -> None:
         if hasattr(self._local, "conn") and self._local.conn is not None:

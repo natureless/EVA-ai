@@ -3,6 +3,7 @@ import logging
 import time as _time
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Any
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -28,7 +29,7 @@ logger = logging.getLogger("eva.app")
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> Any:
     logger.info("application startup")
     ws_manager = WebSocketManager()
     container = bootstrap_system(ws_manager=ws_manager)
@@ -58,7 +59,7 @@ app.state.rate_limiter = _rate_limiter
 
 
 @app.websocket("/ws")
-async def websocket_endpoint(ws):
+async def websocket_endpoint(ws: WebSocket) -> None:
     ws_manager = app.state.container.ws_manager
     channel = ws.query_params.get("channel", "")
     await ws_manager.connect(ws, channel=channel)

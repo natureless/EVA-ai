@@ -15,7 +15,7 @@ class SnapshotStore:
         if not self.latest_snapshot_path.exists():
             return None
         with self.latest_snapshot_path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
+            return json.load(handle)  # type: ignore[no-any-return]
 
     def save_latest(self, payload: dict[str, Any]) -> None:
         self.snapshot_dir.mkdir(parents=True, exist_ok=True)

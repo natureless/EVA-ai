@@ -65,7 +65,7 @@ class HealthService:
                 return result is not None
             except Exception:
                 return False
-        return self.system_state.get("db_ready", False)
+        return self.system_state.get("db_ready", False)  # type: ignore[no-any-return]
 
     def _probe_event_bus(self) -> bool:
         if self._event_bus is not None:
@@ -75,7 +75,7 @@ class HealthService:
                 return depth >= 0 and healthy
             except Exception:
                 return False
-        return self.system_state.get("event_bus_ready", False)
+        return self.system_state.get("event_bus_ready", False)  # type: ignore[no-any-return]
 
     def _probe_event_persistence(self) -> bool:
         if self._event_bus is not None:
@@ -88,10 +88,10 @@ class HealthService:
     def _probe_event_depth(self) -> int:
         if self._event_bus is not None:
             try:
-                return self._event_bus.size()
+                return self._event_bus.size()  # type: ignore[no-any-return]
             except Exception:
                 return -1
-        return self.system_state.get("pending_events", 0)
+        return self.system_state.get("pending_events", 0)  # type: ignore[no-any-return]
 
     def _probe_cognition_loop(self) -> bool:
         if self._loop is not None:
@@ -100,7 +100,7 @@ class HealthService:
                 return t is not None and t.is_alive()
             except Exception:
                 return False
-        return self.system_state.get("loop_ready", False)
+        return self.system_state.get("loop_ready", False)  # type: ignore[no-any-return]
 
     def _probe_scheduler(self) -> bool:
         if self._scheduler is not None:
@@ -111,7 +111,7 @@ class HealthService:
                 return getattr(self._scheduler, "_started", False)
             except Exception:
                 return False
-        return self.system_state.get("scheduler_ready", False)
+        return self.system_state.get("scheduler_ready", False)  # type: ignore[no-any-return]
 
     def _probe_llm(self) -> bool:
         try:

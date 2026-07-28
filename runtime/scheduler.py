@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime, timezone
 import logging
 from typing import Any, Callable
@@ -79,8 +81,8 @@ class RuntimeScheduler:
         self.system_state["scheduler_running"] = False
         logger.info("scheduler stopped")
 
-    def list_jobs(self) -> list[dict]:
-        jobs: list[dict] = []
+    def list_jobs(self) -> list[dict[str, Any]]:
+        jobs: list[dict[str, Any]] = []
         for job in self._scheduler.get_jobs():
             jobs.append(
                 {

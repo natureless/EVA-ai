@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
@@ -40,7 +41,8 @@ class SearchAgent(BaseAgent):
                     content=content, summary=content[:120],
                     meta={"query": query, "error": "path_not_found"})
 
-            matches, files_scanned, truncated = self._search(root, query)
+            _search_result: tuple[list[str], int, bool] = self._search(root, query)
+            matches, files_scanned, truncated = _search_result
 
             if not matches:
                 content = f"[search_agent] no matches for '{query}' under {root}"
@@ -67,7 +69,7 @@ class SearchAgent(BaseAgent):
                 content=f"[search_agent] error: {str(e)}",
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
-    def _llm_summarize(self, llm, query, raw_output, files_scanned, truncated, context=None):
+    def _llm_summarize(self, llm: Any, query: Any, raw_output: Any, files_scanned: Any, truncated: Any, context: Any = None) -> str:
         if isinstance(llm, MockLLM):
             lines = "\n".join(raw_output.splitlines()[:20])
             return f"[search_agent] matches for '{query}' (scanned {files_scanned} files):\n{lines}"
@@ -86,7 +88,7 @@ class SearchAgent(BaseAgent):
                 f"Raw matches:\n{raw_output[:3000]}"
             )},
         ]
-        return llm.chat(messages)
+        return llm.chat(messages)  # type: ignore[no-any-return]
 
     def _normalize_query(self, raw: str) -> str:
         lowered = raw.lower()
@@ -96,8 +98,10 @@ class SearchAgent(BaseAgent):
         return raw
 
     def _search(self, root: Path, query: str) -> tuple[list[str], int, bool]:
+        matches: list[str] = []
+        files_scanned: int = 0
+        truncated: bool = False
         max_files, max_matches, max_file_size = 2000, 20, 512 * 1024
-        matches, files_scanned, truncated = [], 0, False
         skip_dirs = {".git", ".venv", "venv", "__pycache__", "node_modules", "data", "logs", ".pytest_cache"}
         query_lower = query.lower()
 

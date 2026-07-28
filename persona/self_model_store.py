@@ -69,7 +69,7 @@ class SelfModelStore:
             version = payload.get("_version", 1)
             if version < CURRENT_SELF_MODEL_VERSION:
                 payload = _migrate_v1_to_v2(payload)
-            return payload
+            return payload  # type: ignore[no-any-return]
         default = DEFAULT_SELF_MODEL.copy()
         default["_version"] = CURRENT_SELF_MODEL_VERSION
         self.save(default)

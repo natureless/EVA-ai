@@ -96,7 +96,7 @@ class SessionMemory:
             del self._store[k]
         return len(expired)
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         with self._lock:
             return {
                 "tier": "S1_session",
@@ -107,7 +107,7 @@ class SessionMemory:
                 "miss_count": self._miss_count,
             }
 
-    def dump_to_s2(self, s2_store) -> int:
+    def dump_to_s2(self, s2_store: Any) -> int:
         """Flush all S1 entries to S2 working memory so context survives restart."""
         count = 0
         with self._lock:
@@ -124,7 +124,7 @@ class SessionMemory:
                     pass
         return count
 
-    def restore_from_s2(self, s2_store) -> int:
+    def restore_from_s2(self, s2_store: Any) -> int:
         """Reload recently dumped S1 entries from S2 on startup."""
         count = 0
         try:
@@ -180,7 +180,7 @@ class WorkingMemoryStore:
         )
         return mid
 
-    def get(self, memory_id: str) -> dict | None:
+    def get(self, memory_id: str) -> dict[str, Any] | None:
         row = self.store.fetchone(
             "SELECT * FROM working_memory WHERE id = ?", (memory_id,)
         )
@@ -189,7 +189,7 @@ class WorkingMemoryStore:
         row["tags"] = json.loads(row.get("tags_json", "[]"))
         return dict(row)
 
-    def list_recent(self, limit: int = 50) -> list[dict]:
+    def list_recent(self, limit: int = 50) -> list[dict[str, Any]]:
         rows = self.store.fetchall(
             """SELECT * FROM working_memory
                WHERE expires_at > ?
@@ -218,7 +218,7 @@ class WorkingMemoryStore:
                 (count - self.max_entries,),
             )
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         rows = self.store.fetchall("SELECT COUNT(*) as cnt FROM working_memory", ())
         return {
             "tier": "S2_working",
@@ -258,14 +258,14 @@ class LongTermMemoryStore:
         )
         return mid
 
-    def get(self, memory_id: str) -> dict | None:
+    def get(self, memory_id: str) -> dict[str, Any] | None:
         row = self.store.fetchone(
             "SELECT * FROM long_term_memory WHERE id = ? AND status = 'active'",
             (memory_id,),
         )
         return dict(row) if row else None
 
-    def list_by_category(self, category: str, limit: int = 50) -> list[dict]:
+    def list_by_category(self, category: str, limit: int = 50) -> list[dict[str, Any]]:
         rows = self.store.fetchall(
             """SELECT * FROM long_term_memory
                WHERE category = ? AND status = 'active'
@@ -275,7 +275,7 @@ class LongTermMemoryStore:
         )
         return [dict(r) for r in rows]
 
-    def list_recent(self, limit: int = 50) -> list[dict]:
+    def list_recent(self, limit: int = 50) -> list[dict[str, Any]]:
         rows = self.store.fetchall(
             """SELECT * FROM long_term_memory
                WHERE status = 'active'
@@ -284,7 +284,7 @@ class LongTermMemoryStore:
         )
         return [dict(r) for r in rows]
 
-    def search(self, query: str, limit: int = 50) -> list[dict]:
+    def search(self, query: str, limit: int = 50) -> list[dict[str, Any]]:
         """Search long-term memory using FTS5, with LIKE fallback.
 
         FTS5 handles tokenized search (fast, indexed). Falls back to
@@ -336,7 +336,7 @@ class LongTermMemoryStore:
                 (min(500, count - self.max_entries + 100),),
             )
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         active = self.store.fetchall(
             "SELECT COUNT(*) as cnt FROM long_term_memory WHERE status = 'active'", ()
         )
@@ -362,7 +362,7 @@ class WorldModelStore:
     # -- entities -------------------------------------------------------------
 
     def upsert_entity(
-        self, entity_id: str, entity_type: str, name: str, properties: dict | None = None
+        self, entity_id: str, entity_type: str, name: str, properties: dict[str, Any] | None = None
     ) -> None:
         now = datetime.now(timezone.utc).isoformat()
         self.store.execute(
@@ -373,7 +373,7 @@ class WorldModelStore:
              json.dumps(properties or {}, ensure_ascii=False), now),
         )
 
-    def get_entity(self, entity_id: str) -> dict | None:
+    def get_entity(self, entity_id: str) -> dict[str, Any] | None:
         row = self.store.fetchone(
             "SELECT * FROM world_entities WHERE id = ?", (entity_id,)
         )
@@ -381,7 +381,7 @@ class WorldModelStore:
             row["properties"] = json.loads(row.get("properties_json", "{}"))
         return dict(row) if row else None
 
-    def list_entities(self, entity_type: str = "", limit: int = 100) -> list[dict]:
+    def list_entities(self, entity_type: str = "", limit: int = 100) -> list[dict[str, Any]]:
         if entity_type:
             rows = self.store.fetchall(
                 "SELECT * FROM world_entities WHERE type = ? ORDER BY updated_at DESC LIMIT ?",
@@ -409,7 +409,7 @@ class WorldModelStore:
             (source, target, relation, weight, now),
         )
 
-    def list_edges(self, entity_id: str = "", limit: int = 200) -> list[dict]:
+    def list_edges(self, entity_id: str = "", limit: int = 200) -> list[dict[str, Any]]:
         if entity_id:
             rows = self.store.fetchall(
                 "SELECT * FROM world_edges WHERE source = ? OR target = ? LIMIT ?",
@@ -422,7 +422,7 @@ class WorldModelStore:
             )
         return [dict(r) for r in rows]
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         entities = self.store.fetchall("SELECT COUNT(*) as cnt FROM world_entities", ())
         edges = self.store.fetchall("SELECT COUNT(*) as cnt FROM world_edges", ())
         return {
@@ -448,7 +448,7 @@ class EventTraceStore:
         rows = self.store.fetchall("SELECT COUNT(*) as cnt FROM traces", ())
         return rows[0]["cnt"] if rows else 0
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         return {
             "tier": "S5_event_trace",
             "events": self.count_events(),
@@ -472,7 +472,7 @@ class TieredMemoryManager:
     def __init__(
         self,
         store: BaseStorageAdapter,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
         governor: MemoryGovernor | None = None,
         embedding_service: Any = None,
         vector_store: Any = None,
@@ -523,7 +523,7 @@ class TieredMemoryManager:
 
     def batch_ingest(
         self,
-        items: list[dict],
+        items: list[dict[str, Any]],
     ) -> list[dict[str, str]]:
         """Batch-ingest multiple items efficiently.
 
@@ -534,8 +534,8 @@ class TieredMemoryManager:
         reducing per-item latency from ~10ms to <0.1ms.
         """
         results: list[dict[str, str]] = []
-        s2_batch: list[tuple] = []
-        s3_batch: list[tuple] = []
+        s2_batch: list[tuple[Any, ...]] = []
+        s3_batch: list[tuple[Any, ...]] = []
 
         for item in items:
             content = str(item.get("content", ""))
@@ -704,13 +704,14 @@ class TieredMemoryManager:
                 prediction_error=0.0,
             )
 
-            self._governor.ingest(record, features)
+            if self._governor is not None:
+                self._governor.ingest(record, features)
         finally:
             self._push_depth -= 1
 
     # ── recall ──────────────────────────────────────────────
 
-    def recall(self, query: str, tiers: list[int] | None = None) -> list[dict]:
+    def recall(self, query: str, tiers: list[int] | None = None) -> list[dict[str, Any]]:
         """Search across specified tiers (default: all).
 
         S1: in-memory substring scan (small, fast)
@@ -718,7 +719,7 @@ class TieredMemoryManager:
         S3: FTS5 indexed search with LIKE fallback
         """
         tiers = tiers or [1, 2, 3]
-        results: list[dict] = []
+        results: list[dict[str, Any]] = []
         q = query.lower()
 
         if 1 in tiers:
@@ -745,7 +746,7 @@ class TieredMemoryManager:
         query: str,
         alpha: float | None = None,
         top_k: int = 50,
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """Hybrid keyword + semantic search over S3 long_term_memory.
 
         Falls back to plain FTS5 when embedding_service or vector_store
@@ -784,7 +785,7 @@ class TieredMemoryManager:
 
     # ── maintenance ─────────────────────────────────────────
 
-    def maintenance(self) -> dict:
+    def maintenance(self) -> dict[str, Any]:
         s1_evicted = self.s1.evict_expired()
         s2_cleaned = self.s2.cleanup_expired()
         return {
@@ -794,7 +795,7 @@ class TieredMemoryManager:
 
     # ── stats ───────────────────────────────────────────────
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         return {
             "S1_session": self.s1.stats(),
             "S2_working": self.s2.stats(),

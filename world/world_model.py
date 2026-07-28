@@ -180,7 +180,7 @@ class WorldModelGraph:
 
     # ── S4 persistence ─────────────────────────────────────
 
-    def flush(self, s4_store) -> None:
+    def flush(self, s4_store: Any) -> None:
         """Persist dirty entities and edges to S4 WorldModelStore."""
         with self._lock:
             for eid in self._dirty_entities:
@@ -197,7 +197,7 @@ class WorldModelGraph:
             self._dirty_entities.clear()
             self._dirty_edges.clear()
 
-    def load_from_store(self, s4_store) -> None:
+    def load_from_store(self, s4_store: Any) -> None:
         """Restore graph from S4 WorldModelStore."""
         entities = s4_store.list_entities(limit=5000)
         for row in entities:

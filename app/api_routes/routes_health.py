@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import json
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, Request, HTTPException
 
@@ -10,17 +13,17 @@ router = APIRouter()
 
 
 @router.get("/health/live")
-def health_live(request: Request) -> dict:
-    return request.app.state.container.health.live()
+def health_live(request: Request) -> dict[str, Any]:
+    return request.app.state.container.health.live()  # type: ignore[no-any-return]
 
 
 @router.get("/health/ready")
-def health_ready(request: Request) -> dict:
-    return request.app.state.container.health.ready()
+def health_ready(request: Request) -> dict[str, Any]:
+    return request.app.state.container.health.ready()  # type: ignore[no-any-return]
 
 
 @router.get("/health/diagnostic")
-def health_diagnostic(request: Request) -> dict:
+def health_diagnostic(request: Request) -> dict[str, Any]:
     """Run a full system diagnostic and return the report."""
     container = request.app.state.container
     diag = SystemDiagnostic().run_full(
@@ -34,7 +37,7 @@ def health_diagnostic(request: Request) -> dict:
 
 
 @router.post("/health/recover")
-async def health_recover(request: Request) -> dict:
+async def health_recover(request: Request) -> dict[str, Any]:
     """Execute a recovery action.
 
     Body: {"action": "reset_policy" | "clear_registry" | "rebuild_db" | "rebuild_snapshot"}
@@ -77,7 +80,7 @@ async def health_recover(request: Request) -> dict:
 
 
 @router.get("/health/ws")
-def websocket_stats(request: Request) -> dict:
+def websocket_stats(request: Request) -> dict[str, Any]:
     """WebSocket connection statistics."""
     ws = request.app.state.container.ws_manager
     return ws.stats() if ws else {"connections": 0}

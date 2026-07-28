@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Iterable, Optional
 
 from memory.importance_scorer import ImportanceFeatures, ImportanceScorer
 from memory.memory_compactor import MemoryCompactor, MemoryDecayPolicy
@@ -95,7 +95,7 @@ class MemoryRepository:
         )
         return [self._from_row(row) for row in rows]
 
-    def _to_payload(self, record: MemoryRecord) -> dict:
+    def _to_payload(self, record: MemoryRecord) -> dict[str, Any]:
         data = asdict(record)
         data["memory_type"] = record.memory_type.value
         data["status"] = record.status.value
@@ -106,7 +106,7 @@ class MemoryRepository:
         )
         return data
 
-    def _from_row(self, row: dict) -> MemoryRecord:
+    def _from_row(self, row: dict[str, Any]) -> MemoryRecord:
         return MemoryRecord(
             id=row["id"],
             memory_type=MemoryType(row["memory_type"]),
@@ -180,7 +180,7 @@ class MemoryGovernor:
         self.repository.upsert(mem)
         return mem
 
-    def maintenance(self) -> dict:
+    def maintenance(self) -> dict[str, Any]:
         now = datetime.now(timezone.utc)
         changed = 0
         compacted = 0

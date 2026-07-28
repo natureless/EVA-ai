@@ -72,7 +72,7 @@ class SystemDiagnostic:
 
     # ── individual checks ───────────────────────────────────
 
-    def check_db(self, store) -> DiagnosticCheck:
+    def check_db(self, store: Any) -> DiagnosticCheck:
         try:
             result = store.fetchall("PRAGMA integrity_check", ())
             integrity_ok = result and result[0].get("integrity_check") == "ok"
@@ -174,7 +174,7 @@ class SystemDiagnostic:
             metadata={"missing": missing, "unparseable": unparseable},
         )
 
-    def check_memory_tiers(self, tiered_memory) -> DiagnosticCheck:
+    def check_memory_tiers(self, tiered_memory: Any) -> DiagnosticCheck:
         try:
             stats = tiered_memory.stats()
             s1 = stats["S1_session"]["entries"]
@@ -309,7 +309,7 @@ class SystemDiagnostic:
 
 class RecoveryActions:
     @staticmethod
-    def recover_db(store) -> DiagnosticCheck:
+    def recover_db(store: Any) -> DiagnosticCheck:
         """Safe re-init: CREATE IF NOT EXISTS for all tables."""
         try:
             store.init_db()
@@ -326,7 +326,7 @@ class RecoveryActions:
 
     @staticmethod
     def recover_snapshot(
-        snapshot_path: Path, world_model=None
+        snapshot_path: Path, world_model: Any = None
     ) -> DiagnosticCheck:
         """Regenerate a valid snapshot from current state."""
         try:
@@ -347,7 +347,7 @@ class RecoveryActions:
             )
 
     @staticmethod
-    def reset_policy(policy_engine) -> DiagnosticCheck:
+    def reset_policy(policy_engine: Any) -> DiagnosticCheck:
         """Reset policy state to Dormant (exit quarantine)."""
         if policy_engine is None:
             return DiagnosticCheck(
@@ -362,7 +362,7 @@ class RecoveryActions:
         )
 
     @staticmethod
-    def clear_stale_registry(result_registry) -> DiagnosticCheck:
+    def clear_stale_registry(result_registry: Any) -> DiagnosticCheck:
         """Clean up stale result registry entries."""
         if result_registry is None:
             return DiagnosticCheck(

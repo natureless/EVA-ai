@@ -9,6 +9,8 @@ Executors are NOT agents — they gate agent access to external resources.
 Agents handle cognition; executors handle safety.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 import subprocess
@@ -83,7 +85,7 @@ class ExecutorAuditLog:
         executor_type: str = "",
         limit: int = 50,
         status: str = "",
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         if executor_type and status:
             rows = self.store.fetchall(
                 """SELECT * FROM executor_audit
@@ -114,7 +116,7 @@ class ExecutorAuditLog:
             r["parameters"] = json.loads(r.get("parameters_json", "{}"))
         return [dict(r) for r in rows]
 
-    def count_by_type(self) -> list[dict]:
+    def count_by_type(self) -> list[dict[str, Any]]:
         return self.store.fetchall(
             """SELECT executor_type, status, COUNT(*) as cnt
                FROM executor_audit GROUP BY executor_type, status
@@ -137,11 +139,11 @@ class BaseExecutor(ABC):
     name: str = "base"
     description: str = "abstract executor"
 
-    def __init__(self, audit_log: ExecutorAuditLog, config: dict | None = None) -> None:
+    def __init__(self, audit_log: ExecutorAuditLog, config: dict[str, Any] | None = None) -> None:
         self.audit_log = audit_log
         self.config = config or {}
 
-    def validate_token(self, token_manager, token_id: str) -> ExecutorDecision:
+    def validate_token(self, token_manager: Any, token_id: str) -> ExecutorDecision:
         if token_manager is None:
             return ExecutorDecision(allowed=False, reason="no token manager available")
         if not token_id:
@@ -164,7 +166,7 @@ class BaseExecutor(ABC):
         *,
         task_id: str = "",
         token_id: str = "",
-        token_manager=None,
+        token_manager: Any = None,
     ) -> dict[str, Any]:
         """Template method: validate → boundary-check → execute → audit."""
         start = time.perf_counter()
@@ -236,7 +238,7 @@ class FileExecutor(BaseExecutor):
     def __init__(
         self,
         audit_log: ExecutorAuditLog,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("file", {})
@@ -359,7 +361,7 @@ DEFAULT_CODE_TIMEOUT = 30     # seconds
 DEFAULT_CODE_MAX_OUTPUT = 100 * 1024  # 100 KB
 
 
-def _parse_timeout_sec(value) -> int:
+def _parse_timeout_sec(value: int | str) -> int:
     """Parse a timeout value that may be an int or a string like '60 seconds'."""
     if isinstance(value, int):
         return value
@@ -378,7 +380,7 @@ class CodeExecutor(BaseExecutor):
     def __init__(
         self,
         audit_log: ExecutorAuditLog,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("code", {})
@@ -469,7 +471,7 @@ class BrowserExecutor(BaseExecutor):
     def __init__(
         self,
         audit_log: ExecutorAuditLog,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("browser", {})
@@ -543,7 +545,7 @@ class APIExecutor(BaseExecutor):
     def __init__(
         self,
         audit_log: ExecutorAuditLog,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("api", {})
@@ -623,7 +625,7 @@ class CommsExecutor(BaseExecutor):
     def __init__(
         self,
         audit_log: ExecutorAuditLog,
-        config: dict | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(audit_log, config)
         cfg = (config or {}).get("executors", {}).get("comms", {})

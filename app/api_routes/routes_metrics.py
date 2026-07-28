@@ -4,7 +4,10 @@ GET /metrics — JSON payload with queue sizes, memory stats,
               agent execution timings, and scheduler health.
 """
 
+from __future__ import annotations
+
 import time
+from typing import Any
 
 from fastapi import APIRouter, Request
 
@@ -14,12 +17,12 @@ _START_TIME = time.time()
 
 
 @router.get("/metrics")
-def metrics(request: Request) -> dict:
+def metrics(request: Request) -> dict[str, Any]:
     container = request.app.state.container
     ss = container.system_state
     now = time.time()
 
-    payload: dict = {
+    payload: dict[str, Any] = {
         "uptime_seconds": int(now - _START_TIME),
         "timestamp": now,
     }

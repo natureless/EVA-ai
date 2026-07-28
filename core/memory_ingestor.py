@@ -1,6 +1,9 @@
 """Creates MemoryRecord + ImportanceFeatures for cognition loop events."""
 
+from __future__ import annotations
+
 import time
+from typing import Any
 from uuid import uuid4
 
 from memory.importance_scorer import ImportanceFeatures
@@ -15,7 +18,7 @@ class MemoryIngestor:
     feature-extraction logic that would otherwise be ~20 lines inline.
     """
 
-    def __init__(self, memory_governor: MemoryGovernor | None, self_model: dict | None) -> None:
+    def __init__(self, memory_governor: MemoryGovernor | None, self_model: dict[str, Any] | None) -> None:
         self._governor = memory_governor
         self._self_model = self_model
 
@@ -24,7 +27,7 @@ class MemoryIngestor:
         text: str,
         event_id: str,
         source: str,
-        active_tasks: list[dict],
+        active_tasks: list[dict[str, Any]],
     ) -> None:
         """Create and ingest an episodic memory record for a user message."""
         if not self._governor:
@@ -57,7 +60,7 @@ class MemoryIngestor:
 
     # ── helpers ────────────────────────────────────────────────────
 
-    def _text_matches_active_tasks(self, text: str, active_tasks: list[dict]) -> bool:
+    def _text_matches_active_tasks(self, text: str, active_tasks: list[dict[str, Any]]) -> bool:
         if not active_tasks:
             return False
         text_lower = text.lower()

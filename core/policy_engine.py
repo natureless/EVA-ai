@@ -8,6 +8,8 @@ Composes three subsystems:
 All three are consulted by PolicyEngine.evaluate() on every cognition event.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
@@ -104,7 +106,7 @@ DEFAULT_TRANSITIONS = {
 
 
 class StateMachine:
-    def __init__(self, config: dict | None = None) -> None:
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         cfg = config or {}
         sm_cfg = cfg.get("state_machine", {})
         self._transitions: dict[tuple[State, str], State] = dict(DEFAULT_TRANSITIONS)
@@ -192,7 +194,7 @@ class StateMachine:
 # ── Priority Resolver ───────────────────────────────────────
 
 class PriorityResolver:
-    def __init__(self, config: dict | None = None) -> None:
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         self._config = config or {}
 
     def resolve(
@@ -235,7 +237,7 @@ class PriorityResolver:
 # ── Token Manager ───────────────────────────────────────────
 
 class TokenManager:
-    def __init__(self, config: dict | None = None) -> None:
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         self._tokens: dict[str, Token] = {}
         self._max_tokens = 50
 
@@ -328,7 +330,7 @@ class PolicyEngine:
             ...  # request confirmation
     """
 
-    def __init__(self, config: dict | None = None) -> None:
+    def __init__(self, config: dict[str, Any] | None = None) -> None:
         cfg = config or {}
         self.state_machine = StateMachine(cfg)
         self.priority_resolver = PriorityResolver(cfg)

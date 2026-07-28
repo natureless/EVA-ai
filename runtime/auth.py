@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import logging
-from typing import Callable
+from typing import Any, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -38,7 +38,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
     If EVA_API_TOKEN env is not set, all requests pass through (dev mode).
     """
 
-    def __init__(self, app, token: str = "") -> None:
+    def __init__(self, app: Any, token: str = "") -> None:
         super().__init__(app)
         self._token = token or os.environ.get("EVA_API_TOKEN", "")
         if self._token:
@@ -46,7 +46,7 @@ class AuthMiddleware(BaseHTTPMiddleware):
         else:
             logger.warning("EVA_API_TOKEN not set — API is open (no auth)")
 
-    async def dispatch(self, request: Request, call_next: Callable):
+    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Any:
         if not self._token or _is_excluded(request.url.path):
             return await call_next(request)
 

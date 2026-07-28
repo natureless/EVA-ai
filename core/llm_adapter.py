@@ -15,20 +15,23 @@ Usage::
     ])
 """
 
+from __future__ import annotations
+
 import json
 import os
 import logging
 from abc import ABC, abstractmethod
+from typing import Any, Generator
 
 logger = logging.getLogger("eva.llm")
 
 
 class LLMAdapter(ABC):
     @abstractmethod
-    def chat(self, messages: list[dict]) -> str:
+    def chat(self, messages: list[dict[str, Any]]) -> str:
         ...
 
-    def chat_stream(self, messages: list[dict]):
+    def chat_stream(self, messages: list[dict[str, Any]]) -> Generator[str, None, None]:
         """Yield tokens one at a time. Default: yield entire response at once."""
         yield self.chat(messages)
 
@@ -48,7 +51,7 @@ class MockLLM(LLMAdapter):
     API keys are configured.
     """
 
-    def chat(self, messages: list[dict]) -> str:
+    def chat(self, messages: list[dict[str, Any]]) -> str:
         last = messages[-1]["content"] if messages else ""
 
         context_hint = ""
@@ -107,7 +110,7 @@ class OpenAIAdapter(LLMAdapter):
         self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
         self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
-    def chat(self, messages: list[dict]) -> str:
+    def chat(self, messages: list[dict[str, Any]]) -> str:
         if not self.api_key:
             logger.warning("OPENAI_API_KEY not set — falling back to mock")
             return MockLLM().chat(messages)
@@ -130,14 +133,14 @@ class OpenAIAdapter(LLMAdapter):
             )
             if resp.status_code == 200:
                 data = resp.json()
-                return data["choices"][0]["message"]["content"]
+                return data["choices"][0]["message"]["content"]  # type: ignore[no-any-return]
             logger.error("OpenAI API error %d: %s", resp.status_code, resp.text[:500])
             return f"[EVA] API error {resp.status_code}"
         except Exception as e:
             logger.error("OpenAI request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
 
-    def chat_stream(self, messages: list[dict]):
+    def chat_stream(self, messages: list[dict[str, Any]]) -> Generator[str, None, None]:
         if not self.api_key:
             yield MockLLM().chat(messages)
             return
@@ -206,7 +209,7 @@ class ClaudeAdapter(LLMAdapter):
         self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
         self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
-    def chat(self, messages: list[dict]) -> str:
+    def chat(self, messages: list[dict[str, Any]]) -> str:
         if not self.api_key:
             logger.warning("ANTHROPIC_API_KEY not set — falling back to mock")
             return MockLLM().chat(messages)
@@ -234,12 +237,12 @@ class ClaudeAdapter(LLMAdapter):
                 kwargs["system"] = system
 
             resp = client.messages.create(**kwargs)
-            return resp.content[0].text
+            return resp.content[0].text  # type: ignore[no-any-return]
         except Exception as e:
             logger.error("Claude API request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
 
-    def chat_stream(self, messages: list[dict]):
+    def chat_stream(self, messages: list[dict[str, Any]]) -> Generator[str, None, None]:
         if not self.api_key:
             yield MockLLM().chat(messages)
             return
@@ -334,7 +337,7 @@ def get_llm(
     return MockLLM()
 
 
-def load_system_prompt(agent_name: str, **kwargs) -> str:
+def load_system_prompt(agent_name: str, **kwargs: Any) -> str:
     """Load the system prompt template for an agent from config/system_prompt.yaml.
 
     Falls back to built-in defaults if the file is missing.
@@ -352,7 +355,7 @@ def load_system_prompt(agent_name: str, **kwargs) -> str:
             if template:
                 for key, val in kwargs.items():
                     template = template.replace("{" + key + "}", str(val))
-                return template
+                return template  # type: ignore[no-any-return]
     except Exception as e:
         logger.debug("failed to load system prompt template: %s", e)
 

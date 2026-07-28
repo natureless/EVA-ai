@@ -1,4 +1,6 @@
-from typing import Callable
+from __future__ import annotations
+
+from typing import Any, Callable
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, load_system_prompt
@@ -85,7 +87,7 @@ class ChatAgent(BaseAgent):
             },
         )
 
-    def _build_system(self, context: dict | None) -> str:
+    def _build_system(self, context: dict[str, Any] | None) -> str:
         if context and context.get("persona"):
             p = context["persona"]
             persona_name = p.get("name", "EVA")

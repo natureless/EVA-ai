@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
@@ -9,7 +11,7 @@ templates = Jinja2Templates(directory=str(settings.template_dir))
 
 
 @router.get("/")
-def index(request: Request):
+def index(request: Request) -> Any:
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -18,7 +20,7 @@ def index(request: Request):
 
 
 @router.get("/settings")
-def settings_page(request: Request):
+def settings_page(request: Request) -> Any:
     return templates.TemplateResponse(
         request=request,
         name="settings.html",

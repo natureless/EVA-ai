@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -20,7 +20,7 @@ def _l2_normalize(vec: np.ndarray) -> np.ndarray:
     norm = np.linalg.norm(vec)
     if norm < 1e-12:
         return vec
-    return vec / norm
+    return vec / norm  # type: ignore[no-any-return]
 
 
 def reindex_all(
@@ -28,7 +28,7 @@ def reindex_all(
     vector_store: VectorStore,
     ltm_store: LongTermMemoryStore,
     batch_size: int = 500,
-) -> dict:
+) -> dict[str, Any]:
     """Fetch all active long_term_memory rows, encode, and rebuild FAISS index.
 
     Runs as a fire-and-forget background job. Non-blocking by design.

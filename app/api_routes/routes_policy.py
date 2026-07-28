@@ -6,6 +6,7 @@ POST /api/policy/transition   — manual state transition (user confirmation req
 """
 
 import json
+from typing import Any
 
 from fastapi import APIRouter, Request, HTTPException
 
@@ -13,7 +14,7 @@ router = APIRouter()
 
 
 @router.get("/api/policy/state")
-async def get_policy_state(request: Request, detail: bool = False):
+async def get_policy_state(request: Request, detail: bool = False) -> dict[str, Any]:
     container = request.app.state.container
     policy_engine = container.policy_engine
     if policy_engine is None:
@@ -30,11 +31,11 @@ async def get_policy_state(request: Request, detail: bool = False):
             "active_tokens": tk.get("active_tokens", 0),
         }
 
-    return state
+    return state  # type: ignore[no-any-return]
 
 
 @router.post("/api/policy/transition")
-async def trigger_state_transition(request: Request):
+async def trigger_state_transition(request: Request) -> dict[str, Any]:
     """Manually trigger a state machine transition.
 
     Request body: {"trigger": "manual_intervention"}

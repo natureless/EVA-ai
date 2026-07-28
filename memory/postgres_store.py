@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import logging
 from contextlib import contextmanager
-from typing import Any, Iterable
+from typing import Any, Generator, Iterable
 
 from memory.storage_adapter import BaseStorageAdapter
 
@@ -120,8 +120,9 @@ class PostgresStore(BaseStorageAdapter):
             )
 
     @contextmanager
-    def _get_conn(self):
+    def _get_conn(self) -> Generator[Any, None, None]:
         """Get a connection from the pool, yielding it, then put it back."""
+        assert self._pool is not None, "pool not initialized — call _ensure_pool() first"
         conn = self._pool.getconn()
         try:
             yield conn

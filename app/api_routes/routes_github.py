@@ -1,6 +1,9 @@
 """GitHub webhook receiver route."""
 
+from __future__ import annotations
+
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Header, HTTPException, Request
 
@@ -17,7 +20,7 @@ async def github_webhook(
     x_github_event: str = Header(..., alias="X-GitHub-Event"),
     x_hub_signature_256: str = Header(..., alias="X-Hub-Signature-256"),
     x_github_delivery: str = Header(..., alias="X-GitHub-Delivery"),
-) -> dict:
+) -> dict[str, Any]:
     if not settings.github_webhook_secret:
         raise HTTPException(status_code=501, detail="webhook secret not configured")
 

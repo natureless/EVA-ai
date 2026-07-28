@@ -15,6 +15,8 @@ Usage in cognition loop::
     ws.broadcast_sync("chat_token", {"task_id": tid, "token": t})
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -137,7 +139,7 @@ class WebSocketManager:
 
     # ── stats ────────────────────────────────────────────────
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         return {
             "channels": {ch: len(s) for ch, s in self._clients.items()},
             "total_connections": self._count_all(),

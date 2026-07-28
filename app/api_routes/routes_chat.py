@@ -10,9 +10,12 @@ Poll fallback: ``GET /api/chat/result/{task_id}`` for clients that
 cannot open a WebSocket connection.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import time
+from typing import Any, AsyncGenerator
 from uuid import uuid4
 
 from fastapi import APIRouter, Request, status
@@ -32,7 +35,7 @@ class ChatRequest(BaseModel):
 # ── unified async endpoint (returns immediately) ──────────────
 
 @router.post("/api/chat")
-def chat(req: ChatRequest, request: Request):
+def chat(req: ChatRequest, request: Request) -> dict[str, Any]:
     """Publish a user message and return immediately with a task_id.
 
     The client receives the result via WebSocket ``chat_reply`` channel
@@ -70,7 +73,7 @@ def chat(req: ChatRequest, request: Request):
 # ── SSE streaming endpoint (WS-backed, full pipeline) ─────────
 
 @router.post("/api/chat/stream")
-async def chat_stream(req: ChatRequest, request: Request):
+async def chat_stream(req: ChatRequest, request: Request) -> Any:
     """SSE endpoint backed by the unified cognition pipeline.
 
     Publishes a ``user_message`` event with ``stream: true``, then
@@ -100,11 +103,11 @@ async def chat_stream(req: ChatRequest, request: Request):
     # stop the SSE stream cleanly.
     stream_done = asyncio.Event()
 
-    async def _on_chat_token(channel: str, payload: dict) -> None:
+    async def _on_chat_token(channel: str, payload: dict[str, Any]) -> None:
         if payload.get("task_id") == correlation_id:
             await token_queue.put(payload.get("token", ""))
 
-    async def _on_chat_reply(channel: str, payload: dict) -> None:
+    async def _on_chat_reply(channel: str, payload: dict[str, Any]) -> None:
         if payload.get("task_id") == correlation_id:
             stream_done.set()
 
@@ -120,7 +123,7 @@ async def chat_stream(req: ChatRequest, request: Request):
     container.event_bus.publish(event)
     container.system_state["pending_events"] = container.event_bus.size()
 
-    async def event_generator():
+    async def event_generator() -> AsyncGenerator[str, None]:
         try:
             while not stream_done.is_set():
                 try:
@@ -155,7 +158,7 @@ async def chat_stream(req: ChatRequest, request: Request):
 # ── backward-compatible sync endpoint ─────────────────────────
 
 @router.post("/api/chat/sync")
-def chat_sync(req: ChatRequest, request: Request):
+def chat_sync(req: ChatRequest, request: Request) -> Any:
     """Legacy sync endpoint — blocks until the cognition loop finishes.
 
     Kept for backward compatibility during the transition to the
@@ -215,7 +218,7 @@ def chat_sync(req: ChatRequest, request: Request):
 # ── poll fallback ─────────────────────────────────────────────
 
 @router.get("/api/chat/result/{task_id}")
-def get_chat_result(task_id: str, request: Request):
+def get_chat_result(task_id: str, request: Request) -> Any:
     """Poll for a pending chat result by task_id.
 
     Returns the completed result if available, or 202 if still pending.
@@ -243,7 +246,7 @@ def get_chat_result(task_id: str, request: Request):
 # ── state endpoint ────────────────────────────────────────────
 
 @router.get("/api/state")
-def get_state(request: Request) -> dict:
+def get_state(request: Request) -> dict[str, Any]:
     container = request.app.state.container
     ss = container.system_state
 

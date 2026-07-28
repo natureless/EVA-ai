@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -27,7 +29,7 @@ class EpisodicMemoryItem:
     timestamp: str
     event_type: str
     summary: str
-    payload: dict
+    payload: dict[str, Any]
     importance: float
 
 
@@ -144,7 +146,7 @@ class MemoryAPI:
             logger.error("failed to store episodic memory: %s", e, exc_info=True)
             raise
 
-    def get_recent_memories(self, limit: int = 20) -> list[dict]:
+    def get_recent_memories(self, limit: int = 20) -> list[dict[str, Any]]:
         """Retrieve recent episodic memories.
         
         Args:
@@ -166,7 +168,7 @@ class MemoryAPI:
             row["payload"] = self.store.loads_json(row["payload"])
         return rows
 
-    def get_recent_traces(self, limit: int = 20) -> list[dict]:
+    def get_recent_traces(self, limit: int = 20) -> list[dict[str, Any]]:
         """Retrieve recent execution traces.
         
         Args:
@@ -187,7 +189,7 @@ class MemoryAPI:
         logger.debug("retrieved %d traces", len(rows))
         return rows
 
-    def get_recent_events(self, limit: int = 20) -> list[dict]:
+    def get_recent_events(self, limit: int = 20) -> list[dict[str, Any]]:
         """Retrieve recent events.
         
         Args:

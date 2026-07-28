@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
@@ -44,7 +45,7 @@ class DocsAgent(BaseAgent):
                 content=f"[docs_agent] error: {str(e)}",
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
-    def _llm_summarize(self, llm, text, context=None):
+    def _llm_summarize(self, llm: Any, text: Any, context: Any = None) -> str:
         if isinstance(llm, MockLLM):
             preview = text[:160]
             return f"[docs_agent] document task accepted, preview: {preview}"
@@ -59,4 +60,4 @@ class DocsAgent(BaseAgent):
             {"role": "system", "content": system},
             {"role": "user", "content": f"Document to summarize:\n{text[:5000]}"},
         ]
-        return llm.chat(messages)
+        return llm.chat(messages)  # type: ignore[no-any-return]

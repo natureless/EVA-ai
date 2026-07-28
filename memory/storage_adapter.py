@@ -60,7 +60,7 @@ class BaseStorageAdapter(ABC):
 
 # ── Factory ─────────────────────────────────────────────────
 
-def create_store(settings=None) -> BaseStorageAdapter:
+def create_store(settings: Any = None) -> BaseStorageAdapter:
     """Create the appropriate storage backend from configuration.
 
     Reads EVA_STORAGE_BACKEND from settings or environment.

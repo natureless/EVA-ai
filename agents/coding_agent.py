@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import logging
 import re
 from pathlib import Path
+from typing import Any
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from app.config import settings
@@ -60,7 +63,7 @@ class CodingAgent(BaseAgent):
                 content=f"[coding_agent] error: {str(e)}",
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
-    def _llm_summarize(self, llm, analysis, meta, context=None):
+    def _llm_summarize(self, llm: Any, analysis: Any, meta: Any, context: Any = None) -> str:
         if isinstance(llm, MockLLM):
             path_hint = f" {meta.get('path', '')}" if meta.get("path") else ""
             return f"[coding_agent]{path_hint}\n{analysis}"
@@ -81,19 +84,19 @@ class CodingAgent(BaseAgent):
                 f"Preview (first 15 lines):\n{analysis[:3000]}"
             )},
         ]
-        return llm.chat(messages)
+        return llm.chat(messages)  # type: ignore[no-any-return]
 
     def _extract_path(self, raw: str) -> Path | None:
         lowered = raw.lower()
         for prefix in ("/code", "code:", "inspect:", "review:"):
             if lowered.startswith(prefix):
-                candidate = raw[len(prefix):].strip()
+                candidate: str = raw[len(prefix):].strip()
                 if candidate:
                     return Path(candidate)
-        candidate = Path(raw)
-        return candidate if candidate.suffix else None
+        path = Path(raw)
+        return path if path.suffix else None
 
-    def _analyze_file(self, path: Path) -> tuple[str, dict]:
+    def _analyze_file(self, path: Path) -> tuple[str, dict[str, Any]]:
         max_size = 256 * 1024
         try:
             if path.stat().st_size > max_size:
@@ -112,7 +115,7 @@ class CodingAgent(BaseAgent):
         meta["size"] = len(text.encode("utf-8", errors="ignore"))
         return analysis, meta
 
-    def _analyze_text(self, text: str) -> tuple[str, dict]:
+    def _analyze_text(self, text: str) -> tuple[str, dict[str, Any]]:
         lines = text.splitlines()
         total, non_empty = len(lines), sum(1 for l in lines if l.strip())
         classes, functions = [], []

@@ -50,7 +50,7 @@ class CognitionLoop:
         policy_engine: PolicyEngine | None = None,
         tiered_memory: TieredMemoryManager | None = None,
         executors: dict[str, Any] | None = None,
-        ws_manager=None,
+        ws_manager: Any = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -95,7 +95,7 @@ class CognitionLoop:
             self._thread.join(timeout=3)
         self._agent_pool.shutdown(wait=False)
 
-    def _execute_agent(self, selected_agent: str, task, agent_exe, token_manager, agent_tok: str):
+    def _execute_agent(self, selected_agent: str, task: Any, agent_exe: Any, token_manager: Any, agent_tok: str) -> tuple[AgentResult, int]:
         """Run the agent in a thread pool, polling for stop events.
 
         Returns (AgentResult, duration_ms). On timeout or shutdown, returns an
@@ -142,7 +142,7 @@ class CognitionLoop:
         )
 
     def _execute_agent_stream(
-        self, selected_agent: str, task, correlation_id: str,
+        self, selected_agent: str, task: Any, correlation_id: str,
     ) -> tuple[AgentResult, int]:
         """Run the agent with per-token WS broadcast, polling for stop events.
 

@@ -5,11 +5,13 @@ event to the events table. Consume/task_done semantics remain in-memory
 for performance — the database write is fire-and-forget durability.
 """
 
+from __future__ import annotations
+
 import json
 import logging
 from datetime import datetime, timezone
 from queue import Empty, Queue
-from typing import Optional
+from typing import Any, Optional
 
 from event.event_schema import Event
 
@@ -21,7 +23,7 @@ class EventBus:
 
     _PERSIST_ALERT_THRESHOLD = 25  # warn after this many consecutive failures
 
-    def __init__(self, s5_store=None) -> None:
+    def __init__(self, s5_store: Any = None) -> None:
         self._queue: Queue[Event] = Queue()
         self._s5 = s5_store
         self._publish_count = 0
@@ -98,7 +100,7 @@ class EventBus:
                 break
         return items
 
-    def stats(self) -> dict:
+    def stats(self) -> dict[str, Any]:
         return {
             "queue_size": self._queue.qsize(),
             "published": self._publish_count,

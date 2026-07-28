@@ -12,9 +12,9 @@ class ContextBuilder:
     def __init__(
         self,
         *,
-        persona_service=None,
-        tiered_memory=None,
-        world_model=None,
+        persona_service: Any = None,
+        tiered_memory: Any = None,
+        world_model: Any = None,
     ) -> None:
         self.persona_service = persona_service
         self.tiered_memory = tiered_memory
@@ -28,13 +28,13 @@ class ContextBuilder:
         )
 
         # ── recall from tiered memory (S2 + S3) ─────────────
-        memories: list[dict] = []
+        memories: list[dict[str, Any]] = []
         if self.tiered_memory and text.strip():
             memories = self.tiered_memory.recall(text, tiers=[2, 3])
             memories = memories[:10]
 
         # ── world model: active tasks + recent entities ──────
-        active_tasks: list[dict] = []
+        active_tasks: list[dict[str, Any]] = []
         recent_entities: list[str] = []
         if self.world_model:
             active_tasks = self.world_model.active_tasks[:10]

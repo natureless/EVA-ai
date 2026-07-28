@@ -99,9 +99,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         self.limiter = limiter
         self.exclude_paths = exclude_paths or {"/health/live", "/health/ready", "/metrics"}
 
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
         if request.url.path in self.exclude_paths:
-            return await call_next(request)
+            return await call_next(request)  # type: ignore[no-any-return]  # type: ignore[no-any-return]
 
         key = self._client_key(request)
         if not self.limiter.allow(key):
@@ -112,7 +112,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 headers={"Retry-After": str(int(self.limiter.config.window_sec))},
             )
 
-        return await call_next(request)
+        return await call_next(request)  # type: ignore[no-any-return]
 
     @staticmethod
     def _client_key(request: Request) -> str:

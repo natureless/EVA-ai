@@ -1,8 +1,11 @@
 """Background thread that polls the GitHub REST API for PR and issue updates."""
 
+from __future__ import annotations
+
 from datetime import datetime, timezone
 import logging
 import threading
+from typing import Any
 
 from event.event_bus import EventBus
 
@@ -57,7 +60,7 @@ class GitHubPoller:
         for repo in self._repos:
             self._last_polled.setdefault(repo, now)
 
-    def _advance_checkpoint(self, repo: str, items: list[dict], current: str) -> str:
+    def _advance_checkpoint(self, repo: str, items: list[dict[str, Any]], current: str) -> str:
         """Return the newest updated_at across items, clamped to ≥ current."""
         newest = current
         for item in items:
@@ -76,8 +79,8 @@ class GitHubPoller:
         }
 
     def _fetch_repo_items(
-        self, repo: str, kind: str, *, urllib_request, json
-    ) -> list[dict] | None:
+        self, repo: str, kind: str, *, urllib_request: Any, json: Any
+    ) -> list[dict[str, Any]] | None:
         """Fetch a single page of items from GitHub. Returns None on failure."""
         url = (
             f"https://api.github.com/repos/{repo}/{kind}"
@@ -96,7 +99,7 @@ class GitHubPoller:
 
     # ── private: item filtering & publishing ───────────────
 
-    def _is_publishable(self, item: dict, checkpoint: str, kind: str) -> bool:
+    def _is_publishable(self, item: dict[str, Any], checkpoint: str, kind: str) -> bool:
         """True if item should be published (after checkpoint, not a PR in issues)."""
         updated = item.get("updated_at", "")
         if updated <= checkpoint:
@@ -105,7 +108,7 @@ class GitHubPoller:
             return False
         return True
 
-    def _publish_poller_item(self, item: dict, kind: str, repo: str) -> None:
+    def _publish_poller_item(self, item: dict[str, Any], kind: str, repo: str) -> None:
         """Normalize and publish a single polled item to the event bus."""
         from connectors.github.event_normalizer import normalize_poller_payload
 
@@ -122,7 +125,7 @@ class GitHubPoller:
             checkpoint = self._last_polled.get(repo, "")
             self._poll_repo(repo, checkpoint, urllib_request=urllib.request, json=_json)
 
-    def _poll_repo(self, repo: str, checkpoint: str, *, urllib_request, json) -> None:
+    def _poll_repo(self, repo: str, checkpoint: str, *, urllib_request: Any, json: Any) -> None:
         """Poll both pulls and issues for a single repo, advancing the checkpoint."""
         newest = checkpoint
 

@@ -37,4 +37,4 @@ def configure_logging(*, log_dir: Path, log_file: Path, level: str = "INFO") -> 
     logging.getLogger("uvicorn.error").setLevel(level.upper())
     logging.getLogger("uvicorn.access").setLevel(level.upper())
 
-    root._eva_configured = True
+    root._eva_configured = True  # type: ignore[attr-defined]

@@ -23,7 +23,7 @@ class ProfileStore:
     def load_or_init(self) -> dict[str, Any]:
         if self.path.exists():
             with self.path.open("r", encoding="utf-8") as handle:
-                return json.load(handle)
+                return json.load(handle)  # type: ignore[no-any-return]
         self.save(DEFAULT_PROFILE)
         return DEFAULT_PROFILE.copy()
 
