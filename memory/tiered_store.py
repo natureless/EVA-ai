@@ -500,6 +500,7 @@ class TieredMemoryManager:
         self._governor = governor
         self._embedding_service = embedding_service
         self._vector_store = vector_store
+        self._push_depth = 0
 
     # ── ingest ──────────────────────────────────────────────
 
@@ -663,34 +664,46 @@ class TieredMemoryManager:
         source_event_id: str,
     ) -> None:
         """Create a MemoryRecord from tiered-ingested content and feed it into the governor."""
-        from uuid import uuid4 as _uuid4
-        from memory.memory_schema import MemoryRecord, MemoryType
-        from memory.importance_scorer import ImportanceFeatures
+        self._push_depth += 1
+        if self._push_depth > 3:
+            logger.warning(
+                "_push_to_governor recursion guard tripped at depth=%d — "
+                "skipping governor bridge for source=%r",
+                self._push_depth, source,
+            )
+            self._push_depth -= 1
+            return
+        try:
+            from uuid import uuid4 as _uuid4
+            from memory.memory_schema import MemoryRecord, MemoryType
+            from memory.importance_scorer import ImportanceFeatures
 
-        record = MemoryRecord(
-            id=str(_uuid4()),
-            memory_type=MemoryType.EPISODIC,
-            content=content,
-            source_event_id=source_event_id or "",
-            confidence=0.7,
-            ttl_seconds=None,
-            conflict_keys=[],
-        )
+            record = MemoryRecord(
+                id=str(_uuid4()),
+                memory_type=MemoryType.EPISODIC,
+                content=content,
+                source_event_id=source_event_id or "",
+                confidence=0.7,
+                ttl_seconds=None,
+                conflict_keys=[],
+            )
 
-        features = ImportanceFeatures(
-            user_explicit=source == "user",
-            goal_related=importance >= 0.8,
-            blocker_related=False,
-            persona_related=False,
-            repeated_mentions=0,
-            source_reliability=0.9 if source == "user" else 0.6,
-            emotional_intensity=0.1,
-            age_hours=0.0,
-            self_model_delta=0.0,
-            prediction_error=0.0,
-        )
+            features = ImportanceFeatures(
+                user_explicit=source == "user",
+                goal_related=importance >= 0.8,
+                blocker_related=False,
+                persona_related=False,
+                repeated_mentions=0,
+                source_reliability=0.9 if source == "user" else 0.6,
+                emotional_intensity=0.1,
+                age_hours=0.0,
+                self_model_delta=0.0,
+                prediction_error=0.0,
+            )
 
-        self._governor.ingest(record, features)
+            self._governor.ingest(record, features)
+        finally:
+            self._push_depth -= 1
 
     # ── recall ──────────────────────────────────────────────
 

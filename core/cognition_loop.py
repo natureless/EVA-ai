@@ -210,6 +210,7 @@ class CognitionLoop:
             event = self.event_bus.consume(timeout=self.poll_timeout_sec)
             if event is None:
                 continue
+            self.event_bus.task_done()  # mark consumed immediately — defensive against early exits
 
             start = time.perf_counter()
             loop_id = f"loop_{uuid4().hex[:8]}"
@@ -548,4 +549,3 @@ class CognitionLoop:
                 self.result_registry.cleanup(ttl_sec=self.result_ttl_sec)
                 self.system_state["pending_events"] = self.event_bus.size()
                 self.system_state["pending_results"] = self.result_registry.size()
-                self.event_bus.task_done()

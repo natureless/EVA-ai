@@ -65,8 +65,10 @@ def _ensure_dirs() -> None:
 def _load_constitution() -> dict[str, Any]:
     """Load constitution.yaml as the canonical rule source.
 
-    Returns an empty dict if the file is missing or unparseable.
-    This is the base layer — config/*.yaml files can override.
+    Returns an empty dict if the file is missing (development without a
+    constitution is permitted).  Raises RuntimeError when the file exists
+    but is unparseable — a broken constitution is a safety risk and must
+    be treated as a startup failure.
     """
     path = Path("constitution.yaml")
     if not path.exists():
@@ -77,9 +79,12 @@ def _load_constitution() -> dict[str, Any]:
             data = yaml.safe_load(fh) or {}
         logger.info("constitution.yaml loaded (version=%s)", data.get("version", "?"))
         return data
-    except Exception:
-        logger.exception("failed to load constitution.yaml")
-        return {}
+    except yaml.YAMLError as e:
+        logger.critical("constitution.yaml is malformed — refusing to start without valid safety boundaries")
+        raise RuntimeError(f"Failed to parse constitution.yaml: {e}") from e
+    except Exception as e:
+        logger.critical("constitution.yaml could not be read: %s", e)
+        raise RuntimeError(f"Failed to load constitution.yaml: {e}") from e
 
 
 def _create_initial_state() -> dict[str, Any]:

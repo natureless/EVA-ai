@@ -23,7 +23,7 @@ executors:
       - "download_executables"
     limits:
       rate: "10 requests per minute"
-      timeout: "30 seconds per request"
+      timeout: 30
       max_page_size_mb: 50
     sandbox: "firejail"
     network_mode: "L1"  # whitelist only
@@ -43,7 +43,7 @@ executors:
       - "credential_extraction"
     limits:
       rate: "100 requests per minute"
-      timeout: "15 seconds per request"
+      timeout: 15
       max_response_size_mb: 100
       concurrent_connections: 10
     auth_method: "bearer_token"
@@ -91,7 +91,7 @@ executors:
       - "direct_os_calls"
       - "modify_host_system"
     limits:
-      timeout: "60 seconds"
+      timeout: 60
       memory_limit_mb: 512
       cpu_limit_percent: 50
       max_output_size_mb: 10
