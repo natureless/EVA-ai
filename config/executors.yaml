@@ -96,14 +96,13 @@ executors:
       cpu_limit_percent: 50
       max_output_size_mb: 10
     sandboxed: true
-    sandbox_engine: "docker"
+    sandbox_engine: "subprocess"  # temp dir + isolated env vars; Docker not yet wired
 
   # ── Comms Executor ────────────────────────────────────────
   comms:
-    description: "消息、邮件、通知"
+    description: "日志记录、本地文件通知、告警输出"
     permissions:
       - "send_messages"
-      - "send_emails"
       - "trigger_notifications"
       - "read_message_status"
     forbidden:
