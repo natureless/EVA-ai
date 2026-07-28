@@ -68,26 +68,18 @@ class Planner:
                         task=AgentTask(kind=kind, payload={"text": raw_text}),
                     )
 
-            # 2. Keyword-triggered file operations — only for clear file intent
-            if _text_contains(text, _SEARCH_KEYWORDS):
+            # 2. Keyword-triggered file operations — pick best match
+            agent_match = _best_keyword_match(
+                text,
+                (_SEARCH_KEYWORDS, "search_agent", "search"),
+                (_CODE_KEYWORDS, "coding_agent", "code"),
+                (_DOCS_KEYWORDS, "docs_agent", "summarize"),
+            )
+            if agent_match is not None:
                 return Plan(
                     decision="act",
-                    agent="search_agent",
-                    task=AgentTask(kind="search", payload={"text": raw_text}),
-                )
-
-            if _text_contains(text, _CODE_KEYWORDS):
-                return Plan(
-                    decision="act",
-                    agent="coding_agent",
-                    task=AgentTask(kind="code", payload={"text": raw_text}),
-                )
-
-            if _text_contains(text, _DOCS_KEYWORDS):
-                return Plan(
-                    decision="act",
-                    agent="docs_agent",
-                    task=AgentTask(kind="summarize", payload={"text": raw_text}),
+                    agent=agent_match[0],
+                    task=AgentTask(kind=agent_match[1], payload={"text": raw_text}),
                 )
 
             # 3. Everything else → chat_agent
@@ -142,5 +134,21 @@ class Planner:
         return any(text.startswith(prefix) for prefix in prefixes)
 
 
-def _text_contains(text: str, keywords: set[str]) -> bool:
-    return any(kw in text for kw in keywords)
+def _best_keyword_match(
+    text: str,
+    *candidates: tuple[set[str], str, str],
+) -> tuple[str, str] | None:
+    """Return (agent_name, task_kind) with the most keyword matches in text.
+
+    When text hits keywords from multiple agents (e.g. "find and review code"),
+    the agent with the most matches wins rather than whichever was checked first.
+    Returns None if no keywords match at all.
+    """
+    best: tuple[str, str] | None = None
+    best_count = 0
+    for keywords, agent_name, task_kind in candidates:
+        count = sum(1 for kw in keywords if kw in text)
+        if count > best_count:
+            best_count = count
+            best = (agent_name, task_kind)
+    return best
