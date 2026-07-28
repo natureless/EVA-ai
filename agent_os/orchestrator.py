@@ -50,12 +50,31 @@ class AgentOrchestrator:
         """Execute an agent task with per-token streaming callback.
 
         Calls ``agent.run_stream(task, on_token)`` instead of
-        ``agent.run(task)``. Executor gating is NOT supported in
-        stream mode — streaming bypasses the executor safety gate.
+        ``agent.run(task)``.
+
+        **Safety gate**: agents that require executor enforcement
+        (search_agent, coding_agent, docs_agent → file executor)
+        are rejected in stream mode. Streaming bypasses the token +
+        boundary check, so only the chat agent — which performs no
+        filesystem access — is permitted.
         """
+        from agent_os.agent_task import AGENT_EXECUTOR_MAP
+
         agent = self.registry.get(agent_name)
         if agent is None:
             raise ValueError(f"Agent not found: {agent_name}")
+
+        # Only chat_agent (no executor mapping) is safe for streaming.
+        # search/coding/docs agents must go through the gated path.
+        if agent_name in AGENT_EXECUTOR_MAP:
+            return (
+                AgentResult(
+                    ok=False, agent=agent_name,
+                    content=f"[{agent_name}] streaming denied: agent requires executor gating",
+                    summary="streaming blocked for file-access agent",
+                    meta={"status": "denied", "reason": "streaming blocked for gated agent"},
+                ), 0,
+            )
 
         start = time.perf_counter()
         result = agent.run_stream(task, on_token)

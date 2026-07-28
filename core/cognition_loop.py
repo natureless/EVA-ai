@@ -329,8 +329,14 @@ class CognitionLoop:
                         logger.debug("routing: plan.agent=%s selected_agent=%s task.kind=%s",
                                      plan.agent, selected_agent, plan.task.kind)
 
-                        # ── streaming mode: bypass executor, tokens via WS ──
-                        if event.payload.get("stream") and event.correlation_id:
+                        # ── streaming mode: chat_agent only ──
+                        # Agents mapped to executors (search/code/docs → file)
+                        # require token + boundary checks and cannot stream.
+                        # Fall back to the gated path for those agents.
+                        stream_requested = event.payload.get("stream") and event.correlation_id
+                        agent_needs_executor = AGENT_EXECUTOR_MAP.get(selected_agent) and self._executors
+
+                        if stream_requested and not agent_needs_executor:
                             result, agent_duration_ms = self._execute_agent_stream(
                                 selected_agent, plan.task, event.correlation_id,
                             )
