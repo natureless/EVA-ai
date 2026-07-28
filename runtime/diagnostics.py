@@ -238,7 +238,7 @@ class SystemDiagnostic:
         )
 
     def check_llm(self) -> DiagnosticCheck:
-        """Verify a real LLM provider is configured (not MockLLM fallback)."""
+        """Verify a real LLM provider is configured and responding."""
         try:
             from core.llm_adapter import get_llm, MockLLM
             llm = get_llm()
@@ -249,10 +249,29 @@ class SystemDiagnostic:
                     detail="no LLM API key configured — using MockLLM (echo mode)",
                     recommendation="set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable",
                 )
+            # Lightweight liveness probe — a real API call with minimal tokens
+            try:
+                reply = llm.chat([
+                    {"role": "user", "content": "Respond with exactly the word: OK"},
+                ])
+                if not reply.strip():
+                    return DiagnosticCheck(
+                        name="llm",
+                        passed=False,
+                        detail=f"LLM provider {llm.provider} returned empty response",
+                        recommendation="check API account status and rate limits",
+                    )
+            except Exception as e:
+                return DiagnosticCheck(
+                    name="llm",
+                    passed=False,
+                    detail=f"LLM provider {llm.provider} failed liveness probe: {e}",
+                    recommendation="check API key validity, network connectivity, and rate limits",
+                )
             return DiagnosticCheck(
                 name="llm",
                 passed=True,
-                detail=f"LLM provider: {llm.provider}",
+                detail=f"LLM provider: {llm.provider} (liveness OK)",
             )
         except Exception as e:
             return DiagnosticCheck(
