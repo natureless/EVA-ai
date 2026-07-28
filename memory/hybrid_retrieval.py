@@ -59,7 +59,7 @@ def hybrid_search(
         vec_map[mid] = score / max(max_vec, 0.001)
 
     # 3. Normalize FTS5 scores
-    max_fts = max((s for s in fts_map.values()), default=1.0)
+    max_fts = max((fts_map[mid][1] for mid in fts_map), default=1.0)
     for mid in fts_map:
         row, score = fts_map[mid]
         fts_map[mid] = (row, score / max(max_fts, 0.001))
