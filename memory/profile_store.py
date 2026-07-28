@@ -5,7 +5,10 @@ from typing import Any
 from runtime.file_utils import atomic_json_save
 
 
-DEFAULT_PROFILE = {
+from typing import Any
+
+
+DEFAULT_PROFILE: dict[str, Any] = {
     "user_name": None,
     "preferences": {},
     "projects": [],

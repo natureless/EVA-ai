@@ -10,7 +10,7 @@ MAX_STATE_HISTORY = 50
 MAX_PERTURBATIONS = 20
 MAX_PREDICTION_ERRORS = 100
 
-DEFAULT_SELF_MODEL = {
+DEFAULT_SELF_MODEL: dict[str, Any] = {
     "identity": "EVA v0.1",
     "status": "active",
     "capabilities": [

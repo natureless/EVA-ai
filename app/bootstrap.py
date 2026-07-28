@@ -130,8 +130,8 @@ def _deep_merge(base: dict, override: dict) -> None:
 
 # ── subsystem initializers ─────────────────────────────────────────
 
-def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
-    """Initialize SQLite store, memory API, governor, tiered memory, and vector search."""
+def _wire_memory(state: dict[str, Any]) -> dict[str, Any]:
+    """Initialize storage, memory API, governor, tiered memory, vector search, and restore S1 session."""
     store = SQLiteStore(Path(settings.db_path))
     store.init_db()
     state["db_ready"] = True
@@ -196,6 +196,11 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
         except Exception:
             logger.exception("staleness check failed")
 
+    # restore S1 session memory from S2
+    restored = tiered_memory.s1.restore_from_s2(tiered_memory.s2)
+    if restored:
+        logger.info("restored %d session entries from S2", restored)
+
     return {
         "store": store,
         "memory_api": MemoryAPI(store),
@@ -207,8 +212,8 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _init_persona(state: dict[str, Any]) -> dict[str, Any]:
-    """Load profile and self-model from disk."""
+def _wire_persona(state: dict[str, Any]) -> dict[str, Any]:
+    """Load profile, self-model, and create persona service."""
     profile_store = ProfileStore(Path(settings.profile_path))
     self_model_store = SelfModelStore(Path(settings.self_model_path))
 
@@ -227,7 +232,7 @@ def _init_persona(state: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _init_world(
+def _wire_world(
     state: dict[str, Any],
     tiered_memory: TieredMemoryManager,
     persona_service: PersonaService,
@@ -271,7 +276,7 @@ def _init_world(
     }
 
 
-def _init_agents(state: dict[str, Any]) -> dict[str, Any]:
+def _wire_agents(state: dict[str, Any]) -> dict[str, Any]:
     """Register built-in agents and create router + orchestrator."""
     registry = AgentRegistry()
     registry.register(ChatAgent())
@@ -289,7 +294,7 @@ def _init_agents(state: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _init_policy(constitution: dict[str, Any] | None = None) -> PolicyEngine:
+def _wire_policy(constitution: dict[str, Any] | None = None) -> PolicyEngine:
     """Load policy configuration and create PolicyEngine.
 
     Merges constitution.yaml (base layer) with config/policy.yaml (override layer).
@@ -321,7 +326,7 @@ def _init_policy(constitution: dict[str, Any] | None = None) -> PolicyEngine:
     return engine
 
 
-def _init_executors(store: SQLiteStore, constitution: dict[str, Any] | None = None) -> dict[str, Any]:
+def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = None) -> dict[str, Any]:
     """Initialize the executor framework (file, code, browser, api, comms).
 
     Merges constitution.yaml boundaries (base layer) with config/executors.yaml (override).
@@ -386,6 +391,34 @@ def _build_snapshot_payload(
     }
 
 
+def _wire_github_poller(
+    event_bus: EventBus,
+    token: str,
+    poll_repos: str,
+    interval_sec: int,
+) -> Any | None:
+    """Create and start a GitHubPoller if credentials are configured."""
+    if not token or not poll_repos:
+        return None
+    try:
+        from connectors.github.poller import GitHubPoller
+        repos = [r.strip() for r in poll_repos.split(",") if r.strip()]
+        if not repos:
+            return None
+        poller = GitHubPoller(
+            event_bus=event_bus,
+            token=token,
+            repos=repos,
+            interval_sec=interval_sec,
+        )
+        poller.start()
+        logger.info("github poller started (%d repos, interval=%ss)", len(repos), interval_sec)
+        return poller
+    except Exception:
+        logger.exception("failed to start github poller")
+        return None
+
+
 # ── main bootstrap ─────────────────────────────────────────────────
 
 def bootstrap_system(ws_manager: Any = None) -> AppContainer:
@@ -410,21 +443,16 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     constitution = _load_constitution()
 
     # ── storage layer ──
-    storage = _init_storage(system_state)
+    storage = _wire_memory(system_state)
     store = storage["store"]
 
     # ── persona layer ──
-    persona = _init_persona(system_state)
+    persona = _wire_persona(system_state)
     persona_repo = PersonaRepository(store)
     persona_service = PersonaService(persona_repo)
 
     # ── world layer ──
-    world = _init_world(system_state, storage["tiered_memory"], persona_service)
-
-    # ── restore S1 session memory from S2 ──
-    restored = storage["tiered_memory"].s1.restore_from_s2(storage["tiered_memory"].s2)
-    if restored:
-        logger.info("restored %d session entries from S2", restored)
+    world = _wire_world(system_state, storage["tiered_memory"], persona_service)
 
     # ── messaging ──
     event_bus = EventBus(s5_store=storage["tiered_memory"].s5)
@@ -436,7 +464,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     system_state["planner_ready"] = True
 
     # ── agents ──
-    agents = _init_agents(system_state)
+    agents = _wire_agents(system_state)
 
     # ── results ──
     result_registry = ResultRegistry()
@@ -477,11 +505,11 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     prediction_tracker = PredictionTracker(max_history=50, decay_lambda=0.1)
 
     # ── policy engine ──
-    policy_engine = _init_policy(constitution)
+    policy_engine = _wire_policy(constitution)
     system_state["policy_state"] = policy_engine.get_state()
 
     # ── executors ──
-    exec_data = _init_executors(store, constitution)
+    exec_data = _wire_executors(store, constitution)
 
     # ── cognition loop ──
     loop = CognitionLoop(
@@ -512,23 +540,12 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     logger.info("cognition loop started")
 
     # ── github poller ──
-    github_poller = None
-    if settings.github_api_token and settings.github_poll_repos:
-        try:
-            from connectors.github.poller import GitHubPoller
-            repos = [r.strip() for r in settings.github_poll_repos.split(",") if r.strip()]
-            if repos:
-                github_poller = GitHubPoller(
-                    event_bus=event_bus,
-                    token=settings.github_api_token,
-                    repos=repos,
-                    interval_sec=settings.github_poll_interval_sec,
-                )
-                github_poller.start()
-                logger.info("github poller started (%d repos, interval=%ss)",
-                            len(repos), settings.github_poll_interval_sec)
-        except Exception:
-            logger.exception("failed to start github poller")
+    github_poller = _wire_github_poller(
+        event_bus=event_bus,
+        token=settings.github_api_token,
+        poll_repos=settings.github_poll_repos,
+        interval_sec=settings.github_poll_interval_sec,
+    )
 
     # ── scheduler ──
     scheduler = RuntimeScheduler(
