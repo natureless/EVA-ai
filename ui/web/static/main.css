@@ -24,8 +24,6 @@
   --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
   --shadow-md: 0 4px 12px rgba(0,0,0,.08);
   --transition: 150ms ease;
-  --transition-zoom: 600ms cubic-bezier(0.4, 0, 0.2, 1);
-  --avatar-size: min(45vw, 500px);
 }
 
 [data-theme="dark"] {
@@ -101,7 +99,7 @@ body {
   overflow: hidden;
 }
 
-/* ── Avatar Panel ─────────────────────────────────────── */
+/* ── Avatar Panel (particle canvas host) ─────────────── */
 
 .avatar-panel {
   flex: 0 0 45%;
@@ -120,42 +118,6 @@ body {
     radial-gradient(ellipse at 50% 30%, #252530 0%, transparent 55%),
     radial-gradient(ellipse at 50% 80%, rgba(45, 212, 191, 0.08) 0%, transparent 45%),
     var(--bg);
-}
-
-.avatar-container {
-  position: relative;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.avatar-wrapper {
-  will-change: transform;
-  transform-origin: 50% 15%;
-  transform: scale(2.5) translateY(0);
-}
-
-.avatar-wrapper svg {
-  width: var(--avatar-size);
-  height: auto;
-  display: block;
-}
-
-.avatar-wrapper.idle {
-  /* transforms handled by JS animation loop */
-}
-
-.avatar-wrapper.listening {
-  /* filter applied inline by JS */
-}
-
-.avatar-wrapper.responding {
-  /* transforms handled by JS animation loop */
-}
-
-.avatar-state-label {
-  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 12px; color: var(--dim); letter-spacing: 0.5px;
-  transition: opacity var(--transition);
-  pointer-events: none;
 }
 
 .avatar-particle-canvas {
@@ -466,63 +428,42 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes avatar-blink-keyframes {
-  0%, 90%, 100% { transform: scaleY(1); }
-  95%           { transform: scaleY(0.05); }
-}
-
 /* Hide canvas in reduced-motion */
 
 /* ═══════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 
-/* Tablet: stack chat page vertically */
+/* Tablet: shrink particle panel height */
 @media (max-width: 1023px) {
   .chat-page { flex-direction: column; }
-  .avatar-panel { flex: 0 0 32%; min-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
-  .avatar-wrapper svg { width: min(40vw, 300px); }
+  .avatar-panel { flex: 0 0 25%; min-height: 160px; border-right: none; border-bottom: 1px solid var(--border); }
 }
 
-/* Mobile: avatar as bubble, fullscreen chat */
+/* Mobile: particle canvas as subtle background accent */
 @media (max-width: 767px) {
   .chat-page { position: relative; }
   .avatar-panel {
     flex: 0 0 auto; min-height: 0; position: absolute; top: 10px; left: 14px;
     width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--accent);
-    overflow: hidden; z-index: 10; cursor: pointer; background: var(--card-bg);
+    overflow: hidden; z-index: 10; background: var(--card-bg);
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 20%, transparent);
     animation: mobile-bubble-pulse 3s ease-in-out infinite;
   }
-  .avatar-wrapper svg { width: 36px; }
-  .avatar-state-label { display: none; }
-  .avatar-particle-canvas { display: none; }
+
+  .avatar-particle-canvas { opacity: 0.6; }
 
   @keyframes mobile-bubble-pulse {
     0%, 100% { box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 20%, transparent); }
     50% { box-shadow: 0 2px 18px color-mix(in srgb, var(--accent) 40%, transparent); }
   }
 
-  .avatar-panel.expanded {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 100; border-radius: 0; border: none;
-    background:
-      radial-gradient(ellipse at 50% 30%, var(--card-bg) 0%, transparent 55%),
-      radial-gradient(ellipse at 50% 75%, var(--accent-light) 0%, transparent 40%),
-      var(--bg);
-    box-shadow: none; animation: none;
-  }
-  .avatar-panel.expanded .avatar-wrapper svg { width: min(75vw, 360px); }
-  .avatar-panel.expanded .avatar-state-label { display: block; }
-  .avatar-panel.expanded .avatar-particle-canvas { display: block; }
-
-  .chat-panel { padding-top: 8px; }
   .chat-messages { padding: 10px 14px 10px 68px; }
   .message-row { max-width: 92%; }
 
   .chat-input-area { padding: 10px 14px; }
-  .chat-input-row textarea { font-size: 16px; } /* prevent iOS zoom */
+  .chat-input-row textarea { font-size: 16px; }
 
   .topbar { padding: 8px 14px; height: 44px; }
   .topbar-left .sub { display: none; }
@@ -531,9 +472,5 @@ body {
 
 /* Hide avatar panel canvas in print / reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .avatar-wrapper { transition: none; }
-  .avatar-wrapper.listening { animation: none; filter: none; }
   .avatar-particle-canvas { display: none; }
-  .avatar-breathe { animation: none; }
-  .avatar-sway { animation: none; }
 }

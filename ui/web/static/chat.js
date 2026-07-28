@@ -1,17 +1,16 @@
-// EVA Chat — WebSocket-backed message delivery, SSE streaming, avatar state control
+// EVA Chat — WebSocket-backed message delivery, SSE streaming, particle control
 const Chat = {
   _messages: [],
   _streamAbort: null,
   _ws: null,
   _wsReconnectTimer: null,
-  _pendingTasks: {},  // task_id → {resolve, timeout}
+  _pendingTasks: {},
 
   init() {
     this._messages = [];
     this._connectWS();
     this._bindForm();
     this._bindTextarea();
-    this._bindMobileAvatar();
     window.addEventListener("lang-changed", () => this._rerenderMessages());
   },
 
@@ -59,7 +58,7 @@ const Chat = {
       if (pending && pending.onToken) {
         pending.fullReply += payload.token;
         pending.onToken(pending.fullReply);
-        AvatarController.mouthCycle();
+        ParticleController.burstParticles(2);
       }
     }
 
@@ -74,18 +73,13 @@ const Chat = {
           // Sync mode: receive full reply at once
           const reply = payload.reply || "(no reply)";
           this._updateLastEvaMessage(reply);
-          // Simulate mouth movement
-          let cycles = 0;
-          const simMouth = setInterval(() => {
-            AvatarController.mouthCycle();
-            if (++cycles > 6) clearInterval(simMouth);
-          }, 280);
+          ParticleController.burstParticles(8);
         }
         // Settle avatar after reply
         clearTimeout(pending._settleTimer);
         pending._settleTimer = setTimeout(() => {
-          if (AvatarController._state === "responding") {
-            AvatarController._setIdle();
+          if (ParticleController._state === "responding") {
+            ParticleController._setIdle();
           }
         }, 1000);
       }
@@ -118,7 +112,7 @@ const Chat = {
 
       this._sending = true;
       this._addMessage("user", text);
-      AvatarController.setResponding();
+      ParticleController.setResponding();
 
       const useStream = document.getElementById("streamToggle")?.checked !== false;
 
@@ -145,23 +139,13 @@ const Chat = {
     });
 
     input.addEventListener("focus", () => {
-      AvatarController.setListening();
+      ParticleController.setListening();
     });
 
     input.addEventListener("blur", () => {
-      if (AvatarController._state === "listening" && !this._sending) {
-        AvatarController._setIdle();
+      if (ParticleController._state === "listening" && !this._sending) {
+        ParticleController._setIdle();
       }
-    });
-  },
-
-  // ── Mobile avatar tap-to-expand ───────────────────────
-  _bindMobileAvatar() {
-    const panel = document.getElementById("avatarPanel");
-    if (!panel) return;
-    panel.addEventListener("click", () => {
-      if (window.innerWidth > 767) return;
-      panel.classList.toggle("expanded");
     });
   },
 
@@ -262,8 +246,8 @@ const Chat = {
     } catch (err) {
       this._updateLastEvaMessage(`Error: ${err.message}`);
       setTimeout(() => {
-        if (AvatarController._state === "responding") {
-          AvatarController._setIdle();
+        if (ParticleController._state === "responding") {
+          ParticleController._setIdle();
         }
       }, 1000);
     }
@@ -307,7 +291,7 @@ const Chat = {
           }
           full += data;
           this._updateLastEvaMessage(full);
-          AvatarController.mouthCycle();
+          ParticleController.burstParticles(2);
         }
       }
 
@@ -320,8 +304,8 @@ const Chat = {
     } finally {
       this._streamAbort = null;
       setTimeout(() => {
-        if (AvatarController._state === "responding") {
-          AvatarController._setIdle();
+        if (ParticleController._state === "responding") {
+          ParticleController._setIdle();
         }
       }, 1000);
     }
@@ -330,5 +314,5 @@ const Chat = {
 
 // ── Init ────────────────────────────────────────────────
 Nav.init();
-AvatarController.init("avatarWrapper", "particleCanvas");
+ParticleController.init("avatarWrapper", "particleCanvas");
 Chat.init();
