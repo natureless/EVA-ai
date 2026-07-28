@@ -223,6 +223,9 @@ const Chat = {
       return `\x00F${fences.length - 1}\x00`;
     });
 
+    // Convert literal \n / \\n to real newlines (LLM sometimes outputs these)
+    html = html.replace(/\\n/g, "\n");
+
     // ── Phase 1: escape HTML ──
     html = this._escapeHtml(html);
 
