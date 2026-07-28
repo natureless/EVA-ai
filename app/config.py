@@ -59,7 +59,7 @@ class Settings(BaseSettings):
         return v
 
     # Vector search
-    embedding_provider: str = "none"       # "local" | "none"
+    embedding_provider: str = "local"       # "local" | "none"
     embedding_model_name: str = "all-MiniLM-L6-v2"
     embedding_alpha: float = 0.3           # BM25 weight in hybrid search (0.0-1.0)
     embedding_rerank_k: int = 0            # 0 = no re-rank
