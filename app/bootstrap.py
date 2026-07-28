@@ -578,6 +578,13 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     system_state["diagnostic"] = diagnostic.to_dict()
     _log_diagnostic(diagnostic)
 
+    if diagnostic.overall == "critical":
+        failed = diagnostic.failed_checks()
+        raise RuntimeError(
+            f"Boot diagnostic critical (score={diagnostic.score}): "
+            + "; ".join(f"{c.name}: {c.detail}" for c in failed)
+        )
+
     logger.info("bootstrap complete — system ready")
 
     return AppContainer(
