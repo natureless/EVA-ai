@@ -471,6 +471,8 @@ class TieredMemoryManager:
         store: BaseStorageAdapter,
         config: dict | None = None,
         governor: MemoryGovernor | None = None,
+        embedding_service: Any = None,
+        vector_store: Any = None,
     ) -> None:
         cfg = config or {}
 
@@ -496,6 +498,8 @@ class TieredMemoryManager:
         self.s4 = WorldModelStore(store)
         self.s5 = EventTraceStore(store)
         self._governor = governor
+        self._embedding_service = embedding_service
+        self._vector_store = vector_store
 
     # ── ingest ──────────────────────────────────────────────
 
@@ -632,6 +636,17 @@ class TieredMemoryManager:
                 source_event_id=source_event_id,
             )
             result["s3"] = mid_s3
+            # index embedding for vector search
+            if self._embedding_service is not None and self._vector_store is not None:
+                try:
+                    vec = self._embedding_service.encode_single(content)
+                    import numpy as np
+                    norm = np.linalg.norm(vec)
+                    if norm > 1e-12:
+                        vec = vec / norm
+                    self._vector_store.add(mid_s3, vec)
+                except Exception:
+                    pass  # non-fatal; vector search degrades gracefully
 
         # reverse-bridge: feed into MemoryGovernor for lifecycle management
         if self._governor and importance >= 0.6:
@@ -706,6 +721,36 @@ class TieredMemoryManager:
                 results.append({"tier": "S3", **row})
 
         return results
+
+    # ── hybrid search ────────────────────────────────────────
+
+    def hybrid_search(
+        self,
+        query: str,
+        alpha: float | None = None,
+        top_k: int = 50,
+    ) -> list[dict]:
+        """Hybrid keyword + semantic search over S3 long_term_memory.
+
+        Falls back to plain FTS5 when embedding_service or vector_store
+        is unavailable.
+        """
+        if self._embedding_service is None or self._vector_store is None:
+            return self.s3.search(query, limit=top_k)
+
+        if self._vector_store.size() == 0:
+            return self.s3.search(query, limit=top_k)
+
+        from memory.hybrid_retrieval import hybrid_search as _hybrid
+        alpha_val = alpha if alpha is not None else 0.3
+        return _hybrid(
+            query=query,
+            embedding_service=self._embedding_service,
+            vector_store=self._vector_store,
+            ltm_store=self.s3,
+            alpha=alpha_val,
+            top_k=top_k,
+        )
 
     # ── promote ─────────────────────────────────────────────
 

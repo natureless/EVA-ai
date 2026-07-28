@@ -45,6 +45,33 @@ class Settings(BaseSettings):
     storage_backend: str = "sqlite"     # sqlite | postgresql
     database_url: str = ""              # PostgreSQL connection URL (when backend=postgresql)
 
+    # GitHub connector
+    github_webhook_secret: str = ""
+    github_api_token: str = ""
+    github_poll_interval_sec: int = 300
+    github_poll_repos: str = ""         # comma-separated "owner/repo,..."
+
+    @field_validator("github_poll_interval_sec")
+    @classmethod
+    def validate_poll_interval(cls, v: int) -> int:
+        if v < 30:
+            raise ValueError(f"github_poll_interval_sec must be >= 30, got {v}")
+        return v
+
+    # Vector search
+    embedding_provider: str = "none"       # "local" | "none"
+    embedding_model_name: str = "all-MiniLM-L6-v2"
+    embedding_alpha: float = 0.3           # BM25 weight in hybrid search (0.0-1.0)
+    embedding_rerank_k: int = 0            # 0 = no re-rank
+    vector_index_path: Path = Path("data/vector_index.faiss")
+
+    @field_validator("embedding_alpha")
+    @classmethod
+    def validate_alpha(cls, v: float) -> float:
+        if not (0.0 <= v <= 1.0):
+            raise ValueError(f"embedding_alpha must be 0.0-1.0, got {v}")
+        return v
+
     @field_validator("port")
     @classmethod
     def validate_port(cls, v: int) -> int:

@@ -5,7 +5,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 
-EventType = Literal["user_message", "system_tick", "reminder_trigger", "maintenance"]
+EventType = Literal["user_message", "system_tick", "reminder_trigger", "maintenance", "github_push", "github_pr", "github_issue", "github_workflow"]
 
 
 class Event(BaseModel):

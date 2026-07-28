@@ -141,6 +141,23 @@ class Planner:
                 task=AgentTask(kind="noop", payload={"reason": event.type}),
             )
 
+        if event.type in {"github_push", "github_pr", "github_issue", "github_workflow"}:
+            repo = event.payload.get("repository", {})
+            repo_name = repo.get("full_name", "") if isinstance(repo, dict) else ""
+            return Plan(
+                decision="observe",
+                agent="system",
+                task=AgentTask(
+                    kind="observe",
+                    payload={
+                        "reason": event.type,
+                        "repo": repo_name,
+                        "action": event.payload.get("action", ""),
+                        "sender": (event.payload.get("sender", {}) or {}).get("login", ""),
+                    },
+                ),
+            )
+
         return Plan(
             decision="ignore",
             agent="none",

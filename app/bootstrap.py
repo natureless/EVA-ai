@@ -126,21 +126,70 @@ def _deep_merge(base: dict, override: dict) -> None:
 # ── subsystem initializers ─────────────────────────────────────────
 
 def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
-    """Initialize SQLite store, memory API, governor, and tiered memory."""
+    """Initialize SQLite store, memory API, governor, tiered memory, and vector search."""
     store = SQLiteStore(Path(settings.db_path))
     store.init_db()
     state["db_ready"] = True
     logger.info("database initialized at %s", settings.db_path)
 
+    # ── vector search (lazy, only when embedding_provider=local) ──
+    embedding_service = None
+    vector_store = None
+    if settings.embedding_provider == "local":
+        try:
+            from memory.embedding_service import EmbeddingService
+            from memory.vector_store import VectorStore
+            embedding_service = EmbeddingService(model_name=settings.embedding_model_name)
+            vector_store = VectorStore(
+                dim=embedding_service.dim,
+                index_path=Path(settings.vector_index_path),
+            )
+            vector_store.load()
+            logger.info("vector store loaded (%d vectors)", vector_store.size())
+        except ImportError:
+            logger.warning(
+                "sentence-transformers or faiss not installed — "
+                "vector search disabled"
+            )
+        except Exception:
+            logger.exception("failed to initialize vector search — disabling")
+            embedding_service = None
+            vector_store = None
+
     tiered_memory = TieredMemoryManager(store, config={
         "S1_session": {"max_entries": 200, "ttl_minutes": 30},
         "S2_working": {"max_entries": 500, "ttl_hours": 72},
         "S3_long_term": {"max_entries": 10000},
-    })
+    }, embedding_service=embedding_service, vector_store=vector_store)
 
     governor = MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory)
     # wire reverse bridge so tiered ingest feeds back into governor
     tiered_memory._governor = governor
+
+    # staleness check: if DB count diverges from index by >10%, reindex in background
+    if vector_store is not None and embedding_service is not None:
+        try:
+            active_rows = store.fetchall(
+                "SELECT COUNT(*) as cnt FROM long_term_memory WHERE status='active'",
+                (),
+            )
+            active_count = active_rows[0]["cnt"] if active_rows else 0
+            if active_count > 0 and abs(active_count - vector_store.size()) > active_count * 0.1:
+                logger.info(
+                    "vector index stale (%d DB vs %d indexed) — scheduling reindex",
+                    active_count, vector_store.size(),
+                )
+                import threading
+                from memory.reindex_job import reindex_all
+                t = threading.Thread(
+                    target=reindex_all,
+                    args=(embedding_service, vector_store, tiered_memory.s3),
+                    daemon=True,
+                    name="eva-reindex",
+                )
+                t.start()
+        except Exception:
+            logger.exception("staleness check failed")
 
     return {
         "store": store,
@@ -148,6 +197,8 @@ def _init_storage(state: dict[str, Any]) -> dict[str, Any]:
         "memory_repository": MemoryRepository(store),
         "memory_governor": governor,
         "tiered_memory": tiered_memory,
+        "embedding_service": embedding_service,
+        "vector_store": vector_store,
     }
 
 
@@ -455,6 +506,25 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     system_state["loop_ready"] = True
     logger.info("cognition loop started")
 
+    # ── github poller ──
+    github_poller = None
+    if settings.github_api_token and settings.github_poll_repos:
+        try:
+            from connectors.github.poller import GitHubPoller
+            repos = [r.strip() for r in settings.github_poll_repos.split(",") if r.strip()]
+            if repos:
+                github_poller = GitHubPoller(
+                    event_bus=event_bus,
+                    token=settings.github_api_token,
+                    repos=repos,
+                    interval_sec=settings.github_poll_interval_sec,
+                )
+                github_poller.start()
+                logger.info("github poller started (%d repos, interval=%ss)",
+                            len(repos), settings.github_poll_interval_sec)
+        except Exception:
+            logger.exception("failed to start github poller")
+
     # ── scheduler ──
     scheduler = RuntimeScheduler(
         event_bus=event_bus,
@@ -524,6 +594,9 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         health=health,
         diagnostic=diagnostic,
         recovery_actions=RecoveryActions(),
+        github_poller=github_poller,
+        embedding_service=storage.get("embedding_service"),
+        vector_store=storage.get("vector_store"),
     )
 
 
@@ -531,6 +604,10 @@ def shutdown_system(container: AppContainer) -> None:
     """Gracefully shutdown all system components."""
     logger.info("shutdown start")
     try:
+        if container.github_poller:
+            container.github_poller.stop()
+            logger.info("github poller stopped")
+
         if container.scheduler:
             container.scheduler.shutdown()
             logger.info("scheduler shutdown")
@@ -538,6 +615,11 @@ def shutdown_system(container: AppContainer) -> None:
         if container.loop:
             container.loop.stop()
             logger.info("cognition loop stopped")
+
+        # persist vector index
+        if container.vector_store:
+            container.vector_store.save()
+            logger.info("vector index saved")
 
         # dump S1 session memory to S2 for persistence across restarts
         if container.tiered_memory:

@@ -95,3 +95,6 @@ class AppContainer:
     health: HealthService | None = None
     diagnostic: SystemDiagnostic | None = None
     recovery_actions: RecoveryActions | None = None
+    github_poller: Any = None
+    embedding_service: Any = None
+    vector_store: Any = None
