@@ -167,7 +167,7 @@ body {
 
 .message-bubble {
   padding: 10px 16px; border-radius: 16px; line-height: 1.55;
-  font-size: 13px; word-break: break-word; white-space: pre-wrap;
+  font-size: 13px; word-break: break-word;
   animation: message-in 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .message-row.user .message-bubble {
@@ -198,7 +198,13 @@ body {
   font-size: 10px; color: var(--dim); margin-top: 2px; padding: 0 4px;
 }
 
-/* Code blocks inside messages */
+/* ── Markdown rendering inside chat messages ──────────────── */
+.message-bubble p {
+  margin: 4px 0;
+}
+.message-bubble p:first-child { margin-top: 0; }
+.message-bubble p:last-child { margin-bottom: 0; }
+
 .message-bubble code {
   font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
   font-size: 11px; background: rgba(0,0,0,0.06); padding: 1px 4px;
@@ -206,17 +212,49 @@ body {
 }
 .message-row.user .message-bubble code { background: rgba(255,255,255,0.2); }
 
-/* Markdown lists inside messages */
-.message-bubble ul.chat-list {
-  margin: 4px 0; padding-left: 16px; list-style: disc;
+.message-bubble .chat-code-block {
+  margin: 6px 0; padding: 10px 14px;
+  background: rgba(0,0,0,0.04); border-radius: 8px;
+  overflow-x: auto; font-size: 12px; line-height: 1.45;
+  white-space: pre;
 }
-.message-bubble ul.chat-list li {
-  margin: 2px 0; line-height: 1.5;
+.message-row.user .message-bubble .chat-code-block {
+  background: rgba(0,0,0,0.15);
 }
-.message-bubble .chat-list-item {
-  margin: 2px 0; line-height: 1.5;
+
+.message-bubble .chat-h { font-size: 14px; font-weight: 600; margin: 8px 0 4px; }
+.message-bubble .chat-hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+
+.message-bubble .chat-quote {
+  margin: 6px 0; padding: 4px 10px; border-left: 3px solid var(--accent);
+  color: var(--dim); font-style: normal;
 }
+
+.message-bubble ul.chat-list,
+.message-bubble ol.chat-list {
+  margin: 4px 0; padding-left: 20px;
+}
+.message-bubble ul.chat-list { list-style: disc; }
+.message-bubble ol.chat-list-ol { list-style: decimal; }
+.message-bubble .chat-list li { margin: 2px 0; line-height: 1.5; }
+
+.message-bubble .chat-table {
+  margin: 6px 0; border-collapse: collapse; font-size: 12px; width: 100%;
+}
+.message-bubble .chat-table th,
+.message-bubble .chat-table td {
+  border: 1px solid var(--border); padding: 4px 8px; text-align: left;
+}
+.message-bubble .chat-table th {
+  background: rgba(0,0,0,0.03); font-weight: 600;
+}
+
 .message-bubble strong { font-weight: 600; }
+.message-bubble em { font-style: italic; }
+.message-bubble del { opacity: 0.6; }
+.message-bubble a {
+  color: var(--accent); text-decoration: underline;
+}
 
 [data-theme="dark"] .message-row.eva .message-bubble:hover {
   background: color-mix(in srgb, var(--card-bg) 95%, #fff);

@@ -27,8 +27,18 @@ agents:
       Current context:
       {context_summary}
 
-      Respond concisely. Acknowledge what you know and don't know.
-      If tasks are listed in context, reference them naturally.
+      Format your replies like ChatGPT — clean, structured, and easy to read:
+      - Use **bold** for key terms and emphasis
+      - Use bullet lists (-) for multiple items
+      - Use numbered lists (1.) for sequential steps
+      - Use `code` for technical terms, file names, or short snippets
+      - Use ``` fences for multi-line code blocks
+      - Keep paragraphs short — one idea per paragraph
+      - Use a blank line between paragraphs
+      - Use tables when comparing data side by side
+
+      Be concise and direct. Skip disclaimers unless asked. Answer the question,
+      then offer a useful follow-up if relevant.
 
   search:
     system: |

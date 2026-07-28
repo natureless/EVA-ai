@@ -212,61 +212,147 @@ const Chat = {
       .replaceAll(">", "&gt;");
   },
 
-  // Lightweight markdown → HTML for LLM replies (bold, lists, paragraphs)
+  // Full markdown → HTML for LLM replies (ChatGPT-style output)
   _renderMarkdown(s) {
-    let html = this._escapeHtml(s);
+    const raw = String(s ?? "");
 
-    // Bold: **text** → <strong>text</strong>
-    html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    // ── Phase 0: protect fenced code blocks ──
+    const fences = [];
+    let html = raw.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
+      fences.push({ lang, code: code.trimEnd() });
+      return `\x00F${fences.length - 1}\x00`;
+    });
 
-    // Inline code: `text` → <code>text</code>
-    html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+    // ── Phase 1: escape HTML ──
+    html = this._escapeHtml(html);
 
-    // Split into lines, group consecutive list items
+    // ── Phase 2: inline formatting ──
+    html = html
+      .replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, "<em>$1</em>")
+      .replace(/`([^`\n]+)`/g, "<code>$1</code>")
+      .replace(/~~(.+?)~~/g, "<del>$1</del>")
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+    // ── Phase 3: block-level processing ──
     const lines = html.split("\n");
     const out = [];
-    let inList = false;
+    let i = 0;
 
-    for (let i = 0; i < lines.length; i++) {
+    const _isFence = (l) => /^\x00F\d+\x00$/.test(l.trim());
+    const _isHr = (l) => /^[-*_]{3,}$/.test(l.trim());
+    const _isHeading = (l) => /^#{1,3}\s/.test(l.trim());
+    const _isUl = (l) => /^\s*[-*+]\s/.test(l.trim());
+    const _isOl = (l) => /^\s*\d+\.\s/.test(l.trim());
+    const _isBlockquote = (l) => /^&gt;\s/.test(l.trim());
+    const _isTable = (l) => l.trim().startsWith("|") && l.trim().endsWith("|");
+
+    const _collectPara = () => {
+      const buf = [];
+      while (i < lines.length && lines[i].trim() !== ""
+        && !_isFence(lines[i]) && !_isHr(lines[i]) && !_isHeading(lines[i])
+        && !_isUl(lines[i]) && !_isOl(lines[i]) && !_isBlockquote(lines[i])
+        && !_isTable(lines[i])) {
+        buf.push(lines[i]);
+        i++;
+      }
+      return buf;
+    };
+
+    while (i < lines.length) {
       const line = lines[i];
       const trimmed = line.trim();
 
-      // Unordered list items: "- text" or "  - text"
-      if (/^\s*-\s/.test(trimmed)) {
-        if (!inList) {
-          out.push('<ul class="chat-list">');
-          inList = true;
+      // Blank line
+      if (trimmed === "") { i++; continue; }
+
+      // Restore fenced code block
+      if (_isFence(line)) {
+        const idx = parseInt(trimmed.match(/^\x00F(\d+)\x00$/)[1]);
+        const f = fences[idx];
+        out.push(`<pre class="chat-code-block"><code>${f.code}</code></pre>`);
+        i++; continue;
+      }
+
+      // Heading (# ## ###)
+      if (_isHeading(trimmed)) {
+        const m = trimmed.match(/^(#{1,3})\s+(.+)/);
+        const level = parseInt(m[1].length) + 3; // h4-h6
+        out.push(`<h${level} class="chat-h">${m[2]}</h${level}>`);
+        i++; continue;
+      }
+
+      // Horizontal rule
+      if (_isHr(trimmed)) {
+        out.push('<hr class="chat-hr">');
+        i++; continue;
+      }
+
+      // Blockquote
+      if (_isBlockquote(trimmed)) {
+        const bqLines = [];
+        while (i < lines.length && _isBlockquote(lines[i])) {
+          bqLines.push(lines[i].trim().replace(/^&gt;\s?/, ""));
+          i++;
         }
-        const item = trimmed.replace(/^\s*-\s*/, "");
-        out.push(`<li>${item || "&nbsp;"}</li>`);
+        out.push(`<blockquote class="chat-quote">${bqLines.join("<br>")}</blockquote>`);
         continue;
       }
 
-      // Close list if we were in one
-      if (inList) {
-        out.push("</ul>");
-        inList = false;
-      }
-
-      // Numbered list: "1. text"
-      if (/^\s*\d+\.\s/.test(trimmed)) {
-        const item = trimmed.replace(/^\s*\d+\.\s*/, "");
-        out.push(`<div class="chat-list-item"><span>${item || "&nbsp;"}</span></div>`);
+      // Unordered list
+      if (_isUl(trimmed)) {
+        out.push('<ul class="chat-list">');
+        while (i < lines.length && _isUl(lines[i])) {
+          const item = lines[i].trim().replace(/^\s*[-*+]\s*/, "");
+          out.push(`<li>${item}</li>`);
+          i++;
+        }
+        out.push('</ul>');
         continue;
       }
 
-      // Blank line → paragraph break
-      if (trimmed === "") {
-        out.push("<br>");
+      // Ordered list
+      if (_isOl(trimmed)) {
+        out.push('<ol class="chat-list chat-list-ol">');
+        while (i < lines.length && _isOl(lines[i])) {
+          const item = lines[i].trim().replace(/^\s*\d+\.\s*/, "");
+          out.push(`<li>${item}</li>`);
+          i++;
+        }
+        out.push('</ol>');
         continue;
       }
 
-      out.push(line);
+      // Table
+      if (_isTable(trimmed)) {
+        const rows = [];
+        while (i < lines.length && _isTable(lines[i])) {
+          rows.push(lines[i].trim());
+          i++;
+        }
+        out.push('<table class="chat-table"><tbody>');
+        for (let r = 0; r < rows.length; r++) {
+          if (r === 1 && /^[\|\s\-:]+$/.test(rows[r])) continue;
+          const cells = rows[r].split("|").filter(c => c.trim());
+          const tag = r === 0 ? "th" : "td";
+          out.push("<tr>");
+          cells.forEach(c => out.push(`<${tag}>${c.trim()}</${tag}>`));
+          out.push("</tr>");
+        }
+        out.push('</tbody></table>');
+        continue;
+      }
+
+      // Paragraph: collect consecutive non-special lines
+      const paraLines = _collectPara();
+      if (paraLines.length) {
+        out.push(`<p>${paraLines.join("<br>")}</p>`);
+      }
     }
 
-    if (inList) out.push("</ul>");
-
-    return out.join("\n");
+    return out.join("");
   },
 
   _formatTime(ts) {
