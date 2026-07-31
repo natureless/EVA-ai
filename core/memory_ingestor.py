@@ -28,6 +28,9 @@ class MemoryIngestor:
         event_id: str,
         source: str,
         active_tasks: list[dict[str, Any]],
+        *,
+        self_model_delta: float = 0.0,
+        prediction_error: float = 0.0,
     ) -> None:
         """Create and ingest an episodic memory record for a user message."""
         if not self._governor:
@@ -52,8 +55,8 @@ class MemoryIngestor:
             source_reliability=0.9 if source == "user" else 0.6,
             emotional_intensity=self._estimate_emotional_intensity(text),
             age_hours=0.0,
-            self_model_delta=0.0,
-            prediction_error=0.0,
+            self_model_delta=self_model_delta,
+            prediction_error=prediction_error,
         )
 
         self._governor.ingest(record, features)

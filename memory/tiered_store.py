@@ -516,89 +516,19 @@ class TieredMemoryManager:
         category: str = "general",
         tags: list[str] | None = None,
         source_event_id: str = "",
+        self_model_delta: float = 0.0,
+        prediction_error: float = 0.0,
     ) -> dict[str, str]:
-        """Route content to tiers based on importance."""
-        return self._ingest_one(content, importance=importance, source=source,
-                                category=category, tags=tags, source_event_id=source_event_id)
+        """Route content to tiers based on importance.
 
-    def batch_ingest(
-        self,
-        items: list[dict[str, Any]],
-    ) -> list[dict[str, str]]:
-        """Batch-ingest multiple items efficiently.
-
-        Each item is a dict with keys: content, importance (optional, default 0.5),
-        source, category, tags, source_event_id.
-
-        Uses execute_many for S2/S3 writes in a single transaction,
-        reducing per-item latency from ~10ms to <0.1ms.
+        self_model_delta and prediction_error feed into the ImportanceScorer
+        via the governor bridge, wiring the consciousness-model experience
+        intensity formula into the actual memory weighting pipeline.
         """
-        results: list[dict[str, str]] = []
-        s2_batch: list[tuple[Any, ...]] = []
-        s3_batch: list[tuple[Any, ...]] = []
-
-        for item in items:
-            content = str(item.get("content", ""))
-            importance = float(item.get("importance", 0.5))
-            source = str(item.get("source", ""))
-            category = str(item.get("category", "general"))
-            tags = item.get("tags") or []
-            source_event_id = str(item.get("source_event_id", ""))
-
-            result: dict[str, str] = {}
-
-            # S1: always
-            mid_s1 = f"s1_{uuid4().hex[:8]}"
-            self.s1.put(mid_s1, {
-                "content": content, "importance": importance,
-                "source": source, "ts": time.time(),
-            })
-            result["s1"] = mid_s1
-
-            # S2: importance >= 0.6
-            if importance >= 0.6:
-                mid_s2 = f"wm_{uuid4().hex[:12]}"
-                now = datetime.now(timezone.utc).isoformat()
-                expires = datetime.fromtimestamp(
-                    time.time() + self.s2.ttl_hours * 3600, tz=timezone.utc
-                ).isoformat()
-                s2_batch.append((
-                    mid_s2, content, content[:200], source, 2,
-                    json.dumps(tags, ensure_ascii=False), now, expires,
-                ))
-                result["s2"] = mid_s2
-
-            # S3: importance >= 0.8
-            if importance >= 0.8:
-                mid_s3 = f"ltm_{uuid4().hex[:12]}"
-                now = datetime.now(timezone.utc).isoformat()
-                s3_batch.append((
-                    mid_s3, content, category, "", importance,
-                    source_event_id, "active", now,
-                ))
-                result["s3"] = mid_s3
-
-            results.append(result)
-
-        # batch-write S2
-        if s2_batch:
-            self.s2.store.execute_many(
-                """INSERT OR REPLACE INTO working_memory
-                   (id, content, summary, source, priority, tags_json, created_at, expires_at)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-                s2_batch,
-            )
-
-        # batch-write S3
-        if s3_batch:
-            self.s3.store.execute_many(
-                """INSERT OR REPLACE INTO long_term_memory
-                   (id, content, category, embedding_ref, importance, source_event_id, status, created_at)
-                   VALUES (?, ?, ?, ?, ?, ?, 'active', ?)""",
-                s3_batch,
-            )
-
-        return results
+        return self._ingest_one(content, importance=importance, source=source,
+                                category=category, tags=tags, source_event_id=source_event_id,
+                                self_model_delta=self_model_delta,
+                                prediction_error=prediction_error)
 
     def _ingest_one(
         self,
@@ -609,6 +539,8 @@ class TieredMemoryManager:
         category: str = "general",
         tags: list[str] | None = None,
         source_event_id: str = "",
+        self_model_delta: float = 0.0,
+        prediction_error: float = 0.0,
     ) -> dict[str, str]:
         """Single-item ingest (for cognition loop)."""
         result: dict[str, str] = {}
@@ -654,7 +586,9 @@ class TieredMemoryManager:
 
         # reverse-bridge: feed into MemoryGovernor for lifecycle management
         if self._governor and importance >= 0.6:
-            self._push_to_governor(content, importance, source, category, source_event_id)
+            self._push_to_governor(content, importance, source, category, source_event_id,
+                                   self_model_delta=self_model_delta,
+                                   prediction_error=prediction_error)
 
         return result
 
@@ -665,6 +599,8 @@ class TieredMemoryManager:
         source: str,
         category: str,  # noqa: ARG002 — reserved for future governor memory_type mapping
         source_event_id: str,
+        self_model_delta: float = 0.0,
+        prediction_error: float = 0.0,
     ) -> None:
         """Create a MemoryRecord from tiered-ingested content and feed it into the governor."""
         self._push_depth += 1
@@ -700,8 +636,8 @@ class TieredMemoryManager:
                 source_reliability=0.9 if source == "user" else 0.6,
                 emotional_intensity=0.1,
                 age_hours=0.0,
-                self_model_delta=0.0,
-                prediction_error=0.0,
+                self_model_delta=self_model_delta,
+                prediction_error=prediction_error,
             )
 
             if self._governor is not None:
@@ -733,7 +669,8 @@ class TieredMemoryManager:
                     results.append({"tier": "S2", **row})
 
         if 3 in tiers:
-            rows = self.s3.search(query, limit=100)
+            # hybrid: vector + FTS5 when embedding is available, plain FTS5 otherwise
+            rows = self.hybrid_search(query, top_k=100)
             for row in rows:
                 results.append({"tier": "S3", **row})
 
@@ -767,20 +704,6 @@ class TieredMemoryManager:
             ltm_store=self.s3,
             alpha=alpha_val,
             top_k=top_k,
-        )
-
-    # ── promote ─────────────────────────────────────────────
-
-    def promote_to_s3(self, s2_memory_id: str) -> str | None:
-        """Promote a working memory to long-term."""
-        row = self.s2.get(s2_memory_id)
-        if not row:
-            return None
-        return self.s3.put(
-            row["content"],
-            category="promoted",
-            importance=0.8,
-            source_event_id=row.get("source", ""),
         )
 
     # ── maintenance ─────────────────────────────────────────

@@ -455,6 +455,8 @@ class CognitionLoop:
                             category=event.type,
                             tags=[selected_agent, event.type],
                             source_event_id=event.id,
+                            self_model_delta=self_model_delta,
+                            prediction_error=prediction_error,
                         )
 
                     # ── world model: entity extraction → graph → S4 ──

@@ -406,14 +406,40 @@ def _build_snapshot_payload(
     profile: dict[str, Any],
     self_model: dict[str, Any],
     proactive_state: dict[str, Any],
+    tiered_memory: Any = None,
 ) -> dict[str, Any]:
-    return {
+    payload: dict[str, Any] = {
         "version": "0.1",
         "world_model": world_model.to_dict(),
         "profile": profile,
         "self_model": self_model,
         "proactive_state": proactive_state,
     }
+
+    # ── memory snapshot (S1+S2+S3 summaries, not full DB) ──
+    if tiered_memory:
+        try:
+            s1_entries = tiered_memory.s1.list_all()[:20]
+            s2_entries = tiered_memory.s2.list_recent(limit=20)
+            s3_entries = tiered_memory.s3.search("", limit=20)  # most recent
+
+            payload["memory"] = {
+                "s1_session": [{"key": e[0], "value": e[1]} for e in s1_entries],
+                "s2_working": [
+                    {"id": r.get("id"), "content": r.get("content", "")[:200],
+                     "source": r.get("source", ""), "created_at": r.get("created_at", "")}
+                    for r in s2_entries
+                ],
+                "s3_long_term": [
+                    {"id": r.get("id"), "content": r.get("content", "")[:200],
+                     "category": r.get("category", ""), "importance": r.get("importance", 0)}
+                    for r in s3_entries
+                ],
+            }
+        except Exception:
+            pass  # memory snapshot is best-effort; world model is the critical path
+
+    return payload
 
 
 def _wire_github_poller(
@@ -520,6 +546,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
             profile=persona["profile"],
             self_model=persona["self_model"],
             proactive_state=world["proactive_state"],
+            tiered_memory=storage["tiered_memory"],
         )
         payload["persona"] = persona_profile.model_dump(mode="json")
         world["snapshot_store"].save_latest(payload)

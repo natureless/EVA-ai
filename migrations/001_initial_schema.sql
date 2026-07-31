@@ -41,12 +41,6 @@ CREATE TABLE IF NOT EXISTS memory_items (
     metadata_json TEXT NOT NULL DEFAULT '{}'
 );
 
-CREATE TABLE IF NOT EXISTS memory_links (
-    id TEXT PRIMARY KEY, from_memory_id TEXT NOT NULL,
-    to_memory_id TEXT NOT NULL, relation TEXT NOT NULL,
-    strength REAL NOT NULL DEFAULT 1.0, created_at TEXT NOT NULL
-);
-
 CREATE INDEX IF NOT EXISTS idx_memories_type_status
     ON memory_items(memory_type, status);
 CREATE INDEX IF NOT EXISTS idx_memories_salience
