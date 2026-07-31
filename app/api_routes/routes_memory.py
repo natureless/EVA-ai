@@ -31,7 +31,7 @@ def memory_tiers(request: Request) -> dict[str, Any]:
     tm = request.app.state.container.tiered_memory
     if tm is None:
         return {"error": "tiered memory not available"}
-    return tm.stats()  # type: ignore[no-any-return]
+    return tm.stats()  # type: ignore[no-any-return]  # Starlette untyped container
 
 
 @router.get("/api/memory/working")

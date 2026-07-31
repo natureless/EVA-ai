@@ -133,7 +133,7 @@ class OpenAIAdapter(LLMAdapter):
             )
             if resp.status_code == 200:
                 data = resp.json()
-                return data["choices"][0]["message"]["content"]  # type: ignore[no-any-return]
+                return data["choices"][0]["message"]["content"]  # type: ignore[no-any-return]  # httpx untyped
             logger.error("OpenAI API error %d: %s", resp.status_code, resp.text[:500])
             return f"[EVA] API error {resp.status_code}"
         except Exception as e:
@@ -237,7 +237,7 @@ class ClaudeAdapter(LLMAdapter):
                 kwargs["system"] = system
 
             resp = client.messages.create(**kwargs)
-            return resp.content[0].text  # type: ignore[no-any-return]
+            return resp.content[0].text  # type: ignore[no-any-return]  # anthropic SDK untyped
         except Exception as e:
             logger.error("Claude API request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
@@ -355,7 +355,7 @@ def load_system_prompt(agent_name: str, **kwargs: Any) -> str:
             if template:
                 for key, val in kwargs.items():
                     template = template.replace("{" + key + "}", str(val))
-                return template  # type: ignore[no-any-return]
+                return template  # type: ignore[no-any-return]  # str template; mypy sees Any
     except Exception as e:
         logger.debug("failed to load system prompt template: %s", e)
 

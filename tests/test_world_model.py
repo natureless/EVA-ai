@@ -172,3 +172,68 @@ class TestEntityExtraction:
         extractor = EntityExtractor()
         assert isinstance(extractor, EntityExtractor)
         # pure rule-based — no external API calls
+
+    def test_bullet_task_extraction(self):
+        entities = entity_extractor.extract_entities("- fix the login bug\n- [x] write tests\n* deploy to prod")
+        tasks = [e for e in entities if e["type"] == "task"]
+        assert len(tasks) >= 2
+        # Check that the checkbox [x] is marked completed
+        completed = [t for t in tasks if t["properties"].get("status") == "completed"]
+        assert len(completed) >= 1
+
+    def test_numbered_task_extraction(self):
+        entities = entity_extractor.extract_entities("1) update docs\n2. review code\n3) ship it")
+        tasks = [e for e in entities if e["type"] == "task"]
+        assert len(tasks) >= 2
+
+    def test_priority_detection(self):
+        entities = entity_extractor.extract_entities("TODO: urgent fix for critical bug")
+        tasks = [e for e in entities if e["type"] == "task"]
+        urgent_tasks = [t for t in tasks if t["properties"].get("priority") == "urgent"]
+        assert len(urgent_tasks) >= 1
+
+    def test_deadline_detection(self):
+        entities = entity_extractor.extract_entities("- submit report by 2026-03-15")
+        tasks = [e for e in entities if e["type"] == "task"]
+        deadlines = [t for t in tasks if t["properties"].get("deadline")]
+        assert len(deadlines) >= 1
+
+    def test_chinese_patterns(self):
+        entities = entity_extractor.extract_entities("任务：修复登录bug  待办：写测试  分配给：@小明")
+        tasks = [e for e in entities if e["type"] == "task"]
+        persons = [e for e in entities if e["type"] == "person"]
+        assert len(tasks) >= 2
+        assert len(persons) >= 1
+
+    def test_is_noise_filters_garbage(self):
+        assert entity_extractor._is_noise("if") is True
+        assert entity_extractor._is_noise("123") is True
+        assert entity_extractor._is_noise("v2.0") is True
+        assert entity_extractor._is_noise("real task name") is False
+
+    def test_is_done_detection(self):
+        assert entity_extractor._is_done("completed the feature") is True
+        assert entity_extractor._is_done("fixed the bug") is True
+        assert entity_extractor._is_done("still working on it") is False
+
+    def test_relations_single_entity_empty(self):
+        entities = [{"type": "task", "name": "one task"}, {"type": "person", "name": "alice"}]
+        relations = entity_extractor.extract_relations(entities, "assigned to @alice")
+        # At least one relation (user→task or task→person)
+        assert len(relations) >= 1
+
+    def test_relations_empty_entities(self):
+        relations = entity_extractor.extract_relations([], "some text")
+        assert relations == []
+
+    def test_file_extraction(self):
+        entities = entity_extractor.extract_entities("check `main.py` and file: config.yaml")
+        files = [e for e in entities if e["type"] == "file"]
+        assert len(files) >= 1
+
+    def test_action_marker_extraction(self):
+        entities = entity_extractor.extract_entities(
+            "You should fix the login bug. The next step: deploy to staging."
+        )
+        tasks = [e for e in entities if e["type"] == "task"]
+        assert len(tasks) >= 1

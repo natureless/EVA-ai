@@ -31,7 +31,7 @@ async def get_policy_state(request: Request, detail: bool = False) -> dict[str, 
             "active_tokens": tk.get("active_tokens", 0),
         }
 
-    return state  # type: ignore[no-any-return]
+    return state  # type: ignore[no-any-return]  # Starlette untyped container
 
 
 @router.post("/api/policy/transition")

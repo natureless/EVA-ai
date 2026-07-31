@@ -14,6 +14,7 @@ router = APIRouter()
 
 @router.get("/health/live")
 def health_live(request: Request) -> dict[str, Any]:
+    # Starlette's request.app.state is untyped at runtime
     return request.app.state.container.health.live()  # type: ignore[no-any-return]
 
 

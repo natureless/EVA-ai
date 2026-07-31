@@ -63,7 +63,7 @@ def _executor_action(
     if container.policy_engine:
         token_manager = container.policy_engine.token_manager
 
-    return executor.execute(  # type: ignore[no-any-return]
+    return executor.execute(  # type: ignore[no-any-return]  # Starlette untyped container
         action=action,
         params=params,
         task_id=params.get("task_id", ""),
