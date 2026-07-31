@@ -124,6 +124,8 @@ async def chat_stream(req: ChatRequest, request: Request) -> Any:
     container.system_state["pending_events"] = container.event_bus.size()
 
     async def event_generator() -> AsyncGenerator[str, None]:
+        heartbeat_interval = 15.0  # seconds between heartbeats
+        last_heartbeat = time.monotonic()
         try:
             while not stream_done.is_set():
                 try:
@@ -133,6 +135,11 @@ async def chat_stream(req: ChatRequest, request: Request) -> Any:
                     if token:
                         yield f"data: {_sse_escape(token)}\n\n"
                 except asyncio.TimeoutError:
+                    # Send heartbeat to keep connection alive
+                    now = time.monotonic()
+                    if now - last_heartbeat >= heartbeat_interval:
+                        yield ": heartbeat\n\n"
+                        last_heartbeat = now
                     continue
             yield "data: [DONE]\n\n"
         except asyncio.CancelledError:
@@ -253,6 +260,15 @@ def get_state(request: Request) -> dict[str, Any]:
     ss["pending_events"] = container.event_bus.size()
     ss["pending_results"] = container.result_registry.size()
 
+    # ── memory stats ────────────────────────────────────────
+    memory_stats: dict[str, Any] = {}
+    tiered = getattr(container, "tiered_memory", None)
+    if tiered is not None:
+        try:
+            memory_stats = tiered.stats()
+        except Exception:
+            memory_stats = {"error": "unavailable"}
+
     return {
         "focus": ss["focus"],
         "mode": ss["mode"],
@@ -273,6 +289,7 @@ def get_state(request: Request) -> dict[str, Any]:
         "stability_score": ss.get("stability_score", 1.0),
         "mean_prediction_error": ss.get("mean_prediction_error", 0.0),
         "total_perturbations": ss.get("total_perturbations", 0),
+        "memory_stats": memory_stats,
     }
 
 

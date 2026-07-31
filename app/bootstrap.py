@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import logging
 from pathlib import Path
+import time
 from typing import Any
 
 import yaml
@@ -486,6 +487,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         level=settings.log_level,
     )
     logger.info("bootstrap start env=%s port=%s", settings.env, settings.port)
+    _bootstrap_start = time.perf_counter()
 
     if ws_manager:
         ws_manager.capture_loop()
@@ -637,7 +639,9 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
             + "; ".join(f"{c.name}: {c.detail}" for c in failed)
         )
 
-    logger.info("bootstrap complete — system ready")
+    bootstrap_sec = round(time.perf_counter() - _bootstrap_start, 2)
+    logger.info("bootstrap complete — system ready (%.1fs)", bootstrap_sec)
+    system_state["bootstrap_sec"] = bootstrap_sec
 
     return AppContainer(
         settings=settings,

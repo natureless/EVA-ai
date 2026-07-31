@@ -55,6 +55,7 @@ class HealthService:
                 "last_snapshot_at": self.system_state.get("last_snapshot_at"),
                 "last_proactive_reason": self.system_state.get("last_proactive_reason"),
                 "pending_events": self._probe_event_depth(),
+                "bootstrap_sec": self.system_state.get("bootstrap_sec"),
             },
         }
 
