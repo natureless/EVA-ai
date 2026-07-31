@@ -74,6 +74,8 @@ class EventBus:
             )
             return False
 
+        self._publish_count += 1
+
         # fire-and-forget persistence to S5 event trace
         if self._s5 is not None and hasattr(self._s5, "store"):
             try:
@@ -112,7 +114,12 @@ class EventBus:
         return True
 
     def _enqueue(self, event: Event) -> bool:
-        """Try to enqueue; apply overflow policy on full queue."""
+        """Try to enqueue; apply overflow policy on full queue.
+
+        Returns True if the event was enqueued, False if it was dropped.
+        On drop_oldest, the oldest event is silently evicted (counted as
+        dropped) and the new event is enqueued — returns True.
+        """
         try:
             self._queue.put_nowait(event)
             return True
@@ -125,6 +132,7 @@ class EventBus:
             try:
                 self._queue.get_nowait()
                 self._queue.task_done()
+                self._dropped_count += 1  # evicted oldest counts as dropped
             except Empty:
                 pass
             try:

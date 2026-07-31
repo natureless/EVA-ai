@@ -504,11 +504,62 @@ class CodeExecutor(BaseExecutor):
         code = params.get("code", "")
         if not code.strip():
             return ExecutorDecision(allowed=False, reason="code is required")
-        # block dangerous patterns
-        dangerous = ["rm -rf /", "del /f", "shutdown", "reboot", "format ", "sudo "]
-        if language == "bash" and any(d in code.lower() for d in dangerous):
+        # block dangerous patterns with word-boundary regex
+        if language == "bash" and self._matches_dangerous_pattern(code):
             return ExecutorDecision(allowed=False, reason="dangerous command detected")
         return ExecutorDecision(allowed=True, reason="boundary check passed")
+
+    # ── Dangerous command detection ──────────────────────────
+
+    _DANGEROUS_PATTERNS: list[tuple[str, str]] = [
+        # (regex, description)
+        (r"\brm\s.*-rf\s+/(\s|$|;)", "rm -rf /"),
+        (r"\bdd\s+if=.*of=/dev/[a-z]", "dd (raw device write)"),
+        (r">\s*/dev/sd[a-z]", "overwrite block device"),
+        (r">\s*/dev/nvme", "overwrite NVMe device"),
+        (r"\bmkfs\.", "format filesystem"),
+        (r":\(\)\s*\{.*:.*\|.*:.*&.*\}", "fork bomb"),
+        (r"\bchmod\s+[0-7]*7[0-7]*7\s+/", "world-writable system path"),
+        (r"\biptables\s+-F\b", "flush firewall rules"),
+        (r"\bcurl\b.*\|\s*bash", "curl pipe bash"),
+        (r"\bwget\b.*\|\s*bash", "wget pipe bash"),
+    ]
+
+    # Command names that are unconditionally blocked (word-boundary match
+    # on the first token of a command line, excluding echo/print/comment lines).
+    _DANGEROUS_COMMANDS: frozenset[str] = frozenset({
+        "shutdown", "reboot", "halt", "poweroff", "sudo", "su",
+    })
+
+    @classmethod
+    def _matches_dangerous_pattern(cls, code: str) -> bool:
+        import re as _re
+
+        lowered = code.lower()
+
+        # Strip comment lines before regex matching
+        active_lines = "\n".join(
+            line for line in lowered.splitlines()
+            if not line.strip().startswith(("#", "//"))
+        )
+
+        # Regex patterns (checked against active code only)
+        for pattern, _desc in cls._DANGEROUS_PATTERNS:
+            if _re.search(pattern, active_lines):
+                return True
+
+        # Command name blacklist — check each active line's commands.
+        # Split on ; && || | to find the first token of each command segment.
+        for line in active_lines.splitlines():
+            for segment in _re.split(r"[;&|]+", line):
+                segment = segment.strip()
+                if not segment or segment.startswith(("echo ", "print")):
+                    continue
+                tokens = segment.split()
+                if tokens and tokens[0] in cls._DANGEROUS_COMMANDS:
+                    return True
+
+        return False
 
     def _run(self, action: str, params: dict[str, Any]) -> dict[str, Any]:
         if action != "execute":
