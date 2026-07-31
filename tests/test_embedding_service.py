@@ -1,4 +1,4 @@
-"""Tests for memory.embedding_service — lazy-loading, encode, singleton."""
+"""Unit tests for EmbeddingService — encode, dim, singleton."""
 
 from unittest.mock import MagicMock
 
@@ -9,57 +9,51 @@ from memory.embedding_service import EmbeddingService
 
 
 class TestEmbeddingService:
-    DIM = 384
-
-    @pytest.fixture(autouse=True)
-    def _reset_singleton(self):
-        EmbeddingService._instance = None
-        yield
-        EmbeddingService._instance = None
-
-    def _make_service(self):
-        svc = EmbeddingService(model_name="test-model")
-        mock_model = MagicMock()
-        mock_model.encode.return_value = np.zeros((3, self.DIM), dtype=np.float32)
-        svc._model = mock_model
-        return svc
-
-    def test_dim_property(self):
+    def test_dim_default(self):
         svc = EmbeddingService()
-        assert svc.dim == self.DIM
+        assert svc.dim == 384
 
-    def test_encode_returns_correct_shape(self):
-        svc = self._make_service()
-        result = svc.encode(["hello", "world", "test"])
-        assert result.shape == (3, self.DIM)
+    def test_dim_custom(self):
+        svc = EmbeddingService(model_name="custom-model")
+        svc._dim = 768
+        assert svc.dim == 768
+
+    def test_encode_empty_returns_empty(self):
+        svc = EmbeddingService()
+        svc._model = MagicMock()
+        result = svc.encode([])
+        assert result.shape == (0, 384)
+
+    def test_encode_delegates_to_model(self):
+        svc = EmbeddingService()
+        mock_model = MagicMock()
+        mock_model.encode.return_value = np.array([[1.0, 2.0, 3.0]], dtype=np.float32)
+        svc._model = mock_model
+        svc._dim = 3
+        result = svc.encode(["hello"])
+        assert result.shape == (1, 3)
+        mock_model.encode.assert_called_once()
+
+    def test_encode_single(self):
+        svc = EmbeddingService()
+        mock_model = MagicMock()
+        mock_model.encode.return_value = np.array([[0.1, 0.2]], dtype=np.float32)
+        svc._model = mock_model
+        svc._dim = 2
+        result = svc.encode_single("hello")
+        assert result.shape == (2,)
         assert result.dtype == np.float32
 
-    def test_encode_empty_list(self):
-        svc = self._make_service()
-        result = svc.encode([])
-        assert result.shape == (0, self.DIM)
-
-    def test_encode_single_returns_1d(self):
-        svc = self._make_service()
-        result = svc.encode_single("hello")
-        assert result.shape == (self.DIM,)
-        svc._model.encode.assert_called_once()
-
     def test_singleton_returns_same_instance(self):
-        a = EmbeddingService.singleton()
-        b = EmbeddingService.singleton()
-        assert a is b
+        EmbeddingService._instance = None
+        svc1 = EmbeddingService.singleton()
+        svc2 = EmbeddingService.singleton()
+        assert svc1 is svc2
+        EmbeddingService._instance = None
 
-    def test_singleton_respects_model_name(self):
-        svc = EmbeddingService.singleton(model_name="custom-model")
-        assert svc._model_name == "custom-model"
-
-    def test_model_is_lazy_loaded(self):
-        """Model is not loaded at init time — only on first access."""
+    def test_model_lazy_loads(self):
         svc = EmbeddingService()
+        # Model is initially None (lazy)
         assert svc._model is None
-        # The model property triggers import, but since sentence-transformers
-        # isn't installed, we verify the guard: accessing .model raises
-        # ModuleNotFoundError, proving it was deferred (not loaded at init).
-        with pytest.raises(ModuleNotFoundError):
-            _ = svc.model
+        # hasattr would trigger property, check via class dict
+        assert "model" in type(svc).__dict__

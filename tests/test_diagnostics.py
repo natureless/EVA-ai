@@ -135,3 +135,66 @@ class TestSystemDiagnostic:
         )
         assert isinstance(report, DiagnosticReport)
         assert report.overall in ("healthy", "degraded", "critical")
+
+    def test_check_memory_tiers_healthy(self):
+        diag = SystemDiagnostic()
+        tiered = MagicMock()
+        tiered.stats.return_value = {
+            "S1_session": {"entries": 10},
+            "S2_working": {"entries": 50},
+            "S3_long_term": {"entries_active": 200},
+            "S4_world_model": {"entities": 5, "edges": 3},
+            "S5_event_trace": {"events": 1000},
+        }
+        check = diag.check_memory_tiers(tiered)
+        assert check.passed is True
+
+    def test_check_memory_tiers_orphan_edges(self):
+        diag = SystemDiagnostic()
+        tiered = MagicMock()
+        tiered.stats.return_value = {
+            "S1_session": {"entries": 0},
+            "S2_working": {"entries": 0},
+            "S3_long_term": {"entries_active": 0},
+            "S4_world_model": {"entities": 0, "edges": 5},
+            "S5_event_trace": {"events": 0},
+        }
+        check = diag.check_memory_tiers(tiered)
+        assert check.passed is False
+        assert "orphan" in check.detail
+
+    def test_check_memory_tiers_exception(self):
+        diag = SystemDiagnostic()
+        tiered = MagicMock()
+        tiered.stats.side_effect = RuntimeError("tiered down")
+        check = diag.check_memory_tiers(tiered)
+        assert check.passed is False
+
+    def test_check_runtime_healthy(self):
+        diag = SystemDiagnostic()
+        check = diag.check_runtime({
+            "pending_events": 5,
+            "pending_results": 0,
+            "policy_state": {"state_machine": {"current": "dormant"}},
+        })
+        assert check.passed is True
+
+    def test_check_runtime_queue_backed_up(self):
+        diag = SystemDiagnostic()
+        check = diag.check_runtime({
+            "pending_events": 100,
+            "pending_results": 0,
+            "policy_state": {"state_machine": {"current": "dormant"}},
+        })
+        assert check.passed is False
+        assert "backed up" in check.detail
+
+    def test_check_runtime_quarantined(self):
+        diag = SystemDiagnostic()
+        check = diag.check_runtime({
+            "pending_events": 0,
+            "pending_results": 0,
+            "policy_state": {"state_machine": {"current": "quarantined"}},
+        })
+        assert check.passed is False
+        assert "quarantine" in check.detail

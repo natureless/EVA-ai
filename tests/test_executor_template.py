@@ -85,3 +85,35 @@ class TestBaseExecutor:
         exe = StubExecutor(audit)
         result = exe.execute("test_action", {}, token_manager=None)
         assert result["ok"] is True
+
+    def test_execute_run_raises_logs_error(self):
+        """When _run raises, the exception is caught, audited as error, and returned."""
+        audit = MagicMock(spec=ExecutorAuditLog)
+
+        class FailingExecutor(StubExecutor):
+            def _run(self, action, params):
+                raise RuntimeError("execution failed")
+
+        exe = FailingExecutor(audit)
+        result = exe.execute("test_action", {}, task_id="task-err")
+        assert result["ok"] is False
+        assert result["status"] == "error"
+        assert "execution failed" in result["error"]
+        # Audit should have been called with status="error"
+        audit.record.assert_called()
+        # Last call should be error audit
+        last_call_kwargs = audit.record.call_args.kwargs
+        assert last_call_kwargs["status"] == "error"
+
+    def test_execute_passes_through_result(self):
+        """The result from _run is returned with ok=True when no errors."""
+        audit = MagicMock(spec=ExecutorAuditLog)
+
+        class RichExecutor(StubExecutor):
+            def _run(self, action, params):
+                return {"ok": True, "summary": "rich result", "extra_field": 42}
+
+        exe = RichExecutor(audit)
+        result = exe.execute("test_action", {"input": "data"})
+        assert result["ok"] is True
+        assert result["extra_field"] == 42
