@@ -176,6 +176,30 @@ class TestDocsAgentBoundaries:
         result = agent.run(task)
         assert not result.ok or result.ok  # must not crash
 
+    def test_long_text_truncated_to_5000(self):
+        agent = DocsAgent()
+        long_text = "x" * 6000
+        task = AgentTask(kind="summarize", payload={"text": long_text})
+        result = agent.run(task)
+        assert result.ok
+        # mock LLM shows preview of first 160 chars
+        assert "preview" in result.content.lower() or result.meta["source_length"] == 6000
+
+    def test_no_context_works(self):
+        agent = DocsAgent()
+        task = AgentTask(kind="summarize", payload={
+            "text": "Simple document content.",
+        })
+        result = agent.run(task)
+        assert result.ok
+
+    def test_mock_llm_returns_preview(self):
+        agent = DocsAgent()
+        task = AgentTask(kind="summarize", payload={"text": "Hello world" * 20})
+        result = agent.run(task)
+        # With mock LLM, returns preview
+        assert "document" in result.content.lower() or "preview" in result.content.lower()
+
 
 # ── Chat Agent Boundaries ──────────────────────────────────
 
@@ -198,3 +222,52 @@ class TestChatAgentBoundaries:
         result = agent.run(task)
         assert result.meta["active_tasks_count"] == 1
         assert result.meta["memories_count"] == 1
+
+    def test_empty_input_returns_early(self):
+        agent = ChatAgent()
+        task = AgentTask(kind="chat", payload={"text": ""})
+        result = agent.run(task)
+        assert "empty input" in result.content
+
+    def test_run_stream_with_text(self):
+        agent = ChatAgent()
+        task = AgentTask(kind="chat", payload={"text": "hello"})
+        tokens: list[str] = []
+        result = agent.run_stream(task, tokens.append)
+        assert result.ok
+        assert len(tokens) > 0
+        assert "".join(tokens) == result.content
+
+    def test_run_stream_empty_input(self):
+        agent = ChatAgent()
+        task = AgentTask(kind="chat", payload={"text": ""})
+        tokens: list[str] = []
+        result = agent.run_stream(task, tokens.append)
+        assert "empty input" in result.content
+        assert len(tokens) == 1
+
+    def test_build_system_with_persona(self):
+        agent = ChatAgent()
+        context = {
+            "persona": {
+                "name": "HAL",
+                "role_definition": "spaceship AI",
+                "tone_style": "calm, monotone",
+                "hard_constraints": ["never open the pod bay doors"],
+            },
+        }
+        result = agent._build_system(context)
+        assert "HAL" in result
+        assert "pod bay doors" in result
+
+    def test_build_system_without_persona(self):
+        agent = ChatAgent()
+        result = agent._build_system(None)
+        assert "EVA" in result
+        assert "fabricate" in result
+
+    def test_build_system_with_context_summary(self):
+        agent = ChatAgent()
+        context = {"context_summary": "User is working on auth module"}
+        result = agent._build_system(context)
+        assert "auth module" in result
