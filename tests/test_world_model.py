@@ -237,3 +237,46 @@ class TestEntityExtraction:
         )
         tasks = [e for e in entities if e["type"] == "task"]
         assert len(tasks) >= 1
+
+
+# ── Snapshot Store Tests ────────────────────────────────────
+
+class TestSnapshotStore:
+    def test_load_latest_nonexistent(self, tmp_path):
+        from world.snapshot_store import SnapshotStore
+        snap_dir = tmp_path / "snapshots"
+        latest = snap_dir / "latest.json"
+        store = SnapshotStore(snap_dir, latest)
+        assert store.load_latest() is None
+
+    def test_save_and_load_roundtrip(self, tmp_path):
+        from world.snapshot_store import SnapshotStore
+        snap_dir = tmp_path / "snapshots"
+        latest = snap_dir / "latest.json"
+        store = SnapshotStore(snap_dir, latest)
+        payload = {"focus": "testing", "mode": "active", "version": 1}
+        store.save_latest(payload)
+        loaded = store.load_latest()
+        assert loaded is not None
+        assert loaded["focus"] == "testing"
+        assert loaded["version"] == 1
+
+    def test_save_creates_directory(self, tmp_path):
+        from world.snapshot_store import SnapshotStore
+        snap_dir = tmp_path / "nested" / "snapshots"
+        latest = snap_dir / "latest.json"
+        store = SnapshotStore(snap_dir, latest)
+        store.save_latest({"hello": "world"})
+        assert latest.exists()
+
+    def test_load_latest_after_save(self, tmp_path):
+        from world.snapshot_store import SnapshotStore
+        snap_dir = tmp_path / "snapshots"
+        latest = snap_dir / "latest.json"
+        store = SnapshotStore(snap_dir, latest)
+        store.save_latest({"a": 1})
+        first = store.load_latest()
+        store.save_latest({"b": 2})
+        second = store.load_latest()
+        assert first["a"] == 1
+        assert second["b"] == 2

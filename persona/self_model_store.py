@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any
@@ -70,7 +71,7 @@ class SelfModelStore:
             if version < CURRENT_SELF_MODEL_VERSION:
                 payload = _migrate_v1_to_v2(payload)
             return payload  # type: ignore[no-any-return]
-        default = DEFAULT_SELF_MODEL.copy()
+        default = deepcopy(DEFAULT_SELF_MODEL)
         default["_version"] = CURRENT_SELF_MODEL_VERSION
         self.save(default)
         return default
