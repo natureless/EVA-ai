@@ -352,6 +352,7 @@ class CognitionLoop:
                                     tm = self.policy_engine.token_manager
                                     token = tm.issue(
                                         loop_id, exe_type or "agent",
+                                        scope=[exe_type] if exe_type else [],
                                         ttl_seconds=300, budget_tokens=10,
                                     )
                                     agent_tok = token.token_id
@@ -505,6 +506,13 @@ class CognitionLoop:
                 self.system_state["last_selected_agent"] = self.world_model.last_selected_agent
                 self.system_state["last_loop_id"] = self.world_model.last_loop_id
                 self.system_state["last_loop_at"] = self.world_model.last_loop_at
+
+                # ── self-model stability → system_state (read by /api/state) ──
+                if self.self_model is not None:
+                    metrics = self.self_model.get("stability_metrics", {})
+                    self.system_state["stability_score"] = metrics.get("stability_score", 1.0)
+                    self.system_state["mean_prediction_error"] = metrics.get("mean_prediction_error", 0.0)
+                    self.system_state["total_perturbations"] = metrics.get("total_perturbations", 0)
 
                 if event.correlation_id:
                     self.result_registry.fulfill(

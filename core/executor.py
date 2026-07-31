@@ -11,6 +11,7 @@ Agents handle cognition; executors handle safety.
 
 from __future__ import annotations
 
+import hashlib
 import ipaddress
 import json
 import logging
@@ -48,10 +49,31 @@ class AuditEntry:
 
 
 class ExecutorAuditLog:
-    """Immutable audit trail for all executor operations."""
+    """Immutable audit trail with SHA-256 hash chain for tamper detection.
+
+    Each audit entry includes ``chain_hash`` = SHA-256(prev_chain_hash || record_data).
+    The chain can be verified by recomputing hashes from the first entry forward.
+    """
 
     def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
+        # Load the last chain hash from the most recent audit entry
+        self._last_hash: str = self._load_last_hash()
+
+    def _load_last_hash(self) -> str:
+        try:
+            row = self.store.fetchone(
+                "SELECT chain_hash FROM executor_audit ORDER BY timestamp DESC LIMIT 1"
+            )
+            return row["chain_hash"] if row else ""
+        except Exception:
+            return ""
+
+    def _compute_chain_hash(self, prev_hash: str, eid: str, executor_type: str,
+                            action: str, task_id: str, status: str, timestamp: str) -> str:
+        """SHA-256(prev_hash || eid || executor_type || action || task_id || status || timestamp)."""
+        data = "|".join([prev_hash, eid, executor_type, action, task_id, status, timestamp])
+        return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
     def record(
         self,
@@ -67,19 +89,60 @@ class ExecutorAuditLog:
     ) -> str:
         eid = f"audit_{uuid4().hex[:12]}"
         now = datetime.now(timezone.utc).isoformat()
+        chain_hash = self._compute_chain_hash(
+            self._last_hash, eid, executor_type, action, task_id, status, now,
+        )
         self.store.execute(
             """INSERT INTO executor_audit
                (id, executor_type, action, task_id, token_id,
-                parameters_json, result_summary, duration_ms, status, timestamp)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                parameters_json, result_summary, duration_ms, status, timestamp, chain_hash)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 eid, executor_type, action, task_id, token_id,
                 json.dumps(parameters or {}, ensure_ascii=False),
-                result_summary, duration_ms, status, now,
+                result_summary, duration_ms, status, now, chain_hash,
             ),
         )
+        self._last_hash = chain_hash
         logger.debug("audit: %s %s %s → %s", executor_type, action, task_id, status)
         return eid
+
+    def verify_chain(self) -> tuple[bool, str]:
+        """Verify the entire audit chain integrity.
+
+        Returns (valid, message).  If invalid, the message includes the
+        first entry that failed verification.
+        """
+        try:
+            rows = self.store.fetchall(
+                "SELECT * FROM executor_audit ORDER BY timestamp ASC"
+            )
+        except Exception:
+            return False, "could not read audit table"
+
+        if not rows:
+            return True, "audit chain empty"
+
+        prev_hash = ""
+        for row in rows:
+            expected = self._compute_chain_hash(
+                prev_hash,
+                row["id"],
+                row["executor_type"],
+                row["action"],
+                row["task_id"],
+                row["status"],
+                row["timestamp"],
+            )
+            actual = row.get("chain_hash", "")
+            if expected != actual:
+                return False, (
+                    f"chain broken at entry {row['id']}: "
+                    f"expected {expected[:16]}..., got {actual[:16]}..."
+                )
+            prev_hash = expected
+
+        return True, f"chain verified ({len(rows)} entries)"
 
     def query(
         self,
@@ -149,7 +212,7 @@ class BaseExecutor(ABC):
             return ExecutorDecision(allowed=False, reason="no token manager available")
         if not token_id:
             return ExecutorDecision(allowed=False, reason="token_id required")
-        decision = token_manager.validate(token_id)
+        decision = token_manager.validate(token_id, required_scope=self.name)
         if decision.verdict.value == "deny":
             return ExecutorDecision(allowed=False, reason=f"token invalid: {decision.reason}")
         token_manager.consume_budget(token_id, 1)
@@ -393,6 +456,43 @@ class CodeExecutor(BaseExecutor):
         self.max_output = limits.get("max_output_size_mb", 0.1) * 1024 * 1024
         self.max_output = int(self.max_output) if self.max_output > 0 else DEFAULT_CODE_MAX_OUTPUT
         self.allowed_languages = {"python", "bash"}
+        # Resource limits (0 = unlimited / not enforced)
+        self._memory_limit_mb: int = int(limits.get("memory_limit_mb", 0) or 0)
+        self._cpu_limit_percent: int = int(limits.get("cpu_limit_percent", 0) or 0)
+        self._max_processes: int = int(limits.get("max_processes", 16))
+
+    def _build_preexec_fn(self):
+        """Build a preexec_fn that sets rlimits before the child runs.
+
+        Only effective on POSIX; on Windows this is never called (os.name == 'nt').
+        """
+        import resource as _resource
+
+        mem_mb = self._memory_limit_mb
+        cpu_pct = self._cpu_limit_percent
+        max_procs = self._max_processes
+
+        def _set_limits() -> None:
+            if mem_mb > 0:
+                mem_bytes = mem_mb * 1024 * 1024
+                try:
+                    _resource.setrlimit(_resource.RLIMIT_AS, (mem_bytes, mem_bytes))
+                except (ValueError, OSError):
+                    pass  # best-effort; may fail in some container setups
+            if cpu_pct > 0:
+                # Convert percentage to CPU-seconds hard limit via RLIMIT_CPU.
+                # A 50% limit on a 2s timeout = 1 CPU-second.
+                cpu_sec = int(max(1, self.timeout * cpu_pct / 100.0))
+                try:
+                    _resource.setrlimit(_resource.RLIMIT_CPU, (cpu_sec, cpu_sec))
+                except (ValueError, OSError):
+                    pass
+            try:
+                _resource.setrlimit(_resource.RLIMIT_NPROC, (max_procs, max_procs))
+            except (ValueError, OSError):
+                pass
+
+        return _set_limits
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
         language = params.get("language", "python")
@@ -440,6 +540,7 @@ class CodeExecutor(BaseExecutor):
                         "HOME": tmpdir,
                         "TMPDIR": tmpdir,
                     },
+                    preexec_fn=self._build_preexec_fn() if os.name != "nt" else None,
                 )
                 stdout = proc.stdout[:self.max_output] if proc.stdout else ""
                 stderr = proc.stderr[:self.max_output] if proc.stderr else ""

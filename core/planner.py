@@ -17,20 +17,24 @@ _COMMANDS: list[tuple[tuple[str, ...], str, str]] = [
 
 # Keyword sets for file-operation agents — only route when these
 # appear AND the LLM supports the routing decision.
+# Single-word tokens only (no phrases) to avoid word-boundary
+# mismatches in _best_keyword_match substring check.
 _SEARCH_KEYWORDS = {
     "find", "search", "grep", "file", "dir", "path",
-    "folder", "locate", "lookup", "where is",
-    "搜索", "查找", "寻找", "文件",
+    "folder", "locate", "lookup",
+    "搜索", "查找", "寻找", "文件", "目录", "路径",
+    "搜", "找",
 }
 
 _CODE_KEYWORDS = {
-    "inspect", "review code", "analyze code", "check file",
-    "read file", "open file", "show file", "refactor", "patch",
-    "审查", "重构", "查看代码",
+    "inspect", "refactor", "patch",
+    "审查", "重构", "查看代码", "代码",
+    "review", "analyze", "debug",
 }
 
 _DOCS_KEYWORDS = {
-    "summarize", "summary", "extract from", "summarise",
+    "summarize", "summary", "summarise",
+    "摘要", "总结", "概括", "提取",
 }
 
 

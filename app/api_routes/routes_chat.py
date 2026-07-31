@@ -270,6 +270,9 @@ def get_state(request: Request) -> dict[str, Any]:
         "last_context_summary": ss.get("last_context_summary"),
         "scheduler_running": ss.get("scheduler_running", False),
         "agents": ss.get("agents", []),
+        "stability_score": ss.get("stability_score", 1.0),
+        "mean_prediction_error": ss.get("mean_prediction_error", 0.0),
+        "total_perturbations": ss.get("total_perturbations", 0),
     }
 
 

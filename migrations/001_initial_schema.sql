@@ -94,7 +94,8 @@ CREATE TABLE IF NOT EXISTS executor_audit (
     parameters_json TEXT NOT NULL DEFAULT '{}',
     result_summary TEXT NOT NULL DEFAULT '',
     duration_ms INTEGER NOT NULL DEFAULT 0,
-    status TEXT NOT NULL, timestamp TEXT NOT NULL
+    status TEXT NOT NULL, timestamp TEXT NOT NULL,
+    chain_hash TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS idx_audit_type_status ON executor_audit(executor_type, status);
 CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON executor_audit(timestamp);

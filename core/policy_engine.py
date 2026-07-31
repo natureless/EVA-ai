@@ -269,7 +269,7 @@ class TokenManager:
         self._tokens[token.token_id] = token
         return token
 
-    def validate(self, token_id: str) -> PolicyDecision:
+    def validate(self, token_id: str, *, required_scope: str = "") -> PolicyDecision:
         token = self._tokens.get(token_id)
         if token is None:
             return PolicyDecision(verdict=Verdict.DENY, reason="token not found")
@@ -278,6 +278,12 @@ class TokenManager:
             return PolicyDecision(verdict=Verdict.DENY, reason="token expired")
         if token.budget_exhausted:
             return PolicyDecision(verdict=Verdict.DENY, reason="token budget exhausted")
+        if required_scope and required_scope not in token.scope:
+            return PolicyDecision(
+                verdict=Verdict.DENY,
+                reason=f"token scope mismatch: required={required_scope}, "
+                       f"token_scopes={token.scope}",
+            )
         return PolicyDecision(verdict=Verdict.ALLOW, reason="token valid")
 
     def consume_budget(self, token_id: str, amount: int = 1) -> bool:

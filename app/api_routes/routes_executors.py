@@ -156,6 +156,18 @@ def audit_replay(
     }
 
 
+# ── Audit Chain Verification ────────────────────────────────
+
+@router.get("/api/executors/audit/verify")
+def audit_verify(request: Request) -> dict[str, Any]:
+    """Verify the integrity of the audit hash chain."""
+    audit = request.app.state.container.executor_audit_log
+    if audit is None:
+        return {"valid": False, "message": "audit log not available"}
+    valid, message = audit.verify_chain()
+    return {"valid": valid, "message": message}
+
+
 # ── Comms Executor Routes ──────────────────────────────────
 
 @router.post("/api/executors/comms/log")
