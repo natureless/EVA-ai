@@ -1,8 +1,13 @@
-"""Thread-safe event bus with optional persistence.
+"""Thread-safe event bus with optional persistence and back-pressure.
 
 When an S5 store reference is provided, every publish() also writes the
-event to the events table. Consume/task_done semantics remain in-memory
+event to the events table.  Consume/task_done semantics remain in-memory
 for performance — the database write is fire-and-forget durability.
+
+Back-pressure: the queue has a configurable maxsize (default 10 000).
+When full, events are dropped per the configured overflow policy:
+- "drop_oldest" (default): discard the oldest event to make room
+- "drop_newest": reject the incoming event
 """
 
 from __future__ import annotations
@@ -11,20 +16,36 @@ import json
 import logging
 from datetime import datetime, timezone
 from queue import Empty, Queue
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from event.event_schema import Event
 
 logger = logging.getLogger("eva.event_bus")
 
+DEFAULT_MAX_QUEUE_SIZE = 10_000
+OverflowPolicy = Literal["drop_oldest", "drop_newest"]
+
 
 class EventBus:
-    """Thread-safe event bus for publishing and consuming events."""
+    """Thread-safe event bus with bounded queue and back-pressure.
+
+    On overflow the oldest event is silently dropped (FIFO eviction).
+    This prevents unbounded memory growth when the cognition loop
+    cannot keep up with the publish rate.
+    """
 
     _PERSIST_ALERT_THRESHOLD = 25  # warn after this many consecutive failures
 
-    def __init__(self, s5_store: Any = None) -> None:
-        self._queue: Queue[Event] = Queue()
+    def __init__(
+        self,
+        s5_store: Any = None,
+        *,
+        max_queue_size: int = DEFAULT_MAX_QUEUE_SIZE,
+        overflow_policy: OverflowPolicy = "drop_oldest",
+    ) -> None:
+        self._queue: Queue[Event] = Queue(maxsize=max_queue_size)
+        self._max_queue_size = max_queue_size
+        self._overflow_policy: OverflowPolicy = overflow_policy
         self._s5 = s5_store
         self._publish_count = 0
         self._persist_count = 0
@@ -32,12 +53,26 @@ class EventBus:
         self._consecutive_failures = 0
         self._persist_healthy = True
         self._alerted = False
+        self._dropped_count = 0
 
-    def publish(self, event: Event) -> None:
-        """Publish an event to the bus and persist to S5 if configured."""
+    def publish(self, event: Event) -> bool:
+        """Publish an event to the bus and persist to S5 if configured.
+
+        Returns True if the event was enqueued, False if it was dropped
+        due to queue overflow.
+        """
         if event is None:
             raise ValueError("Cannot publish None event")
-        self._queue.put(event)
+
+        enqueued = self._enqueue(event)
+        if not enqueued:
+            self._dropped_count += 1
+            logger.warning(
+                "queue overflow (size=%d, max=%d) — event %s dropped (%d total dropped)",
+                self._queue.qsize(), self._max_queue_size,
+                event.type, self._dropped_count,
+            )
+            return False
 
         # fire-and-forget persistence to S5 event trace
         if self._s5 is not None and hasattr(self._s5, "store"):
@@ -74,6 +109,32 @@ class EventBus:
                     )
                     self._alerted = True
 
+        return True
+
+    def _enqueue(self, event: Event) -> bool:
+        """Try to enqueue; apply overflow policy on full queue."""
+        try:
+            self._queue.put_nowait(event)
+            return True
+        except Exception:
+            # Queue.Full — Python's queue module raises Full, not an Exception
+            # subclass we can catch by name, so we catch broadly here.
+            pass
+
+        if self._overflow_policy == "drop_oldest":
+            try:
+                self._queue.get_nowait()
+                self._queue.task_done()
+            except Empty:
+                pass
+            try:
+                self._queue.put_nowait(event)
+                return True
+            except Exception:
+                pass
+
+        return False
+
     def consume(self, timeout: float = 0.5) -> Optional[Event]:
         """Consume an event from the bus with optional timeout."""
         try:
@@ -100,13 +161,21 @@ class EventBus:
                 break
         return items
 
+    @property
+    def dropped(self) -> int:
+        """Number of events dropped due to queue overflow."""
+        return self._dropped_count
+
     def stats(self) -> dict[str, Any]:
         return {
             "queue_size": self._queue.qsize(),
+            "max_queue_size": self._max_queue_size,
             "published": self._publish_count,
             "persisted": self._persist_count,
             "persist_failures": self._persist_failures,
             "consecutive_failures": self._consecutive_failures,
             "persist_healthy": self._persist_healthy,
+            "dropped": self._dropped_count,
+            "overflow_policy": self._overflow_policy,
         }
 

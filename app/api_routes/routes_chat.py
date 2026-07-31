@@ -258,6 +258,7 @@ def get_state(request: Request) -> dict[str, Any]:
         "mode": ss["mode"],
         "active_tasks": ss["active_tasks"],
         "pending_events": ss["pending_events"],
+        "events_dropped": container.event_bus.dropped,
         "pending_results": ss.get("pending_results", 0),
         "last_reply": ss["last_reply"],
         "last_selected_agent": ss["last_selected_agent"],

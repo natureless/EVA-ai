@@ -511,7 +511,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     logger.info("event bus initialized")
 
     # ── planner ──
-    planner = Planner()
+    planner = Planner(embedding_service=storage.get("embedding_service"))
     system_state["planner_ready"] = True
 
     # ── agents ──

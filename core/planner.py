@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Any
 
 from agents.base_agent import AgentTask
 from event.event_schema import Event
@@ -49,9 +52,71 @@ class Planner:
     """Plans how to handle incoming events.
 
     Routes events to appropriate agents based on event type and content.
-    Uses explicit command prefixes and keyword matching — no LLM
-    classification to avoid misrouting and latency.
+    Uses explicit command prefixes → semantic embedding (when available)
+    → keyword matching as fallback.  No LLM classification to avoid
+    misrouting and latency.
     """
+
+    def __init__(self, embedding_service: Any = None) -> None:
+        self._embedding_service = embedding_service
+        # Pre-compute agent description embeddings for semantic routing.
+        # Lazily built on first use so the import doesn't block startup
+        # when sentence-transformers is not installed.
+        self._agent_embeddings: dict[str, Any] | None = None
+        self._agent_descriptions: dict[str, str] = {
+            "search_agent": "search find files directories grep locate lookup file system",
+            "coding_agent": "inspect review analyze code refactor patch read file open file show file source code programming",
+            "docs_agent": "summarize summary extract summarise documentation document",
+            "chat_agent": "chat conversation talk discuss general question answer help",
+        }
+
+    def _build_embeddings(self) -> None:
+        """Pre-compute agent description embeddings for semantic routing."""
+        if self._embedding_service is None or self._agent_embeddings is not None:
+            return
+        try:
+            self._agent_embeddings = {
+                name: self._embedding_service.encode_single(desc)
+                for name, desc in self._agent_descriptions.items()
+            }
+        except Exception:
+            self._agent_embeddings = {}  # don't retry; fall back to keywords
+
+    def _semantic_route(self, text: str) -> tuple[str, str] | None:
+        """Route via cosine similarity against agent description embeddings.
+
+        Returns (agent_name, task_kind) or None if embedding is unavailable
+        or the best match is too weak (< 0.3 similarity).
+        """
+        self._build_embeddings()
+        if not self._agent_embeddings or self._embedding_service is None:
+            return None
+
+        try:
+            import numpy as np
+            query_vec = self._embedding_service.encode_single(text)
+            best_agent: str | None = None
+            best_score = -1.0
+            for name, desc_vec in self._agent_embeddings.items():
+                # cosine similarity (both vectors are normalized by encode_single)
+                score = float(np.dot(query_vec, desc_vec))
+                if score > best_score:
+                    best_score = score
+                    best_agent = name
+
+            if best_agent is None or best_score < 0.3:
+                return None
+
+            # Map agent name → task kind
+            kind_map = {
+                "search_agent": "search",
+                "coding_agent": "code",
+                "docs_agent": "summarize",
+                "chat_agent": "chat",
+            }
+            return (best_agent, kind_map.get(best_agent, "chat"))
+        except Exception:
+            return None
 
     def plan(self, event: Event) -> Plan:
         """Create a plan for handling the given event."""
@@ -68,7 +133,17 @@ class Planner:
                         task=AgentTask(kind=kind, payload={"text": raw_text}),
                     )
 
-            # 2. Keyword-triggered file operations — pick best match
+            # 2. Semantic embedding routing (when embedding_service is available)
+            if self._embedding_service is not None:
+                semantic_match = self._semantic_route(raw_text)
+                if semantic_match is not None:
+                    return Plan(
+                        decision="act",
+                        agent=semantic_match[0],
+                        task=AgentTask(kind=semantic_match[1], payload={"text": raw_text}),
+                    )
+
+            # 3. Keyword-triggered file operations — pick best match (fallback)
             agent_match = _best_keyword_match(
                 text,
                 (_SEARCH_KEYWORDS, "search_agent", "search"),
@@ -82,7 +157,7 @@ class Planner:
                     task=AgentTask(kind=agent_match[1], payload={"text": raw_text}),
                 )
 
-            # 3. Everything else → chat_agent
+            # 4. Everything else → chat_agent
             return Plan(
                 decision="act",
                 agent="chat_agent",
@@ -109,16 +184,35 @@ class Planner:
         if event.type in {"github_push", "github_pr", "github_issue", "github_workflow"}:
             repo = event.payload.get("repository", {})
             repo_name = repo.get("full_name", "") if isinstance(repo, dict) else ""
+            action = event.payload.get("action", "")
+            sender = (event.payload.get("sender", {}) or {}).get("login", "")
+            title = event.payload.get("title", "")
+            body_text = event.payload.get("body", "") or ""
+            # Build a chat prompt from the GitHub event
+            kind_label = {
+                "github_push": "push",
+                "github_pr": "pull request",
+                "github_issue": "issue",
+                "github_workflow": "workflow run",
+            }.get(event.type, "event")
+            summary = (
+                f"[GitHub {kind_label}] {sender} {action} on {repo_name}"
+                + (f": {title}" if title else "")
+                + (f"\n{body_text[:500]}" if body_text else "")
+            )
             return Plan(
-                decision="observe",
-                agent="system",
+                decision="act",
+                agent="chat_agent",
                 task=AgentTask(
-                    kind="observe",
+                    kind="chat",
                     payload={
-                        "reason": event.type,
-                        "repo": repo_name,
-                        "action": event.payload.get("action", ""),
-                        "sender": (event.payload.get("sender", {}) or {}).get("login", ""),
+                        "text": summary,
+                        "context": {
+                            "github_event": event.type,
+                            "repo": repo_name,
+                            "action": action,
+                            "sender": sender,
+                        },
                     },
                 ),
             )

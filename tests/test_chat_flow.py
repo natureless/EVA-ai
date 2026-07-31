@@ -109,3 +109,60 @@ def test_memory_and_trace_written(client):
     assert any(item["event_type"] == "user_message" for item in mem_items)
     assert any(item["event_type"] == "user_message" for item in trace_items)
     assert any(item["type"] == "user_message" for item in event_items)
+
+
+def test_state_exposes_events_dropped(client):
+    """GET /api/state includes events_dropped counter from EventBus."""
+    response = client.get("/api/state")
+    assert response.status_code == 200
+    data = response.json()
+    assert "events_dropped" in data
+    assert data["events_dropped"] == 0
+
+
+def test_github_pr_routes_to_chat_agent():
+    """GitHub PR events route to chat_agent (act) instead of observe."""
+    from event.event_schema import Event
+    from core.planner import Planner
+
+    planner = Planner()
+    event = Event(
+        type="github_pr",
+        source="github",
+        payload={
+            "action": "opened",
+            "title": "Add new feature",
+            "body": "This PR adds the new feature we discussed.",
+            "repository": {"full_name": "owner/repo"},
+            "sender": {"login": "dev-user"},
+        },
+    )
+    plan = planner.plan(event)
+    assert plan.decision == "act", f"Expected 'act', got '{plan.decision}'"
+    assert plan.agent == "chat_agent", f"Expected 'chat_agent', got '{plan.agent}'"
+    assert plan.task.kind == "chat"
+    assert "GitHub pull request" in plan.task.payload["text"]
+    assert plan.task.payload["context"]["github_event"] == "github_pr"
+
+
+def test_github_issue_routes_to_chat_agent():
+    """GitHub issue events also route to chat_agent."""
+    from event.event_schema import Event
+    from core.planner import Planner
+
+    planner = Planner()
+    event = Event(
+        type="github_issue",
+        source="github",
+        payload={
+            "action": "created",
+            "title": "Bug report",
+            "body": "Something is broken.",
+            "repository": {"full_name": "owner/repo"},
+            "sender": {"login": "reporter"},
+        },
+    )
+    plan = planner.plan(event)
+    assert plan.decision == "act"
+    assert plan.agent == "chat_agent"
+    assert "GitHub issue" in plan.task.payload["text"]
