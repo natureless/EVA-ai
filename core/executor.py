@@ -67,6 +67,7 @@ class ExecutorAuditLog:
             )
             return row["chain_hash"] if row else ""
         except Exception:
+            logger.debug("could not load last audit chain hash — starting fresh")
             return ""
 
     def _compute_chain_hash(self, prev_hash: str, eid: str, executor_type: str,
@@ -118,6 +119,7 @@ class ExecutorAuditLog:
                 "SELECT * FROM executor_audit ORDER BY timestamp ASC"
             )
         except Exception:
+            logger.warning("could not read audit table for chain verification", exc_info=True)
             return False, "could not read audit table"
 
         if not rows:

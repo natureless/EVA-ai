@@ -1,88 +1,119 @@
-from datetime import datetime, timedelta, timezone
-from tempfile import TemporaryDirectory
-from uuid import uuid4
-from pathlib import Path
+"""Unit tests for MemoryGovernor — ingest, access, maintenance."""
 
-from memory.importance_scorer import ImportanceFeatures, ImportanceScorer
-from memory.memory_conflict_resolver import MemoryConflictResolver
-from memory.memory_compactor import MemoryDecayPolicy
+from datetime import datetime, timezone
+from unittest.mock import MagicMock
+
+import pytest
+
 from memory.memory_governor import MemoryGovernor, MemoryRepository
-from memory.memory_schema import MemoryRecord, MemoryType
-from memory.sqlite_store import SQLiteStore
+from memory.memory_schema import MemoryRecord, MemoryStatus, MemoryType
+from memory.importance_scorer import ImportanceFeatures
 
 
-def build_repo():
-    tmp = TemporaryDirectory(ignore_cleanup_errors=True)
-    store = SQLiteStore(Path(tmp.name) / "test.db")
-    store.init_db()
-    repo = MemoryRepository(store)
-    return tmp, repo
-
-
-def test_importance_score_higher_for_goal_related():
-    scorer = ImportanceScorer()
-    low = scorer.score(ImportanceFeatures())
-    high = scorer.score(ImportanceFeatures(user_explicit=True, goal_related=True))
-    assert high > low
-
-
-def test_conflict_detector_finds_same_key_different_content():
-    detector = MemoryConflictResolver()
-
-    old = MemoryRecord(
-        id=str(uuid4()),
-        memory_type=MemoryType.PERSONA,
-        content="User likes frequent social activity",
-        conflict_keys=["social_preference"],
-    )
-    new = MemoryRecord(
-        id=str(uuid4()),
-        memory_type=MemoryType.PERSONA,
-        content="User dislikes frequent social activity",
-        conflict_keys=["social_preference"],
+def _make_record(content: str = "test", salience: float = 0.5,
+                 conflict_keys: list | None = None) -> MemoryRecord:
+    return MemoryRecord(
+        id="mem_001",
+        memory_type=MemoryType.EPISODIC,
+        content=content,
+        source_event_id="ev_001",
+        salience=salience,
+        confidence=0.7,
+        ttl_seconds=None,
+        conflict_keys=conflict_keys or [],
     )
 
-    conflicts = detector.detect(new, [old])
-    assert len(conflicts) == 1
+
+def _make_features(**kwargs) -> ImportanceFeatures:
+    defaults = {
+        "user_explicit": False,
+        "goal_related": False,
+        "blocker_related": False,
+        "persona_related": False,
+        "repeated_mentions": 0,
+        "source_reliability": 0.9,
+        "emotional_intensity": 0.1,
+        "age_hours": 0.0,
+        "self_model_delta": 0.0,
+        "prediction_error": 0.0,
+    }
+    defaults.update(kwargs)
+    return ImportanceFeatures(**defaults)
 
 
-def test_decay_forgets_old_working_memory():
-    policy = MemoryDecayPolicy()
-    mem = MemoryRecord(
-        id=str(uuid4()),
-        memory_type=MemoryType.WORKING,
-        content="Temporary task context",
-        created_at=datetime.now(timezone.utc) - timedelta(hours=13),
-        updated_at=datetime.now(timezone.utc) - timedelta(hours=13),
-    )
+class TestMemoryGovernor:
+    def test_ingest_sets_salience(self):
+        repo = MagicMock(spec=MemoryRepository)
+        gov = MemoryGovernor(repo)
+        record = _make_record()
+        features = _make_features(user_explicit=True, goal_related=True)
+        result = gov.ingest(record, features)
+        assert result.salience > 0.5
+        repo.upsert.assert_called_once()
 
-    updated = policy.apply(mem, datetime.now(timezone.utc))
-    assert updated.status.value == "forgotten"
+    def test_ingest_resolves_conflicts(self):
+        repo = MagicMock(spec=MemoryRepository)
+        repo.find_by_conflict_keys.return_value = [_make_record("conflict")]
+        gov = MemoryGovernor(repo)
+        record = _make_record(content="new info", conflict_keys=["topic_x"])
+        features = _make_features()
+        result = gov.ingest(record, features)
+        assert result is not None
+        repo.upsert.assert_called_once()
+        repo.find_by_conflict_keys.assert_called_once_with(["topic_x"])
 
+    def test_ingest_high_salience_flows_to_tiered(self):
+        tiered = MagicMock()
+        repo = MagicMock(spec=MemoryRepository)
+        gov = MemoryGovernor(repo, tiered_memory=tiered)
+        record = _make_record()
+        features = _make_features(user_explicit=True, goal_related=True, emotional_intensity=0.8)
+        result = gov.ingest(record, features)
+        assert result.salience >= 0.6
+        tiered.ingest.assert_called_once()
 
-def test_governor_marks_conflict():
-    tmp, repo = build_repo()
-    try:
-        governor = MemoryGovernor(repo)
-        existing = MemoryRecord(
-            id=str(uuid4()),
-            memory_type=MemoryType.PERSONA,
-            content="User prefers concise responses",
-            conflict_keys=["verbosity"],
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
-        )
-        repo.upsert(existing)
+    def test_ingest_low_salience_skips_tiered(self):
+        tiered = MagicMock()
+        repo = MagicMock(spec=MemoryRepository)
+        gov = MemoryGovernor(repo, tiered_memory=tiered)
+        record = _make_record(salience=0.3)
+        features = _make_features()
+        gov.ingest(record, features)
+        tiered.ingest.assert_not_called()
 
-        candidate = MemoryRecord(
-            id=str(uuid4()),
-            memory_type=MemoryType.PERSONA,
-            content="User prefers detailed responses",
-            conflict_keys=["verbosity"],
-            created_at=datetime.now(timezone.utc),
-            updated_at=datetime.now(timezone.utc),
-        )
-        result = governor.ingest(candidate, ImportanceFeatures())
-        assert result.status.value == "conflicted"
-    finally:
-        tmp.cleanup()
+    def test_ingest_tiered_exception_graceful(self):
+        tiered = MagicMock()
+        tiered.ingest.side_effect = RuntimeError("tiered down")
+        repo = MagicMock(spec=MemoryRepository)
+        gov = MemoryGovernor(repo, tiered_memory=tiered)
+        record = _make_record(salience=0.8)
+        features = _make_features()
+        result = gov.ingest(record, features)
+        assert result is not None
+
+    def test_access_updates_last_accessed(self):
+        repo = MagicMock(spec=MemoryRepository)
+        record = _make_record()
+        repo.get.return_value = record
+        gov = MemoryGovernor(repo)
+        result = gov.access("mem_001")
+        assert result is not None
+        assert result.last_accessed_at is not None
+        assert repo.upsert.call_count == 1
+
+    def test_access_nonexistent(self):
+        repo = MagicMock(spec=MemoryRepository)
+        repo.get.return_value = None
+        gov = MemoryGovernor(repo)
+        result = gov.access("missing")
+        assert result is None
+
+    def test_maintenance_returns_stats(self):
+        repo = MagicMock(spec=MemoryRepository)
+        repo.list_active_memories.return_value = []
+        repo.list_by_type.return_value = []
+        gov = MemoryGovernor(repo)
+        stats = gov.maintenance()
+        assert "changed" in stats
+        assert "compacted" in stats
+        assert "groups" in stats

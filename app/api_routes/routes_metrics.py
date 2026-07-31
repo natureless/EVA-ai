@@ -6,12 +6,14 @@ GET /metrics — JSON payload with queue sizes, memory stats,
 
 from __future__ import annotations
 
+import logging
 import time
 from typing import Any
 
 from fastapi import APIRouter, Request
 
 router = APIRouter()
+logger = logging.getLogger("eva.metrics")
 
 _START_TIME = time.time()
 
@@ -35,6 +37,7 @@ def metrics(request: Request) -> dict[str, Any]:
     try:
         payload["event_bus"] = container.event_bus.stats()
     except Exception:
+        logger.warning("could not collect event_bus stats", exc_info=True)
         payload["event_bus"] = {}
 
     # ── memory ──

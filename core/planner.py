@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 from agents.base_agent import AgentTask
 from event.event_schema import Event
+
+logger = logging.getLogger("eva.planner")
 
 
 # ── Explicit command prefixes ──────────────────────────────
@@ -84,6 +87,7 @@ class Planner:
                 for name, desc in self._agent_descriptions.items()
             }
         except Exception:
+            logger.exception("failed to build agent embeddings — semantic routing disabled")
             self._agent_embeddings = {}  # don't retry; fall back to keywords
 
     def _semantic_route(self, text: str) -> tuple[str, str] | None:
@@ -120,6 +124,7 @@ class Planner:
             }
             return (best_agent, kind_map.get(best_agent, "chat"))
         except Exception:
+            logger.warning("semantic routing failed — falling back to keywords", exc_info=True)
             return None
 
     def plan(self, event: Event) -> Plan:

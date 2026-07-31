@@ -62,6 +62,7 @@ class MigrationRunner:
             rows = self.store.fetchall("SELECT name FROM _migrations ORDER BY name")
             return {r["name"] for r in rows}
         except Exception:
+            logger.warning("could not read _migrations table — treating as empty", exc_info=True)
             return set()
 
     def _pending_migrations(
