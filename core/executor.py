@@ -11,6 +11,7 @@ Agents handle cognition; executors handle safety.
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import logging
 import subprocess
@@ -258,9 +259,11 @@ class FileExecutor(BaseExecutor):
             return ExecutorDecision(allowed=False, reason="path is required")
         target = Path(path_str).resolve()
 
-        # path traversal check
+        # path traversal check — use is_relative_to for correct prefix semantics
+        # (startswith would match /data/eva-secret against /data/eva)
         allowed = any(
-            str(target).startswith(str(allowed_path.resolve()))
+            target == allowed_path.resolve()
+            or target.is_relative_to(allowed_path.resolve())
             for allowed_path in self.allowed_paths
         )
         if not allowed:
@@ -269,10 +272,11 @@ class FileExecutor(BaseExecutor):
                 reason=f"path {target} not in allowed paths",
             )
 
-        # forbidden prefix check
+        # forbidden prefix check — resolve forbidden paths too
         target_str = str(target)
         for prefix in self.forbidden_prefixes:
-            if target_str.startswith(prefix):
+            forbidden_path = Path(prefix).resolve()
+            if target == forbidden_path or target.is_relative_to(forbidden_path):
                 return ExecutorDecision(
                     allowed=False,
                     reason=f"path {target} matches forbidden prefix {prefix}",
@@ -463,6 +467,38 @@ DEFAULT_BROWSER_TIMEOUT = 15  # seconds
 DEFAULT_BROWSER_MAX_SIZE = 5 * 1024 * 1024  # 5 MB
 DEFAULT_BROWSER_ALLOWED_SCHEMES = {"http", "https"}
 
+# Private-use and loopback ranges blocked for outbound executors
+_BLOCKED_NETWORKS = [
+    ipaddress.ip_network("127.0.0.0/8"),
+    ipaddress.ip_network("10.0.0.0/8"),
+    ipaddress.ip_network("172.16.0.0/12"),
+    ipaddress.ip_network("192.168.0.0/16"),
+    ipaddress.ip_network("169.254.0.0/16"),  # link-local
+    ipaddress.ip_network("::1/128"),           # IPv6 loopback
+    ipaddress.ip_network("fc00::/7"),          # IPv6 unique local
+    ipaddress.ip_network("fe80::/10"),         # IPv6 link-local
+]
+
+
+def _is_private_or_loopback(hostname: str) -> bool:
+    """Return True if hostname resolves to a private/loopback address.
+
+    Used by BrowserExecutor and APIExecutor to prevent SSRF against
+    internal networks, regardless of domain whitelist configuration.
+    """
+    import socket
+
+    try:
+        addr = ipaddress.ip_address(hostname)
+    except ValueError:
+        # Not a raw IP — try DNS resolution
+        try:
+            addr = ipaddress.ip_address(socket.gethostbyname(hostname))
+        except (socket.gaierror, ValueError):
+            return False  # unresolvable; let the request fail naturally
+
+    return any(addr in net for net in _BLOCKED_NETWORKS)
+
 
 class BrowserExecutor(BaseExecutor):
     name = "browser"
@@ -490,8 +526,18 @@ class BrowserExecutor(BaseExecutor):
         if not parsed or parsed.scheme not in DEFAULT_BROWSER_ALLOWED_SCHEMES:
             return ExecutorDecision(allowed=False, reason=f"only http/https allowed, got: {url[:80]}")
 
+        hostname = parsed.hostname or ""
+        if not hostname:
+            return ExecutorDecision(allowed=False, reason="could not parse hostname from url")
+
+        # Always block private/loopback — SSRF prevention
+        if _is_private_or_loopback(hostname):
+            return ExecutorDecision(
+                allowed=False,
+                reason=f"private/loopback address blocked: {hostname}",
+            )
+
         if self.allowed_domains:
-            hostname = parsed.hostname or ""
             if not any(
                 hostname == domain or hostname.endswith("." + domain)
                 for domain in self.allowed_domains
@@ -514,7 +560,7 @@ class BrowserExecutor(BaseExecutor):
             resp = httpx.get(
                 url,
                 timeout=self.timeout,
-                follow_redirects=True,
+                follow_redirects=False,
                 headers={"User-Agent": "EVA/0.1 (cognitive-agent)"},
             )
             content_type = resp.headers.get("content-type", "")
@@ -568,8 +614,18 @@ class APIExecutor(BaseExecutor):
         if not parsed or parsed.scheme not in {"http", "https"}:
             return ExecutorDecision(allowed=False, reason="only http/https allowed")
 
+        hostname = parsed.hostname or ""
+        if not hostname:
+            return ExecutorDecision(allowed=False, reason="could not parse hostname from url")
+
+        # Always block private/loopback — SSRF prevention
+        if _is_private_or_loopback(hostname):
+            return ExecutorDecision(
+                allowed=False,
+                reason=f"private/loopback address blocked: {hostname}",
+            )
+
         if self.allowed_domains:
-            hostname = parsed.hostname or ""
             if not any(
                 hostname == domain or hostname.endswith("." + domain)
                 for domain in self.allowed_domains
@@ -598,7 +654,7 @@ class APIExecutor(BaseExecutor):
                 headers=headers,
                 json=body if body and method in ("POST", "PUT", "PATCH") else None,
                 timeout=self.timeout,
-                follow_redirects=True,
+                follow_redirects=False,
             )
             data = resp.text[:self.max_size]
             return {

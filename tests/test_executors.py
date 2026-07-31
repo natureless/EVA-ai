@@ -192,7 +192,7 @@ class TestBrowserExecutor:
 
     def test_unknown_action(self):
         e = BrowserExecutor(self.audit)
-        result = e.execute("navigate", {"url": "http://127.0.0.1:1"})
+        result = e.execute("navigate", {"url": "http://example.com"})
         assert not result["ok"]
         assert "unknown action" in result["error"]
 

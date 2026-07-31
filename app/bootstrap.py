@@ -339,6 +339,7 @@ def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = No
     boundaries = const.get("boundaries", {})
     fs_boundary = boundaries.get("filesystem", {})
     compute_boundary = boundaries.get("compute", {})
+    network_boundary = boundaries.get("network", {})
 
     if fs_boundary:
         executors_config.setdefault("executors", {})
@@ -349,6 +350,19 @@ def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = No
             file_cfg["limits"]["max_file_size_mb"] = fs_boundary["max_file_size_mb"]
         if fs_boundary.get("forbidden_paths"):
             file_cfg["forbidden_paths"] = fs_boundary["forbidden_paths"]
+        # Append platform-specific forbidden paths so Linux-centric
+        # constitution defaults also work on Windows and macOS.
+        import platform as _platform
+        _plat = _platform.system()
+        _existing = file_cfg.setdefault("forbidden_paths", [])
+        if _plat == "Windows":
+            for _p in ("C:\\Windows", "C:\\Windows\\System32", "C:\\Program Files", "C:\\Program Files (x86)"):
+                if _p not in _existing:
+                    _existing.append(_p)
+        elif _plat == "Darwin":
+            for _p in ("/System", "/Library/System", "/private/etc", "/private/var"):
+                if _p not in _existing:
+                    _existing.append(_p)
 
     if compute_boundary:
         executors_config.setdefault("executors", {})
@@ -357,6 +371,17 @@ def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = No
         code_cfg.setdefault("limits", {})
         if compute_boundary.get("max_process_duration_minutes"):
             code_cfg["limits"]["timeout"] = compute_boundary["max_process_duration_minutes"] * 60
+
+    if network_boundary:
+        executors_config.setdefault("executors", {})
+        allowed_domains = network_boundary.get("allowed_domains", [])
+        allowed_ports = network_boundary.get("allowed_ports", [80, 443])
+        if allowed_domains:
+            executors_config["executors"].setdefault("browser", {})
+            executors_config["executors"]["browser"]["allowed_domains"] = allowed_domains
+            executors_config["executors"].setdefault("api", {})
+            executors_config["executors"]["api"]["allowed_domains"] = allowed_domains
+            executors_config["executors"]["api"]["allowed_ports"] = allowed_ports
 
     # override layer: config/executors.yaml
     exec_cfg_path = Path("config/executors.yaml")
