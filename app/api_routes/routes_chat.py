@@ -269,7 +269,7 @@ def get_state(request: Request) -> dict[str, Any]:
         except Exception:
             memory_stats = {"error": "unavailable"}
 
-    return {
+    result = {
         "focus": ss["focus"],
         "mode": ss["mode"],
         "active_tasks": ss["active_tasks"],
@@ -291,6 +291,17 @@ def get_state(request: Request) -> dict[str, Any]:
         "total_perturbations": ss.get("total_perturbations", 0),
         "memory_stats": memory_stats,
     }
+
+    # ── MVSC status (when enabled) ──
+    if ss.get("mvsc_feature_flags"):
+        result["mvsc"] = {
+            "enabled": True,
+            "tick": ss.get("mvsc_tick", 0),
+            "runtime_mode": ss.get("mvsc_runtime_mode", "unknown"),
+            "cognition_phase": ss.get("mvsc_cognition_phase", "unknown"),
+        }
+
+    return result
 
 
 # ── internal helpers ──────────────────────────────────────────

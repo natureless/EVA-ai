@@ -580,13 +580,15 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
 
     # ── sync world state → system_state ──
     wm = world["world_model"]
-    system_state["focus"] = wm.focus
-    system_state["mode"] = wm.mode
-    system_state["active_tasks"] = wm.active_tasks
-    system_state["last_reply"] = wm.last_reply
-    system_state["last_selected_agent"] = wm.last_selected_agent
-    system_state["last_loop_id"] = wm.last_loop_id
-    system_state["last_loop_at"] = wm.last_loop_at
+    system_state.update({
+        "focus": wm.focus,
+        "mode": wm.mode,
+        "active_tasks": wm.active_tasks,
+        "last_reply": wm.last_reply,
+        "last_selected_agent": wm.last_selected_agent,
+        "last_loop_id": wm.last_loop_id,
+        "last_loop_at": wm.last_loop_at,
+    })
 
     # ── snapshot callback ──
     def save_runtime_snapshot() -> None:

@@ -32,7 +32,7 @@ class HealthService:
         return {"status": "alive"}
 
     def ready(self) -> dict[str, Any]:
-        return {
+        result = {
             "status": "ready" if self.system_state.get("ready", False) else "not_ready",
             "components": {
                 "db": self._probe_db(),
@@ -58,6 +58,18 @@ class HealthService:
                 "bootstrap_sec": self.system_state.get("bootstrap_sec"),
             },
         }
+
+        # ── MVSC status (when enabled) ──
+        mvsc_enabled = bool(self.system_state.get("mvsc_feature_flags"))
+        if mvsc_enabled:
+            result["mvsc"] = {
+                "enabled": True,
+                "tick": self.system_state.get("mvsc_tick", 0),
+                "mode": self.system_state.get("mvsc_runtime_mode", "unknown"),
+                "phase": self.system_state.get("mvsc_cognition_phase", "unknown"),
+            }
+
+        return result
 
     def _probe_db(self) -> bool:
         if self._store is not None:
