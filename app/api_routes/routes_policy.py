@@ -75,3 +75,22 @@ async def trigger_state_transition(request: Request) -> dict[str, Any]:
         "verdict": decision.verdict,
         "reason": decision.reason,
     }
+
+
+@router.get("/api/policy/history")
+def get_policy_history(request: Request, limit: int = 10) -> dict[str, Any]:
+    """策略状态转换历史。"""
+    container = request.app.state.container
+    policy_engine = container.policy_engine
+    if policy_engine is None:
+        return {"history": []}
+
+    state = policy_engine.get_state()
+    sm = state.get("state_machine", {})
+    history = sm.get("history", [])[-limit:]
+
+    return {
+        "history": history,
+        "total": sm.get("history_size", 0),
+        "current": sm.get("current", "unknown"),
+    }

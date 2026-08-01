@@ -92,3 +92,23 @@ def unregister_agent(name: str, request: Request) -> dict[str, Any]:
         return {"ok": True, "agent": name, "total_agents": len(registry.list_agents())}
     else:
         raise HTTPException(status_code=500, detail="registry does not support unregistration")
+
+
+@router.get("/api/agents/stats")
+def agent_stats(request: Request) -> dict[str, Any]:
+    """Agent 统计和执行器映射。"""
+    container = request.app.state.container
+    registry = container.registry
+    agents = registry.list_agents()
+
+    return {
+        "total": len(agents),
+        "names": agents,
+        "executor_mappings": {
+            "search_agent": "file",
+            "coding_agent": "file",
+            "docs_agent": "file",
+            "chat_agent": "none",
+        },
+        "builtins": ["chat_agent", "search_agent", "coding_agent", "docs_agent"],
+    }
