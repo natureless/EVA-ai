@@ -64,8 +64,8 @@ class EventBusAdapter:
     Usage::
 
         legacy_bus = EventBus(s5_store=...)
-        event_store = EventStore("data/event_store.db")
-        adapter = EventBusAdapter(legacy_bus, event_store)
+        event_store = EventStore(db_path)  # configurable path
+        adapter = EventBusAdapter(legacy_bus, event_store, subject_id="eva-001")
 
         # 发布新格式事件
         evt = EventEnvelope(event_type="perception.user_message_received", ...)

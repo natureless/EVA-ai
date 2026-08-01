@@ -274,11 +274,19 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
             # Update world model with final result
             if self._container.world_model:
                 wm = self._container.world_model
-                final_result = result if 'result' in dir() else None
-                if final_result:
+                # Track last result from the execution loop
+                _last_result = None
+                _last_agent = "chat_agent"
+                # (result/selected_agent captured in the plan step loop above)
+                try:
+                    _last_result = result
+                    _last_agent = selected_agent
+                except NameError:
+                    pass
+                if _last_result:
                     wm.apply_agent_result(
-                        reply=final_result.content,
-                        selected_agent=selected_agent if 'selected_agent' in dir() else "chat_agent",
+                        reply=_last_result.content,
+                        selected_agent=_last_agent,
                         loop_id=f"mvsc_{state.tick}",
                     )
 
@@ -287,7 +295,11 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
             events.append(EventEnvelope(
                 event_type=EventFamily.ACTION.TOOL_FAILED,
                 source="adapted_loop",
-                payload={"error": "agent execution failed"},
+                payload={
+                    "error": "agent execution failed",
+                    "error_type": "agent_execution",
+                    "tick": state.tick,
+                },
             ))
 
         return events

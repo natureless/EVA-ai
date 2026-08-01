@@ -193,3 +193,68 @@ def get_verification_stats(request: Request) -> dict[str, Any]:
         }
 
     return {"status": "verifier_not_initialized"}
+
+
+@router.get("/observability")
+def get_observability_snapshot(request: Request) -> dict[str, Any]:
+    """获取可观测性快照：指标、追踪、健康。"""
+    container = request.app.state.container
+
+    result: dict[str, Any] = {"status": "mvsc_not_enabled"}
+
+    if container.mvsc_components:
+        mvsc = container.mvsc_components
+        result["status"] = "active"
+
+        # Metrics
+        collector = getattr(container, "ablation_collector", None)
+        if collector:
+            result["metrics"] = collector.to_dict()
+
+        # Lifecycle
+        ss = container.system_state
+        result["lifecycle"] = {
+            "mode": ss.get("mvsc_runtime_mode", "unknown"),
+            "phase": ss.get("mvsc_cognition_phase", "unknown"),
+            "tick": ss.get("mvsc_tick", 0),
+        }
+
+        # Feature flags
+        result["features"] = {
+            k: v for k, v in ss.get("mvsc_feature_flags", {}).items()
+            if not v  # show only disabled features
+        }
+
+    return result
+
+
+@router.get("/trace/{correlation_id}")
+def get_trace(request: Request, correlation_id: str) -> dict[str, Any]:
+    """获取事件关联ID的追踪信息。"""
+    container = request.app.state.container
+
+    if not container.mvsc_components:
+        return {"status": "mvsc_not_enabled"}
+
+    event_store = container.mvsc_components.get("event_store")
+    if event_store is None:
+        return {"status": "event_store_not_available"}
+
+    try:
+        events = event_store.get_by_correlation(correlation_id)
+        return {
+            "correlation_id": correlation_id,
+            "event_count": len(events),
+            "events": [
+                {
+                    "event_id": e.event_id,
+                    "event_type": e.event_type,
+                    "source": e.source,
+                    "sequence": e.sequence,
+                    "timestamp": e.timestamp.isoformat() if e.timestamp else None,
+                }
+                for e in events[:50]
+            ],
+        }
+    except Exception:
+        return {"status": "error", "correlation_id": correlation_id}
