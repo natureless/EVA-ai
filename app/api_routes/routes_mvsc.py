@@ -325,6 +325,23 @@ def get_semantic_cache_stats(request: Request) -> dict[str, Any]:
     }
 
 
+@router.get("/vector/stats")
+def vector_store_stats(request: Request) -> dict[str, Any]:
+    """向量存储统计 — FAISS 索引大小和状态。"""
+    container = request.app.state.container
+
+    vs = container.vector_store
+    es = container.embedding_service
+
+    return {
+        "vector_store_available": vs is not None,
+        "vector_count": vs.size() if vs else 0,
+        "embedding_service_available": es is not None,
+        "embedding_dim": es.dim if es else 0,
+        "embedding_model": container.settings.embedding_model_name,
+    }
+
+
 @router.post("/cache/invalidate")
 def invalidate_semantic_cache(request: Request) -> dict[str, Any]:
     """清空语义缓存。"""
