@@ -1,0 +1,137 @@
+# EVA-MVSC 实验配置
+# 所有关键机制的特性开关，用于消融实验
+
+version: "1.0"
+
+# ═══════════════════════════════════════════════════════════
+# 特性开关 — 消融实验的核心控制点
+# ═══════════════════════════════════════════════════════════
+features:
+  recurrent_content: true       # 递归内容迭代稳定
+  global_workspace: true        # 全局工作空间广播
+  self_model: true              # 自我模型（归属+能力+叙事）
+  value_model: true             # 价值调制（目标+风险+效价）
+  episodic_memory: true         # 情景记忆
+  narrative_identity: true      # 叙事身份连续性
+  metacognition: true           # 元认知（置信度+反思）
+  attention_competition: true   # 注意力竞争
+  verification: true            # 行动结果验证
+  body_monitoring: true         # 数字身体监控
+
+# ═══════════════════════════════════════════════════════════
+# 消融实验预设
+# ═══════════════════════════════════════════════════════════
+ablations:
+  baseline:
+    description: "所有特性开启 — 完整系统基线"
+
+  no_recurrent:
+    description: "关闭递归内容迭代稳定"
+    features:
+      recurrent_content: false
+    expected:
+      content_stability: "显著下降"
+      broadcast_success_rate: "轻微下降"
+      self_attribution_accuracy: "基本不变"
+
+  no_broadcast:
+    description: "关闭全局工作空间广播"
+    features:
+      global_workspace: false
+    expected:
+      content_stability: "基本不变"
+      broadcast_success_rate: "完全归零"
+      self_attribution_accuracy: "下降"
+      cross_module_calls: "显著下降"
+
+  no_self_model:
+    description: "关闭自我模型（归属+能力+叙事）"
+    features:
+      self_model: false
+      narrative_identity: false
+    expected:
+      self_attribution_accuracy: "显著下降"
+      attribution_errors: "显著增加"
+      narrative_consistency: "完全归零"
+
+  no_value:
+    description: "所有内容使用相同优先级"
+    features:
+      value_model: false
+    expected:
+      risk_response_rate: "显著下降"
+      goal_completion_rate: "下降"
+
+  no_working_memory:
+    description: "工作记忆窗口极短"
+    features:
+      episodic_memory: false
+    expected:
+      task_continuity: "显著下降"
+      memory_retrieval_accuracy: "下降"
+
+  no_narrative:
+    description: "禁止跨情景叙事整合"
+    features:
+      narrative_identity: false
+    expected:
+      narrative_consistency: "完全归零"
+      identity_continuity: "下降"
+
+  no_metacognition:
+    description: "关闭元认知"
+    features:
+      metacognition: false
+    expected:
+      confidence_calibration: "下降"
+      uncertainty_awareness: "下降"
+
+  resource_limited:
+    description: "限制CPU/并发/推理预算"
+    features:
+      body_monitoring: false
+    expected:
+      error_rate: "增加"
+      response_latency_ms: "增加"
+      broadcast_success_rate: "下降"
+
+  minimal:
+    description: "仅保留基础感知和行动"
+    features:
+      recurrent_content: false
+      global_workspace: false
+      self_model: false
+      value_model: false
+      episodic_memory: false
+      narrative_identity: false
+      metacognition: false
+      attention_competition: false
+      verification: false
+      body_monitoring: false
+    expected:
+      content_stability: "最低"
+      broadcast_success_rate: "归零"
+      self_attribution_accuracy: "归零"
+      narrative_consistency: "归零"
+
+# ═══════════════════════════════════════════════════════════
+# 关键实验定义
+# ═══════════════════════════════════════════════════════════
+key_experiments:
+  - name: "选择性分离验证"
+    description: >
+      在保持基础输入识别能力相近的条件下，
+      分别关闭递归内容、全局广播和自模型，
+      验证内容稳定、灵活访问和主体归属是否发生选择性分离。
+    conditions:
+      - no_recurrent
+      - no_broadcast
+      - no_self_model
+    metrics:
+      - content_stability
+      - broadcast_success_rate
+      - self_attribution_accuracy
+    success_criteria:
+      - "no_recurrent: content_stability 下降 > 其他指标"
+      - "no_broadcast: broadcast_success_rate 下降 > 其他指标"
+      - "no_self_model: self_attribution_accuracy 下降 > 其他指标"

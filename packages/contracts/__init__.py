@@ -1,0 +1,85 @@
+"""packages/contracts 包 — EVA-MVSC 事件、状态和协议定义。
+
+这是整个系统的契约层。所有其他包依赖此包，此包不依赖任何其他包。
+"""
+
+from packages.contracts.events import EventEnvelope, EventFamily, from_legacy_event
+from packages.contracts.state import (
+    BodyState,
+    BroadcastContent,
+    CognitionPhase,
+    Commitment,
+    ConsciousState,
+    ContentCandidate,
+    Goal,
+    Plan,
+    PlanStep,
+    RuntimeMode,
+    ViabilityBounds,
+)
+from packages.contracts.protocols import (
+    AttentionProtocol,
+    BodyModelProtocol,
+    CognitiveModule,
+    ContentEngineProtocol,
+    Decision,
+    DecisionEngineProtocol,
+    EventBusProtocol,
+    Intent,
+    IntentParserProtocol,
+    MemoryProtocol,
+    MetacognitionProtocol,
+    PlannerProtocol,
+    RuntimeContext,
+    SelfModelProtocol,
+    StateRepository,
+    ToolAdapterProtocol,
+    ToolRequest,
+    ToolResult,
+    VerificationResult,
+    VerifierProtocol,
+    WorkspaceProtocol,
+    WorldModelProtocol,
+)
+
+__all__ = [
+    # events
+    "EventEnvelope",
+    "EventFamily",
+    "from_legacy_event",
+    # state
+    "BodyState",
+    "BroadcastContent",
+    "CognitionPhase",
+    "Commitment",
+    "ConsciousState",
+    "ContentCandidate",
+    "Goal",
+    "Plan",
+    "PlanStep",
+    "RuntimeMode",
+    "ViabilityBounds",
+    # protocols
+    "AttentionProtocol",
+    "BodyModelProtocol",
+    "CognitiveModule",
+    "ContentEngineProtocol",
+    "Decision",
+    "DecisionEngineProtocol",
+    "EventBusProtocol",
+    "Intent",
+    "IntentParserProtocol",
+    "MemoryProtocol",
+    "MetacognitionProtocol",
+    "PlannerProtocol",
+    "RuntimeContext",
+    "SelfModelProtocol",
+    "StateRepository",
+    "ToolAdapterProtocol",
+    "ToolRequest",
+    "ToolResult",
+    "VerificationResult",
+    "VerifierProtocol",
+    "WorkspaceProtocol",
+    "WorldModelProtocol",
+]
