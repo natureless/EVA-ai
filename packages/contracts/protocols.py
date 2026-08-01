@@ -8,7 +8,7 @@
 
 from typing import Protocol, runtime_checkable
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from packages.contracts.events import EventEnvelope
 from packages.contracts.state import (
@@ -16,7 +16,6 @@ from packages.contracts.state import (
     BroadcastContent,
     ConsciousState,
     ContentCandidate,
-    Goal,
     Plan,
 )
 

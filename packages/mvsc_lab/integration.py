@@ -20,7 +20,7 @@ from typing import Any
 
 import yaml
 
-from packages.mvsc_lab.ablations import AblationConfig, AblationMetrics, AblationRunner
+from packages.mvsc_lab.ablations import AblationConfig, AblationMetrics
 
 logger = logging.getLogger("eva.mvsc.ablation_integration")
 

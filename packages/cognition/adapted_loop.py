@@ -14,17 +14,13 @@
 from __future__ import annotations
 
 import logging
-import time
 from typing import Any
 
 from agents.base_agent import AgentTask
-from event.event_schema import Event as LegacyEvent
 from packages.contracts.events import EventEnvelope, EventFamily
 from packages.contracts.state import (
     BroadcastContent,
     ConsciousState,
-    ContentCandidate,
-    RuntimeMode,
 )
 from packages.cognition.loop import (
     Attention,
@@ -35,9 +31,7 @@ from packages.cognition.loop import (
     Workspace,
 )
 from packages.kernel.state_bridge import (
-    conscious_to_system_state,
     sync_system_state,
-    system_state_to_conscious,
 )
 
 logger = logging.getLogger("eva.cognition.adapted")

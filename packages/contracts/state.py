@@ -92,8 +92,6 @@ class BodyState(BaseModel):
     last_heartbeat: datetime | None = None
     consecutive_failures: int = Field(default=0, ge=0)
 
-    model_config = {"json_encoders": {set: list}}
-
 
 class ViabilityBounds(BaseModel):
     """可生存域 — 超出这些边界意味着系统进入生存风险状态。

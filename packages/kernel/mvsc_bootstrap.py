@@ -24,19 +24,10 @@ from typing import Any
 from packages.kernel.event_bus_adapter import EventBusAdapter
 from packages.kernel.event_store import EventStore
 from packages.kernel.state_bridge import (
-    conscious_to_system_state,
-    sync_system_state,
     system_state_to_conscious,
 )
 # Lazy imports to avoid circular dependency with cognition package
 # (adapted_loop imports from kernel.state_bridge)
-from packages.cognition.loop import (
-    Attention,
-    ContentEngine,
-    DecisionEngine,
-    Metacognition,
-    Workspace,
-)
 from packages.mvsc_lab.integration import (
     inject_ablation_to_bootstrap,
     load_ablation_config,

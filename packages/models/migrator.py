@@ -28,7 +28,6 @@ from typing import Any
 
 from packages.models.self_model import (
     ActionReceipt,
-    CapabilityEntry,
     IdentityModel,
     NarrativeNode,
     SelfModel,

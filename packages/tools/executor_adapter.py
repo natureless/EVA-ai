@@ -18,7 +18,6 @@ import time
 from typing import Any
 
 from packages.contracts.protocols import (
-    ToolAdapterProtocol,
     ToolRequest,
     ToolResult,
 )

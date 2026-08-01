@@ -13,9 +13,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import threading
-from datetime import datetime, timezone
 from typing import Any
-from uuid import uuid4
 
 from event.event_schema import Event as LegacyEvent
 from packages.contracts.events import EventEnvelope, EventFamily, from_legacy_event
