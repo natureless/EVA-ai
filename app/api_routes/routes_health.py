@@ -110,3 +110,29 @@ def health_summary(request: Request) -> dict[str, Any]:
         "components_ready": sum(1 for v in ready_data.get("components", {}).values() if v is True),
         "components_total": len(ready_data.get("components", {})),
     }
+
+
+@router.get("/health/ws/channels")
+def ws_channels(request: Request) -> dict[str, Any]:
+    """WebSocket 频道列表和连接数。"""
+    ws = request.app.state.container.ws_manager
+    if ws is None:
+        return {"channels": {}, "total": 0}
+    stats = ws.stats()
+    return {
+        "channels": stats.get("channels", {}),
+        "total_connections": stats.get("total_connections", 0),
+        "messages_sent": stats.get("messages_sent", 0),
+    }
+
+
+@router.get("/health/rate-limiter")
+def rate_limiter_stats(request: Request) -> dict[str, Any]:
+    """速率限制器统计。"""
+    limiter = request.app.state.rate_limiter
+    if limiter is None:
+        return {"status": "unavailable"}
+    try:
+        return {"status": "active", "stats": limiter.stats()}
+    except Exception:
+        return {"status": "error"}

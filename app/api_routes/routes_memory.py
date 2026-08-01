@@ -236,3 +236,16 @@ def semantic_search(request: Request, q: str = "", limit: int = 10, alpha: float
         }
     except Exception:
         return {"results": [], "query": q, "total": 0, "error": "search failed"}
+
+
+@router.get("/api/memory/compaction/stats")
+def compaction_stats(request: Request) -> dict[str, Any]:
+    """记忆压缩统计 — 最后一次维护的结果。"""
+    container = request.app.state.container
+    ss = container.system_state
+    gov = ss.get("last_memory_governor", {})
+
+    return {
+        "last_maintenance": gov if gov else {"status": "not_yet_run"},
+        "memory_governor_available": container.memory_governor is not None,
+    }
