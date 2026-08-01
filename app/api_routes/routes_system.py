@@ -105,3 +105,70 @@ def environment_info(request: Request) -> dict[str, Any]:
         "env_vars": list(eva_vars.keys()),
         "count": len(eva_vars),
     }
+
+
+@router.get("/resources")
+def system_resources(request: Request) -> dict[str, Any]:
+    """系统资源使用 — 内存、CPU、磁盘。"""
+    import os
+
+    info: dict[str, Any] = {}
+
+    # Memory (via psutil if available)
+    try:
+        import psutil
+        process = psutil.Process(os.getpid())
+        mem = process.memory_info()
+        info["memory"] = {
+            "rss_mb": round(mem.rss / 1024 / 1024, 1),
+            "vms_mb": round(mem.vms / 1024 / 1024, 1),
+            "percent": round(process.memory_percent(), 1),
+        }
+        info["cpu"] = {
+            "percent": round(process.cpu_percent(interval=0.1), 1),
+            "threads": process.num_threads(),
+        }
+    except ImportError:
+        info["memory"] = {"status": "psutil_not_installed"}
+        info["cpu"] = {"status": "psutil_not_installed"}
+
+    # Disk
+    try:
+        import shutil
+        usage = shutil.disk_usage("data")
+        info["disk"] = {
+            "total_gb": round(usage.total / 1024**3, 1),
+            "used_gb": round(usage.used / 1024**3, 1),
+            "free_gb": round(usage.free / 1024**3, 1),
+        }
+    except Exception:
+        info["disk"] = {"status": "unavailable"}
+
+    return info
+
+
+@router.get("/data-usage")
+def data_usage(request: Request) -> dict[str, Any]:
+    """数据目录文件大小统计。"""
+    from pathlib import Path
+
+    data_dir = Path("data")
+    if not data_dir.exists():
+        return {"files": [], "total_size_mb": 0}
+
+    files = []
+    total = 0
+    for f in sorted(data_dir.rglob("*")):
+        if f.is_file():
+            size = f.stat().st_size
+            total += size
+            files.append({
+                "name": str(f.relative_to(data_dir)),
+                "size_kb": round(size / 1024, 1),
+            })
+
+    return {
+        "files": files[:20],
+        "total_files": len(files),
+        "total_size_mb": round(total / 1024**2, 1),
+    }

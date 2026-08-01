@@ -86,3 +86,28 @@ def tool_stats(request: Request) -> dict[str, object]:
         "names": tool_names,
         "by_category": by_category,
     }
+
+
+@router.get("/api/tools/usage")
+def tool_usage_stats(request: Request) -> dict[str, object]:
+    """工具使用统计 — 从审计日志汇总。"""
+    container = request.app.state.container
+    audit_log = container.executor_audit_log
+
+    if audit_log is None:
+        return {"status": "unavailable"}
+
+    try:
+        counts = audit_log.count_by_type()
+        tool_counts: dict[str, dict[str, int]] = {}
+        for entry in counts:
+            etype = entry.get("executor_type", "unknown")
+            status = entry.get("status", "unknown")
+            cnt = entry.get("cnt", 0)
+            tool_counts.setdefault(etype, {"success": 0, "denied": 0, "error": 0, "total": 0})
+            tool_counts[etype][status] = cnt
+            tool_counts[etype]["total"] += cnt
+
+        return {"by_tool": tool_counts}
+    except Exception:
+        return {"status": "error"}
