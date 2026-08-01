@@ -1,0 +1,322 @@
+"""AdaptedCognitionLoop — 将 PipelineCognitionLoop 接入现有 EVA 后端。
+
+继承 MVSC 的 PipelineCognitionLoop，重写关键阶段方法以使用:
+- WorldModelGraph (world/world_model.py)
+- TieredMemoryManager (memory/tiered_store.py)
+- 现有 AgentOS (agent_os/, agents/, core/executor.py)
+- SelfModelStore (persona/self_model_store.py)
+- PredictionTracker (core/prediction.py)
+
+这是新旧代码的关键桥梁 — 所有现有后端保持不变，
+只是通过此适配器以 MVSC Pipeline 的方式被调用。
+"""
+
+from __future__ import annotations
+
+import logging
+import time
+from typing import Any
+
+from agents.base_agent import AgentTask
+from event.event_schema import Event as LegacyEvent
+from packages.contracts.events import EventEnvelope, EventFamily
+from packages.contracts.state import (
+    BroadcastContent,
+    ConsciousState,
+    ContentCandidate,
+    RuntimeMode,
+)
+from packages.cognition.loop import (
+    Attention,
+    ContentEngine,
+    DecisionEngine,
+    Metacognition,
+    PipelineCognitionLoop,
+    Workspace,
+)
+from packages.kernel.state_bridge import (
+    conscious_to_system_state,
+    sync_system_state,
+    system_state_to_conscious,
+)
+
+logger = logging.getLogger("eva.cognition.adapted")
+
+
+class AdaptedCognitionLoop(PipelineCognitionLoop):
+    """接入现有 EVA 后端的 MVSC 认知循环。
+
+    通过重写 _update_world, _update_body, _execute_action,
+    _consolidate_memory 等方法，将 MVSC 的 13 阶段 Pipeline
+    连接到现有的 WorldModelGraph, TieredMemoryManager, AgentOS 等。
+
+    Usage (in bootstrap)::
+
+        adapted = AdaptedCognitionLoop(
+            container=app_container,
+            feature_flags={"global_workspace": True, ...},
+        )
+        await adapted.run_once(event_envelope)
+    """
+
+    def __init__(
+        self,
+        container: Any = None,  # AppContainer
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._container = container
+
+    # ── Phase 2: UPDATE_WORLD ──────────────────────────────────
+
+    async def _update_world(
+        self, state: ConsciousState, event: EventEnvelope,
+    ) -> dict:
+        """使用现有 WorldModelGraph 更新世界模型。"""
+        if self._container is None:
+            return {}
+
+        wm = self._container.world_model
+        delta: dict[str, Any] = {}
+
+        if event.event_type == EventFamily.PERCEPTION.USER_MESSAGE:
+            text = event.payload.get("text", "")
+            wm.apply_user_message(text)
+            delta["focus"] = wm.focus
+            delta["mode"] = wm.mode
+            delta["active_tasks"] = wm.active_tasks
+
+        elif event.event_type == EventFamily.LIFECYCLE.MAINTENANCE_STARTED:
+            delta["focus"] = wm.focus
+            delta["active_tasks"] = wm.active_tasks
+
+        # 同步回 system_state 供现有 API 使用
+        if self._container.system_state:
+            self._container.system_state["focus"] = wm.focus
+            self._container.system_state["mode"] = wm.mode
+            self._container.system_state["active_tasks"] = wm.active_tasks
+
+        return delta
+
+    # ── Phase 3: UPDATE_BODY ───────────────────────────────────
+
+    async def _update_body(
+        self, state: ConsciousState, event: EventEnvelope,
+    ) -> dict:
+        """从现有运行时指标更新身体状态。"""
+        if self._container is None:
+            return {}
+
+        loop = self._container.loop
+        delta: dict[str, Any] = {}
+
+        # 从现有 cognition loop 获取错误计数
+        if hasattr(loop, "_consecutive_errors"):
+            delta["consecutive_failures"] = loop._consecutive_errors
+            delta["error_rate"] = min(1.0, loop._consecutive_errors / 100.0)
+
+        # 从 event bus 获取队列深度
+        if self._container.event_bus:
+            delta["cpu_load"] = min(100.0, self._container.event_bus.size() * 2)
+
+        return delta
+
+    # ── Phase 7: ATTRIBUTE_SELF ────────────────────────────────
+
+    async def _attribute_self(
+        self, state: ConsciousState, event: EventEnvelope,
+        broadcast: list[BroadcastContent],
+    ) -> dict:
+        """使用现有 SelfModelStore + PredictionTracker 做自我归属。"""
+        if self._container is None:
+            return {}
+
+        delta: dict[str, Any] = {}
+
+        # 记录预测误差
+        tracker = self._container.prediction_tracker
+        if tracker and state.world.get("focus"):
+            prev_focus = state.world.get("focus", "")
+            if prev_focus and broadcast:
+                expected = f"response about {prev_focus[:60]}"
+                actual = broadcast[0].content.summary[:200] if broadcast else ""
+                rec = tracker.record(focus=prev_focus, expected=expected, actual=actual)
+
+                # 写入自我模型
+                store = self._container.self_model_store
+                if store:
+                    sm = self._container.self_model
+                    if sm is not None:
+                        store.record_prediction_error(sm, error=rec.error, focus=prev_focus)
+                        if rec.error > 0.6:
+                            store.record_perturbation(
+                                sm,
+                                cause=f"high prediction error ({rec.error:.2f})",
+                                delta_magnitude=rec.error,
+                                affected_fields=["world.focus", "prediction"],
+                            )
+                        delta["prediction_error"] = rec.error
+
+        return delta
+
+    # ── Phase 11: ACT ──────────────────────────────────────────
+
+    async def _execute_action(
+        self, state: ConsciousState, decision: dict, plan: Any,
+    ) -> list[EventEnvelope]:
+        """使用现有 AgentOS 执行行动。
+
+        将 MVSC 决策转换为 AgentTask，通过现有 Router + Orchestrator 执行。
+        """
+        if self._container is None or not decision.get("requires_action"):
+            return []
+
+        intent = decision.get("intent", {})
+        events: list[EventEnvelope] = []
+
+        try:
+            # 构建 AgentTask
+            task = AgentTask(
+                kind="chat",
+                payload={
+                    "text": intent.get("description", ""),
+                    "context": {
+                        "persona": state.self_model.get("identity"),
+                        "active_tasks": state.world.get("active_tasks", []),
+                    },
+                },
+            )
+
+            # 路由到 agent
+            router = self._container.agent_router
+            orchestrator = self._container.orchestrator
+            selected_agent = router.route("chat_agent", task)
+
+            # 执行
+            result, duration_ms = orchestrator.execute(selected_agent, task)
+
+            # 发出行动事件
+            events.append(EventEnvelope(
+                event_type=EventFamily.ACTION.AGENT_INVOKED,
+                source="adapted_loop",
+                payload={
+                    "agent": selected_agent,
+                    "task_kind": task.kind,
+                    "duration_ms": duration_ms,
+                },
+            ))
+            events.append(EventEnvelope(
+                event_type=EventFamily.ACTION.AGENT_COMPLETED,
+                source="adapted_loop",
+                payload={
+                    "agent": selected_agent,
+                    "ok": result.ok,
+                    "summary": result.summary,
+                },
+            ))
+
+            # 更新世界模型
+            wm = self._container.world_model
+            wm.apply_agent_result(
+                reply=result.content,
+                selected_agent=selected_agent,
+                loop_id=f"mvsc_{state.tick}",
+            )
+
+        except Exception:
+            logger.exception("agent execution failed in adapted loop")
+            events.append(EventEnvelope(
+                event_type=EventFamily.ACTION.TOOL_FAILED,
+                source="adapted_loop",
+                payload={"error": "agent execution failed"},
+            ))
+
+        return events
+
+    # ── Phase 13: CONSOLIDATE ──────────────────────────────────
+
+    async def _consolidate_memory(
+        self, state: ConsciousState, event: EventEnvelope,
+        broadcast: list[BroadcastContent], evaluation: dict,
+        action_events: list[EventEnvelope],
+    ) -> list[EventEnvelope]:
+        """使用现有 TieredMemoryManager 整合记忆。"""
+        if self._container is None:
+            return []
+
+        tm = self._container.tiered_memory
+        if tm is None:
+            return []
+
+        events: list[EventEnvelope] = []
+
+        try:
+            for bc in broadcast:
+                importance = bc.content.priority
+                tm.ingest(
+                    bc.content.summary,
+                    importance=importance,
+                    source=bc.content.source_module,
+                    category=bc.content.content_type,
+                    source_event_id=event.event_id,
+                    self_model_delta=evaluation.get("self_model_delta", 0.0),
+                    prediction_error=evaluation.get("prediction_error", 0.0),
+                )
+                events.append(EventEnvelope(
+                    event_type=EventFamily.MEMORY.EPISODE_COMMITTED,
+                    source="adapted_loop",
+                    payload={
+                        "content_id": bc.content.content_id,
+                        "importance": importance,
+                    },
+                ))
+
+            # Memory governor maintenance on consolidation ticks
+            if state.tick % 100 == 0 and self._container.memory_governor:
+                self._container.memory_governor.maintenance()
+
+        except Exception:
+            logger.exception("memory consolidation failed")
+
+        return events
+
+    # ── Convenience: sync-back wrapper ─────────────────────────
+
+    async def run_once_and_sync(self, event: EventEnvelope) -> ConsciousState:
+        """执行一次认知循环并同步回 system_state。
+
+        这是与现有 bootstrap 集成的主要入口。
+        """
+        new_state = await self.run_once(event)
+
+        # 同步回 system_state 供现有 API 使用
+        if self._container and self._container.system_state:
+            sync_system_state(self._container.system_state, new_state)
+
+        return new_state
+
+
+# ═══════════════════════════════════════════════════════════════
+# Bootstrap 集成 helper
+# ═══════════════════════════════════════════════════════════════
+
+def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = None) -> AdaptedCognitionLoop:
+    """从 AppContainer 创建 AdaptedCognitionLoop。
+
+    使用容器中的所有现有后端组件。
+    """
+    return AdaptedCognitionLoop(
+        container=container,
+        event_bus=container.event_bus,
+        world_model=container.world_model,
+        self_model=container.self_model,
+        planner=container.planner,
+        agent_os=container.orchestrator,
+        memory=container.tiered_memory,
+        content_engine=ContentEngine(),
+        attention=Attention(),
+        workspace=Workspace(),
+        metacognition=Metacognition(),
+        decision_engine=DecisionEngine(),
+        feature_flags=feature_flags,
+    )

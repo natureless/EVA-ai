@@ -8,6 +8,10 @@ from packages.cognition.loop import (
     PipelineCognitionLoop,
     Workspace,
 )
+from packages.cognition.adapted_loop import (
+    AdaptedCognitionLoop,
+    create_adapted_loop,
+)
 
 __all__ = [
     "Attention",
@@ -16,4 +20,6 @@ __all__ = [
     "Metacognition",
     "PipelineCognitionLoop",
     "Workspace",
+    "AdaptedCognitionLoop",
+    "create_adapted_loop",
 ]

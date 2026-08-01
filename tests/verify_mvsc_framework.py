@@ -22,6 +22,8 @@ import os
 import sys
 import tempfile
 
+import pytest
+
 sys.path.insert(0, ".")
 
 pass_count = 0
@@ -199,6 +201,7 @@ os.unlink(db_path)
 check("EventStore: append-only, sequence, replay, causal chain, duplicate, integrity, deterministic hash")
 
 # ─── 11. Full PipelineCognitionLoop cycle ───
+@pytest.mark.asyncio
 async def test_pipeline():
     loop = PipelineCognitionLoop(feature_flags={
         "recurrent_content": True, "global_workspace": True,
@@ -231,6 +234,7 @@ minimal = cfg.enable_only("recurrent_content")
 assert minimal.recurrent_content is True
 assert minimal.global_workspace is False
 
+@pytest.mark.asyncio
 async def test_ablated_pipeline():
     loop = PipelineCognitionLoop(feature_flags=no_ws.to_dict())
     event = EventEnvelope(event_type="test", source="test", payload={})

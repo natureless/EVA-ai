@@ -430,6 +430,7 @@ class PipelineCognitionLoop:
             "metacognition": True,
         }
         self._phase_timings: dict[str, float] = {}
+        self._current_state: ConsciousState | None = None
 
     async def run_once(self, event: EventEnvelope) -> ConsciousState:
         """执行一个完整的认知循环。
@@ -442,20 +443,19 @@ class PipelineCognitionLoop:
         """
         t_start = time.perf_counter()
 
-        # 加载当前状态
+        # 加载当前状态（复用已有状态以保持 tick/version 连续性）
         state = await self._load_state(event.subject_id)
         state.cognition_phase = CognitionPhase.PERCEIVE
         emitted_events: list[EventEnvelope] = []
 
         # ── Phase 1: PERCEIVE ──
         t0 = time.perf_counter()
-        # 感知已在事件接收时完成，此处做标准化
         self._record_phase("perceive", t0)
 
         # ── Phase 2: UPDATE_WORLD ──
         t0 = time.perf_counter()
         world_delta = {}
-        if self.world_model and self.feature_flags.get("value_model", True):
+        if self.feature_flags.get("value_model", True):
             world_delta = await self._update_world(state, event)
         state.cognition_phase = CognitionPhase.UPDATE_WORLD
         self._record_phase("update_world", t0)
@@ -463,7 +463,7 @@ class PipelineCognitionLoop:
         # ── Phase 3: UPDATE_BODY ──
         t0 = time.perf_counter()
         body_delta = {}
-        if self.body_model:
+        if self.feature_flags.get("body_monitoring", True):
             body_delta = await self._update_body(state, event)
         state.cognition_phase = CognitionPhase.UPDATE_BODY
         self._record_phase("update_body", t0)
@@ -572,6 +572,9 @@ class PipelineCognitionLoop:
                 events=[event, *emitted_events, *memory_events],
             )
 
+        # 保存状态以保持 tick/version 连续性
+        self._current_state = new_state
+
         total_ms = (time.perf_counter() - t_start) * 1000
         logger.info(
             "cognition pipeline complete tick=%d phases=%s total_ms=%.1f",
@@ -585,9 +588,16 @@ class PipelineCognitionLoop:
     # ── 阶段实现（可被子类重写以适配现有组件）──
 
     async def _load_state(self, subject_id: str) -> ConsciousState:
+        """加载或复用 ConsciousState，保持 tick/version 连续性。"""
+        if self._current_state is not None:
+            return self._current_state
         if self.state_repo:
-            return await self.state_repo.load(subject_id)
-        return ConsciousState(subject_id=subject_id)
+            state = await self.state_repo.load(subject_id)
+            self._current_state = state
+            return state
+        state = ConsciousState(subject_id=subject_id)
+        self._current_state = state
+        return state
 
     async def _update_world(self, state: ConsciousState, event: EventEnvelope) -> dict:
         """更新世界模型。子类可重写以使用现有 WorldModelGraph。"""

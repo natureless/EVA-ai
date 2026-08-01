@@ -5,9 +5,25 @@ from packages.kernel.event_store import (
     EventStore,
     VersionConflictError,
 )
+from packages.kernel.event_bus_adapter import (
+    EventBusAdapter,
+    from_legacy_event,
+    to_legacy_event,
+)
+from packages.kernel.state_bridge import (
+    conscious_to_system_state,
+    sync_system_state,
+    system_state_to_conscious,
+)
 
 __all__ = [
     "DuplicateEventError",
     "EventStore",
     "VersionConflictError",
+    "EventBusAdapter",
+    "from_legacy_event",
+    "to_legacy_event",
+    "conscious_to_system_state",
+    "sync_system_state",
+    "system_state_to_conscious",
 ]
