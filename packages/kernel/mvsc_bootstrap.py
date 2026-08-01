@@ -28,7 +28,8 @@ from packages.kernel.state_bridge import (
     sync_system_state,
     system_state_to_conscious,
 )
-from packages.cognition.adapted_loop import AdaptedCognitionLoop, create_adapted_loop
+# Lazy imports to avoid circular dependency with cognition package
+# (adapted_loop imports from kernel.state_bridge)
 from packages.cognition.loop import (
     Attention,
     ContentEngine,
@@ -95,6 +96,7 @@ def integrate_mvsc(
     )
 
     # ── 4. Adapted Cognition Loop ────────────────────────────
+    from packages.cognition.adapted_loop import create_adapted_loop  # lazy import
     mvsc_loop = create_adapted_loop(container)
     logger.info("MVSC adapted cognition loop created")
 

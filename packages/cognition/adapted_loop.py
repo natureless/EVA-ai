@@ -72,7 +72,11 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     async def _update_world(
         self, state: ConsciousState, event: EventEnvelope,
     ) -> dict:
-        """使用现有 WorldModelGraph 更新世界模型。"""
+        """使用现有 WorldModelGraph 更新世界模型。
+
+        只通过返回 delta 来影响状态，不直接修改 container。
+        状态同步由 run_once_and_sync() 统一完成。
+        """
         if self._container is None:
             return {}
 
@@ -89,12 +93,6 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
         elif event.event_type == EventFamily.LIFECYCLE.MAINTENANCE_STARTED:
             delta["focus"] = wm.focus
             delta["active_tasks"] = wm.active_tasks
-
-        # 同步回 system_state 供现有 API 使用
-        if self._container.system_state:
-            self._container.system_state["focus"] = wm.focus
-            self._container.system_state["mode"] = wm.mode
-            self._container.system_state["active_tasks"] = wm.active_tasks
 
         return delta
 

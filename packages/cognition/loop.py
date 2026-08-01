@@ -47,6 +47,8 @@ logger = logging.getLogger("eva.cognition.pipeline")
 class ContentEngine:
     """从世界/身体/事件变化生成候选意识内容。
 
+    实现 ContentEngineProtocol。
+
     候选内容包括:
     - 对用户消息的响应建议
     - 风险警报

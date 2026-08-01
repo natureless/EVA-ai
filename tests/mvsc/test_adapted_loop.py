@@ -143,7 +143,12 @@ class TestAdaptedCognitionLoop:
 
     @pytest.mark.asyncio
     async def test_world_model_updated(self, adapted, container):
-        """World model should reflect user message."""
+        """World model should reflect user message after run_once.
+
+        Note: system_state is only synced via run_once_and_sync(),
+        not during _update_world(). This is by design — ConsciousState
+        is the single source of truth; system_state is a cached view.
+        """
         event = EventEnvelope(
             event_type="perception.user_message_received",
             source="user",
@@ -151,7 +156,11 @@ class TestAdaptedCognitionLoop:
         )
         await adapted.run_once(event)
 
+        # WorldModel is updated directly (side effect in _update_world)
         assert container.world_model.focus == "What is the weather?"
+
+        # system_state only synced via run_once_and_sync
+        await adapted.run_once_and_sync(event)
         assert container.system_state["focus"] == "What is the weather?"
 
     @pytest.mark.asyncio

@@ -92,9 +92,7 @@ class BodyState(BaseModel):
     last_heartbeat: datetime | None = None
     consecutive_failures: int = Field(default=0, ge=0)
 
-    class Config:
-        # set 不能直接用 JSON，需要转换
-        json_encoders = {set: list}
+    model_config = {"json_encoders": {set: list}}
 
 
 class ViabilityBounds(BaseModel):

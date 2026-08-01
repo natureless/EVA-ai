@@ -1,0 +1,1 @@
+"""MVSC framework integration tests."""
