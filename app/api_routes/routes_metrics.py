@@ -173,3 +173,23 @@ def metrics_prometheus(request: Request) -> Any:
         pass
 
     return PlainTextResponse(content="\n".join(lines) + "\n", media_type="text/plain")
+
+
+@router.get("/metrics/llm")
+def llm_status(request: Request) -> dict[str, Any]:
+    """LLM 状态 — provider, model, mock detection。"""
+    try:
+        from core.llm_adapter import get_llm, MockLLM
+
+        llm = get_llm()
+        is_mock = isinstance(llm, MockLLM)
+
+        return {
+            "provider": getattr(llm, "provider", "unknown"),
+            "model": getattr(llm, "model", "unknown"),
+            "is_mock": is_mock,
+            "status": "mock" if is_mock else "live",
+            "timeout_sec": getattr(llm, "timeout", 30) if not is_mock else 0,
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
