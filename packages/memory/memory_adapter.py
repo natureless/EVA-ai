@@ -33,11 +33,13 @@ class TieredMemoryAdapter:
         results = await adapter.retrieve("user query", context={})
     """
 
-    def __init__(self, tiered_memory: Any) -> None:
+    def __init__(self, tiered_memory: Any, cache: Any = None) -> None:
         """Args:
             tiered_memory: TieredMemoryManager 实例
+            cache: SemanticCache 实例 (可选)
         """
         self._tm = tiered_memory
+        self._cache = cache
 
     # ── consolidate ──────────────────────────────────────────
 
@@ -122,7 +124,7 @@ class TieredMemoryAdapter:
         context: dict | None = None,
         limit: int = 10,
     ) -> list[dict[str, Any]]:
-        """多因素记忆检索。
+        """多因素记忆检索（带语义缓存）。
 
         检索评分考虑:
         - Similarity (语义+FTS5)
@@ -130,14 +132,18 @@ class TieredMemoryAdapter:
         - Freshness (时间衰减)
         - GoalRelevance (目标相关性)
 
-        与现有 recall() 的区别:
-        - 增加了多因素排序
-        - 返回结果附带评分信息
+        缓存: 如果配置了 SemanticCache，优先从缓存返回。
         """
         ctx = context or {}
 
         if self._tm is None:
             return []
+
+        # ── 缓存查找 ──
+        if self._cache is not None:
+            cached = self._cache.get(query)
+            if cached is not None:
+                return cached[:limit]
 
         try:
             # 使用现有 recall (已包含 S1+S2+S3)
@@ -152,6 +158,10 @@ class TieredMemoryAdapter:
 
             # 按评分排序
             scored.sort(key=lambda r: r.get("_retrieval_score", 0), reverse=True)
+
+            # ── 写入缓存 ──
+            if self._cache is not None:
+                self._cache.put(query, scored)
 
             return scored[:limit]
 
