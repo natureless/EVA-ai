@@ -63,6 +63,10 @@ def integrate_mvsc(
     """
     logger.info("MVSC integration start")
 
+    # ── 0. Subject ID ────────────────────────────────────────
+    subject_id = getattr(settings, "mvsc_subject_id", "eva-001")
+    logger.info("MVSC subject_id=%s", subject_id)
+
     # ── 1. Event Store ───────────────────────────────────────
     event_store = EventStore("data/mvsc_event_store.db")
     logger.info("MVSC event store initialized")
@@ -71,7 +75,7 @@ def integrate_mvsc(
     event_adapter = EventBusAdapter(
         legacy_bus=container.event_bus,
         event_store=event_store,
-        subject_id="eva-001",
+        subject_id=subject_id,
     )
     logger.info("MVSC event bus adapter initialized")
 
@@ -79,7 +83,7 @@ def integrate_mvsc(
     # 将现有 system_state 提升为 ConsciousState
     initial_cs = system_state_to_conscious(
         container.system_state,
-        subject_id="eva-001",
+        subject_id=subject_id,
     )
     logger.info(
         "MVSC state bridge: system_state → ConsciousState (mode=%s)",

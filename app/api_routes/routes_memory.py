@@ -126,3 +126,47 @@ def world_model(request: Request, entity_type: str = "", limit: int = 100) -> di
         "entities": tm.s4.list_entities(entity_type=entity_type if entity_type else "", limit=limit),
         "edges": tm.s4.list_edges(limit=limit),
     }
+
+
+@router.get("/api/memory/search")
+def semantic_search(request: Request, q: str = "", limit: int = 10, alpha: float = 0.3) -> dict[str, Any]:
+    """语义搜索记忆 — 混合 FTS5 + 向量检索。
+
+    Args:
+        q: 搜索查询
+        limit: 返回结果数 (默认 10, 最大 50)
+        alpha: BM25 权重 (0.0=纯语义, 1.0=纯关键词, 默认 0.3)
+
+    Returns:
+        {"results": [...], "query": str, "total": int}
+    """
+    if not q.strip():
+        return {"results": [], "query": q, "total": 0}
+
+    container = request.app.state.container
+    tm = container.tiered_memory
+    if tm is None:
+        return {"results": [], "query": q, "total": 0}
+
+    limit = min(limit, 50)
+    alpha = max(0.0, min(1.0, alpha))
+
+    try:
+        results = tm.hybrid_search(q, alpha=alpha, top_k=limit)
+        return {
+            "results": [
+                {
+                    "id": r.get("id", ""),
+                    "content": r.get("content", "")[:300],
+                    "category": r.get("category", ""),
+                    "importance": r.get("importance", 0),
+                    "created_at": r.get("created_at", ""),
+                }
+                for r in results
+            ],
+            "query": q,
+            "total": len(results),
+            "alpha": alpha,
+        }
+    except Exception:
+        return {"results": [], "query": q, "total": 0, "error": "search failed"}

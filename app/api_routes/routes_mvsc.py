@@ -261,6 +261,55 @@ def verify_event_integrity(request: Request) -> dict[str, Any]:
         return {"status": "error", "detail": str(e)}
 
 
+@router.get("/events")
+def list_events(
+    request: Request,
+    subject_id: str = "eva-001",
+    from_seq: int = 0,
+    limit: int = 20,
+) -> dict[str, Any]:
+    """列出 EventStore 中的事件（支持分页）。
+
+    Args:
+        subject_id: 主体ID
+        from_seq: 起始序列号
+        limit: 最大返回数 (默认 20, 最大 100)
+    """
+    container = request.app.state.container
+
+    if not container.mvsc_components:
+        return {"status": "mvsc_not_enabled", "events": []}
+
+    event_store = container.mvsc_components.get("event_store")
+    if event_store is None:
+        return {"status": "event_store_not_available", "events": []}
+
+    limit = min(limit, 100)
+    try:
+        events = event_store.replay(subject_id, from_sequence=from_seq)
+        latest = event_store.get_latest_sequence(subject_id)
+        return {
+            "subject_id": subject_id,
+            "from_sequence": from_seq,
+            "latest_sequence": latest,
+            "total": len(events),
+            "events": [
+                {
+                    "sequence": e.sequence,
+                    "event_id": e.event_id,
+                    "event_type": e.event_type,
+                    "source": e.source,
+                    "timestamp": e.timestamp.isoformat() if e.timestamp else None,
+                    "correlation_id": e.correlation_id,
+                    "causation_id": e.causation_id,
+                }
+                for e in events[from_seq:from_seq + limit]
+            ],
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e), "events": []}
+
+
 @router.get("/cache/stats")
 def get_semantic_cache_stats(request: Request) -> dict[str, Any]:
     """获取语义缓存统计信息。"""
