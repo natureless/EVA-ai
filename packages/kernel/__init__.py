@@ -15,6 +15,10 @@ from packages.kernel.state_bridge import (
     sync_system_state,
     system_state_to_conscious,
 )
+from packages.kernel.mvsc_bootstrap import (
+    integrate_mvsc,
+    shutdown_mvsc,
+)
 
 __all__ = [
     "DuplicateEventError",
@@ -26,4 +30,6 @@ __all__ = [
     "conscious_to_system_state",
     "sync_system_state",
     "system_state_to_conscious",
+    "integrate_mvsc",
+    "shutdown_mvsc",
 ]

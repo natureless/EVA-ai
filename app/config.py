@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     # Parallelism
     cognition_worker_count: int = 1     # number of parallel event-processing workers (1-8)
 
+    # MVSC feature flag — set to "true" to enable the new pipeline
+    enable_mvsc_pipeline: bool = False
+
     @field_validator("github_poll_interval_sec")
     @classmethod
     def validate_poll_interval(cls, v: int) -> int:
