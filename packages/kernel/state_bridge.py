@@ -4,8 +4,15 @@
 1. system_state → ConsciousState: 提取相关字段
 2. ConsciousState → system_state: 同步回 dict 供现有 API 使用
 
+双轨状态契约:
+- ConsciousState 是 MVSC 认知循环的权威状态 (单一事实来源)
+- system_state 是现有 API 的缓存视图 (只读, 通过 sync_system_state 更新)
+- 任何模块不得同时直接修改两个状态
+- 同步时机: run_once_and_sync() 调用后, 或显式调用 sync_system_state()
+- 未知字段保存在 health._raw 中, 确保不丢失数据
+
 这是最小侵入的对接方式: 现有代码继续读写 system_state dict，
-StateBridge 在每次认知循环前后做同步。
+StateBridge 在每次认知循环后做同步。
 """
 
 from __future__ import annotations

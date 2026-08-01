@@ -37,7 +37,7 @@ class EventEnvelope(BaseModel):
     # ── 溯源 ──
     correlation_id: str = Field(default_factory=lambda: f"corr_{uuid4().hex[:8]}")
     causation_id: str | None = None  # 哪个事件直接导致此事件
-    subject_id: str = "eva-001"
+    subject_id: str = "eva-001"  # override via EventEnvelope(subject_id=...)
     session_id: str | None = None
     sequence: int | None = None  # 由EventStore分配
 

@@ -252,7 +252,7 @@ class ConsciousState(BaseModel):
     """
 
     # ── 标识 ──
-    subject_id: str = "eva-001"
+    subject_id: str = "eva-001"  # override via ConsciousState(subject_id=...)
     version: int = 0  # 乐观锁版本号，每次提交+1
     tick: int = 0  # 认知循环计数
 

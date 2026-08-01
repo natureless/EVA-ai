@@ -60,6 +60,7 @@ class Settings(BaseSettings):
 
     # MVSC feature flag — set to "true" to enable the new pipeline
     enable_mvsc_pipeline: bool = False
+    mvsc_subject_id: str = "eva-001"
 
     @field_validator("github_poll_interval_sec")
     @classmethod
