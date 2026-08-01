@@ -18,7 +18,7 @@ _project_root = Path(__file__).resolve().parent.parent
 if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
 
-import uvicorn
+import uvicorn  # noqa: E402 — must be after sys.path setup
 
 # Read PORT from environment (set by preview tool with autoPort)
 port = int(os.environ.get("PORT", 0))
