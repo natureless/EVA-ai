@@ -335,6 +335,8 @@ class ChatAgent(BaseAgent):
             return f'Browsing {args.get("url", "?")[:80]}'
         elif tool_name == "web_search":
             return f'Searching web for "{args.get("query", "?")}"'
+        elif tool_name == "ingest_document":
+            return f'Ingesting {args.get("path", "?")}'
         return json.dumps(args, ensure_ascii=False)[:100]
 
     @staticmethod
@@ -361,6 +363,8 @@ class ChatAgent(BaseAgent):
             return str(result.get("summary", "Browsed page"))
         elif tool_name == "web_search":
             return str(result.get("summary", "Searched web"))
+        elif tool_name == "ingest_document":
+            return str(result.get("summary", "Ingested document"))
         return "Done"
 
     # ── Tool call parsing ─────────────────────────────────────

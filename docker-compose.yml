@@ -23,6 +23,14 @@ services:
       EVA_LOG_LEVEL: INFO
       EVA_HOST: 0.0.0.0
       EVA_PORT: 8000
+      # Uncomment to enable API authentication:
+      # EVA_API_TOKEN: ${EVA_API_TOKEN:-}
+      # Uncomment for real LLM (otherwise uses mock):
+      # DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # For parallel event processing, set to 2-4:
+      # EVA_COGNITION_WORKER_COUNT: 2
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://localhost:8000/health/live')"]
