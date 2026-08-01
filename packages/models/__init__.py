@@ -18,6 +18,7 @@ from packages.models.migrator import (
     load_self_model,
     migrate_self_model,
 )
+from packages.models.other_agent_model import OtherAgentModel
 
 __all__ = [
     "ActionReceipt",
@@ -30,6 +31,7 @@ __all__ = [
     "IdentityModel",
     "NarrativeModel",
     "NarrativeNode",
+    "OtherAgentModel",
     "SelfModel",
     "SelfModelMigrator",
     "load_self_model",

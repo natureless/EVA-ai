@@ -14,6 +14,7 @@ from app.api_routes.routes_persona import router as persona_router
 from app.api_routes.routes_policy import router as policy_router
 from app.api_routes.routes_proactive import router as proactive_router
 from app.api_routes.routes_scheduler import router as scheduler_router
+from app.api_routes.routes_self_model import router as self_model_router
 from app.api_routes.routes_snapshot import router as snapshot_router
 from app.api_routes.routes_tools import router as tools_router
 from app.api_routes.routes_ui import router as ui_router
@@ -33,6 +34,7 @@ router.include_router(agents_router)
 router.include_router(persona_router)
 router.include_router(policy_router)
 router.include_router(scheduler_router)
+router.include_router(self_model_router)
 router.include_router(snapshot_router)
 router.include_router(tools_router)
 router.include_router(proactive_router)
