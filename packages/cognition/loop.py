@@ -136,11 +136,7 @@ class ContentEngine:
     def _llm_quick_summary(self, text: str, state: ConsciousState) -> str:
         """使用 LLM 快速生成内容摘要（降级安全）。"""
         try:
-            # 只取前 200 字符避免过长
             prompt = text[:200]
-            focus = state.world.get("focus", "")
-            context = f"Current focus: {focus}" if focus else ""
-            # 尝试调用 LLM 但设置极短超时
             return f"User query about: {prompt[:80]}"
         except Exception:
             return f"Respond to user: {text[:80]}"

@@ -105,13 +105,13 @@ def _export_json(rows: list[dict[str, Any]]) -> dict[str, Any]:
 def _export_markdown(rows: list[dict[str, Any]]) -> PlainTextResponse:
     """Export as human-readable Markdown."""
     lines = [
-        f"# EVA Conversation Export",
-        f"",
+        "# EVA Conversation Export",
+        "",
         f"Exported: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')}",
         f"Messages: {len(rows)}",
-        f"",
-        f"---",
-        f"",
+        "",
+        "---",
+        "",
     ]
 
     for row in rows:
@@ -131,11 +131,11 @@ def _export_markdown(rows: list[dict[str, Any]]) -> PlainTextResponse:
         role = "**User**" if row["type"] == "user_message" else "**EVA**"
         ts = str(row.get("timestamp", ""))[:19]
         lines.append(f"### {role} — {ts}")
-        lines.append(f"")
+        lines.append("")
         lines.append(str(text)[:5000])
-        lines.append(f"")
-        lines.append(f"---")
-        lines.append(f"")
+        lines.append("")
+        lines.append("---")
+        lines.append("")
 
     return PlainTextResponse(
         content="\n".join(lines),

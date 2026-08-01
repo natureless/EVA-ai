@@ -50,13 +50,12 @@ class TestMVSCAPIEndpoints:
         data = r.json()
         assert "mvsc_enabled" in data
 
-    def test_mvsc_health_full_endpoint(self):
-        """GET /api/mvsc/health/full should return aggregated health."""
-        r = self.client.get("/api/mvsc/health/full")
+    def test_mvsc_health_via_ready_endpoint(self):
+        """MVSC status is now integrated into /health/ready."""
+        r = self.client.get("/health/ready")
         assert r.status_code == 200
         data = r.json()
         assert "status" in data
-        assert "mvsc" in data
         assert "components" in data
 
     def test_mvsc_verification_stats(self):

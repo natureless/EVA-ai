@@ -545,12 +545,10 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
 
     # ── messaging ──
     event_bus = EventBus(s5_store=storage["tiered_memory"].s5)
-    system_state["event_bus_ready"] = True
     logger.info("event bus initialized")
 
     # ── planner ──
     planner = Planner(embedding_service=storage.get("embedding_service"))
-    system_state["planner_ready"] = True
 
     # ── tool registry ──
     tool_registry = ToolRegistry()
@@ -673,8 +671,6 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         loop=loop,
         scheduler=scheduler,
     )
-    system_state["ready"] = True
-    system_state["storage_backend"] = settings.storage_backend
 
     # ── boot diagnostic ──
     diagnostic = SystemDiagnostic().run_full(
@@ -693,7 +689,13 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
 
     bootstrap_sec = round(time.perf_counter() - _bootstrap_start, 2)
     logger.info("bootstrap complete — system ready (%.1fs)", bootstrap_sec)
-    system_state["bootstrap_sec"] = bootstrap_sec
+
+    # ── finalize system_state in one batch ──
+    system_state.update({
+        "ready": True,
+        "storage_backend": settings.storage_backend,
+        "bootstrap_sec": bootstrap_sec,
+    })
 
     container = AppContainer(
         settings=settings,

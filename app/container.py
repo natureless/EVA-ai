@@ -23,7 +23,6 @@ if TYPE_CHECKING:
     from memory.memory_api import MemoryAPI
     from memory.memory_governor import MemoryGovernor, MemoryRepository
     from memory.profile_store import ProfileStore
-    from memory.sqlite_store import SQLiteStore
     from memory.storage_adapter import BaseStorageAdapter
     from memory.tiered_store import TieredMemoryManager
     from persona.repository import PersonaRepository

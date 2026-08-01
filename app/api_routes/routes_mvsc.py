@@ -148,35 +148,6 @@ def get_lifecycle_state(request: Request) -> dict[str, Any]:
     }
 
 
-@router.get("/health/full")
-def get_full_health(request: Request) -> dict[str, Any]:
-    """聚合健康检查：现有 health + MVSC 状态。"""
-    container = request.app.state.container
-    ss = container.system_state
-
-    mvsc_health = "not_enabled"
-    if container.mvsc_components:
-        mvsc_loop = container.mvsc_components.get("mvsc_loop")
-        if mvsc_loop:
-            mvsc_health = "active" if ss.get("loop_ready") else "degraded"
-
-    return {
-        "status": "healthy" if ss.get("ready") else "degraded",
-        "mvsc": {
-            "enabled": bool(container.mvsc_components),
-            "status": mvsc_health,
-            "tick": ss.get("mvsc_tick", 0),
-            "mode": ss.get("mvsc_runtime_mode", "unknown"),
-        },
-        "components": {
-            "db": ss.get("db_ready", False),
-            "event_bus": ss.get("event_bus_ready", False),
-            "loop": ss.get("loop_ready", False),
-            "scheduler": ss.get("scheduler_running", False),
-        },
-    }
-
-
 @router.get("/verification/stats")
 def get_verification_stats(request: Request) -> dict[str, Any]:
     """获取 Verifier 统计信息。"""
@@ -203,7 +174,6 @@ def get_observability_snapshot(request: Request) -> dict[str, Any]:
     result: dict[str, Any] = {"status": "mvsc_not_enabled"}
 
     if container.mvsc_components:
-        mvsc = container.mvsc_components
         result["status"] = "active"
 
         # Metrics
