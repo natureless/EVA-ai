@@ -342,5 +342,15 @@ class ConsciousState(BaseModel):
             new_state.uncertainty.update(evaluation.get("uncertainty", {}))
             new_state.affect.update(evaluation.get("affect", {}))
 
+        # ── 大小限制 (防止无界增长) ──
+        if len(new_state.active_contents) > 50:
+            new_state.active_contents = new_state.active_contents[-50:]
+        if len(new_state.goals) > 100:
+            new_state.goals = new_state.goals[-100:]
+        if len(new_state.working_memory) > 50:
+            new_state.working_memory = new_state.working_memory[-50:]
+        if len(new_state.narrative_context) > 50:
+            new_state.narrative_context = new_state.narrative_context[-50:]
+
         new_state.integrity_hash = new_state.compute_integrity_hash()
         return new_state

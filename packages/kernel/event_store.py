@@ -396,7 +396,11 @@ class EventStore:
         )
 
     def close(self) -> None:
-        """关闭数据库连接。"""
+        """关闭数据库连接（含 WAL checkpoint）。"""
         if self._conn:
+            try:
+                self._conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            except Exception:
+                pass
             self._conn.close()
             self._conn = None
