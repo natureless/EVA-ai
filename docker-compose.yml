@@ -1,8 +1,5 @@
-version: '3.8'
-
-# EVA-VM v1 Docker Compose
-# Single-container deployment — bootstrap.py initializes all subsystems:
-#   cognition loop, scheduler, memory store, audit log, executor framework
+# EVA-MVSC Production Docker Compose
+# Includes MVSC pipeline support via EVA_ENABLE_MVSC_PIPELINE flag
 
 services:
   eva:
@@ -11,33 +8,76 @@ services:
       dockerfile: Dockerfile
     container_name: eva
     ports:
-      - "8000:8000"
+      - "${EVA_PORT:-8000}:8000"
     volumes:
-      - ./data:/app/data
-      - ./logs:/app/logs
+      # Persistent data — bind mount for production
+      - eva_data:/app/data
+      - eva_logs:/app/logs
+      # Configuration — read-only
       - ./config:/app/config:ro
       - ./constitution.yaml:/app/constitution.yaml:ro
+      - ./configs:/app/configs:ro
     environment:
+      # Core
       EVA_ENV: production
-      EVA_DB_PATH: /app/data/eva.db
-      EVA_LOG_LEVEL: INFO
       EVA_HOST: 0.0.0.0
       EVA_PORT: 8000
-      # Uncomment to enable API authentication:
-      # EVA_API_TOKEN: ${EVA_API_TOKEN:-}
-      # Uncomment for real LLM (otherwise uses mock):
+      EVA_LOG_LEVEL: ${EVA_LOG_LEVEL:-INFO}
+      EVA_DB_PATH: /app/data/eva.db
+
+      # MVSC Pipeline — set "true" to enable
+      EVA_ENABLE_MVSC_PIPELINE: ${EVA_ENABLE_MVSC_PIPELINE:-false}
+      EVA_MVSC_SUBJECT_ID: ${EVA_MVSC_SUBJECT_ID:-eva-prod-001}
+
+      # Ablation preset — only used when MVSC is enabled
+      # Options: baseline, no_broadcast, no_self_model, minimal, resource_limited
+      EVA_ABLATION_PRESET: ${EVA_ABLATION_PRESET:-baseline}
+
+      # LLM — uncomment and set via .env or environment
       # DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      # For parallel event processing, set to 2-4:
-      # EVA_COGNITION_WORKER_COUNT: 2
+
+      # Authentication — set to enable API auth
+      # EVA_API_TOKEN: ${EVA_API_TOKEN:-}
+
+      # Parallelism — 2-4 workers for production
+      EVA_COGNITION_WORKER_COUNT: ${EVA_COGNITION_WORKER_COUNT:-2}
+
+      # Storage backend — postgresql for multi-instance
+      EVA_STORAGE_BACKEND: ${EVA_STORAGE_BACKEND:-sqlite}
+
+      # Timing tuning
+      EVA_SCHEDULER_TICK_INTERVAL_SEC: 10
+      EVA_SCHEDULER_SNAPSHOT_INTERVAL_SEC: 120
+      EVA_STAGNATION_THRESHOLD_SEC: 86400
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://localhost:8000/health/live')"]
+      test: ["CMD", "python", "-c", "import urllib.request,json; r=urllib.request.urlopen('http://localhost:8000/health/ready'); d=json.loads(r.read()); exit(0 if d['status']=='ready' else 1)"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 15s
     labels:
       eva.component: "core"
-      eva.description: "EVA cognitive agent host — all-in-one"
+      eva.version: "v0.2-mvsc"
+      eva.description: "EVA cognitive agent host with MVSC pipeline"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+        reservations:
+          memory: 128M
+          cpus: "0.25"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  eva_data:
+    driver: local
+  eva_logs:
+    driver: local
