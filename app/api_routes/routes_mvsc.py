@@ -146,3 +146,50 @@ def get_lifecycle_state(request: Request) -> dict[str, Any]:
         "mvsc_enabled": bool(container.mvsc_components),
         "feature_flags": ss.get("mvsc_feature_flags", {}),
     }
+
+
+@router.get("/health/full")
+def get_full_health(request: Request) -> dict[str, Any]:
+    """聚合健康检查：现有 health + MVSC 状态。"""
+    container = request.app.state.container
+    ss = container.system_state
+
+    mvsc_health = "not_enabled"
+    if container.mvsc_components:
+        mvsc_loop = container.mvsc_components.get("mvsc_loop")
+        if mvsc_loop:
+            mvsc_health = "active" if ss.get("loop_ready") else "degraded"
+
+    return {
+        "status": "healthy" if ss.get("ready") else "degraded",
+        "mvsc": {
+            "enabled": bool(container.mvsc_components),
+            "status": mvsc_health,
+            "tick": ss.get("mvsc_tick", 0),
+            "mode": ss.get("mvsc_runtime_mode", "unknown"),
+        },
+        "components": {
+            "db": ss.get("db_ready", False),
+            "event_bus": ss.get("event_bus_ready", False),
+            "loop": ss.get("loop_ready", False),
+            "scheduler": ss.get("scheduler_running", False),
+        },
+    }
+
+
+@router.get("/verification/stats")
+def get_verification_stats(request: Request) -> dict[str, Any]:
+    """获取 Verifier 统计信息。"""
+    container = request.app.state.container
+
+    if not container.mvsc_components:
+        return {"status": "mvsc_not_enabled"}
+
+    mvsc_loop = container.mvsc_components.get("mvsc_loop")
+    if mvsc_loop and mvsc_loop._verifier:
+        return {
+            "status": "active",
+            "stats": mvsc_loop._verifier.stats,
+        }
+
+    return {"status": "verifier_not_initialized"}

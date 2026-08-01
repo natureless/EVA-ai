@@ -62,10 +62,16 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     def __init__(
         self,
         container: Any = None,  # AppContainer
+        intent_parser: Any = None,
+        planner_dag: Any = None,
+        verifier: Any = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._container = container
+        self._intent_parser = intent_parser
+        self._planner_dag = planner_dag
+        self._verifier = verifier
 
     # ── Phase 2: UPDATE_WORLD ──────────────────────────────────
 
@@ -162,64 +168,125 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     async def _execute_action(
         self, state: ConsciousState, decision: dict, plan: Any,
     ) -> list[EventEnvelope]:
-        """使用现有 AgentOS 执行行动。
+        """使用 IntentParser → PlannerDAG → AgentOS → Verifier 全链路执行。
 
-        将 MVSC 决策转换为 AgentTask，通过现有 Router + Orchestrator 执行。
+        将 MVSC 决策转换为完整的行动流水线。
         """
         if self._container is None or not decision.get("requires_action"):
             return []
 
-        intent = decision.get("intent", {})
+        intent_dict = decision.get("intent", {})
         events: list[EventEnvelope] = []
 
         try:
-            # 构建 AgentTask
-            task = AgentTask(
-                kind="chat",
-                payload={
-                    "text": intent.get("description", ""),
-                    "context": {
-                        "persona": state.self_model.get("identity"),
-                        "active_tasks": state.world.get("active_tasks", []),
-                    },
-                },
-            )
+            # ── Step 1: Parse intent ──
+            intent = None
+            if self._intent_parser:
+                # Build a synthetic event from the decision
+                synthetic_event = EventEnvelope(
+                    event_type=EventFamily.PERCEPTION.USER_MESSAGE,
+                    source="decision_engine",
+                    payload={"text": intent_dict.get("description", "")},
+                )
+                intent = await self._intent_parser.parse(synthetic_event, state)
 
-            # 路由到 agent
+            if intent is None:
+                from packages.contracts.protocols import Intent as IntentModel
+                intent = IntentModel(
+                    intent_id=f"int_{state.tick}",
+                    description=intent_dict.get("description", ""),
+                    priority=intent_dict.get("priority", 0.5),
+                )
+
+            # ── Step 2: Create plan ──
+            if self._planner_dag and plan is None:
+                plan = await self._planner_dag.create(state=state, intent=intent)
+                events.append(EventEnvelope(
+                    event_type=EventFamily.PLAN.CREATED,
+                    source="adapted_loop",
+                    payload={"plan_id": plan.plan_id, "steps": len(plan.steps)},
+                ))
+
+            # ── Step 3: Execute each plan step ──
             router = self._container.agent_router
             orchestrator = self._container.orchestrator
-            selected_agent = router.route("chat_agent", task)
 
-            # 执行
-            result, duration_ms = orchestrator.execute(selected_agent, task)
+            for step in (plan.steps if plan else []):
+                # Build AgentTask from PlanStep
+                task = AgentTask(
+                    kind="chat" if step.agent_type == "chat_agent" else step.agent_type.replace("_agent", ""),
+                    payload={
+                        "text": intent.description,
+                        "context": {
+                            "step_id": step.step_id,
+                            "expected_output": step.expected_output_schema,
+                        },
+                    },
+                )
 
-            # 发出行动事件
-            events.append(EventEnvelope(
-                event_type=EventFamily.ACTION.AGENT_INVOKED,
-                source="adapted_loop",
-                payload={
-                    "agent": selected_agent,
-                    "task_kind": task.kind,
-                    "duration_ms": duration_ms,
-                },
-            ))
-            events.append(EventEnvelope(
-                event_type=EventFamily.ACTION.AGENT_COMPLETED,
-                source="adapted_loop",
-                payload={
-                    "agent": selected_agent,
-                    "ok": result.ok,
-                    "summary": result.summary,
-                },
-            ))
+                selected_agent = router.route(step.agent_type, task)
+                result, duration_ms = orchestrator.execute(selected_agent, task)
 
-            # 更新世界模型
-            wm = self._container.world_model
-            wm.apply_agent_result(
-                reply=result.content,
-                selected_agent=selected_agent,
-                loop_id=f"mvsc_{state.tick}",
-            )
+                events.append(EventEnvelope(
+                    event_type=EventFamily.ACTION.AGENT_INVOKED,
+                    source="adapted_loop",
+                    payload={"agent": selected_agent, "step": step.step_id, "duration_ms": duration_ms},
+                ))
+
+                # ── Step 4: Verify ──
+                if self._verifier:
+                    from packages.contracts.protocols import ToolResult
+                    vr = await self._verifier.verify(
+                        intent=intent,
+                        plan=plan,
+                        result=ToolResult(
+                            ok=result.ok,
+                            data={"reply": result.content, "summary": result.summary},
+                            error=None if result.ok else result.summary,
+                            duration_ms=duration_ms,
+                        ),
+                    )
+                    verification_events = self._verifier.to_events(vr, events[-1].event_id)
+                    events.extend(verification_events)
+
+                    if not vr.passed:
+                        logger.warning("verification failed for step %s: %s", step.step_id, vr.summary)
+
+                events.append(EventEnvelope(
+                    event_type=EventFamily.ACTION.AGENT_COMPLETED,
+                    source="adapted_loop",
+                    payload={"agent": selected_agent, "ok": result.ok, "summary": result.summary},
+                ))
+
+            # Fallback: no plan steps → direct agent call
+            if not plan or not plan.steps:
+                task = AgentTask(
+                    kind="chat",
+                    payload={"text": intent.description, "context": {}},
+                )
+                selected_agent = router.route("chat_agent", task)
+                result, duration_ms = orchestrator.execute(selected_agent, task)
+                events.append(EventEnvelope(
+                    event_type=EventFamily.ACTION.AGENT_INVOKED,
+                    source="adapted_loop",
+                    payload={"agent": selected_agent, "duration_ms": duration_ms},
+                ))
+                events.append(EventEnvelope(
+                    event_type=EventFamily.ACTION.AGENT_COMPLETED,
+                    source="adapted_loop",
+                    payload={"agent": selected_agent, "ok": result.ok, "summary": result.summary},
+                ))
+
+            # Update world model with final result
+            if self._container.world_model:
+                wm = self._container.world_model
+                final_result = result if 'result' in dir() else None
+                if final_result:
+                    wm.apply_agent_result(
+                        reply=final_result.content,
+                        selected_agent=selected_agent if 'selected_agent' in dir() else "chat_agent",
+                        loop_id=f"mvsc_{state.tick}",
+                    )
 
         except Exception:
             logger.exception("agent execution failed in adapted loop")
@@ -301,8 +368,12 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
 def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = None) -> AdaptedCognitionLoop:
     """从 AppContainer 创建 AdaptedCognitionLoop。
 
-    使用容器中的所有现有后端组件。
+    使用容器中的所有现有后端组件 + 新的 MVSC AgentOS 组件。
     """
+    from packages.agentos.intent_parser import IntentParser
+    from packages.agentos.planner_dag import PlannerDAG
+    from packages.agentos.verifier import Verifier
+
     return AdaptedCognitionLoop(
         container=container,
         event_bus=container.event_bus,
@@ -316,5 +387,8 @@ def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = 
         workspace=Workspace(),
         metacognition=Metacognition(),
         decision_engine=DecisionEngine(),
+        intent_parser=IntentParser(),
+        planner_dag=PlannerDAG(),
+        verifier=Verifier(),
         feature_flags=feature_flags,
     )
