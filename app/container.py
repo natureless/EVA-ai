@@ -101,3 +101,4 @@ class AppContainer:
     github_poller: Any = None
     embedding_service: Any = None
     vector_store: Any = None
+    mvsc_components: dict[str, Any] | None = None
