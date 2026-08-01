@@ -85,3 +85,28 @@ def websocket_stats(request: Request) -> dict[str, Any]:
     """WebSocket connection statistics."""
     ws = request.app.state.container.ws_manager
     return ws.stats() if ws else {"connections": 0}
+
+
+@router.get("/health/summary")
+def health_summary(request: Request) -> dict[str, Any]:
+    """聚合健康摘要 — 适合仪表板使用。"""
+    container = request.app.state.container
+    ss = container.system_state
+    ready_data = container.health.ready()
+
+    return {
+        "status": ready_data["status"],
+        "uptime_events": container.event_bus.size(),
+        "events_dropped": container.event_bus.dropped,
+        "cognition": {
+            "focus": ss.get("focus", "idle"),
+            "tick": ss.get("mvsc_tick", 0),
+            "phase": ss.get("mvsc_cognition_phase", "unknown"),
+        },
+        "memory": {
+            "working": len(container.tiered_memory.s2.list_recent(limit=1)) if container.tiered_memory else 0,
+        },
+        "agents": len(container.registry.list_agents()),
+        "components_ready": sum(1 for v in ready_data.get("components", {}).values() if v is True),
+        "components_total": len(ready_data.get("components", {})),
+    }
