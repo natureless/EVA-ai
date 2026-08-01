@@ -45,11 +45,18 @@ class Settings(BaseSettings):
     storage_backend: str = "sqlite"     # sqlite | postgresql
     database_url: str = ""              # PostgreSQL connection URL (when backend=postgresql)
 
+    # LLM settings
+    llm_timeout_sec: float = 60.0       # timeout for individual LLM API calls
+    llm_max_retries: int = 2            # max retries for transient LLM errors
+
     # GitHub connector
     github_webhook_secret: str = ""
     github_api_token: str = ""
     github_poll_interval_sec: int = 300
     github_poll_repos: str = ""         # comma-separated "owner/repo,..."
+
+    # Parallelism
+    cognition_worker_count: int = 1     # number of parallel event-processing workers (1-8)
 
     @field_validator("github_poll_interval_sec")
     @classmethod

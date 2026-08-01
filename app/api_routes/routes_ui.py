@@ -26,3 +26,12 @@ def settings_page(request: Request) -> Any:
         name="settings.html",
         context={"app_name": settings.app_name, "page": "settings"},
     )
+
+
+@router.get("/memory")
+def memory_explorer_page(request: Request) -> Any:
+    return templates.TemplateResponse(
+        request=request,
+        name="memory.html",
+        context={"app_name": settings.app_name, "page": "memory"},
+    )

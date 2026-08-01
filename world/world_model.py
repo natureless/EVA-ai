@@ -110,6 +110,25 @@ class WorldModelGraph:
     def get_entity(self, eid: str) -> Entity | None:
         return self._entities.get(eid)
 
+    def list_entities(self, limit: int = 50) -> list[dict[str, Any]]:
+        """Return recent entities as dicts (for API consumption)."""
+        with self._lock:
+            items = sorted(
+                self._entities.values(),
+                key=lambda e: e.updated_at,
+                reverse=True,
+            )[:limit]
+            return [
+                {
+                    "id": e.id,
+                    "type": e.type,
+                    "name": e.name,
+                    "properties_json": json.dumps(e.properties, ensure_ascii=False),
+                    "updated_at": e.updated_at,
+                }
+                for e in items
+            ]
+
     def get_entities_by_type(self, entity_type: str) -> list[Entity]:
         return [e for e in self._entities.values() if e.type == entity_type]
 

@@ -86,6 +86,12 @@ class SessionMemory:
             self._hit_count += 1
             return entry.value
 
+    def list_all(self) -> list[tuple[str, dict[str, Any]]]:
+        """Return all non-expired entries as (key, value) tuples."""
+        with self._lock:
+            self.evict_expired()
+            return [(e.key, e.value) for e in self._store.values()]
+
     def evict_expired(self) -> int:
         now = time.time()
         expired = [
@@ -120,8 +126,8 @@ class SessionMemory:
                         tags=["s1_dump"],
                     )
                     count += 1
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("S2 restore: skipping corrupt entry: %s", e)
         return count
 
     def restore_from_s2(self, s2_store: Any) -> int:
@@ -139,8 +145,8 @@ class SessionMemory:
                         "ts": time.time(),
                     })
                     count += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("S2 restore_from_s2 failed: %s", e)
         return count
 
 
@@ -195,6 +201,19 @@ class WorkingMemoryStore:
                WHERE expires_at > ?
                ORDER BY created_at DESC LIMIT ?""",
             (datetime.now(timezone.utc).isoformat(), limit),
+        )
+        for r in rows:
+            r["tags"] = json.loads(r.get("tags_json", "[]"))
+        return [dict(r) for r in rows]
+
+    def search(self, query: str, limit: int = 50) -> list[dict[str, Any]]:
+        """Simple LIKE-based search in working memory."""
+        rows = self.store.fetchall(
+            """SELECT * FROM working_memory
+               WHERE (content LIKE ? OR summary LIKE ? OR source LIKE ?)
+                 AND expires_at > ?
+               ORDER BY created_at DESC LIMIT ?""",
+            (f"%{query}%", f"%{query}%", f"%{query}%", datetime.now(timezone.utc).isoformat(), limit),
         )
         for r in rows:
             r["tags"] = json.loads(r.get("tags_json", "[]"))
@@ -302,8 +321,9 @@ class LongTermMemoryStore:
             )
             if rows:
                 return [dict(r) for r in rows]
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("S2 search failed: %s", e)
+        return []
 
         # fallback: substring LIKE scan
         rows = self.store.fetchall(
@@ -581,8 +601,8 @@ class TieredMemoryManager:
                     if norm > 1e-12:
                         vec = vec / norm
                     self._vector_store.add(mid_s3, vec)
-                except Exception:
-                    pass  # non-fatal; vector search degrades gracefully
+                except Exception as e:
+                    logger.debug("S3 vector update skipped for %s: %s", mid_s3, e)
 
         # reverse-bridge: feed into MemoryGovernor for lifecycle management
         if self._governor and importance >= 0.6:

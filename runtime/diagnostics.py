@@ -240,13 +240,14 @@ class SystemDiagnostic:
     def check_llm(self) -> DiagnosticCheck:
         """Verify a real LLM provider is configured and responding."""
         try:
-            from core.llm_adapter import get_llm, MockLLM
+            from core.llm_adapter import get_llm, get_llm_info, MockLLM
+            info = get_llm_info()
             llm = get_llm()
             if isinstance(llm, MockLLM):
                 return DiagnosticCheck(
                     name="llm",
                     passed=False,
-                    detail="no LLM API key configured — using MockLLM (echo mode)",
+                    detail=f"no LLM API key configured — using MockLLM (echo mode). Provider: {info['provider']}",
                     recommendation="set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable",
                 )
             # Lightweight liveness probe — a real API call with minimal tokens

@@ -41,9 +41,18 @@ class MigrationRunner:
                     (mig["name"], mig["name"]),
                 )
                 logger.info("migration applied: %s", mig["name"])
-            except Exception:
-                logger.exception("migration failed: %s", mig["name"])
-                raise
+            except Exception as e:
+                # Gracefully handle "already exists" errors (e.g., duplicate column)
+                err_msg = str(e).lower()
+                if "duplicate column" in err_msg or "already exists" in err_msg:
+                    logger.info("migration %s already applied (column exists), marking as done", mig["name"])
+                    self.store.execute(
+                        "INSERT OR IGNORE INTO _migrations (name, applied_at) VALUES (?, ?)",
+                        (mig["name"], mig["name"]),
+                    )
+                else:
+                    logger.exception("migration failed: %s", mig["name"])
+                    raise
 
         return [m["name"] for m in pending]
 

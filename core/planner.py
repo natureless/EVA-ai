@@ -22,10 +22,13 @@ _COMMANDS: list[tuple[tuple[str, ...], str, str]] = [
 # appear AND the LLM supports the routing decision.
 # Single-word tokens only (no phrases) to avoid word-boundary
 # mismatches in _best_keyword_match substring check.
+#
+# NOTE: chat_agent now has tool-calling (list_directory, read_file, search_files),
+# so keyword routing to search_agent is intentionally narrow — only explicit
+# /search commands and strong search signals trigger the specialized agent.
 _SEARCH_KEYWORDS = {
-    "find", "search", "grep", "file", "dir", "path",
-    "folder", "locate", "lookup",
-    "搜索", "查找", "寻找", "文件", "目录", "路径",
+    "grep", "locate", "lookup",
+    "搜索", "查找", "寻找",
     "搜", "找",
 }
 

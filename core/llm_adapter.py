@@ -49,10 +49,27 @@ class MockLLM(LLMAdapter):
     Produces task-like structured replies that exercise the entity
     extraction pipeline. Real LLM replaces this automatically when
     API keys are configured.
+
+    Set EVA_LLM_PROVIDER=mock to force this mode even with keys present.
     """
 
     def chat(self, messages: list[dict[str, Any]]) -> str:
         last = messages[-1]["content"] if messages else ""
+
+        # Detect if this is a tool-use context (has tool results in history)
+        has_tools = any(
+            "Tool result:" in m.get("content", "")
+            for m in messages
+        )
+
+        if has_tools:
+            # After tool use, synthesize a response from the tool output
+            tool_content = ""
+            for m in reversed(messages):
+                if "Tool result:" in m.get("content", ""):
+                    tool_content = m["content"]
+                    break
+            return f"[EVA mock] Tool result processed. Based on the tool output, here is what I found:\n\n{tool_content[:500]}"
 
         context_hint = ""
         for m in messages:
@@ -64,7 +81,7 @@ class MockLLM(LLMAdapter):
         base = f"[EVA mock{context_hint}] received: {last[:120]}"
 
         # produce structured output for task-oriented messages
-        task_kw = ("fix", "bug", "deploy", "implement", "add", "create", "build")
+        task_kw = ("fix", "bug", "deploy", "implement", "add", "create", "build", "list", "show", "find", "search", "read")
         user_lower = last.lower()
         if any(kw in user_lower for kw in task_kw):
             if "implement" in user_lower:
@@ -73,6 +90,12 @@ class MockLLM(LLMAdapter):
                 action = "Fix"
             elif "deploy" in user_lower:
                 action = "Deploy"
+            elif "list" in user_lower or "show" in user_lower:
+                action = "List"
+            elif "find" in user_lower or "search" in user_lower:
+                action = "Find"
+            elif "read" in user_lower:
+                action = "Read"
             else:
                 action = "Add"
             task_name = last[:80].strip()
@@ -335,6 +358,38 @@ def get_llm(
 
     logger.info("no LLM API key configured — using mock (echo mode)")
     return MockLLM()
+
+
+def get_llm_info() -> dict[str, Any]:
+    """Return diagnostic info about the active LLM configuration.
+
+    Useful for health checks and debugging. Does not reveal API keys.
+    """
+    info: dict[str, Any] = {
+        "provider": "mock",
+        "model": "mock",
+        "configured": False,
+    }
+
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        info["provider"] = "claude"
+        info["model"] = os.environ.get("EVA_LLM_MODEL", "claude-sonnet-4-6")
+        info["configured"] = True
+    elif os.environ.get("DEEPSEEK_API_KEY"):
+        info["provider"] = "deepseek"
+        info["model"] = os.environ.get("EVA_LLM_MODEL", "deepseek-chat")
+        info["configured"] = True
+    elif os.environ.get("OPENAI_API_KEY"):
+        info["provider"] = "openai"
+        info["model"] = os.environ.get("EVA_LLM_MODEL", "gpt-4o-mini")
+        info["configured"] = True
+
+    provider_env = os.environ.get("EVA_LLM_PROVIDER", "").lower()
+    if provider_env:
+        info["provider"] = provider_env
+        info["explicit_provider"] = True
+
+    return info
 
 
 def load_system_prompt(agent_name: str, **kwargs: Any) -> str:

@@ -1,14 +1,40 @@
-"""Rule-based entity and relation extraction from agent replies.
+"""Entity and relation extraction from agent replies.
 
-Parses both raw format (/task:, TODO:) and LLM-structured output
-(bullet lists, numbered steps, priority markers, deadlines).
+Supports two extraction strategies:
+1. LLM-based (primary, when LLM is available): uses the configured LLM
+   to extract structured entities and relations with higher accuracy.
+2. Rule-based (fallback): parses both raw format (/task:, TODO:) and
+   LLM-structured output (bullet lists, numbered steps, priority markers,
+   deadlines). Used when no LLM API key is configured.
+
 Used by the cognition loop to auto-populate the WorldModelGraph.
 """
 
 from __future__ import annotations
 
+import json
+import logging
 import re
 from typing import Any
+
+logger = logging.getLogger("eva.entity_extractor")
+
+
+# ── LLM-based extraction prompt ─────────────────────────────
+
+ENTITY_EXTRACTION_PROMPT = """Extract entities and relations from the following text.
+
+Return a JSON object with "entities" and "relations" arrays.
+
+Entity types: task, person, file, project, risk, blocker
+Each entity: {{"type": "...", "name": "...", "properties": {{"status": "active|completed", "priority": "low|medium|high|urgent", "deadline": "..."}}}}
+
+Relations: {{"source": "entity_name", "target": "entity_name", "relation": "created|assigned_to|depends_on|blocks|references", "weight": 0.5-1.0}}
+
+Text:
+{text}
+
+JSON:"""
 
 
 # ── Task extraction patterns ────────────────────────────────
@@ -77,17 +103,145 @@ DEPENDENCY_MARKERS = ["依赖", "depends on", "requires", "需要先", "前置�
 
 
 class EntityExtractor:
-    """Rule-based extraction of typed entities from text.
+    """Extract typed entities and relations from text.
 
-    Enhanced for LLM output: parses bullet lists, numbered steps,
-    priority markers, deadlines, and completion status.
+    Supports LLM-based extraction (primary) with rule-based fallback.
+    The LLM path is automatically used when an LLM adapter is available
+    and produces valid JSON; otherwise falls back to regex patterns.
     """
 
+    def __init__(self, llm: Any = None) -> None:
+        """Initialize with optional LLM adapter for enhanced extraction.
+
+        Args:
+            llm: An LLMAdapter instance (from core.llm_adapter).
+                 If None, only rule-based extraction is used.
+        """
+        self._llm = llm
+
     def extract_entities(self, text: str) -> list[dict[str, Any]]:
+        """Extract entities from text.
+
+        Tries LLM-based extraction first, falls back to rule-based.
+        Entities include a confidence score (0.0-1.0) indicating extraction quality.
+        """
+        # Try LLM extraction first
+        if self._llm is not None:
+            try:
+                llm_entities, _ = self._extract_via_llm(text)
+                if llm_entities:
+                    return self._deduplicate(llm_entities)
+            except Exception:
+                logger.debug("LLM entity extraction failed, falling back to rules", exc_info=True)
+
+        # Rule-based fallback
+        entities = self._extract_entities_rules(text)
+        return self._deduplicate(entities)
+
+    def extract_relations(
+        self, entities: list[dict[str, Any]], text: str
+    ) -> list[dict[str, Any]]:
+        """Extract relations between entities.
+
+        Tries LLM-based extraction first, falls back to rule-based.
+        """
+        if self._llm is not None:
+            try:
+                _, llm_relations = self._extract_via_llm(text)
+                if llm_relations:
+                    return llm_relations
+            except Exception as e:
+                logger.debug("LLM relation extraction failed: %s", e)
+
+        return self._extract_relations_rules(entities, text)
+
+    def extract_from_reply(
+        self, reply: str
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Extract both entities and relations from a reply.
+
+        Uses LLM when available for higher accuracy, with rule-based fallback.
+        """
+        # Try LLM path
+        if self._llm is not None:
+            try:
+                entities, relations = self._extract_via_llm(reply)
+                if entities:
+                    return entities, relations
+            except Exception:
+                logger.debug("LLM extraction failed, using rules", exc_info=True)
+
+        # Rule-based fallback
+        entities = self._extract_entities_rules(reply)
+        relations = self._extract_relations_rules(entities, reply)
+        return entities, relations
+
+    # ── LLM-based extraction ─────────────────────────────────
+
+    def _extract_via_llm(self, text: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Use LLM to extract entities and relations as structured JSON."""
+        if self._llm is None:
+            return [], []
+
+        prompt = ENTITY_EXTRACTION_PROMPT.format(text=text[:3000])
+        messages = [
+            {"role": "user", "content": prompt},
+        ]
+        response = self._llm.chat(messages)
+
+        # Extract JSON from response (may have markdown fences)
+        json_match = re.search(r'\{[\s\S]*"entities"[\s\S]*"relations"[\s\S]*\}', response)
+        if not json_match:
+            logger.debug("LLM extraction: no valid JSON found in response")
+            return [], []
+
+        try:
+            data = json.loads(json_match.group(0))
+        except json.JSONDecodeError:
+            logger.debug("LLM extraction: JSON parse failed")
+            return [], []
+
+        entities: list[dict[str, Any]] = []
+        for e in data.get("entities", []):
+            if isinstance(e, dict) and "type" in e and "name" in e:
+                etype = e["type"]
+                if etype not in ("task", "person", "file", "project", "risk", "blocker"):
+                    etype = "task"
+                props = e.get("properties", {}) if isinstance(e.get("properties"), dict) else {}
+                confidence = float(e.get("confidence", 0.85))
+                entities.append({
+                    "type": etype,
+                    "name": str(e["name"])[:200],
+                    "properties": {
+                        "status": props.get("status", "active"),
+                        "priority": props.get("priority", "medium"),
+                        "deadline": props.get("deadline", ""),
+                        "source": "llm_extraction",
+                        "confidence": confidence,
+                    },
+                })
+
+        relations: list[dict[str, Any]] = []
+        for r in data.get("relations", []):
+            if isinstance(r, dict) and "source" in r and "target" in r and "relation" in r:
+                relations.append({
+                    "source": str(r["source"]),
+                    "target": str(r["target"]),
+                    "relation": str(r["relation"]),
+                    "weight": float(r.get("weight", 0.7)),
+                    "confidence": float(r.get("confidence", 0.7)),
+                })
+
+        logger.info("LLM extraction: %d entities, %d relations", len(entities), len(relations))
+        return entities, relations
+
+    # ── Rule-based extraction ─────────────────────────────────
+
+    def _extract_entities_rules(self, text: str) -> list[dict[str, Any]]:
         entities: list[dict[str, Any]] = []
         seen: set[str] = set()
 
-        # ── explicit task markers ────────────────────────────
+        # explicit task markers
         for pattern in TASK_PATTERNS:
             for match in pattern.finditer(text):
                 name = match.group(1).strip().rstrip(".!！。")
@@ -99,10 +253,11 @@ class EntityExtractor:
                         "properties": {
                             "status": "active", "source": "agent_reply",
                             "priority": self._detect_priority(name),
+                            "confidence": 0.7,
                         },
                     })
 
-        # ── bullet/numbered list items ───────────────────────
+        # bullet/numbered list items
         for pattern in (BULLET_TASK, NUMBERED_TASK):
             for match in pattern.finditer(text):
                 status = (match.groupdict().get("status") or "").strip()
@@ -121,10 +276,11 @@ class EntityExtractor:
                         "source": "agent_reply",
                         "priority": self._detect_priority(name),
                         "deadline": self._detect_deadline(name),
+                        "confidence": 0.6,
                     },
                 })
 
-        # ── action markers ───────────────────────────────────
+        # action markers
         for pattern in ACTION_MARKERS:
             for match in pattern.finditer(text):
                 name = match.group(1).strip().rstrip(".!！。")
@@ -139,7 +295,7 @@ class EntityExtractor:
                         },
                     })
 
-        # ── persons ──────────────────────────────────────────
+        # persons
         for pattern in PERSON_PATTERNS:
             for match in pattern.finditer(text):
                 name = match.group(1).strip()
@@ -150,7 +306,7 @@ class EntityExtractor:
                         "type": "person", "name": name, "properties": {},
                     })
 
-        # ── files ────────────────────────────────────────────
+        # files
         for pattern in FILE_PATTERNS:
             for match in pattern.finditer(text):
                 name = match.group(1).strip()
@@ -161,7 +317,7 @@ class EntityExtractor:
                         "type": "file", "name": name, "properties": {},
                     })
 
-        # ── risks ────────────────────────────────────────────
+        # risks
         for sentence in re.split(r"[.!！。\n]", text):
             s = sentence.strip().lower()
             if any(m in s for m in RISK_MARKERS) and len(s) > 3:
@@ -175,7 +331,7 @@ class EntityExtractor:
 
         return entities
 
-    def extract_relations(
+    def _extract_relations_rules(
         self, entities: list[dict[str, Any]], text: str
     ) -> list[dict[str, Any]]:
         if not entities or len(entities) < 2:
@@ -183,7 +339,7 @@ class EntityExtractor:
 
         relations: list[dict[str, Any]] = []
 
-        # user → task
+        # user -> task
         for e in entities:
             if e["type"] == "task":
                 relations.append({
@@ -193,7 +349,7 @@ class EntityExtractor:
                     "weight": 0.9,
                 })
 
-        # task→task dependencies
+        # task->task dependencies
         tasks = [e for e in entities if e["type"] == "task"]
         for i, t1 in enumerate(tasks):
             for t2 in tasks[i + 1:]:
@@ -206,7 +362,7 @@ class EntityExtractor:
                             "weight": 0.6,
                         })
 
-        # task→person
+        # task->person
         for task in tasks:
             for person in [e for e in entities if e["type"] == "person"]:
                 if person["name"].lower() in text.lower():
@@ -217,7 +373,7 @@ class EntityExtractor:
                         "weight": 0.7,
                     })
 
-        # tasks in same reply → related
+        # tasks in same reply -> related
         for i, t1 in enumerate(tasks):
             for t2 in tasks[i + 1:]:
                 if not any(
@@ -234,12 +390,65 @@ class EntityExtractor:
 
         return relations
 
-    def extract_from_reply(self, reply: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
-        entities = self.extract_entities(reply)
-        relations = self.extract_relations(entities, reply)
-        return entities, relations
-
     # ── helpers ─────────────────────────────────────────────
+
+    @staticmethod
+    def _deduplicate(entities: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Remove duplicate entities, keeping the one with highest confidence.
+
+        Two entities are duplicates only if they have the same type AND
+        their names are identical or near-identical (same first 80% of chars).
+        Short names (<10 chars) must match exactly to be merged.
+        """
+        if len(entities) <= 1:
+            return entities
+
+        result: list[dict[str, Any]] = []
+        for entity in entities:
+            etype = entity.get("type", "")
+            ename = entity.get("name", "").strip()
+            ename_lower = ename.lower()
+            econfs = entity.get("properties", {})
+            econf = float(econfs.get("confidence", 0.5))
+
+            found = False
+            for existing in result:
+                if existing.get("type") != etype:
+                    continue
+                ex_name = existing.get("name", "").strip()
+                ex_lower = ex_name.lower()
+
+                # Exact match (case-insensitive) → keep higher confidence
+                if ename_lower == ex_lower:
+                    ex_conf = float(existing.get("properties", {}).get("confidence", 0.5))
+                    if econf > ex_conf:
+                        existing["name"] = ename  # keep original casing of higher-conf
+                        existing["properties"]["confidence"] = econf
+                    found = True
+                    break
+
+                # For short names (<10 chars), only exact match counts
+                if len(ename_lower) < 10 or len(ex_lower) < 10:
+                    continue
+
+                # Near-duplicate: one contains the other AND the shorter is
+                # at least 80% of the longer → likely same entity
+                shorter = ename_lower if len(ename_lower) < len(ex_lower) else ex_lower
+                longer = ex_lower if len(ename_lower) < len(ex_lower) else ename_lower
+                if shorter in longer and len(shorter) / len(longer) >= 0.8:
+                    avg_conf = round((econf + float(
+                        existing.get("properties", {}).get("confidence", 0.5)
+                    )) / 2, 2)
+                    # Keep the longer (more descriptive) name
+                    existing["name"] = ename if len(ename) > len(ex_name) else ex_name
+                    existing["properties"]["confidence"] = avg_conf
+                    found = True
+                    break
+
+            if not found:
+                result.append(entity)
+
+        return result
 
     def _detect_priority(self, text: str) -> str:
         t = text.lower()
@@ -264,12 +473,12 @@ class EntityExtractor:
         """Filter out bullet items that aren't tasks."""
         noise_patterns = [
             r"^(if|when|while|because|since|although|however|therefore|note|for example)\b",
-            r"^[a-z]{1,3}\b$",        # single short word
-            r"^\d+$",                   # pure number
-            r"^[.,;:!?]+$",            # pure punctuation
-            r"^\d+\s+to\s+",           # "0 to production" from "v2.0 to"
-            r"^\d+\.\d+",              # version numbers like "2.0"
-            r"^v\d+\.\d+",             # "v2.0"
+            r"^[a-z]{1,3}\b$",
+            r"^\d+$",
+            r"^[.,;:!?]+$",
+            r"^\d+\s+to\s+",
+            r"^\d+\.\d+",
+            r"^v\d+\.\d+",
         ]
         for pat in noise_patterns:
             if re.match(pat, name, re.IGNORECASE):
@@ -282,4 +491,22 @@ def _eid(entity: dict[str, Any]) -> str:
     return f"{entity['type']}_{slug}"
 
 
+# Module-level singleton with lazy LLM initialization.
+# When an API key is configured, the extractor auto-upgrades to LLM-based extraction.
 entity_extractor = EntityExtractor()
+
+
+def _lazy_init_llm() -> None:
+    """Wire LLM into the singleton if one is available and not already set."""
+    if entity_extractor._llm is not None:
+        return
+    try:
+        from core.llm_adapter import get_llm
+        llm = get_llm()
+        # Only set if it's not a MockLLM (mock means no real LLM available)
+        from core.llm_adapter import MockLLM
+        if not isinstance(llm, MockLLM):
+            entity_extractor._llm = llm
+            logger.info("entity_extractor upgraded to LLM-based extraction")
+    except Exception as e:
+        logger.debug("entity_extractor LLM init skipped: %s", e)

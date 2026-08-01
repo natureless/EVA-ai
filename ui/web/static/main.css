@@ -257,6 +257,27 @@ body {
 .message-bubble ol.chat-list-ol { list-style: decimal; }
 .message-bubble .chat-list li { margin: 2px 0; line-height: 1.5; }
 
+/* ── Tool progress cards in chat ─────────────────────── */
+.tool-card {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 2px 4px 2px 0; padding: 4px 10px;
+  border-radius: 14px; font-size: 12px; font-family: monospace;
+  background: var(--card-bg); border: 1px solid var(--border);
+  animation: toolCardIn 0.3s ease-out;
+}
+@keyframes toolCardIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tool-card .tool-icon   { font-size: 13px; }
+.tool-card .tool-label  { font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; }
+.tool-card .tool-name   { color: var(--accent); }
+.tool-card .tool-detail { color: var(--dim); max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tool-card.tool-start   { border-color: #60a5fa; background: #eff6ff; }
+.tool-card.tool-result  { border-color: #34d399; background: #ecfdf5; }
+.tool-card.tool-error   { border-color: #f87171; background: #fef2f2; }
+.tool-card.tool-warn    { border-color: #fbbf24; background: #fffbeb; }
+
 .message-bubble .chat-table {
   margin: 6px 0; border-collapse: collapse; font-size: 12px; width: 100%;
 }
@@ -543,3 +564,98 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .avatar-particle-canvas { display: none; }
 }
+
+/* ── Memory Explorer ──────────────────────────────────── */
+.mem-explorer {
+  max-width: 900px; margin: 0 auto; padding: 20px 24px;
+}
+
+.mem-search-bar {
+  display: flex; gap: 8px; margin-bottom: 20px;
+}
+.mem-search-bar input {
+  flex: 1; padding: 8px 14px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px; background: var(--card-bg); color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.mem-search-bar input:focus { border-color: var(--accent); }
+.mem-search-bar button {
+  padding: 8px 18px; border: none; border-radius: 8px;
+  background: var(--accent); color: #fff; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: opacity 0.2s;
+}
+.mem-search-bar button:hover { opacity: 0.85; }
+
+.mem-tiers {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px; margin-bottom: 24px;
+}
+
+.mem-tier-card {
+  padding: 14px; border-radius: 10px; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mem-tier-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.mem-tier-card.active { box-shadow: 0 0 0 2px var(--accent); }
+.tier-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.tier-badge {
+  padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;
+  font-family: monospace;
+}
+.tier-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.tier-count { font-size: 22px; font-weight: 700; color: var(--header); }
+.tier-max { font-size: 13px; font-weight: 400; color: var(--dim); }
+.tier-bar {
+  height: 4px; background: rgba(0,0,0,0.06); border-radius: 2px;
+  margin: 8px 0; overflow: hidden;
+}
+.tier-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.tier-fill.ok { background: #34d399; }
+.tier-fill.warn { background: #fbbf24; }
+.tier-fill.full { background: #f87171; }
+.tier-meta { font-size: 11px; color: var(--dim); }
+
+.mem-results-header {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 12px;
+}
+.mem-results-header h3 { font-size: 16px; font-weight: 600; color: var(--header); margin: 0; }
+.mem-results-header span { font-size: 12px; color: var(--dim); }
+
+.mem-entries {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.mem-entry {
+  padding: 10px 14px; border-radius: 8px; background: var(--card-bg);
+  border: 1px solid var(--border); transition: border-color 0.15s;
+}
+.mem-entry:hover { border-color: var(--accent); }
+.entry-content { font-size: 13px; line-height: 1.5; color: var(--text); margin-bottom: 6px; }
+.entry-footer { display: flex; gap: 12px; align-items: center; }
+.entry-source { font-size: 11px; color: var(--accent); font-weight: 500; }
+.entry-imp, .entry-prio {
+  font-size: 10px; padding: 1px 6px; border-radius: 3px;
+  background: rgba(0,0,0,0.04); color: var(--dim); font-family: monospace;
+}
+.entry-meta { font-size: 10px; color: var(--dim); margin-left: auto; }
+
+.s4-entry, .s5-entry {
+  display: flex; align-items: center; gap: 10px;
+}
+.entry-type {
+  font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
+  background: var(--accent); color: #fff; text-transform: uppercase;
+}
+.entry-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.entry-status {
+  font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 600;
+}
+.entry-status.processed { background: #d1fae5; color: #065f46; }
+.entry-status.pending { background: #fef3c7; color: #92400e; }
+.entry-status.failed { background: #fee2e2; color: #991b1b; }
+
+.search-result .tier-badge { margin-bottom: 4px; display: inline-block; }
+
+.loading { padding: 20px; text-align: center; color: var(--dim); font-size: 14px; }
+.empty-state { padding: 30px; text-align: center; color: var(--dim); font-size: 14px; }

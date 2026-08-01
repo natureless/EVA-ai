@@ -26,12 +26,74 @@ def recent_events(request: Request, limit: int = 20) -> dict[str, Any]:
 # ── Tiered Memory Endpoints ─────────────────────────────────
 
 @router.get("/api/memory/tiers")
-def memory_tiers(request: Request) -> dict[str, Any]:
-    """Statistics for all five memory tiers."""
+def memory_tiers(request: Request, format: str = "raw") -> dict[str, Any]:
+    """Statistics for all five memory tiers.
+
+    Args:
+        format: \"raw\" (default, backward-compat for settings page) or
+                \"explorer\" (transformed for Memory Explorer UI).
+    """
     tm = request.app.state.container.tiered_memory
     if tm is None:
+        if format == "explorer":
+            return {"tiers": [], "total_entries": 0}
         return {"error": "tiered memory not available"}
-    return tm.stats()  # type: ignore[no-any-return]  # Starlette untyped container
+
+    stats = tm.stats()
+
+    if format == "explorer":
+        tiers: list[dict[str, Any]] = []
+
+        s1 = stats.get("S1_session", {})
+        tiers.append({
+            "name": "S1", "label": "Session",
+            "entries": s1.get("entries", 0),
+            "max": s1.get("max_entries", 200),
+            "ttl": "30 min", "storage": "in-memory",
+            "hits": s1.get("hit_count", 0),
+            "misses": s1.get("miss_count", 0),
+        })
+
+        s2 = stats.get("S2_working", {})
+        tiers.append({
+            "name": "S2", "label": "Working",
+            "entries": s2.get("entries", 0),
+            "max": s2.get("max_entries", 500),
+            "ttl": "72 hours", "storage": "SQLite",
+            "expired": s2.get("expired_count", 0),
+        })
+
+        s3 = stats.get("S3_long_term", {})
+        tiers.append({
+            "name": "S3", "label": "Long-term",
+            "entries": s3.get("entries_active", 0),
+            "max": s3.get("max_entries", 10000),
+            "ttl": "permanent", "storage": "SQLite + FTS5",
+            "avg_importance": s3.get("avg_importance", 0),
+        })
+
+        s4 = stats.get("S4_world_model", {})
+        tiers.append({
+            "name": "S4", "label": "World Model",
+            "entries": s4.get("entities", 0),
+            "max": None, "ttl": "permanent", "storage": "SQLite",
+            "edges": s4.get("edges", 0),
+        })
+
+        s5 = stats.get("S5_event_trace", {})
+        tiers.append({
+            "name": "S5", "label": "Event/Trace",
+            "entries": s5.get("events", 0) + s5.get("traces", 0),
+            "max": None, "ttl": "permanent", "storage": "SQLite",
+            "events": s5.get("events", 0),
+            "traces": s5.get("traces", 0),
+        })
+
+        total = sum(t["entries"] for t in tiers)
+        return {"tiers": tiers, "total_entries": total}
+
+    # Default: raw format (backward-compatible)
+    return stats  # type: ignore[no-any-return]
 
 
 @router.get("/api/memory/working")

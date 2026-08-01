@@ -93,17 +93,39 @@ class ExecutorAuditLog:
         chain_hash = self._compute_chain_hash(
             self._last_hash, eid, executor_type, action, task_id, status, now,
         )
-        self.store.execute(
-            """INSERT INTO executor_audit
-               (id, executor_type, action, task_id, token_id,
-                parameters_json, result_summary, duration_ms, status, timestamp, chain_hash)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-            (
-                eid, executor_type, action, task_id, token_id,
-                json.dumps(parameters or {}, ensure_ascii=False),
-                result_summary, duration_ms, status, now, chain_hash,
-            ),
-        )
+        try:
+            self.store.execute(
+                """INSERT INTO executor_audit
+                   (id, executor_type, action, task_id, token_id,
+                    parameters_json, result_summary, duration_ms, status, timestamp, chain_hash)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    eid, executor_type, action, task_id, token_id,
+                    json.dumps(parameters or {}, ensure_ascii=False),
+                    result_summary, duration_ms, status, now, chain_hash,
+                ),
+            )
+        except Exception:
+            # Auto-migrate: add chain_hash column if missing (legacy DBs)
+            try:
+                self.store.execute(
+                    "ALTER TABLE executor_audit ADD COLUMN chain_hash TEXT NOT NULL DEFAULT ''"
+                )
+                logger.info("auto-migrated executor_audit: added chain_hash column")
+            except Exception:
+                pass  # column already exists or other issue
+            # Retry the insert
+            self.store.execute(
+                """INSERT INTO executor_audit
+                   (id, executor_type, action, task_id, token_id,
+                    parameters_json, result_summary, duration_ms, status, timestamp, chain_hash)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    eid, executor_type, action, task_id, token_id,
+                    json.dumps(parameters or {}, ensure_ascii=False),
+                    result_summary, duration_ms, status, now, chain_hash,
+                ),
+            )
         self._last_hash = chain_hash
         logger.debug("audit: %s %s %s → %s", executor_type, action, task_id, status)
         return eid
@@ -830,7 +852,7 @@ DEFAULT_COMMS_DIR = str(Path(tempfile.gettempdir()) / "eva" / "notifications")
 
 class CommsExecutor(BaseExecutor):
     name = "comms"
-    description = "Log messages, write notifications, and emit alerts"
+    description = "Log messages, write notifications, emit alerts, and send webhooks"
 
     def __init__(
         self,
@@ -841,7 +863,9 @@ class CommsExecutor(BaseExecutor):
         cfg = (config or {}).get("executors", {}).get("comms", {})
         self.output_dir = Path(cfg.get("output_dir", DEFAULT_COMMS_DIR))
         self.allowed_levels = {"debug", "info", "warning", "error", "critical"}
-        self.allowed_actions = {"log", "notify", "alert"}
+        self.allowed_actions = {"log", "notify", "alert", "webhook"}
+        # Webhook URLs (configured via executors.yaml)
+        self.webhook_urls: list[str] = cfg.get("webhook_urls", [])
 
     def check_boundaries(self, params: dict[str, Any]) -> ExecutorDecision:
         action = params.get("action", params.get("kind", "log"))
@@ -904,5 +928,44 @@ class CommsExecutor(BaseExecutor):
                 results["actions"].append("write_failed")
                 results["write_error"] = str(e)
 
+        # ── Webhook delivery ──────────────────────────────────
+        if action in ("webhook", "alert") and self.webhook_urls:
+            webhook_results = self._send_webhooks(title, message, level)
+            results["actions"].extend(webhook_results.get("actions", []))
+            if "webhook_error" in webhook_results:
+                results["webhook_error"] = webhook_results["webhook_error"]
+
         results["summary"] = f"comms {action}: {message[:150]}"
+        return results
+
+    def _send_webhooks(self, title: str, message: str, level: str) -> dict[str, Any]:
+        """Send message to configured webhook URLs."""
+        import json as _json
+
+        results: dict[str, Any] = {"actions": []}
+        payload = _json.dumps({
+            "title": title,
+            "message": message,
+            "level": level,
+            "source": "EVA-v0.2",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
+
+        for url in self.webhook_urls:
+            try:
+                import httpx
+                resp = httpx.post(
+                    url,
+                    content=payload,
+                    headers={"Content-Type": "application/json"},
+                    timeout=10,
+                )
+                if resp.is_success:
+                    results["actions"].append(f"webhook_ok:{url[:60]}")
+                else:
+                    results["actions"].append(f"webhook_fail:{resp.status_code}")
+            except Exception as e:
+                results["actions"].append("webhook_error")
+                results["webhook_error"] = str(e)
+
         return results

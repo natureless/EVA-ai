@@ -6,6 +6,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable
 
 if TYPE_CHECKING:
+    from core.tool_registry import ToolRegistry
+
     from agent_os.orchestrator import AgentOrchestrator
     from agent_os.registry import AgentRegistry
     from agent_os.router import AgentRouter
@@ -91,6 +93,7 @@ class AppContainer:
     ws_manager: WebSocketManager | None = None
     executors: dict[str, Any] = field(default_factory=dict)
     executor_audit_log: ExecutorAuditLog | None = None
+    tool_registry: ToolRegistry | None = None
     save_runtime_snapshot: Callable[[], None] = field(default=lambda: None)
     health: HealthService | None = None
     diagnostic: DiagnosticReport | None = None

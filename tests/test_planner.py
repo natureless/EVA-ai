@@ -32,7 +32,7 @@ class TestPlannerSemanticRouting:
     def test_no_embedding_service_falls_back_to_keywords(self):
         """Without embedding service, semantic routing is skipped."""
         planner = Planner(embedding_service=None)
-        plan = planner.plan(_event("find the config file"))
+        plan = planner.plan(_event("grep the config file"))
         # Falls through to keyword match
         assert plan.agent == "search_agent"
         assert plan.decision == "act"
@@ -43,7 +43,7 @@ class TestPlannerSemanticRouting:
         # Make encode_single raise so _build_embeddings fails
         svc.encode_single = lambda text: (_ for _ in ()).throw(RuntimeError("fail"))  # type: ignore[assignment]
         planner = Planner(embedding_service=svc)
-        plan = planner.plan(_event("find the config file"))
+        plan = planner.plan(_event("grep the config file"))
         # Falls through to keyword match
         assert plan.agent == "search_agent"
 
@@ -154,7 +154,7 @@ class TestPlannerKeywordMatch:
 
     def test_search_keyword_match(self):
         planner = Planner(embedding_service=None)
-        plan = planner.plan(_event("find the config file"))
+        plan = planner.plan(_event("grep the config file"))
         assert plan.agent == "search_agent"
 
     def test_code_keyword_match(self):

@@ -29,10 +29,12 @@ from core.executor import (
     ExecutorAuditLog,
     FileExecutor,
 )
+from core.playwright_executor import PlaywrightBrowserExecutor, is_playwright_available
 from core.planner import Planner
 from core.policy_engine import PolicyEngine
 from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
+from core.tool_registry import ToolRegistry, create_builtin_tools
 from event.event_bus import EventBus
 from memory.memory_api import MemoryAPI
 from memory.memory_governor import MemoryGovernor, MemoryRepository
@@ -133,10 +135,24 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> None:
 
 def _wire_memory(state: dict[str, Any]) -> dict[str, Any]:
     """Initialize storage, memory API, governor, tiered memory, vector search, and restore S1 session."""
-    store = SQLiteStore(Path(settings.db_path))
-    store.init_db()
-    state["db_ready"] = True
-    logger.info("database initialized at %s", settings.db_path)
+    # ── storage backend selection ──
+    if settings.storage_backend == "postgresql" and settings.database_url:
+        from memory.postgres_store import PostgresStore
+        store = PostgresStore(database_url=settings.database_url)
+        store.init_db()
+        state["db_ready"] = True
+        logger.info("database initialized (PostgreSQL: %s)", settings.database_url.split("@")[-1] if "@" in settings.database_url else "connected")
+    elif settings.storage_backend == "postgresql":
+        from memory.postgres_store import PostgresStore
+        store = PostgresStore()
+        store.init_db()
+        state["db_ready"] = True
+        logger.info("database initialized (PostgreSQL via env vars)")
+    else:
+        store = SQLiteStore(Path(settings.db_path))
+        store.init_db()
+        state["db_ready"] = True
+        logger.info("database initialized at %s", settings.db_path)
 
     # ── vector search (lazy, only when embedding_provider=local) ──
     embedding_service = None
@@ -277,10 +293,10 @@ def _wire_world(
     }
 
 
-def _wire_agents(state: dict[str, Any]) -> dict[str, Any]:
+def _wire_agents(state: dict[str, Any], tool_registry: Any = None) -> dict[str, Any]:
     """Register built-in agents and create router + orchestrator."""
     registry = AgentRegistry()
-    registry.register(ChatAgent())
+    registry.register(ChatAgent(tool_registry=tool_registry))
     registry.register(DocsAgent())
     registry.register(SearchAgent())
     registry.register(CodingAgent())
@@ -398,6 +414,15 @@ def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = No
         "api": APIExecutor(audit_log, executors_config),
         "comms": CommsExecutor(audit_log, executors_config),
     }
+
+    # Upgrade to Playwright-based browser if available
+    if is_playwright_available():
+        try:
+            executors["playwright_browser"] = PlaywrightBrowserExecutor(audit_log, executors_config)
+            logger.info("playwright browser executor enabled")
+        except Exception as e:
+            logger.warning("playwright browser executor init failed: %s", e)
+
     logger.info("executor framework initialized (%d executors)", len(executors))
     return {"executor_audit_log": audit_log, "executors": executors}
 
@@ -516,8 +541,20 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     planner = Planner(embedding_service=storage.get("embedding_service"))
     system_state["planner_ready"] = True
 
+    # ── tool registry ──
+    tool_registry = ToolRegistry()
+    builtin_tools = create_builtin_tools(tiered_memory=storage["tiered_memory"])
+    for tool in builtin_tools:
+        tool_registry.register(tool)
+    logger.info("tool registry initialized with %d tools", len(tool_registry.list_all()))
+
+    # ── entity extractor upgrade ──
+    # Upgrade the global entity extractor singleton to use LLM when available.
+    from core.entity_extractor import _lazy_init_llm
+    _lazy_init_llm()
+
     # ── agents ──
-    agents = _wire_agents(system_state)
+    agents = _wire_agents(system_state, tool_registry=tool_registry)
 
     # ── results ──
     result_registry = ResultRegistry()
@@ -588,6 +625,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         tiered_memory=storage["tiered_memory"],
         executors=exec_data["executors"],
         ws_manager=ws_manager,
+        worker_count=settings.cognition_worker_count,
     )
     loop.start()
     system_state["loop_ready"] = True
@@ -623,6 +661,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         scheduler=scheduler,
     )
     system_state["ready"] = True
+    system_state["storage_backend"] = settings.storage_backend
 
     # ── boot diagnostic ──
     diagnostic = SystemDiagnostic().run_full(
@@ -675,6 +714,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         policy_engine=policy_engine,
         executors=exec_data["executors"],
         executor_audit_log=exec_data["executor_audit_log"],
+        tool_registry=tool_registry,
         save_runtime_snapshot=save_runtime_snapshot,
         health=health,
         diagnostic=diagnostic,

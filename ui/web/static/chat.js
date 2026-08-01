@@ -4,6 +4,7 @@ const Chat = {
   _streamAbort: null,
   _ws: null,
   _wsReconnectTimer: null,
+  _wsReconnectAttempts: 0,
   _pendingTasks: {},
 
   init() {
@@ -25,6 +26,7 @@ const Chat = {
 
     ws.onopen = () => {
       this._wsReconnectTimer = null;
+      this._wsReconnectAttempts = 0;
       this._setWsIndicator("connected");
     };
 
@@ -37,9 +39,13 @@ const Chat = {
 
     ws.onclose = () => {
       this._setWsIndicator("disconnected");
-      // Reconnect after 3s if not intentionally closed
+      // Exponential backoff: 1s → 2s → 4s → 8s → 16s → 30s cap
       if (!this._wsReconnectTimer) {
-        this._wsReconnectTimer = setTimeout(() => this._connectWS(), 3000);
+        this._wsReconnectAttempts++;
+        const base = Math.min(1000 * Math.pow(2, this._wsReconnectAttempts - 1), 30000);
+        const jitter = Math.random() * 1000;  // 0-1s random jitter
+        const delay = base + jitter;
+        this._wsReconnectTimer = setTimeout(() => this._connectWS(), delay);
       }
     };
 
@@ -202,8 +208,10 @@ const Chat = {
         : (I18N ? I18N.t("chat.eva") : "EVA");
       const timeStr = this._formatTime(m.time);
       const html = isUser ? this._escapeHtml(m.text) : this._renderMarkdown(m.text);
+      const toolCardsHtml = m.toolCards ? this._renderToolCards(m.toolCards) : "";
       return `<div class="message-row ${isUser ? "user" : "eva"}">
         <span class="message-sender">${senderLabel}</span>
+        ${toolCardsHtml}
         <div class="message-bubble">${html}</div>
         <span class="message-time">${timeStr}</span>
       </div>`;
@@ -447,6 +455,10 @@ const Chat = {
       const decoder = new TextDecoder();
       let buf = "";
       let full = "";
+      let toolCards = [];  // accumulated tool progress cards
+
+      // Regex for tool progress events
+      const TOOL_RE = /^\[(TOOL_START|TOOL_RESULT|TOOL_ERROR|TOOL_MAX_ROUNDS):([^\]]+)\]\s*(.*)$/;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -462,14 +474,25 @@ const Chat = {
             full = data;
             break;
           }
+
+          // Check for tool progress events (strip leading/trailing whitespace)
+          const toolMatch = data.trim().match(TOOL_RE);
+          if (toolMatch) {
+            const [, eventType, toolName, detail] = toolMatch;
+            toolCards.push({ eventType, toolName, detail: detail.trim() });
+            // Render with tool cards inline
+            this._updateLastEvaMessageWithTools(full, toolCards);
+            continue;
+          }
+
           full += data;
-          this._updateLastEvaMessage(full);
+          this._updateLastEvaMessageWithTools(full, toolCards);
           ParticleController.burstParticles(2);
         }
       }
 
-      if (!full) full = "(empty response)";
-      this._updateLastEvaMessage(full);
+      if (!full && toolCards.length === 0) full = "(empty response)";
+      this._updateLastEvaMessageWithTools(full, toolCards);
     } catch (err) {
       if (err.name !== "AbortError") {
         this._updateLastEvaMessage(`Error: ${err.message}`);
@@ -482,6 +505,46 @@ const Chat = {
         }
       }, 1000);
     }
+  },
+
+  // ── Render message with tool progress cards ──────────────
+  _updateLastEvaMessageWithTools(fullText, toolCards) {
+    const last = this._messages[this._messages.length - 1];
+    if (last && last.role === "eva") {
+      last.text = fullText;
+      last.toolCards = toolCards.slice(); // copy
+    } else {
+      this._messages.push({ role: "eva", text: fullText, time: Date.now(), toolCards: toolCards.slice() });
+    }
+    this._renderMessages();
+  },
+
+  // ── Render tool cards as styled HTML ─────────────────────
+  _renderToolCards(cards) {
+    if (!cards || cards.length === 0) return "";
+    const iconMap = {
+      TOOL_START:   { cls: "tool-start",   icon: "⚙️" },
+      TOOL_RESULT:  { cls: "tool-result",  icon: "✅" },
+      TOOL_ERROR:   { cls: "tool-error",   icon: "❌" },
+      TOOL_MAX_ROUNDS: { cls: "tool-warn", icon: "⚠️" },
+    };
+    const labelMap = {
+      TOOL_START:   "Running",
+      TOOL_RESULT:  "Done",
+      TOOL_ERROR:   "Failed",
+      TOOL_MAX_ROUNDS: "Limit",
+    };
+    return cards.map(c => {
+      const cfg = iconMap[c.eventType] || { cls: "tool-start", icon: "🔧" };
+      const label = labelMap[c.eventType] || c.eventType;
+      const toolLabel = c.toolName.replace(/_/g, " ");
+      return `<div class="tool-card ${cfg.cls}">
+        <span class="tool-icon">${cfg.icon}</span>
+        <span class="tool-label">${label}</span>
+        <span class="tool-name">${this._escapeHtml(toolLabel)}</span>
+        <span class="tool-detail">${this._escapeHtml(c.detail)}</span>
+      </div>`;
+    }).join("");
   },
 };
 
