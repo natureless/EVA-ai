@@ -249,3 +249,30 @@ def compaction_stats(request: Request) -> dict[str, Any]:
         "last_maintenance": gov if gov else {"status": "not_yet_run"},
         "memory_governor_available": container.memory_governor is not None,
     }
+
+
+@router.get("/api/memory/db-stats")
+def db_table_stats(request: Request) -> dict[str, Any]:
+    """数据库表统计 — 各表的行数。"""
+    container = request.app.state.container
+    store = container.store
+
+    if store is None:
+        return {"status": "unavailable"}
+
+    tables = [
+        "events", "traces", "memory_items",
+        "working_memory", "long_term_memory",
+        "world_entities", "world_edges",
+        "executor_audit",
+    ]
+
+    counts = {}
+    for table in tables:
+        try:
+            rows = store.fetchall(f"SELECT COUNT(*) as cnt FROM {table}", ())
+            counts[table] = rows[0]["cnt"] if rows else 0
+        except Exception:
+            counts[table] = -1  # table doesn't exist
+
+    return {"table_counts": counts, "total_tables": len(tables)}
