@@ -98,11 +98,50 @@ def memory_tiers(request: Request, format: str = "raw") -> dict[str, Any]:
 
 @router.get("/api/memory/working")
 def working_memory(request: Request, limit: int = 50) -> dict[str, Any]:
-    """Recent S2 working memory entries."""
+    """S1+S2 working memory — current session context."""
     tm = request.app.state.container.tiered_memory
     if tm is None:
-        return {"items": []}
-    return {"items": tm.s2.list_recent(limit=limit)}
+        return {"items": [], "s1": [], "s2": []}
+
+    s1_entries = tm.s1.list_all()[:limit]
+    s2_entries = tm.s2.list_recent(limit=limit)
+
+    return {
+        "s1": [
+            {"key": k, "content": str(v.get("content", ""))[:200], "importance": v.get("importance", 0)}
+            for k, v in s1_entries
+        ],
+        "s2": [
+            {"id": r.get("id", ""), "content": r.get("content", "")[:200], "source": r.get("source", "")}
+            for r in s2_entries
+        ],
+        "total": len(s1_entries) + len(s2_entries),
+    }
+
+
+@router.get("/api/memory/working/stats")
+def working_memory_stats(request: Request) -> dict[str, Any]:
+    """S1+S2 capacity and hit/miss statistics."""
+    tm = request.app.state.container.tiered_memory
+    if tm is None:
+        return {"status": "unavailable"}
+
+    s1_stats = tm.s1.stats()
+    s2_stats = tm.s2.stats()
+
+    hits = s1_stats.get("hit_count", 0)
+    misses = s1_stats.get("miss_count", 0)
+    return {
+        "s1": {
+            "entries": s1_stats.get("entries", 0),
+            "max": s1_stats.get("max_entries", 200),
+            "hit_rate": round(hits / max(1, hits + misses), 3),
+        },
+        "s2": {
+            "entries": s2_stats.get("entries", 0),
+            "max": s2_stats.get("max_entries", 500),
+        },
+    }
 
 
 @router.get("/api/memory/longterm")
