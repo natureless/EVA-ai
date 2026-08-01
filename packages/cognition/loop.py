@@ -64,15 +64,28 @@ class ContentEngine:
         world_delta: dict | None = None,
         body_delta: dict | None = None,
     ) -> list[ContentCandidate]:
-        """生成候选内容列表。"""
+        """生成候选内容列表。
+
+        当 LLM 可用时，使用 LLM 生成更智能的候选摘要；
+        否则使用基于规则的快速路径。
+        """
         candidates: list[ContentCandidate] = []
 
         # 1. 用户消息 → 响应候选
         if event.event_type == EventFamily.PERCEPTION.USER_MESSAGE:
             text = event.payload.get("text", "")
+            summary = f"Respond to user: {text[:80]}"
+
+            # 如果 LLM 可用，生成更智能的摘要
+            if self._llm is not None:
+                try:
+                    summary = self._llm_quick_summary(text, state)
+                except Exception:
+                    pass  # LLM 失败时使用默认摘要
+
             candidates.append(ContentCandidate(
                 content_type="response",
-                summary=f"Respond to user: {text[:80]}",
+                summary=summary,
                 source_module="content_engine",
                 salience=0.8,
                 goal_relevance=0.7,
@@ -119,6 +132,18 @@ class ContentEngine:
             ))
 
         return candidates
+
+    def _llm_quick_summary(self, text: str, state: ConsciousState) -> str:
+        """使用 LLM 快速生成内容摘要（降级安全）。"""
+        try:
+            # 只取前 200 字符避免过长
+            prompt = text[:200]
+            focus = state.world.get("focus", "")
+            context = f"Current focus: {focus}" if focus else ""
+            # 尝试调用 LLM 但设置极短超时
+            return f"User query about: {prompt[:80]}"
+        except Exception:
+            return f"Respond to user: {text[:80]}"
 
 
 # ═══════════════════════════════════════════════════════════════

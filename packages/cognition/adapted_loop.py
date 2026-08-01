@@ -311,7 +311,11 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
         broadcast: list[BroadcastContent], evaluation: dict,
         action_events: list[EventEnvelope],
     ) -> list[EventEnvelope]:
-        """使用现有 TieredMemoryManager 整合记忆。"""
+        """使用现有 TieredMemoryManager + MemoryIngestor 整合记忆。
+
+        复用 core/memory_ingestor.py 的 MemoryIngestor 进行用户消息摄取，
+        同时使用 TieredMemoryManager 进行分层记忆写入。
+        """
         if self._container is None:
             return []
 
@@ -322,6 +326,24 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
         events: list[EventEnvelope] = []
 
         try:
+            # 对用户消息事件，使用 MemoryIngestor (复用现有逻辑)
+            if event.event_type == EventFamily.PERCEPTION.USER_MESSAGE:
+                try:
+                    from core.memory_ingestor import MemoryIngestor
+                    ingestor = MemoryIngestor(
+                        self._container.memory_governor,
+                        self._container.self_model,
+                    )
+                    ingestor.ingest_user_message(
+                        text=event.payload.get("text", ""),
+                        event_id=event.event_id,
+                        source=event.source,
+                        active_tasks=state.world.get("active_tasks", []),
+                    )
+                except Exception:
+                    pass  # MemoryIngestor is best-effort
+
+            # 广播内容写入分层记忆
             for bc in broadcast:
                 importance = bc.content.priority
                 tm.ingest(

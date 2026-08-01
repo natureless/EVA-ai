@@ -642,31 +642,6 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     system_state["loop_ready"] = True
     logger.info("cognition loop started")
 
-    # ── MVSC integration (feature-flagged) ──
-    mvsc_components: dict[str, Any] | None = None
-    if settings.enable_mvsc_pipeline:
-        try:
-            from packages.kernel.mvsc_bootstrap import integrate_mvsc
-            # Build a temporary container-like object for integration
-            mvsc_components = integrate_mvsc(
-                container=_build_mvsc_container_ref(
-                    system_state=system_state,
-                    event_bus=event_bus,
-                    world_model=wm,
-                    tiered_memory=storage["tiered_memory"],
-                    agent_router=agents["agent_router"],
-                    orchestrator=agents["orchestrator"],
-                    self_model_store=persona["self_model_store"],
-                    self_model=persona["self_model"],
-                    prediction_tracker=prediction_tracker,
-                    memory_governor=storage["memory_governor"],
-                ),
-                settings=settings,
-            )
-            logger.info("MVSC pipeline enabled — adapted loop ready")
-        except Exception:
-            logger.exception("MVSC integration failed — falling back to legacy loop")
-
     # ── github poller ──
     github_poller = _wire_github_poller(
         event_bus=event_bus,
@@ -718,7 +693,7 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
     logger.info("bootstrap complete — system ready (%.1fs)", bootstrap_sec)
     system_state["bootstrap_sec"] = bootstrap_sec
 
-    return AppContainer(
+    container = AppContainer(
         settings=settings,
         system_state=system_state,
         store=store,
@@ -758,8 +733,18 @@ def bootstrap_system(ws_manager: Any = None) -> AppContainer:
         github_poller=github_poller,
         embedding_service=storage.get("embedding_service"),
         vector_store=storage.get("vector_store"),
-        mvsc_components=mvsc_components,
     )
+
+    # ── MVSC integration (feature-flagged, post-construction) ──
+    if settings.enable_mvsc_pipeline:
+        try:
+            from packages.kernel.mvsc_bootstrap import integrate_mvsc
+            container.mvsc_components = integrate_mvsc(container, settings)
+            logger.info("MVSC pipeline enabled — adapted loop ready")
+        except Exception:
+            logger.exception("MVSC integration failed — falling back to legacy loop")
+
+    return container
 
 
 def shutdown_system(container: AppContainer) -> None:
@@ -807,44 +792,6 @@ def shutdown_system(container: AppContainer) -> None:
 
 
 # ── internal helpers ───────────────────────────────────────────────
-
-def _build_mvsc_container_ref(
-    *,
-    system_state: dict[str, Any],
-    event_bus: Any,
-    world_model: Any,
-    tiered_memory: Any,
-    agent_router: Any,
-    orchestrator: Any,
-    self_model_store: Any,
-    self_model: dict[str, Any] | None,
-    prediction_tracker: Any,
-    memory_governor: Any,
-) -> Any:
-    """Build a lightweight container reference for MVSC integration.
-
-    This avoids a circular dependency: bootstrap creates the real
-    AppContainer after all components are ready, but MVSC needs a
-    subset of those components during integration.
-    """
-    # Simple namespace object
-    class _MVSCContainerRef:
-        pass
-
-    ref = _MVSCContainerRef()
-    ref.system_state = system_state
-    ref.event_bus = event_bus
-    ref.world_model = world_model
-    ref.tiered_memory = tiered_memory
-    ref.agent_router = agent_router
-    ref.orchestrator = orchestrator
-    ref.self_model_store = self_model_store
-    ref.self_model = self_model
-    ref.prediction_tracker = prediction_tracker
-    ref.memory_governor = memory_governor
-    ref.planner = None
-    ref.loop = None  # filled in later if needed
-    return ref
 
 def _log_diagnostic(diagnostic: DiagnosticReport) -> None:
     if diagnostic.overall == "critical":
