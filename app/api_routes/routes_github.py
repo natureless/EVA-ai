@@ -57,3 +57,17 @@ async def github_webhook(
 
     logger.info("github webhook: %s %s → %s", x_github_event, x_github_delivery, event.id)
     return {"status": "ok", "event_id": event.id, "delivery_id": x_github_delivery}
+
+
+@router.get("/api/github/status")
+def github_status(request: Request) -> dict[str, Any]:
+    """GitHub 连接器状态。"""
+    container = request.app.state.container
+
+    return {
+        "webhook_configured": bool(container.settings.github_webhook_secret),
+        "poll_configured": bool(container.settings.github_api_token and container.settings.github_poll_repos),
+        "poll_repos": container.settings.github_poll_repos,
+        "poll_interval_sec": container.settings.github_poll_interval_sec,
+        "poller_active": container.github_poller is not None,
+    }
