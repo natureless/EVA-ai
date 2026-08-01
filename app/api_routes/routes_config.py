@@ -52,3 +52,24 @@ def get_config(request: Request) -> dict[str, Any]:
             "agents_registered": len(container.registry.list_agents()),
         },
     }
+
+
+@router.get("/defaults")
+def config_defaults(request: Request) -> dict[str, Any]:
+    """配置默认值 — 用于对比当前配置。"""
+    from app.config import Settings
+    defaults = Settings()
+
+    return {
+        "defaults": {
+            "env": defaults.env,
+            "port": defaults.port,
+            "log_level": defaults.log_level,
+            "tick_interval_sec": defaults.tick_interval_sec,
+            "stagnation_threshold_sec": defaults.stagnation_threshold_sec,
+            "enable_mvsc_pipeline": defaults.enable_mvsc_pipeline,
+            "cognition_worker_count": defaults.cognition_worker_count,
+            "llm_timeout_sec": defaults.llm_timeout_sec,
+            "embedding_provider": defaults.embedding_provider,
+        },
+    }

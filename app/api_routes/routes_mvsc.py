@@ -261,6 +261,38 @@ def verify_event_integrity(request: Request) -> dict[str, Any]:
         return {"status": "error", "detail": str(e)}
 
 
+@router.get("/events/chain/{event_id}")
+def get_causal_chain(request: Request, event_id: str) -> dict[str, Any]:
+    """获取事件的完整因果链。"""
+    container = request.app.state.container
+
+    if not container.mvsc_components:
+        return {"status": "mvsc_not_enabled"}
+
+    event_store = container.mvsc_components.get("event_store")
+    if event_store is None:
+        return {"status": "event_store_not_available"}
+
+    try:
+        chain = event_store.get_causal_chain(event_id)
+        return {
+            "event_id": event_id,
+            "chain_length": len(chain),
+            "chain": [
+                {
+                    "sequence": e.sequence,
+                    "event_id": e.event_id,
+                    "event_type": e.event_type,
+                    "source": e.source,
+                    "causation_id": e.causation_id,
+                }
+                for e in chain
+            ],
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e), "event_id": event_id}
+
+
 @router.get("/events")
 def list_events(
     request: Request,
