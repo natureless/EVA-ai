@@ -25,7 +25,7 @@ from packages.contracts.protocols import (
     VerificationResult,
 )
 
-logger = logging.getLogger("eva.verifier")
+logger = logging.getLogger("eva.agentos.verifier")
 
 
 class Verifier:

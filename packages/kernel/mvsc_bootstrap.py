@@ -33,7 +33,7 @@ from packages.mvsc_lab.integration import (
     load_ablation_config,
 )
 
-logger = logging.getLogger("eva.bootstrap.mvsc")
+logger = logging.getLogger("eva.kernel.mvsc_bootstrap")
 
 
 # ═══════════════════════════════════════════════════════════════
