@@ -135,12 +135,13 @@ class MemoryGovernor:
         self,
         repository: MemoryRepository,
         tiered_memory: TieredMemoryManager | None = None,
+        llm: object | None = None,
     ) -> None:
         self.repository = repository
         self.tiered_memory = tiered_memory
         self.importance = ImportanceScorer()
         self.conflict_resolver = MemoryConflictResolver()
-        self.compactor = MemoryCompactor()
+        self.compactor = MemoryCompactor(llm=llm)
         self.decay_policy = MemoryDecayPolicy()
 
     def ingest(

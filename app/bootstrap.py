@@ -184,7 +184,18 @@ def _wire_memory(state: dict[str, Any]) -> dict[str, Any]:
         "S3_long_term": {"max_entries": 10000},
     }, embedding_service=embedding_service, vector_store=vector_store)
 
-    governor = MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory)
+    # Try to wire LLM into memory compactor for smarter summarization
+    _compactor_llm = None
+    try:
+        from core.llm_adapter import get_llm, MockLLM
+        _candidate = get_llm()
+        if not isinstance(_candidate, MockLLM):
+            _compactor_llm = _candidate
+            logger.info("memory compactor upgraded to LLM-based summarization")
+    except Exception:
+        pass
+
+    governor = MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory, llm=_compactor_llm)
     # wire reverse bridge so tiered ingest feeds back into governor
     tiered_memory._governor = governor
 

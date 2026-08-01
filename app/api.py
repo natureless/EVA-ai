@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api_routes.routes_agents import router as agents_router
 from app.api_routes.routes_chat import router as chat_router
 from app.api_routes.routes_executors import router as executors_router
+from app.api_routes.routes_export import router as export_router
 from app.api_routes.routes_github import router as github_router
 from app.api_routes.routes_health import router as health_router
 from app.api_routes.routes_memory import router as memory_router
@@ -22,6 +23,7 @@ router = APIRouter()
 router.include_router(ui_router)
 router.include_router(chat_router)
 router.include_router(executors_router)
+router.include_router(export_router)
 router.include_router(memory_router)
 router.include_router(memory_explorer_router)
 router.include_router(agents_router)

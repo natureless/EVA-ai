@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Iterable
 
 from memory.memory_schema import MemoryRecord, MemoryStatus, MemoryType
+
+logger = logging.getLogger("eva.memory.compactor")
 
 
 class MemoryDecayPolicy:
@@ -31,7 +34,34 @@ class MemoryDecayPolicy:
         return mem
 
 
+# ── LLM summarization prompt ──────────────────────────────────
+
+COMPACTION_PROMPT = """Summarize the following group of related memories into a single concise paragraph.
+
+Topic: {topic}
+Number of memories: {count}
+
+Memories:
+{memories}
+
+Return only the summary paragraph, no extra commentary."""
+
+
 class MemoryCompactor:
+    """Compacts groups of related episodic memories into semantic summaries.
+
+    Uses LLM-based summarization when an LLM is available; falls back to
+    simple concatenation otherwise.
+    """
+
+    def __init__(self, llm: object | None = None) -> None:
+        """Initialize with optional LLM for summarization.
+
+        Args:
+            llm: An LLMAdapter instance. If None, uses simple concatenation.
+        """
+        self._llm = llm
+
     def group_for_compaction(
         self, memories: Iterable[MemoryRecord]
     ) -> dict[str, list[MemoryRecord]]:
@@ -47,18 +77,22 @@ class MemoryCompactor:
         return {key: group for key, group in groups.items() if len(group) >= 3}
 
     def compact_group(self, topic: str, group: list[MemoryRecord]) -> MemoryRecord:
-        joined = "\n".join(f"- {mem.content}" for mem in group[:10])
-        summary = f"Topic[{topic}] recurring events:\n{joined}"
+        """Compact a group of related memories into one summary record.
 
+        Uses LLM summarization when available for higher-quality summaries.
+        """
         now = datetime.now(timezone.utc)
         from uuid import uuid4
+
+        summary = self._summarize(topic, group)
+        avg_confidence = sum(mem.confidence for mem in group) / len(group)
 
         return MemoryRecord(
             id=str(uuid4()),
             memory_type=MemoryType.SEMANTIC,
             content=summary,
             salience=max(mem.salience for mem in group),
-            confidence=min(0.95, sum(mem.confidence for mem in group) / len(group) + 0.1),
+            confidence=min(0.95, avg_confidence + 0.1),
             conflict_keys=[],
             created_at=now,
             updated_at=now,
@@ -66,8 +100,38 @@ class MemoryCompactor:
                 "source_memory_ids": [mem.id for mem in group],
                 "topic": topic,
                 "compacted_from_count": len(group),
+                "method": "llm" if self._llm is not None else "concat",
             },
         )
+
+    def _summarize(self, topic: str, group: list[MemoryRecord]) -> str:
+        """Generate a summary of a memory group."""
+        # Try LLM summarization first
+        if self._llm is not None:
+            try:
+                memories_text = "\n".join(
+                    f"- {mem.content}" for mem in group[:15]
+                )
+                prompt = COMPACTION_PROMPT.format(
+                    topic=topic,
+                    count=len(group),
+                    memories=memories_text[:3000],
+                )
+                response = self._llm.chat([
+                    {"role": "user", "content": prompt},
+                ])
+                if response and len(response.strip()) > 20:
+                    logger.debug(
+                        "LLM compacted %d memories on topic '%s' → %d chars",
+                        len(group), topic, len(response),
+                    )
+                    return response.strip()
+            except Exception as e:
+                logger.debug("LLM compaction failed, using concat: %s", e)
+
+        # Fallback: simple concatenation
+        joined = "\n".join(f"- {mem.content}" for mem in group[:10])
+        return f"Topic[{topic}] recurring events ({len(group)} items):\n{joined}"
 
     def _topic_key(self, mem: MemoryRecord) -> str:
         if mem.conflict_keys:

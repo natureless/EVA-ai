@@ -250,3 +250,111 @@ class TestToolsRoutes:
         assert r.status_code == 200
         data = r.json()
         assert data["ok"] is False
+
+
+class TestExportRoutes:
+    """Tests for conversation export/import endpoints."""
+
+    def test_export_json(self, client):
+        """Export returns JSON with messages array."""
+        r = client.get("/api/conversation/export?format=json&limit=10")
+        assert r.status_code == 200
+        data = r.json()
+        assert "messages" in data
+        assert "exported_at" in data
+        assert "message_count" in data
+
+    def test_export_markdown(self, client):
+        """Export returns markdown text."""
+        r = client.get("/api/conversation/export?format=markdown&limit=5")
+        assert r.status_code == 200
+        text = r.text
+        assert "# EVA Conversation Export" in text
+        assert r.headers.get("content-type", "").startswith("text/markdown")
+
+    def test_export_invalid_format(self, client):
+        """Invalid format returns 422."""
+        r = client.get("/api/conversation/export?format=xml")
+        assert r.status_code == 422
+
+    def test_export_limit_respected(self, client):
+        """Limit parameter is honored."""
+        r = client.get("/api/conversation/export?format=json&limit=3")
+        assert r.status_code == 200
+        data = r.json()
+        assert len(data["messages"]) <= 3
+
+    def test_import_json(self, client):
+        """Import JSON conversation."""
+        payload = {
+            "format": "json",
+            "content": '{"messages": [{"type": "user_message", "text": "Hello EVA"}, {"type": "agent_response", "text": "Hello human"}]}',
+            "source_label": "test",
+        }
+        r = client.post("/api/conversation/import", json=payload)
+        assert r.status_code == 200
+        data = r.json()
+        assert data["ok"] is True
+        assert data["imported"] == 2
+
+    def test_import_empty_content(self, client):
+        """Empty content returns 422."""
+        r = client.post("/api/conversation/import", json={
+            "format": "json", "content": "", "source_label": "test",
+        })
+        assert r.status_code == 422
+
+
+class TestAgentRoutes:
+    """Tests for agent registration endpoints."""
+
+    def test_list_agents(self, client):
+        """List agents returns all registered agents."""
+        r = client.get("/api/agents")
+        assert r.status_code == 200
+        data = r.json()
+        assert "agents" in data
+        assert "count" in data
+        assert data["count"] >= 4  # at least 4 built-in agents
+
+    def test_register_agent(self, client):
+        """Register a new agent at runtime."""
+        r = client.post("/api/agents/register", json={
+            "name": "test_bot",
+            "description": "A test agent",
+            "kind": "chat",
+        })
+        assert r.status_code == 200
+        data = r.json()
+        assert data["ok"] is True
+        assert data["agent"] == "test_bot"
+
+        # Verify it appears in the list
+        r2 = client.get("/api/agents")
+        agents = r2.json()["agents"]
+        names = [a["name"] for a in agents]
+        assert "test_bot" in names
+
+    def test_register_duplicate(self, client):
+        """Registering duplicate name returns 409."""
+        client.post("/api/agents/register", json={
+            "name": "dup_bot", "description": "", "kind": "chat",
+        })
+        r = client.post("/api/agents/register", json={
+            "name": "dup_bot", "description": "", "kind": "chat",
+        })
+        assert r.status_code == 409
+
+    def test_unregister_agent(self, client):
+        """Unregister a dynamically added agent."""
+        client.post("/api/agents/register", json={
+            "name": "temp_bot", "description": "", "kind": "chat",
+        })
+        r = client.delete("/api/agents/temp_bot")
+        assert r.status_code == 200
+        assert r.json()["ok"] is True
+
+    def test_cannot_unregister_builtin(self, client):
+        """Built-in agents cannot be unregistered."""
+        r = client.delete("/api/agents/chat_agent")
+        assert r.status_code == 403
