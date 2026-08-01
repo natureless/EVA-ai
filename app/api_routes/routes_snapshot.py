@@ -64,3 +64,34 @@ def snapshot_status(request: Request) -> dict[str, Any]:
         "world_entities": container.world_model.entity_count if container.world_model else 0,
         "world_edges": container.world_model.edge_count if container.world_model else 0,
     }
+
+
+@router.get("/api/debug/snapshot/verify")
+def verify_snapshot(request: Request) -> dict[str, Any]:
+    """验证最新快照完整性。"""
+    import hashlib
+    import json
+
+    container = request.app.state.container
+    snapshot = container.snapshot_store.load_latest()
+
+    if snapshot is None:
+        return {"status": "no_snapshot"}
+
+    # Compute hash
+    data = json.dumps(snapshot, sort_keys=True, ensure_ascii=False)
+    snapshot_hash = hashlib.sha256(data.encode()).hexdigest()[:16]
+
+    # Basic structure check
+    has_world = "world_model" in snapshot
+    has_profile = "profile" in snapshot
+    has_memory = "memory" in snapshot
+
+    return {
+        "status": "valid" if (has_world and has_profile) else "incomplete",
+        "hash": snapshot_hash,
+        "has_world_model": has_world,
+        "has_profile": has_profile,
+        "has_memory": has_memory,
+        "snapshot_keys": list(snapshot.keys()) if isinstance(snapshot, dict) else [],
+    }

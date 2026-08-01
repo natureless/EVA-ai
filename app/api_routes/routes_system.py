@@ -71,3 +71,37 @@ def set_log_level(req: LogLevelRequest, request: Request) -> dict[str, Any]:
             logging.getLogger(name).setLevel(getattr(logging, req.level))
 
     return {"ok": True, "level": req.level}
+
+
+@router.get("/versions")
+def dependency_versions(request: Request) -> dict[str, Any]:
+    """关键依赖版本列表。"""
+    versions = {}
+    for pkg in ["fastapi", "pydantic", "uvicorn", "yaml", "httpx", "jinja2"]:
+        try:
+            mod = __import__(pkg)
+            versions[pkg] = getattr(mod, "__version__", "unknown")
+        except Exception:
+            versions[pkg] = "not_installed"
+
+    import sys
+    return {
+        "python": sys.version,
+        "packages": versions,
+    }
+
+
+@router.get("/env")
+def environment_info(request: Request) -> dict[str, Any]:
+    """环境变量查看（脱敏 — 只显示 key，不显示 value）。"""
+    import os
+
+    # Only show EVA-related vars
+    eva_vars = {k: "***" if "KEY" in k or "TOKEN" in k or "SECRET" in k else v[:30]
+                for k, v in sorted(os.environ.items())
+                if k.startswith("EVA_")}
+
+    return {
+        "env_vars": list(eva_vars.keys()),
+        "count": len(eva_vars),
+    }
