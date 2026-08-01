@@ -229,3 +229,20 @@ def _parse_markdown_messages(content: str) -> list[dict[str, Any]]:
             messages.append({"type": role, "text": text.strip()})
 
     return messages
+
+
+@router.get("/api/conversation/stats")
+def conversation_stats(request: Request) -> dict[str, Any]:
+    """会话统计 — 可导出的消息数量。"""
+    container = request.app.state.container
+
+    # Count events in the event bus
+    total_events = container.event_bus.size()
+    recent_traces = len(container.memory_api.get_recent_traces(limit=1000))
+
+    return {
+        "total_events_in_queue": total_events,
+        "total_traces": recent_traces,
+        "export_formats": ["json", "markdown"],
+        "max_export_limit": 1000,
+    }
