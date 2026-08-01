@@ -228,3 +228,62 @@ def get_trace(request: Request, correlation_id: str) -> dict[str, Any]:
         }
     except Exception:
         return {"status": "error", "correlation_id": correlation_id}
+
+
+@router.get("/integrity")
+def verify_event_integrity(request: Request) -> dict[str, Any]:
+    """验证 EventStore 事件日志完整性。
+
+    检查:
+    - 序列号连续性 (无gap)
+    - 事件总数
+    - 状态哈希确定性
+    """
+    container = request.app.state.container
+
+    if not container.mvsc_components:
+        return {"status": "mvsc_not_enabled"}
+
+    event_store = container.mvsc_components.get("event_store")
+    if event_store is None:
+        return {"status": "event_store_not_available"}
+
+    try:
+        integrity = event_store.verify_integrity()
+        state_hash = event_store.compute_state_hash()
+        return {
+            "status": "healthy" if integrity["ok"] else "degraded",
+            "integrity": integrity,
+            "state_hash": state_hash,
+            "total_events": integrity["total"],
+        }
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+
+@router.get("/cache/stats")
+def get_semantic_cache_stats(request: Request) -> dict[str, Any]:
+    """获取语义缓存统计信息。"""
+    container = request.app.state.container
+
+    cache = getattr(container, "mvsc_semantic_cache", None)
+    if cache is None:
+        return {"status": "cache_not_initialized"}
+
+    return {
+        "status": "active",
+        "stats": cache.stats,
+    }
+
+
+@router.post("/cache/invalidate")
+def invalidate_semantic_cache(request: Request) -> dict[str, Any]:
+    """清空语义缓存。"""
+    container = request.app.state.container
+
+    cache = getattr(container, "mvsc_semantic_cache", None)
+    if cache is None:
+        return {"status": "cache_not_initialized"}
+
+    count = cache.invalidate()
+    return {"ok": True, "invalidated": count}
