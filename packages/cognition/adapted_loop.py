@@ -420,3 +420,7 @@ def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = 
         verifier=Verifier(),
         feature_flags=feature_flags,
     )
+    # Wire WebSocket for real-time phase broadcasting
+    if hasattr(container, "ws_manager") and container.ws_manager:
+        loop._ws_manager = container.ws_manager
+    return loop

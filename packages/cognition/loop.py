@@ -452,6 +452,7 @@ class PipelineCognitionLoop:
         }
         self._phase_timings: dict[str, float] = {}
         self._current_state: ConsciousState | None = None
+        self._ws_manager: Any = None  # set by subclasses for real-time broadcast
 
     async def run_once(self, event: EventEnvelope) -> ConsciousState:
         """执行一个完整的认知循环。
@@ -472,6 +473,7 @@ class PipelineCognitionLoop:
         # ── Phase 1: PERCEIVE ──
         t0 = time.perf_counter()
         self._record_phase("perceive", t0)
+        await self._notify_phase(state, "perceive", {})
 
         # ── Phase 2: UPDATE_WORLD ──
         t0 = time.perf_counter()
@@ -662,6 +664,20 @@ class PipelineCognitionLoop:
 
     def _record_phase(self, phase: str, t0: float) -> None:
         self._phase_timings[phase] = (time.perf_counter() - t0) * 1000
+
+    async def _notify_phase(self, state: ConsciousState, phase: str, detail: dict) -> None:
+        """Broadcast pipeline phase transition via WebSocket."""
+        if self._ws_manager:
+            try:
+                self._ws_manager.broadcast_sync("mvsc_phase", {
+                    "tick": state.tick,
+                    "phase": phase,
+                    "mode": state.runtime_mode.value,
+                    "detail": detail,
+                    "timing_ms": self._phase_timings.get(phase, 0),
+                })
+            except Exception:
+                pass
 
     @property
     def phase_timings(self) -> dict[str, float]:

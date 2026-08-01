@@ -28,6 +28,16 @@ def settings_page(request: Request) -> Any:
     )
 
 
+@router.get("/mvsc")
+def mvsc_dashboard(request: Request) -> Any:
+    """MVSC Pipeline Dashboard — real-time cognitive state visualization."""
+    return templates.TemplateResponse(
+        request=request,
+        name="mvsc_dashboard.html",
+        context={"app_name": f"{settings.app_name} MVSC", "page": "mvsc"},
+    )
+
+
 @router.get("/memory")
 def memory_explorer_page(request: Request) -> Any:
     return templates.TemplateResponse(

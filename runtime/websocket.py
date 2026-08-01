@@ -41,6 +41,8 @@ class WebSocketManager:
             "system_state": set(),
             "chat_reply": set(),
             "chat_token": set(),
+            "mvsc_phase": set(),       # MVSC pipeline phase transitions
+            "mvsc_metrics": set(),     # MVSC ablation metrics
         }
         self._message_count = 0
         self._main_loop: asyncio.AbstractEventLoop | None = None
