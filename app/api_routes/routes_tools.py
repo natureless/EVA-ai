@@ -56,3 +56,33 @@ def call_tool(request: Request, payload: dict[str, object]) -> dict[str, object]
         "result": result,
         "formatted": formatted,
     }
+
+
+@router.get("/api/tools/stats")
+def tool_stats(request: Request) -> dict[str, object]:
+    """工具注册表统计 — 可用工具数和分类。"""
+    container = request.app.state.container
+    tool_registry = getattr(container, "tool_registry", None)
+
+    if tool_registry is None:
+        return {"tools": [], "count": 0}
+
+    tools = tool_registry.list_all()
+    categories = {
+        "filesystem": ["search_files", "read_file", "list_directory"],
+        "execution": ["run_code"],
+        "network": ["web_fetch", "browse_web", "web_search"],
+        "memory": ["search_memory", "ingest_document"],
+    }
+
+    tool_names = [t.name for t in tools]
+    by_category = {
+        cat: [n for n in tool_names if n in cat_tools]
+        for cat, cat_tools in categories.items()
+    }
+
+    return {
+        "count": len(tools),
+        "names": tool_names,
+        "by_category": by_category,
+    }

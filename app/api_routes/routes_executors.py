@@ -204,3 +204,31 @@ async def comms_alert(request: Request) -> dict[str, Any]:
     if not params.get("message"):
         raise HTTPException(status_code=400, detail="message field required")
     return _executor_action(request, "comms", "alert", params)
+
+
+@router.get("/api/executors/stats")
+def executor_stats(request: Request) -> dict[str, Any]:
+    """执行器统计 — 审计日志汇总。"""
+    container = request.app.state.container
+    audit_log = container.executor_audit_log
+
+    if audit_log is None:
+        return {"status": "unavailable"}
+
+    try:
+        type_counts = audit_log.count_by_type()
+        recent = audit_log.list_recent(limit=5)
+        return {
+            "by_type": type_counts,
+            "recent": [
+                {
+                    "executor_type": r.get("executor_type", ""),
+                    "action": r.get("action", ""),
+                    "status": r.get("status", ""),
+                    "timestamp": r.get("timestamp", ""),
+                }
+                for r in recent
+            ],
+        }
+    except Exception:
+        return {"status": "error"}

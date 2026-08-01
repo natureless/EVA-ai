@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, HTTPException, Request
 
 router = APIRouter(prefix="/api/constitution", tags=["constitution"])
 logger = logging.getLogger("eva.api.constitution")

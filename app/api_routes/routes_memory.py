@@ -15,7 +15,34 @@ def recent_memory(request: Request, limit: int = 20) -> dict[str, Any]:
 
 @router.get("/api/debug/trace")
 def recent_trace(request: Request, limit: int = 20) -> dict[str, Any]:
+    """最近执行追踪记录。"""
     return {"items": request.app.state.container.memory_api.get_recent_traces(limit=limit)}
+
+
+@router.get("/api/events/stats")
+def event_type_stats(request: Request) -> dict[str, Any]:
+    """事件类型分布统计。"""
+    container = request.app.state.container
+
+    # From legacy EventBus
+    bus_stats = container.event_bus.stats()
+
+    # From MVSC EventStore (if enabled)
+    mvsc_stats = {}
+    if container.mvsc_components:
+        event_store = container.mvsc_components.get("event_store")
+        if event_store:
+            try:
+                mvsc_stats = event_store.stats()
+            except Exception:
+                pass
+
+    return {
+        "legacy_bus": bus_stats,
+        "mvsc_event_store": mvsc_stats,
+        "pending_events": container.event_bus.size(),
+        "events_dropped": container.event_bus.dropped,
+    }
 
 
 @router.get("/api/events/recent")

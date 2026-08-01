@@ -402,7 +402,7 @@ def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = 
     from packages.agentos.planner_dag import PlannerDAG
     from packages.agentos.verifier import Verifier
 
-    return AdaptedCognitionLoop(
+    loop = AdaptedCognitionLoop(
         container=container,
         event_bus=container.event_bus,
         world_model=container.world_model,
