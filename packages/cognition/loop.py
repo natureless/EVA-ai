@@ -81,22 +81,23 @@ class ContentEngine:
 
         # 2. 身体风险 → 警报候选
         if body_delta:
-            violations = state.body.__class__(
-                **{**state.body.model_dump(), **body_delta}
-            )
-            from packages.contracts.state import ViabilityBounds
-            bounds = ViabilityBounds()
-            issues = bounds.check(violations)
-            if issues:
-                for issue in issues:
-                    candidates.append(ContentCandidate(
-                        content_type="risk_alert",
-                        summary=f"Viability risk: {issue}",
-                        source_module="content_engine",
-                        viability_risk=0.9,
-                        salience=0.7,
-                        novelty=0.6,
-                    ))
+            try:
+                merged = state.body.model_copy(update=body_delta)
+                from packages.contracts.state import ViabilityBounds
+                bounds = ViabilityBounds()
+                issues = bounds.check(merged)
+                if issues:
+                    for issue in issues:
+                        candidates.append(ContentCandidate(
+                            content_type="risk_alert",
+                            summary=f"Viability risk: {issue}",
+                            source_module="content_engine",
+                            viability_risk=0.9,
+                            salience=0.7,
+                            novelty=0.6,
+                        ))
+            except Exception:
+                pass  # body delta merge failure is non-critical
 
         # 3. 世界模型变化 → 反思候选
         if world_delta and world_delta.get("focus_changed"):
