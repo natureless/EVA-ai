@@ -13,6 +13,11 @@ from packages.models.self_model import (
     NarrativeNode,
     SelfModel,
 )
+from packages.models.migrator import (
+    SelfModelMigrator,
+    load_self_model,
+    migrate_self_model,
+)
 
 __all__ = [
     "ActionReceipt",
@@ -26,4 +31,7 @@ __all__ = [
     "NarrativeModel",
     "NarrativeNode",
     "SelfModel",
+    "SelfModelMigrator",
+    "load_self_model",
+    "migrate_self_model",
 ]
