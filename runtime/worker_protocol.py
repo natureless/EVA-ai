@@ -128,7 +128,10 @@ class WorkerRequest(BaseModel):
     @classmethod
     def check_serializable(cls, v: dict[str, Any]) -> dict[str, Any]:
         """Reject payloads that contain non-serializable objects."""
-        _assert_json_serializable(v, "WorkerRequest.payload")
+        try:
+            _assert_json_serializable(v, "WorkerRequest.payload")
+        except TypeError as exc:
+            raise ValueError(str(exc)) from exc
         return v
 
     def to_capability_grants(self) -> list[CapabilityGrant]:
@@ -171,7 +174,10 @@ class WorkerProgress(BaseModel):
     @field_validator("detail")
     @classmethod
     def check_serializable(cls, v: dict[str, Any]) -> dict[str, Any]:
-        _assert_json_serializable(v, "WorkerProgress.detail")
+        try:
+            _assert_json_serializable(v, "WorkerProgress.detail")
+        except TypeError as exc:
+            raise ValueError(str(exc)) from exc
         return v
 
 
@@ -210,7 +216,10 @@ class WorkerResponse(BaseModel):
     @field_validator("meta")
     @classmethod
     def check_serializable(cls, v: dict[str, Any]) -> dict[str, Any]:
-        _assert_json_serializable(v, "WorkerResponse.meta")
+        try:
+            _assert_json_serializable(v, "WorkerResponse.meta")
+        except TypeError as exc:
+            raise ValueError(str(exc)) from exc
         return v
 
     def to_agent_result(self) -> Any:
@@ -273,6 +282,8 @@ _NON_SERIALIZABLE_TYPE_NAMES: frozenset[str] = frozenset({
     "frame", "code", "generator", "coroutine", "future",
     "thread", "lock", "rlock", "condition", "semaphore",
     "connection", "cursor", "session", "executor",
+    "Thread", "Lock", "RLock", "Condition", "Semaphore",
+    "Event",
 })
 
 
