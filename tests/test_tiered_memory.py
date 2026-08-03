@@ -2,8 +2,6 @@
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from memory.tiered_store import (
     SessionMemory,
     WorkingMemoryStore,
@@ -83,6 +81,18 @@ class TestLongTermMemoryStore:
         ltm = LongTermMemoryStore(store)
         items = ltm.list_recent()
         assert items == []
+
+    def test_search_falls_back_to_like_when_fts_has_no_results(self):
+        store = MagicMock()
+        expected = [{"id": "m1", "content": "EVA architecture"}]
+        store.fetchall.side_effect = [[], expected]
+        ltm = LongTermMemoryStore(store)
+
+        result = ltm.search("architecture")
+
+        assert result == expected
+        assert store.fetchall.call_count == 2
+        assert "LIKE" in store.fetchall.call_args_list[1].args[0]
 
     def test_stats(self):
         store = MagicMock()

@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-import time
-from typing import Any, Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, load_system_prompt
@@ -53,13 +52,18 @@ class ChatAgent(BaseAgent):
     name = "chat_agent"
     description = "Handle general conversational tasks with LLM + context + tools"
 
-    def __init__(self, tool_registry: ToolRegistry | None = None) -> None:
+    def __init__(
+        self,
+        tool_registry: ToolRegistry | None = None,
+        llm_max_retries: int = 2,
+    ) -> None:
         """Initialize with optional tool registry.
 
         Args:
             tool_registry: ToolRegistry for tool-calling. If None, tools are disabled.
         """
         self.tool_registry: ToolRegistry | None = tool_registry
+        self.llm_max_retries = max(0, min(llm_max_retries, 5))
 
     def can_handle(self, task: AgentTask) -> bool:
         return task.kind == "chat"
@@ -69,6 +73,7 @@ class ChatAgent(BaseAgent):
     def run(self, task: AgentTask) -> AgentResult:
         text = str(task.payload.get("text", "")).strip()
         context = task.payload.get("context")
+        tools_allowed = bool(task.payload.get("tools_allowed", True))
 
         if not text:
             return AgentResult(
@@ -88,7 +93,7 @@ class ChatAgent(BaseAgent):
         ]
 
         # ── Tool-calling loop ─────────────────────────────────
-        if self.tool_registry and self.tool_registry.list_all():
+        if tools_allowed and self.tool_registry and self.tool_registry.list_all():
             reply, tool_rounds = self._tool_loop(llm, messages)
         else:
             reply = llm.chat(messages)
@@ -109,6 +114,7 @@ class ChatAgent(BaseAgent):
             },
         )
 
+
     # ── Streaming run with tool-calling ───────────────────────
 
     def run_stream(self, task: AgentTask, on_token: Callable[[str], None]) -> AgentResult:
@@ -121,6 +127,7 @@ class ChatAgent(BaseAgent):
         """
         text = str(task.payload.get("text", "")).strip()
         context = task.payload.get("context")
+        tools_allowed = bool(task.payload.get("tools_allowed", True))
 
         if not text:
             result = AgentResult(
@@ -142,7 +149,7 @@ class ChatAgent(BaseAgent):
         tool_rounds = 0
 
         # ── Handle tool calls with progress streaming ──────────
-        if self.tool_registry and self.tool_registry.list_all():
+        if tools_allowed and self.tool_registry and self.tool_registry.list_all():
             # Run tool loop with progress callbacks
             reply, tool_rounds = self._tool_loop(llm, messages, on_token=on_token)
 
@@ -218,7 +225,7 @@ class ChatAgent(BaseAgent):
             # ── LLM call with retry + backoff ──────────────────
             response = None
             last_error = None
-            max_retries = _get_llm_max_retries()
+            max_retries = self.llm_max_retries
             for attempt in range(max_retries + 1):
                 try:
                     response = llm.chat(messages)
@@ -652,12 +659,25 @@ def _coerce_tool_args(
     return coerced
 
 
-def _get_llm_max_retries() -> int:
-    """Read LLM max retries from settings, with safe fallback."""
-    try:
-        from app.config import settings
-        return max(0, min(settings.llm_max_retries, 5))
-    except Exception as e:
-        logger = logging.getLogger("eva.chat_agent")
-        logger.debug("Cannot read llm_max_retries from settings: %s", e)
-        return 2
+class ConfiguredChatAgent(ChatAgent):
+    """Runtime-registered LLM agent bound to one explicit task kind."""
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        task_kind: str,
+        tool_registry: ToolRegistry | None = None,
+        llm_max_retries: int = 2,
+    ) -> None:
+        super().__init__(
+            tool_registry=tool_registry,
+            llm_max_retries=llm_max_retries,
+        )
+        self.name = name
+        self.description = description
+        self.task_kind = task_kind
+
+    def can_handle(self, task: AgentTask) -> bool:
+        return task.kind == self.task_kind

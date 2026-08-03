@@ -20,7 +20,7 @@ import time
 import os
 import tempfile
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 from urllib.parse import urlparse
@@ -360,7 +360,6 @@ class FileExecutor(BaseExecutor):
             )
 
         # forbidden prefix check — resolve forbidden paths too
-        target_str = str(target)
         for prefix in self.forbidden_prefixes:
             forbidden_path = Path(prefix).resolve()
             if target == forbidden_path or target.is_relative_to(forbidden_path):
@@ -918,7 +917,7 @@ class CommsExecutor(BaseExecutor):
                     f"Title: {title}",
                     f"Level: {level.upper()}",
                     f"Timestamp: {datetime.now(timezone.utc).isoformat()}",
-                    f"",
+                    "",
                     message,
                 ]
                 filepath.write_text("\n".join(lines), encoding="utf-8")

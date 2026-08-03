@@ -13,8 +13,9 @@ Usage::
     wm.load_from_store(s4_store)  # restore from SQLite
 """
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
+import json
 import threading
 from typing import Any
 
@@ -120,7 +121,7 @@ class WorldModelGraph:
             )[:limit]
             return [
                 {
-                    "id": e.id,
+                    "id": e.eid,
                     "type": e.type,
                     "name": e.name,
                     "properties_json": json.dumps(e.properties, ensure_ascii=False),
@@ -144,6 +145,16 @@ class WorldModelGraph:
 
     def link(self, source: str, target: str, relation: str, *, weight: float = 1.0) -> Edge:
         with self._lock:
+            for existing in self._edges:
+                if (
+                    existing.source == source
+                    and existing.target == target
+                    and existing.relation == relation
+                ):
+                    existing.weight = weight
+                    existing.updated_at = datetime.now(timezone.utc).isoformat()
+                    self._dirty_edges.append(existing)
+                    return existing
             edge = Edge(
                 source=source, target=target, relation=relation,
                 weight=weight,

@@ -1,7 +1,6 @@
 """Unit tests for persona module — models, repository, service, self_model."""
 
 import json
-import os
 from datetime import datetime, timezone
 from unittest.mock import MagicMock
 

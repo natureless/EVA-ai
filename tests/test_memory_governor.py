@@ -1,12 +1,10 @@
 """Unit tests for MemoryGovernor — ingest, access, maintenance."""
 
-from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
-import pytest
 
 from memory.memory_governor import MemoryGovernor, MemoryRepository
-from memory.memory_schema import MemoryRecord, MemoryStatus, MemoryType
+from memory.memory_schema import MemoryRecord, MemoryType
 from memory.importance_scorer import ImportanceFeatures
 
 

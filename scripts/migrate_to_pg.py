@@ -10,7 +10,6 @@ Requires psycopg2-binary on the PG side. SQLite side uses built-in sqlite3.
 """
 
 import argparse
-import json
 import os
 import sys
 from pathlib import Path

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from agents.chat_agent import (
     _coerce_tool_args,

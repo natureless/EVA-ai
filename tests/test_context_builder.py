@@ -2,7 +2,6 @@
 
 from unittest.mock import MagicMock
 
-import pytest
 
 from core.context_builder import ContextBuilder
 
@@ -49,5 +48,5 @@ class TestContextBuilder:
     def test_build_empty_text_skips_memory_recall(self):
         tiered = MagicMock()
         builder = ContextBuilder(tiered_memory=tiered)
-        result = builder.build(user_id="user1", text="")
+        builder.build(user_id="user1", text="")
         tiered.recall.assert_not_called()

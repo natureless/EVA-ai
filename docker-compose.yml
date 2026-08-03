@@ -38,11 +38,18 @@ services:
       # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
 
-      # Authentication — set to enable API auth
-      # EVA_API_TOKEN: ${EVA_API_TOKEN:-}
+      # Production refuses to start without API authentication.
+      EVA_API_TOKEN: ${EVA_API_TOKEN:?Set EVA_API_TOKEN before starting EVA}
 
-      # Parallelism — 2-4 workers for production
+      # High-risk LLM tools are disabled unless explicitly enabled.
+      EVA_ENABLE_CODE_TOOL: ${EVA_ENABLE_CODE_TOOL:-false}
+      EVA_ENABLE_NETWORK_TOOLS: ${EVA_ENABLE_NETWORK_TOOLS:-false}
+      EVA_TRUST_PROXY_HEADERS: ${EVA_TRUST_PROXY_HEADERS:-false}
+
+      # Parallelism. Keep the API itself single-process until an external bus lands.
       EVA_COGNITION_WORKER_COUNT: ${EVA_COGNITION_WORKER_COUNT:-2}
+      EVA_AGENT_WORKER_COUNT: ${EVA_AGENT_WORKER_COUNT:-4}
+      EVA_AGENT_EXECUTION_TIMEOUT_SEC: ${EVA_AGENT_EXECUTION_TIMEOUT_SEC:-120}
 
       # Storage backend — postgresql for multi-instance
       EVA_STORAGE_BACKEND: ${EVA_STORAGE_BACKEND:-sqlite}

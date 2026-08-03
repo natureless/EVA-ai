@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
-from app.config import settings
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
 
@@ -24,6 +23,9 @@ class CodingAgent(BaseAgent):
     name = "coding_agent"
     description = "Analyze code files and generate intelligent summaries"
 
+    def __init__(self, base_dir: Path | None = None) -> None:
+        self.base_dir = (base_dir or Path.cwd()).resolve()
+
     def can_handle(self, task: AgentTask) -> bool:
         return task.kind == "code"
 
@@ -37,7 +39,7 @@ class CodingAgent(BaseAgent):
 
             path = self._extract_path(raw)
             if path:
-                resolved = (settings.base_dir / path).resolve()
+                resolved = (self.base_dir / path).resolve()
                 if resolved.exists():
                     analysis, meta = self._analyze_file(resolved)
                 else:
@@ -117,13 +119,15 @@ class CodingAgent(BaseAgent):
 
     def _analyze_text(self, text: str) -> tuple[str, dict[str, Any]]:
         lines = text.splitlines()
-        total, non_empty = len(lines), sum(1 for l in lines if l.strip())
+        total, non_empty = len(lines), sum(1 for line in lines if line.strip())
         classes, functions = [], []
         for line in lines:
             m = re.match(r"^class\s+([A-Za-z_][A-Za-z0-9_]*)", line)
-            if m: classes.append(m.group(1))
+            if m:
+                classes.append(m.group(1))
             m = re.match(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)", line)
-            if m: functions.append(m.group(1))
+            if m:
+                functions.append(m.group(1))
 
         preview = "\n".join(lines[:15])
         summary = (

@@ -11,7 +11,6 @@ Configuration via environment:
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import threading
@@ -55,6 +54,7 @@ class PostgresStore(BaseStorageAdapter):
         self._max_connections = max_connections
         self._local = threading.local()
         self._lock = threading.Lock()
+        self._connections: list[Any] = []
         self._closed = False
 
     # ── connection management ────────────────────────────────
@@ -89,16 +89,21 @@ class PostgresStore(BaseStorageAdapter):
             # Register dict-like cursor factory
             psycopg2.extras.register_default_jsonb(conn)
             self._local.conn = conn
+            with self._lock:
+                self._connections.append(conn)
             logger.debug("new PG connection established")
         return conn
 
     def close(self) -> None:
         """Close all connections."""
         self._closed = True
-        conn = getattr(self._local, "conn", None)
-        if conn is not None and not conn.closed:
-            conn.close()
-            self._local.conn = None
+        with self._lock:
+            connections = self._connections
+            self._connections = []
+        for conn in connections:
+            if not conn.closed:
+                conn.close()
+        self._local.conn = None
 
     @contextmanager
     def _cursor(self):

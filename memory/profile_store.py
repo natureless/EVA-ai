@@ -5,7 +5,6 @@ from typing import Any
 from runtime.file_utils import atomic_json_save
 
 
-from typing import Any
 
 
 DEFAULT_PROFILE: dict[str, Any] = {

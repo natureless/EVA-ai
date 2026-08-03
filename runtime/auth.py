@@ -7,8 +7,9 @@ X-API-Token header or ?token query parameter. Excludes /health, /metrics, /docs,
 
 from __future__ import annotations
 
-import os
 import logging
+import os
+import secrets
 from typing import Any, Callable
 
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -17,35 +18,31 @@ from starlette.responses import JSONResponse
 
 logger = logging.getLogger("eva.auth")
 
-EXCLUDED_PREFIXES = (
-    "/health",
+PUBLIC_EXACT_PATHS = {
+    "/health/live",
+    "/health/ready",
     "/metrics",
+    "/metrics/prometheus",
     "/docs",
     "/redoc",
     "/openapi.json",
-    "/ws",
-    "/static",
+    "/api/webhooks/github",  # authenticated by GitHub HMAC signature
+}
+
+PUBLIC_PREFIXES = (
+    "/static/",
 )
 
-# Endpoints that require auth even in dev mode (write/execute operations).
-# Only enforced when EVA_API_TOKEN is NOT set — when a token IS configured,
-# ALL non-excluded routes require auth.
-DEV_MODE_REQUIRE_AUTH_PREFIXES = (
-    "/api/executors/file/write",
-    "/api/executors/file/list",
-    "/api/executors/file/delete",
-    "/api/executors/code/execute",
-    "/api/executors/comms/log",
-    "/api/executors/comms/notify",
-    "/api/executors/comms/alert",
-    "/api/executors/browser/",
-    "/api/executors/api/",
-    "/api/debug/snapshot/restore",
-)
+DEV_MODE_PUBLIC_WRITES = {
+    "/api/chat",
+    "/api/chat/stream",
+    "/api/chat/sync",
+    "/api/webhooks/github",
+}
 
 
 def _is_excluded(path: str) -> bool:
-    return any(path.startswith(p) for p in EXCLUDED_PREFIXES)
+    return path in PUBLIC_EXACT_PATHS or any(path.startswith(p) for p in PUBLIC_PREFIXES)
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
@@ -76,11 +73,11 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
         # When a token is configured, all non-excluded routes require it
         if self._token:
-            provided = request.headers.get("X-API-Token") or request.query_params.get("token", "")
+            provided = request.headers.get("X-API-Token", "")
             if not provided:
                 return JSONResponse(
                     status_code=401,
-                    content={"detail": "X-API-Token header or ?token query parameter required"},
+                    content={"detail": "X-API-Token header required"},
                 )
             if not _timing_safe_equals(provided, self._token):
                 logger.warning("auth rejected from %s", request.client.host if request.client else "?")
@@ -90,9 +87,13 @@ class AuthMiddleware(BaseHTTPMiddleware):
                 )
             return await call_next(request)
 
-        # Dev mode (no token configured): read-only is open,
-        # but write/execute endpoints are still blocked
-        if any(path.startswith(p) for p in DEV_MODE_REQUIRE_AUTH_PREFIXES):
+        # Dev mode (no token configured): reads and chat are open, while every
+        # other state-changing method is blocked. This deny-by-default rule
+        # also protects newly-added endpoints without updating a path list.
+        if (
+            request.method.upper() not in {"GET", "HEAD", "OPTIONS"}
+            and path not in DEV_MODE_PUBLIC_WRITES
+        ):
             return JSONResponse(
                 status_code=401,
                 content={
@@ -107,9 +108,4 @@ class AuthMiddleware(BaseHTTPMiddleware):
 
 
 def _timing_safe_equals(a: str, b: str) -> bool:
-    if len(a) != len(b):
-        return False
-    result = 0
-    for x, y in zip(a, b):
-        result |= ord(x) ^ ord(y)
-    return result == 0
+    return secrets.compare_digest(a, b)

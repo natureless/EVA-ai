@@ -1,6 +1,5 @@
 """Executor framework unit + integration tests."""
 
-import json
 import tempfile
 import os
 from pathlib import Path
@@ -317,8 +316,7 @@ class TestAPIExecutorBoundaries:
 
     def test_bad_method_blocked(self):
         e = APIExecutor(self.audit)
-        result = e.execute("call", {"url": "http://127.0.0.1:1/test", "method": "PATCH"})
-        # PATCH is allowed — test something truly disallowed
+        # HEAD is outside the executor's explicit write/read method set.
         result2 = e.execute("call", {"url": "http://127.0.0.1:1/test", "method": "HEAD"})
         assert not result2["ok"]
 

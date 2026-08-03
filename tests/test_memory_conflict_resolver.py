@@ -1,6 +1,5 @@
 """Unit tests for MemoryConflictResolver — conflict detection and resolution."""
 
-import pytest
 
 from memory.memory_conflict_resolver import MemoryConflictResolver
 from memory.memory_schema import MemoryRecord, MemoryStatus, MemoryType

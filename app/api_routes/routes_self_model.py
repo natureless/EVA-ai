@@ -13,7 +13,7 @@ from typing import Any
 
 from fastapi import APIRouter, Request
 
-from packages.kernel.state_bridge import system_state_to_conscious
+from app.experimental import conscious_state
 
 router = APIRouter(prefix="/api/mvsc/self", tags=["mvsc-self"])
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/api/mvsc/self", tags=["mvsc-self"])
 @router.get("/identity")
 def get_identity(request: Request) -> dict[str, Any]:
     """获取身份模型 — 版本化的稳定身份信息。"""
-    cs = system_state_to_conscious(request.app.state.container.system_state)
+    cs = conscious_state(request.app.state.container.system_state)
     sm = cs.self_model
     identity = sm.get("identity", {})
     return {
@@ -36,7 +36,7 @@ def get_identity(request: Request) -> dict[str, Any]:
 @router.get("/capability")
 def get_capability(request: Request) -> dict[str, Any]:
     """获取能力模型 — 系统知道自己能/不能做什么。"""
-    cs = system_state_to_conscious(request.app.state.container.system_state)
+    cs = conscious_state(request.app.state.container.system_state)
     sm = cs.self_model
     capabilities = sm.get("capability", {}).get("capabilities", {})
     return {
@@ -57,7 +57,7 @@ def get_capability(request: Request) -> dict[str, Any]:
 @router.get("/boundary")
 def get_boundary(request: Request) -> dict[str, Any]:
     """获取边界模型 — 资源访问范围。"""
-    cs = system_state_to_conscious(request.app.state.container.system_state)
+    cs = conscious_state(request.app.state.container.system_state)
     sm = cs.self_model
     boundary = sm.get("boundary", {})
     return {
@@ -71,7 +71,7 @@ def get_boundary(request: Request) -> dict[str, Any]:
 @router.get("/narrative")
 def get_narrative(request: Request, limit: int = 10) -> dict[str, Any]:
     """获取叙事模型 — 最近的关键事件节点。"""
-    cs = system_state_to_conscious(request.app.state.container.system_state)
+    cs = conscious_state(request.app.state.container.system_state)
     sm = cs.self_model
     narrative = sm.get("narrative", {})
     nodes = narrative.get("nodes", [])[-limit:]
@@ -94,7 +94,7 @@ def get_narrative(request: Request, limit: int = 10) -> dict[str, Any]:
 @router.get("/stability")
 def get_stability(request: Request) -> dict[str, Any]:
     """获取自我稳定性指标。"""
-    cs = system_state_to_conscious(request.app.state.container.system_state)
+    cs = conscious_state(request.app.state.container.system_state)
     sm = cs.self_model
     metrics = sm.get("stability_metrics", {})
     return {

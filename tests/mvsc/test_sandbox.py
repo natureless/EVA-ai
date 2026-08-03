@@ -1,11 +1,8 @@
 """Additional tests: SandboxManager + enhanced coverage for edge cases."""
 
-import asyncio
 import os
 import sys
-import tempfile
 
-import pytest
 
 sys.path.insert(0, ".")
 

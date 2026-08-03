@@ -17,8 +17,7 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from packages.kernel.state_bridge import system_state_to_conscious
-from packages.mvsc_lab.integration import toggle_feature
+from app.experimental import conscious_state, toggle_mvsc_feature
 
 router = APIRouter(prefix="/api/mvsc", tags=["mvsc"])
 logger = logging.getLogger("eva.api.mvsc")
@@ -45,7 +44,7 @@ def get_mvsc_state(request: Request) -> dict[str, Any]:
     当 MVSC pipeline 未启用时仍可工作（使用默认值）。
     """
     container = request.app.state.container
-    cs = system_state_to_conscious(container.system_state)
+    cs = conscious_state(container.system_state)
     return {
         "subject_id": cs.subject_id,
         "tick": cs.tick,
@@ -102,7 +101,7 @@ def toggle_ablation_feature(req: ToggleRequest, request: Request) -> Any:
             content={"detail": "MVSC pipeline not enabled — cannot toggle features"},
         )
 
-    success = toggle_feature(container, req.feature, req.enabled)
+    success = toggle_mvsc_feature(container, req.feature, req.enabled)
     if not success:
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,

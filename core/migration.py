@@ -109,7 +109,11 @@ def _split_sql(sql: str) -> list[str]:
         if not stmt:
             continue
         # skip pure comment blocks
-        lines = [l for l in stmt.splitlines() if l.strip() and not l.strip().startswith("--")]
+        lines = [
+            line
+            for line in stmt.splitlines()
+            if line.strip() and not line.strip().startswith("--")
+        ]
         if not lines:
             continue
 

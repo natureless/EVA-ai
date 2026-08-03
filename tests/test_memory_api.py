@@ -1,7 +1,6 @@
 """Unit tests for MemoryAPI — event, trace, episodic memory CRUD."""
 
 import json
-from datetime import datetime, timezone
 from unittest.mock import MagicMock
 
 import pytest

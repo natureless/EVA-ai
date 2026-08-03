@@ -1,6 +1,5 @@
 """Tests for new MVSC components: Verifier, Lifecycle, MVSC API routes."""
 
-import asyncio
 import sys
 
 import pytest

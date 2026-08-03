@@ -1,13 +1,13 @@
 import importlib
 import sys
 import time
-from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 
 def test_snapshot_save_endpoint(client):
-    client.post("/api/chat", json={"text": "Update EVA persona"})
+    chat = client.post("/api/chat/sync", json={"text": "Update EVA persona"})
+    assert chat.json()["completed"] is True
     response = client.post("/api/debug/snapshot/save")
     assert response.status_code == 200
     assert response.json()["ok"] is True

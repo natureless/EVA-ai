@@ -2,7 +2,7 @@ import logging
 import sqlite3
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
+from concurrent.futures import TimeoutError as FutureTimeoutError
 from typing import Any
 from uuid import uuid4
 
@@ -24,6 +24,7 @@ from core.memory_ingestor import MemoryIngestor
 from memory.tiered_store import TieredMemoryManager
 from persona.self_model_store import SelfModelStore
 from runtime.result_registry import ResultRegistry
+from runtime.agent_worker import AgentWorkerBackend, ThreadAgentWorkerBackend
 from world.world_model import WorldModelGraph
 
 
@@ -73,6 +74,7 @@ class CognitionLoop:
         executors: dict[str, Any] | None = None,
         ws_manager: Any = None,
         worker_count: int = 1,
+        agent_worker_backend: AgentWorkerBackend | None = None,
     ) -> None:
         self.event_bus = event_bus
         self.memory_api = memory_api
@@ -96,9 +98,8 @@ class CognitionLoop:
         self._executors: dict[str, Any] = executors or {}
         self._ws_manager = ws_manager
         self._memory_ingestor = MemoryIngestor(memory_governor, self_model)
-        self._agent_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="eva-agent")
-        # Tool-calling agents may need multiple LLM round-trips; floor at 30s
-        self._agent_timeout_sec = max(poll_timeout_sec * 10 if poll_timeout_sec else 30.0, 30.0)
+        self._owns_agent_worker = agent_worker_backend is None
+        self._agent_worker = agent_worker_backend or ThreadAgentWorkerBackend(orchestrator)
 
         self._worker_count = max(1, min(worker_count, 8))  # cap at 8 workers
         self._stop_event = threading.Event()
@@ -129,9 +130,9 @@ class CognitionLoop:
 
         logger = logging.getLogger("eva.cognition_loop")
         logger.info(
-            "cognition loop started with %d worker(s), agent_pool=%d",
+            "cognition loop started with %d worker(s), agent_backend=%s",
             self._worker_count,
-            4,  # _agent_pool max_workers
+            self._agent_worker.stats.get("backend", "unknown"),
         )
 
     def stop(self) -> None:
@@ -139,7 +140,8 @@ class CognitionLoop:
         for t in self._threads:
             t.join(timeout=3)
         self._threads.clear()
-        self._agent_pool.shutdown(wait=False)
+        if self._owns_agent_worker:
+            self._agent_worker.shutdown()
 
     @property
     def stats(self) -> dict[str, Any]:
@@ -148,55 +150,20 @@ class CognitionLoop:
             "total_processed": self._total_processed,
             "total_errors": self._total_errors,
             "consecutive_errors": self._consecutive_errors,
-            "agent_pool_workers": 4,
+            "agent_worker": self._agent_worker.stats,
         }
 
     # ── agent execution ─────────────────────────────────────
 
     def _execute_agent(self, selected_agent: str, task: Any, agent_exe: Any, token_manager: Any, agent_tok: str) -> tuple[AgentResult, int]:
-        """Run the agent in a thread pool, polling for stop events.
-
-        Returns (AgentResult, duration_ms). On timeout or shutdown, returns an
-        error result so the loop can continue without blocking forever.
-        """
-        future = self._agent_pool.submit(
-            self.orchestrator.execute,
-            selected_agent, task,
+        """Delegate an agent call to the configured worker backend."""
+        return self._agent_worker.execute(
+            selected_agent,
+            task,
             executor=agent_exe,
             token_manager=token_manager,
             token_id=agent_tok,
-        )
-        poll_interval = 0.5
-        elapsed = 0.0
-        while not self._stop_event.is_set():
-            try:
-                return future.result(timeout=poll_interval)
-            except FutureTimeoutError:
-                elapsed += poll_interval
-                if elapsed >= self._agent_timeout_sec:
-                    logger = logging.getLogger("eva.cognition_loop")
-                    logger.error("agent %s timed out after %.0fs", selected_agent, elapsed)
-                    return (
-                        AgentResult(
-                            ok=False, agent=selected_agent,
-                            content=f"[{selected_agent}] timed out after {elapsed:.0f}s",
-                            summary=f"timeout ({elapsed:.0f}s)",
-                            meta={"status": "timeout", "elapsed_sec": elapsed},
-                        ),
-                        int(elapsed * 1000),
-                    )
-
-        # stop_event was set — return cancelled
-        logger = logging.getLogger("eva.cognition_loop")
-        logger.warning("agent %s cancelled due to shutdown", selected_agent)
-        return (
-            AgentResult(
-                ok=False, agent=selected_agent,
-                content=f"[{selected_agent}] cancelled (shutdown)",
-                summary="cancelled",
-                meta={"status": "cancelled"},
-            ),
-            0,
+            stop_event=self._stop_event,
         )
 
     def _execute_agent_stream(
@@ -217,49 +184,11 @@ class CognitionLoop:
                     "token": token,
                 })
 
-        future = self._agent_pool.submit(
-            self.orchestrator.execute_stream,
-            selected_agent, task, _on_token,
-        )
-        poll_interval = 0.5
-        elapsed = 0.0
-        while not self._stop_event.is_set():
-            try:
-                return future.result(timeout=poll_interval)
-            except FutureTimeoutError:
-                elapsed += poll_interval
-                if elapsed >= self._agent_timeout_sec:
-                    logger = logging.getLogger("eva.cognition_loop")
-                    logger.error("agent %s stream timed out after %.0fs", selected_agent, elapsed)
-                    error_msg = f"[{selected_agent}] stream timed out after {elapsed:.0f}s"
-                    if ws:
-                        ws.broadcast_sync("chat_reply", {
-                            "task_id": correlation_id,
-                            "ok": False,
-                            "reply": error_msg,
-                            "selected_agent": selected_agent,
-                            "error": "timeout",
-                        })
-                    return (
-                        AgentResult(
-                            ok=False, agent=selected_agent,
-                            content=error_msg,
-                            summary=f"timeout ({elapsed:.0f}s)",
-                            meta={"status": "timeout", "elapsed_sec": elapsed},
-                        ),
-                        int(elapsed * 1000),
-                    )
-
-        logger = logging.getLogger("eva.cognition_loop")
-        logger.warning("agent %s stream cancelled due to shutdown", selected_agent)
-        return (
-            AgentResult(
-                ok=False, agent=selected_agent,
-                content=f"[{selected_agent}] cancelled (shutdown)",
-                summary="cancelled",
-                meta={"status": "cancelled"},
-            ),
-            0,
+        return self._agent_worker.execute_stream(
+            selected_agent,
+            task,
+            _on_token,
+            stop_event=self._stop_event,
         )
 
     # ── main loop (per-worker) ──────────────────────────────
@@ -277,7 +206,6 @@ class CognitionLoop:
             event = self.event_bus.consume(timeout=self.poll_timeout_sec)
             if event is None:
                 continue
-            self.event_bus.task_done()
 
             start = time.perf_counter()
             loop_id = f"loop_{uuid4().hex[:8]}"
@@ -310,6 +238,7 @@ class CognitionLoop:
                 with self._consecutive_errors_lock:
                     self._consecutive_errors = 0
             finally:
+                self.event_bus.task_done()
                 self.result_registry.cleanup(ttl_sec=self.result_ttl_sec)
                 self.system_state["pending_events"] = self.event_bus.size()
                 self.system_state["pending_results"] = self.result_registry.size()
@@ -487,7 +416,6 @@ class CognitionLoop:
             # ── self-model feedback: prediction error + state recording ──
             if not blocked:
                 prev_focus = self.world_model.focus
-                prev_reply = self.world_model.last_reply
 
                 self.world_model.apply_agent_result(
                     reply=reply,
@@ -571,7 +499,7 @@ class CognitionLoop:
             # ── world model: entity extraction → graph → S4 ──
             if not blocked and reply and self.world_model:
                 try:
-                    future = self._agent_pool.submit(
+                    future = self._agent_worker.submit(
                         entity_extractor.extract_from_reply, reply
                     )
                     entities, relations = future.result(timeout=5.0)

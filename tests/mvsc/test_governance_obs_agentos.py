@@ -1,6 +1,5 @@
 """Tests for governance, observability, intent_parser, planner_dag."""
 
-import asyncio
 import sys
 
 import pytest
@@ -99,7 +98,7 @@ class TestIdentityChangeManager:
 
     def test_risk_assessment(self):
         icm = IdentityChangeManager()
-        pid = icm.propose("core_principles", "old", "new", "dangerous")
+        icm.propose("core_principles", "old", "new", "dangerous")
         proposals = icm.pending_proposals
         assert proposals[0]["risk_assessment"]["risk_level"] == "high"
 

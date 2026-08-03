@@ -1,811 +1,383 @@
-"""EVA system bootstrap — initialize all components and wire them together."""
+"""EVA composition root and runtime lifecycle."""
 
 from __future__ import annotations
 
 from datetime import datetime, timezone
 import logging
+import os
 from pathlib import Path
 import time
-from typing import Any
+from typing import Any, Callable
 
-import yaml
-
-from agent_os.orchestrator import AgentOrchestrator
-from agent_os.registry import AgentRegistry
-from agent_os.router import AgentRouter
-from agents.chat_agent import ChatAgent
-from agents.coding_agent import CodingAgent
-from agents.docs_agent import DocsAgent
-from agents.search_agent import SearchAgent
-from app.config import settings
-from app.container import AppContainer
-from core.cognition_loop import CognitionLoop
-from core.context_builder import ContextBuilder
-from core.executor import (
-    APIExecutor,
-    BrowserExecutor,
-    CodeExecutor,
-    CommsExecutor,
-    ExecutorAuditLog,
-    FileExecutor,
+from app.composition import (
+    build_agents,
+    build_executors,
+    build_identity,
+    build_memory,
+    build_policy,
+    build_snapshot_payload,
+    build_world,
+    create_initial_state,
+    ensure_runtime_dirs,
+    load_constitution,
+    start_github_poller,
 )
-from core.playwright_executor import PlaywrightBrowserExecutor, is_playwright_available
+from app.config import settings
+from app.container import (
+    AgentSubsystem,
+    AppContainer,
+    IntegrationSubsystem,
+    MemorySubsystem,
+    PersonaSubsystem,
+    RuntimeSubsystem,
+    WorldSubsystem,
+)
+from app.experimental import start_mvsc, stop_mvsc
+from core.cognition_loop import CognitionLoop
 from core.planner import Planner
-from core.policy_engine import PolicyEngine
 from core.prediction import PredictionTracker
 from core.proactive_engine import ProactiveEngine
 from core.tool_registry import ToolRegistry, create_builtin_tools
 from event.event_bus import EventBus
-from memory.memory_api import MemoryAPI
-from memory.memory_governor import MemoryGovernor, MemoryRepository
-from memory.profile_store import ProfileStore
-from memory.sqlite_store import SQLiteStore
-from memory.tiered_store import TieredMemoryManager
 from persona.repository import PersonaRepository
-from persona.self_model_store import SelfModelStore
 from persona.service import PersonaService
 from runtime.diagnostics import DiagnosticReport, RecoveryActions, SystemDiagnostic
+from runtime.agent_worker import ThreadAgentWorkerBackend
 from runtime.health import HealthService
-from runtime.logging_setup import configure_logging
+from runtime.logging_setup import configure_logging, shutdown_logging
 from runtime.result_registry import ResultRegistry
 from runtime.scheduler import RuntimeScheduler
-from world.snapshot_store import SnapshotStore
-from world.world_model import WorldModelGraph
 
 logger = logging.getLogger("eva.bootstrap")
 
 
-# ── helpers ────────────────────────────────────────────────────────
-
-def _ensure_dirs() -> None:
-    settings.data_dir.mkdir(parents=True, exist_ok=True)
-    settings.log_dir.mkdir(parents=True, exist_ok=True)
-    settings.template_dir.mkdir(parents=True, exist_ok=True)
-    settings.static_dir.mkdir(parents=True, exist_ok=True)
-    settings.snapshot_dir.mkdir(parents=True, exist_ok=True)
-
-
-def _load_constitution() -> dict[str, Any]:
-    """Load constitution.yaml as the canonical rule source.
-
-    Returns an empty dict if the file is missing (development without a
-    constitution is permitted).  Raises RuntimeError when the file exists
-    but is unparseable — a broken constitution is a safety risk and must
-    be treated as a startup failure.
-    """
-    path = Path("constitution.yaml")
-    if not path.exists():
-        logger.warning("constitution.yaml not found — using defaults")
-        return {}
-    try:
-        with path.open("r", encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
-        logger.info("constitution.yaml loaded (version=%s)", data.get("version", "?"))
-        return data
-    except yaml.YAMLError as e:
-        logger.critical("constitution.yaml is malformed — refusing to start without valid safety boundaries")
-        raise RuntimeError(f"Failed to parse constitution.yaml: {e}") from e
-    except Exception as e:
-        logger.critical("constitution.yaml could not be read: %s", e)
-        raise RuntimeError(f"Failed to load constitution.yaml: {e}") from e
-
-
-def _create_initial_state() -> dict[str, Any]:
-    return {
-        "ready": False,
-        "db_ready": False,
-        "event_bus_ready": False,
-        "planner_ready": False,
-        "loop_ready": False,
-        "registry_ready": False,
-        "result_registry_ready": False,
-        "snapshot_ready": False,
-        "profile_ready": False,
-        "persona_ready": False,
-        "self_model_ready": False,
-        "scheduler_ready": False,
-        "proactive_ready": False,
-        "scheduler_running": False,
-        "focus": "idle",
-        "mode": "active",
-        "active_tasks": [],
-        "pending_events": 0,
-        "pending_results": 0,
-        "last_reply": "",
-        "last_selected_agent": "",
-        "last_loop_id": "",
-        "last_loop_at": None,
-        "last_snapshot_at": None,
-        "last_proactive_reason": None,
-        "last_context_summary": None,
-        "agents": [],
-    }
-
-
-def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> None:
-    """Merge override into base in-place (nested dicts merged, not replaced)."""
-    for key, value in override.items():
-        if key in base and isinstance(base[key], dict) and isinstance(value, dict):
-            _deep_merge(base[key], value)
-        else:
-            base[key] = value
-
-
-# ── subsystem initializers ─────────────────────────────────────────
-
-def _wire_memory(state: dict[str, Any]) -> dict[str, Any]:
-    """Initialize storage, memory API, governor, tiered memory, vector search, and restore S1 session."""
-    # ── storage backend selection ──
-    if settings.storage_backend == "postgresql" and settings.database_url:
-        from memory.postgres_store import PostgresStore
-        store = PostgresStore(database_url=settings.database_url)
-        store.init_db()
-        state["db_ready"] = True
-        logger.info("database initialized (PostgreSQL: %s)", settings.database_url.split("@")[-1] if "@" in settings.database_url else "connected")
-    elif settings.storage_backend == "postgresql":
-        from memory.postgres_store import PostgresStore
-        store = PostgresStore()
-        store.init_db()
-        state["db_ready"] = True
-        logger.info("database initialized (PostgreSQL via env vars)")
-    else:
-        store = SQLiteStore(Path(settings.db_path))
-        store.init_db()
-        state["db_ready"] = True
-        logger.info("database initialized at %s", settings.db_path)
-
-    # ── vector search (lazy, only when embedding_provider=local) ──
-    embedding_service = None
-    vector_store = None
-    if settings.embedding_provider == "local":
-        try:
-            from memory.embedding_service import EmbeddingService
-            from memory.vector_store import VectorStore
-            embedding_service = EmbeddingService(model_name=settings.embedding_model_name)
-            vector_store = VectorStore(
-                dim=embedding_service.dim,
-                index_path=Path(settings.vector_index_path),
-            )
-            vector_store.load()
-            logger.info("vector store loaded (%d vectors)", vector_store.size())
-        except ImportError:
-            logger.warning(
-                "sentence-transformers or faiss not installed — "
-                "vector search disabled"
-            )
-        except Exception:
-            logger.exception("failed to initialize vector search — disabling")
-            embedding_service = None
-            vector_store = None
-
-    tiered_memory = TieredMemoryManager(store, config={
-        "S1_session": {"max_entries": 200, "ttl_minutes": 30},
-        "S2_working": {"max_entries": 500, "ttl_hours": 72},
-        "S3_long_term": {"max_entries": 10000},
-    }, embedding_service=embedding_service, vector_store=vector_store)
-
-    # Try to wire LLM into memory compactor for smarter summarization
-    _compactor_llm = None
-    try:
-        from core.llm_adapter import get_llm, MockLLM
-        _candidate = get_llm()
-        if not isinstance(_candidate, MockLLM):
-            _compactor_llm = _candidate
-            logger.info("memory compactor upgraded to LLM-based summarization")
-    except Exception:
-        pass
-
-    governor = MemoryGovernor(MemoryRepository(store), tiered_memory=tiered_memory, llm=_compactor_llm)
-    # wire reverse bridge so tiered ingest feeds back into governor
-    tiered_memory._governor = governor
-
-    # staleness check: if DB count diverges from index by >10%, reindex in background
-    if vector_store is not None and embedding_service is not None:
-        try:
-            active_rows = store.fetchall(
-                "SELECT COUNT(*) as cnt FROM long_term_memory WHERE status='active'",
-                (),
-            )
-            active_count = active_rows[0]["cnt"] if active_rows else 0
-            if active_count > 0 and abs(active_count - vector_store.size()) > active_count * 0.1:
-                logger.info(
-                    "vector index stale (%d DB vs %d indexed) — scheduling reindex",
-                    active_count, vector_store.size(),
-                )
-                import threading
-                from memory.reindex_job import reindex_all
-                t = threading.Thread(
-                    target=reindex_all,
-                    args=(embedding_service, vector_store, tiered_memory.s3),
-                    daemon=True,
-                    name="eva-reindex",
-                )
-                t.start()
-        except Exception:
-            logger.exception("staleness check failed")
-
-    # restore S1 session memory from S2
-    restored = tiered_memory.s1.restore_from_s2(tiered_memory.s2)
-    if restored:
-        logger.info("restored %d session entries from S2", restored)
-
-    return {
-        "store": store,
-        "memory_api": MemoryAPI(store),
-        "memory_repository": MemoryRepository(store),
-        "memory_governor": governor,
-        "tiered_memory": tiered_memory,
-        "embedding_service": embedding_service,
-        "vector_store": vector_store,
-    }
-
-
-def _wire_persona(state: dict[str, Any]) -> dict[str, Any]:
-    """Load profile, self-model, and create persona service."""
-    profile_store = ProfileStore(Path(settings.profile_path))
-    self_model_store = SelfModelStore(Path(settings.self_model_path))
-
-    profile = profile_store.load_or_init()
-    self_model = self_model_store.load_or_init()
-    state["profile_ready"] = True
-    state["persona_ready"] = True
-    state["self_model_ready"] = True
-    logger.info("profile and self-model loaded")
-
-    return {
-        "profile_store": profile_store,
-        "self_model_store": self_model_store,
-        "profile": profile,
-        "self_model": self_model,
-    }
-
-
-def _wire_world(
-    state: dict[str, Any],
-    tiered_memory: TieredMemoryManager,
-    persona_service: PersonaService,
-) -> dict[str, Any]:
-    """Load or create world model from snapshot/S4 store."""
-    snapshot_store = SnapshotStore(
-        snapshot_dir=Path(settings.snapshot_dir),
-        latest_snapshot_path=Path(settings.latest_snapshot_path),
-    )
-    snapshot = snapshot_store.load_latest()
-
-    if snapshot and isinstance(snapshot, dict) and "world_model" in snapshot:
-        world_model = WorldModelGraph.from_dict(snapshot["world_model"])
-        world_model.load_from_store(tiered_memory.s4)
-        logger.info("snapshot loaded (entities=%d, edges=%d)",
-                    world_model.entity_count, world_model.edge_count)
-    else:
-        world_model = WorldModelGraph()
-        world_model.load_from_store(tiered_memory.s4)
-        logger.info("no snapshot; loaded %d entities, %d edges from S4",
-                    world_model.entity_count, world_model.edge_count)
-    state["snapshot_ready"] = True
-
-    context_builder = ContextBuilder(
-        persona_service=persona_service,
-        tiered_memory=tiered_memory,
-        world_model=world_model,
-    )
-
-    proactive_state: dict[str, Any] = (
-        snapshot.get("proactive_state", {}) if snapshot else {}
-    )
-    proactive_state.setdefault("last_user_message_ts", None)
-    proactive_state.setdefault("last_reminder_ts", None)
-
-    return {
-        "snapshot_store": snapshot_store,
-        "world_model": world_model,
-        "context_builder": context_builder,
-        "proactive_state": proactive_state,
-    }
-
-
-def _wire_agents(state: dict[str, Any], tool_registry: Any = None) -> dict[str, Any]:
-    """Register built-in agents and create router + orchestrator."""
-    registry = AgentRegistry()
-    registry.register(ChatAgent(tool_registry=tool_registry))
-    registry.register(DocsAgent())
-    registry.register(SearchAgent())
-    registry.register(CodingAgent())
-    state["registry_ready"] = True
-    state["agents"] = registry.list_agents()
-    logger.info("agent registry initialized with %d agents", len(registry.list_agents()))
-
-    return {
-        "registry": registry,
-        "agent_router": AgentRouter(registry),
-        "orchestrator": AgentOrchestrator(registry),
-    }
-
-
-def _wire_policy(constitution: dict[str, Any] | None = None) -> PolicyEngine:
-    """Load policy configuration and create PolicyEngine.
-
-    Merges constitution.yaml (base layer) with config/policy.yaml (override layer).
-    """
-    const = constitution or {}
-    policy_config: dict[str, Any] = {}
-
-    # base layer: constitution state_machine
-    const_sm = const.get("state_machine", {})
-    if const_sm:
-        policy_config["state_machine"] = const_sm
-
-    # base layer: constitution priority_system
-    const_ps = const.get("priority_system", {})
-    if const_ps:
-        policy_config["priority_system"] = const_ps
-
-    # override layer: config/policy.yaml
-    policy_config_path = Path("config/policy.yaml")
-    if policy_config_path.exists():
-        with policy_config_path.open("r", encoding="utf-8") as fh:
-            override = yaml.safe_load(fh) or {}
-        _deep_merge(policy_config, override)
-
-    engine = PolicyEngine(policy_config)
-    engine.transition("user_command")
-    engine.transition("command_completed")
-    logger.info("policy engine initialized (state=%s)", engine.get_state())
-    return engine
-
-
-def _wire_executors(store: SQLiteStore, constitution: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Initialize the executor framework (file, code, browser, api, comms).
-
-    Merges constitution.yaml boundaries (base layer) with config/executors.yaml (override).
-    """
-    const = constitution or {}
-    audit_log = ExecutorAuditLog(store)
-    executors_config: dict[str, Any] = {}
-
-    # base layer: constitution boundaries → executor limits
-    boundaries = const.get("boundaries", {})
-    fs_boundary = boundaries.get("filesystem", {})
-    compute_boundary = boundaries.get("compute", {})
-    network_boundary = boundaries.get("network", {})
-
-    if fs_boundary:
-        executors_config.setdefault("executors", {})
-        executors_config["executors"].setdefault("file", {})
-        file_cfg = executors_config["executors"]["file"]
-        file_cfg.setdefault("limits", {})
-        if fs_boundary.get("max_file_size_mb"):
-            file_cfg["limits"]["max_file_size_mb"] = fs_boundary["max_file_size_mb"]
-        if fs_boundary.get("forbidden_paths"):
-            file_cfg["forbidden_paths"] = fs_boundary["forbidden_paths"]
-        # Append platform-specific forbidden paths so Linux-centric
-        # constitution defaults also work on Windows and macOS.
-        import platform as _platform
-        _plat = _platform.system()
-        _existing = file_cfg.setdefault("forbidden_paths", [])
-        if _plat == "Windows":
-            for _p in ("C:\\Windows", "C:\\Windows\\System32", "C:\\Program Files", "C:\\Program Files (x86)"):
-                if _p not in _existing:
-                    _existing.append(_p)
-        elif _plat == "Darwin":
-            for _p in ("/System", "/Library/System", "/private/etc", "/private/var"):
-                if _p not in _existing:
-                    _existing.append(_p)
-
-    if compute_boundary:
-        executors_config.setdefault("executors", {})
-        executors_config["executors"].setdefault("code", {})
-        code_cfg = executors_config["executors"]["code"]
-        code_cfg.setdefault("limits", {})
-        if compute_boundary.get("max_process_duration_minutes"):
-            code_cfg["limits"]["timeout"] = compute_boundary["max_process_duration_minutes"] * 60
-
-    if network_boundary:
-        executors_config.setdefault("executors", {})
-        allowed_domains = network_boundary.get("allowed_domains", [])
-        allowed_ports = network_boundary.get("allowed_ports", [80, 443])
-        if allowed_domains:
-            executors_config["executors"].setdefault("browser", {})
-            executors_config["executors"]["browser"]["allowed_domains"] = allowed_domains
-            executors_config["executors"].setdefault("api", {})
-            executors_config["executors"]["api"]["allowed_domains"] = allowed_domains
-            executors_config["executors"]["api"]["allowed_ports"] = allowed_ports
-
-    # override layer: config/executors.yaml
-    exec_cfg_path = Path("config/executors.yaml")
-    if exec_cfg_path.exists():
-        with exec_cfg_path.open("r", encoding="utf-8") as fh:
-            override = yaml.safe_load(fh) or {}
-        _deep_merge(executors_config, override)
-
-    executors = {
-        "file": FileExecutor(audit_log, executors_config),
-        "code": CodeExecutor(audit_log, executors_config),
-        "browser": BrowserExecutor(audit_log, executors_config),
-        "api": APIExecutor(audit_log, executors_config),
-        "comms": CommsExecutor(audit_log, executors_config),
-    }
-
-    # Upgrade to Playwright-based browser if available
-    if is_playwright_available():
-        try:
-            executors["playwright_browser"] = PlaywrightBrowserExecutor(audit_log, executors_config)
-            logger.info("playwright browser executor enabled")
-        except Exception as e:
-            logger.warning("playwright browser executor init failed: %s", e)
-
-    logger.info("executor framework initialized (%d executors)", len(executors))
-    return {"executor_audit_log": audit_log, "executors": executors}
-
-
-def _build_snapshot_payload(
-    world_model: WorldModelGraph,
-    profile: dict[str, Any],
-    self_model: dict[str, Any],
-    proactive_state: dict[str, Any],
-    tiered_memory: Any = None,
-) -> dict[str, Any]:
-    payload: dict[str, Any] = {
-        "version": "0.1",
-        "world_model": world_model.to_dict(),
-        "profile": profile,
-        "self_model": self_model,
-        "proactive_state": proactive_state,
-    }
-
-    # ── memory snapshot (S1+S2+S3 summaries, not full DB) ──
-    if tiered_memory:
-        try:
-            s1_entries = tiered_memory.s1.list_all()[:20]
-            s2_entries = tiered_memory.s2.list_recent(limit=20)
-            s3_entries = tiered_memory.s3.search("", limit=20)  # most recent
-
-            payload["memory"] = {
-                "s1_session": [{"key": e[0], "value": e[1]} for e in s1_entries],
-                "s2_working": [
-                    {"id": r.get("id"), "content": r.get("content", "")[:200],
-                     "source": r.get("source", ""), "created_at": r.get("created_at", "")}
-                    for r in s2_entries
-                ],
-                "s3_long_term": [
-                    {"id": r.get("id"), "content": r.get("content", "")[:200],
-                     "category": r.get("category", ""), "importance": r.get("importance", 0)}
-                    for r in s3_entries
-                ],
-            }
-        except Exception:
-            pass  # memory snapshot is best-effort; world model is the critical path
-
-    return payload
-
-
-def _wire_github_poller(
-    event_bus: EventBus,
-    token: str,
-    poll_repos: str,
-    interval_sec: int,
-) -> Any | None:
-    """Create and start a GitHubPoller if credentials are configured."""
-    if not token or not poll_repos:
-        return None
-    try:
-        from connectors.github.poller import GitHubPoller
-        repos = [r.strip() for r in poll_repos.split(",") if r.strip()]
-        if not repos:
-            return None
-        poller = GitHubPoller(
-            event_bus=event_bus,
-            token=token,
-            repos=repos,
-            interval_sec=interval_sec,
-        )
-        poller.start()
-        logger.info("github poller started (%d repos, interval=%ss)", len(repos), interval_sec)
-        return poller
-    except Exception:
-        logger.exception("failed to start github poller")
-        return None
-
-
-# ── main bootstrap ─────────────────────────────────────────────────
-
 def bootstrap_system(ws_manager: Any = None) -> AppContainer:
-    """Initialize the EVA system and return a typed AppContainer.
+    """Build and start one EVA runtime.
 
-    Sets up directories, logging, database, event bus, agents, executors,
-    cognition loop, and scheduler. All components are accessible via
-    attribute access on the returned container.
+    Component creation is delegated to ``app.composition``. This function owns
+    only dependency ordering and process lifecycle.
     """
-    _ensure_dirs()
+    ensure_runtime_dirs(settings)
     configure_logging(
         log_dir=settings.log_dir,
         log_file=settings.log_file,
         level=settings.log_level,
     )
+    started_at = time.perf_counter()
     logger.info("bootstrap start env=%s port=%s", settings.env, settings.port)
-    _bootstrap_start = time.perf_counter()
+    _validate_runtime_security()
 
     if ws_manager:
         ws_manager.capture_loop()
 
-    system_state = _create_initial_state()
-    constitution = _load_constitution()
+    state = create_initial_state()
+    constitution = load_constitution(settings)
 
-    # ── storage layer ──
-    storage = _wire_memory(system_state)
-    store = storage["store"]
+    memory = build_memory(settings, state)
+    policy = build_policy(settings, constitution)
+    state["policy_state"] = policy.get_state()
+    executor = build_executors(settings, memory.store, constitution)
 
-    # ── persona layer ──
-    persona = _wire_persona(system_state)
-    persona_repo = PersonaRepository(store)
-    persona_service = PersonaService(persona_repo)
+    identity = build_identity(settings, state)
+    persona_repository = PersonaRepository(memory.store)
+    persona_service = PersonaService(persona_repository)
+    world = build_world(settings, state, memory.tiered, persona_service)
 
-    # ── world layer ──
-    world = _wire_world(system_state, storage["tiered_memory"], persona_service)
+    event_bus = EventBus(s5_store=memory.tiered.s5)
+    state["event_bus_ready"] = True
+    planner = Planner(embedding_service=memory.embedding_service)
+    state["planner_ready"] = True
 
-    # ── messaging ──
-    event_bus = EventBus(s5_store=storage["tiered_memory"].s5)
-    logger.info("event bus initialized")
+    tool_registry = _build_tool_registry(
+        memory.tiered,
+        executor.executors,
+        workspace_root=settings.base_dir,
+    )
+    _initialize_entity_extractor()
+    agents = build_agents(
+        state,
+        tool_registry=tool_registry,
+        base_dir=settings.base_dir,
+        llm_max_retries=settings.llm_max_retries,
+    )
 
-    # ── planner ──
-    planner = Planner(embedding_service=storage.get("embedding_service"))
-
-    # ── tool registry ──
-    tool_registry = ToolRegistry()
-    builtin_tools = create_builtin_tools(tiered_memory=storage["tiered_memory"])
-    for tool in builtin_tools:
-        tool_registry.register(tool)
-    logger.info("tool registry initialized with %d tools", len(tool_registry.list_all()))
-
-    # ── entity extractor upgrade ──
-    # Upgrade the global entity extractor singleton to use LLM when available.
-    from core.entity_extractor import _lazy_init_llm
-    _lazy_init_llm()
-
-    # ── agents ──
-    agents = _wire_agents(system_state, tool_registry=tool_registry)
-
-    # ── results ──
     result_registry = ResultRegistry()
-    system_state["result_registry_ready"] = True
-
-    # ── proactive engine ──
+    state["result_registry_ready"] = True
     proactive_engine = ProactiveEngine(
         stagnation_threshold_sec=settings.stagnation_threshold_sec,
         reminder_cooldown_sec=settings.reminder_cooldown_sec,
     )
-    system_state["proactive_ready"] = True
+    state["proactive_ready"] = True
+    _sync_world_state(state, world.model)
 
-    # ── sync world state → system_state ──
-    wm = world["world_model"]
-    system_state.update({
-        "focus": wm.focus,
-        "mode": wm.mode,
-        "active_tasks": wm.active_tasks,
-        "last_reply": wm.last_reply,
-        "last_selected_agent": wm.last_selected_agent,
-        "last_loop_id": wm.last_loop_id,
-        "last_loop_at": wm.last_loop_at,
-    })
-
-    # ── snapshot callback ──
-    def save_runtime_snapshot() -> None:
-        persona_profile = persona_service.get_active_persona()
-        payload = _build_snapshot_payload(
-            world_model=wm,
-            profile=persona["profile"],
-            self_model=persona["self_model"],
-            proactive_state=world["proactive_state"],
-            tiered_memory=storage["tiered_memory"],
-        )
-        payload["persona"] = persona_profile.model_dump(mode="json")
-        world["snapshot_store"].save_latest(payload)
-        system_state["last_snapshot_at"] = datetime.now(timezone.utc).isoformat()
-        logger.debug("snapshot saved")
-
-    # ── prediction tracker ──
+    save_snapshot = _snapshot_callback(
+        state=state,
+        world=world,
+        identity=identity,
+        persona_service=persona_service,
+        tiered_memory=memory.tiered,
+    )
     prediction_tracker = PredictionTracker(max_history=50, decay_lambda=0.1)
+    worker_backend = ThreadAgentWorkerBackend(
+        agents.orchestrator,
+        max_workers=settings.agent_worker_count,
+        timeout_sec=settings.agent_execution_timeout_sec,
+    )
 
-    # ── policy engine ──
-    policy_engine = _wire_policy(constitution)
-    system_state["policy_state"] = policy_engine.get_state()
-
-    # ── executors ──
-    exec_data = _wire_executors(store, constitution)
-
-    # ── cognition loop ──
     loop = CognitionLoop(
         event_bus=event_bus,
-        memory_api=storage["memory_api"],
-        memory_governor=storage["memory_governor"],
+        memory_api=memory.api,
+        memory_governor=memory.governor,
         planner=planner,
-        agent_router=agents["agent_router"],
-        orchestrator=agents["orchestrator"],
+        agent_router=agents.router,
+        orchestrator=agents.orchestrator,
         result_registry=result_registry,
         proactive_engine=proactive_engine,
-        proactive_state=world["proactive_state"],
-        world_model=wm,
-        system_state=system_state,
+        proactive_state=world.proactive_state,
+        world_model=world.model,
+        system_state=state,
         poll_timeout_sec=settings.queue_poll_timeout_sec,
         result_ttl_sec=settings.result_ttl_sec,
-        context_builder=world["context_builder"],
+        context_builder=world.context_builder,
         prediction_tracker=prediction_tracker,
-        self_model_store=persona["self_model_store"],
-        self_model=persona["self_model"],
-        policy_engine=policy_engine,
-        tiered_memory=storage["tiered_memory"],
-        executors=exec_data["executors"],
+        self_model_store=identity.self_model_store,
+        self_model=identity.self_model,
+        policy_engine=policy,
+        tiered_memory=memory.tiered,
+        executors=executor.executors,
         ws_manager=ws_manager,
         worker_count=settings.cognition_worker_count,
+        agent_worker_backend=worker_backend,
     )
-    loop.start()
-    system_state["loop_ready"] = True
-    logger.info("cognition loop started")
-
-    # ── github poller ──
-    github_poller = _wire_github_poller(
-        event_bus=event_bus,
-        token=settings.github_api_token,
-        poll_repos=settings.github_poll_repos,
-        interval_sec=settings.github_poll_interval_sec,
-    )
-
-    # ── scheduler ──
     scheduler = RuntimeScheduler(
         event_bus=event_bus,
-        snapshot_save_fn=save_runtime_snapshot,
-        system_state=system_state,
+        snapshot_save_fn=save_snapshot,
+        system_state=state,
         tick_interval_sec=settings.scheduler_tick_interval_sec,
         maintenance_interval_sec=settings.scheduler_maintenance_interval_sec,
         snapshot_interval_sec=settings.scheduler_snapshot_interval_sec,
     )
-    scheduler.start()
-    system_state["scheduler_ready"] = True
-    logger.info("scheduler started (tick=%ss)", settings.scheduler_tick_interval_sec)
-
-    # ── health ──
     health = HealthService(
-        system_state,
-        store=store,
+        state,
+        store=memory.store,
         event_bus=event_bus,
         loop=loop,
         scheduler=scheduler,
     )
-
-    # ── boot diagnostic ──
-    diagnostic = SystemDiagnostic().run_full(
-        store, storage["tiered_memory"], system_state,
-        snapshot_path=Path(settings.latest_snapshot_path),
-    )
-    system_state["diagnostic"] = diagnostic.to_dict()
-    _log_diagnostic(diagnostic)
-
-    if diagnostic.overall == "critical":
-        failed = diagnostic.failed_checks()
-        raise RuntimeError(
-            f"Boot diagnostic critical (score={diagnostic.score}): "
-            + "; ".join(f"{c.name}: {c.detail}" for c in failed)
-        )
-
-    bootstrap_sec = round(time.perf_counter() - _bootstrap_start, 2)
-    logger.info("bootstrap complete — system ready (%.1fs)", bootstrap_sec)
-
-    # ── finalize system_state in one batch ──
-    system_state.update({
-        "ready": True,
-        "storage_backend": settings.storage_backend,
-        "bootstrap_sec": bootstrap_sec,
-    })
 
     container = AppContainer(
         settings=settings,
-        system_state=system_state,
-        store=store,
-        memory_api=storage["memory_api"],
-        memory_repository=storage["memory_repository"],
-        memory_governor=storage["memory_governor"],
-        tiered_memory=storage["tiered_memory"],
-        profile_store=persona["profile_store"],
-        self_model_store=persona["self_model_store"],
-        profile=persona["profile"],
-        self_model=persona["self_model"],
-        persona_repo=persona_repo,
-        persona_service=persona_service,
-        context_builder=world["context_builder"],
-        snapshot_store=world["snapshot_store"],
-        world_model=wm,
-        proactive_state=world["proactive_state"],
-        event_bus=event_bus,
-        ws_manager=ws_manager,
-        planner=planner,
-        registry=agents["registry"],
-        result_registry=result_registry,
-        proactive_engine=proactive_engine,
-        agent_router=agents["agent_router"],
-        orchestrator=agents["orchestrator"],
-        loop=loop,
-        scheduler=scheduler,
-        prediction_tracker=prediction_tracker,
-        policy_engine=policy_engine,
-        executors=exec_data["executors"],
-        executor_audit_log=exec_data["executor_audit_log"],
-        tool_registry=tool_registry,
-        save_runtime_snapshot=save_runtime_snapshot,
-        health=health,
-        diagnostic=diagnostic,
-        recovery_actions=RecoveryActions(),
-        github_poller=github_poller,
-        embedding_service=storage.get("embedding_service"),
-        vector_store=storage.get("vector_store"),
+        system_state=state,
+        memory=MemorySubsystem(
+            store=memory.store,
+            api=memory.api,
+            repository=memory.repository,
+            governor=memory.governor,
+            tiered=memory.tiered,
+            embedding_service=memory.embedding_service,
+            vector_store=memory.vector_store,
+        ),
+        persona=PersonaSubsystem(
+            profile_store=identity.profile_store,
+            self_model_store=identity.self_model_store,
+            profile=identity.profile,
+            self_model=identity.self_model,
+            repository=persona_repository,
+            service=persona_service,
+        ),
+        world=WorldSubsystem(
+            context_builder=world.context_builder,
+            snapshot_store=world.snapshot_store,
+            model=world.model,
+            proactive_state=world.proactive_state,
+        ),
+        agents=AgentSubsystem(
+            planner=planner,
+            registry=agents.registry,
+            router=agents.router,
+            orchestrator=agents.orchestrator,
+            proactive_engine=proactive_engine,
+            prediction_tracker=prediction_tracker,
+            tool_registry=tool_registry,
+        ),
+        runtime=RuntimeSubsystem(
+            event_bus=event_bus,
+            results=result_registry,
+            loop=loop,
+            scheduler=scheduler,
+            policy=policy,
+            worker_backend=worker_backend,
+            executors=executor.executors,
+            executor_audit_log=executor.audit_log,
+            websocket=ws_manager,
+            save_snapshot=save_snapshot,
+            health=health,
+            recovery=RecoveryActions(),
+        ),
+        integrations=IntegrationSubsystem(),
     )
 
-    # ── MVSC integration (feature-flagged, post-construction) ──
-    if settings.enable_mvsc_pipeline:
-        try:
-            from packages.kernel.mvsc_bootstrap import integrate_mvsc
-            container.mvsc_components = integrate_mvsc(container, settings)
-            logger.info("MVSC pipeline enabled — adapted loop ready")
-        except Exception:
-            logger.exception("MVSC integration failed — falling back to legacy loop")
-
-    return container
-
-
-def shutdown_system(container: AppContainer) -> None:
-    """Gracefully shutdown all system components."""
-    logger.info("shutdown start")
     try:
-        if container.github_poller:
-            container.github_poller.stop()
-            logger.info("github poller stopped")
+        _start_runtime(container)
+        diagnostic = _run_boot_diagnostic(container)
+        container.diagnostic = diagnostic
+        state["diagnostic"] = diagnostic.to_dict()
+        _log_diagnostic(diagnostic)
+        if diagnostic.overall == "critical":
+            failed = diagnostic.failed_checks()
+            raise RuntimeError(
+                f"Boot diagnostic critical (score={diagnostic.score}): "
+                + "; ".join(f"{check.name}: {check.detail}" for check in failed)
+            )
 
-        if container.scheduler:
-            container.scheduler.shutdown()
-            logger.info("scheduler shutdown")
-
-        if container.loop:
-            container.loop.stop()
-            logger.info("cognition loop stopped")
-
-        # persist vector index
-        if container.vector_store:
-            container.vector_store.save()
-            logger.info("vector index saved")
-
-        # dump S1 session memory to S2 for persistence across restarts
-        if container.tiered_memory:
-            count = container.tiered_memory.s1.dump_to_s2(container.tiered_memory.s2)
-            logger.info("S1 session memory dumped to S2 (%d entries)", count)
-
-        container.save_runtime_snapshot()
-        logger.info("snapshot saved on shutdown")
-
-        # ── MVSC shutdown ──
-        if container.mvsc_components:
-            try:
-                from packages.kernel.mvsc_bootstrap import shutdown_mvsc
-                shutdown_mvsc(container.mvsc_components)
-            except Exception:
-                logger.exception("MVSC shutdown failed")
-
-        container.system_state["ready"] = False
-        logger.info("shutdown complete")
+        container.mvsc_components = start_mvsc(container, settings)
+        bootstrap_sec = round(time.perf_counter() - started_at, 2)
+        state.update({
+            "ready": True,
+            "storage_backend": settings.storage_backend,
+            "bootstrap_sec": bootstrap_sec,
+        })
+        logger.info("bootstrap complete; system ready (%.1fs)", bootstrap_sec)
+        return container
     except Exception:
-        logger.exception("error during shutdown")
+        logger.exception("bootstrap failed; releasing initialized components")
+        shutdown_system(container)
         raise
 
 
-# ── internal helpers ───────────────────────────────────────────────
+def shutdown_system(container: AppContainer) -> None:
+    """Stop runtime services and persist state using best-effort cleanup."""
+    logger.info("shutdown start")
+    actions: tuple[tuple[str, Callable[[], Any]], ...] = (
+        ("github poller", lambda: container.github_poller and container.github_poller.stop()),
+        ("scheduler", container.scheduler.shutdown),
+        ("cognition loop", container.loop.stop),
+        ("agent worker", container.runtime.worker_backend.shutdown),
+        ("vector index", lambda: container.vector_store and container.vector_store.save()),
+        (
+            "session memory",
+            lambda: container.tiered_memory.s1.dump_to_s2(container.tiered_memory.s2),
+        ),
+        ("runtime snapshot", container.save_runtime_snapshot),
+        ("MVSC", lambda: stop_mvsc(container.mvsc_components)),
+        ("storage", container.store.close),
+    )
+    for name, action in actions:
+        try:
+            result = action()
+            if name == "session memory":
+                logger.info("session memory persisted (%d entries)", result or 0)
+            else:
+                logger.info("%s stopped", name)
+        except Exception:
+            logger.exception("%s shutdown failed", name)
+
+    container.system_state["ready"] = False
+    container.system_state["scheduler_running"] = False
+    logger.info("shutdown complete")
+    shutdown_logging()
+
+
+def _validate_runtime_security() -> None:
+    if settings.env.lower() in {"prod", "production"} and not os.environ.get("EVA_API_TOKEN"):
+        raise RuntimeError("EVA_API_TOKEN is required in production")
+
+
+def _build_tool_registry(
+    tiered_memory: Any,
+    executors: dict[str, Any],
+    workspace_root: Path,
+) -> ToolRegistry:
+    registry = ToolRegistry()
+    for tool in create_builtin_tools(
+        tiered_memory=tiered_memory,
+        executors=executors,
+        enable_code=settings.enable_code_tool,
+        enable_network=settings.enable_network_tools,
+        workspace_root=workspace_root,
+    ):
+        registry.register(tool)
+    logger.info("tool registry initialized with %d tools", len(registry.list_all()))
+    return registry
+
+
+def _initialize_entity_extractor() -> None:
+    from core.entity_extractor import _lazy_init_llm
+
+    _lazy_init_llm()
+
+
+def _sync_world_state(state: dict[str, Any], world_model: Any) -> None:
+    state.update({
+        "focus": world_model.focus,
+        "mode": world_model.mode,
+        "active_tasks": world_model.active_tasks,
+        "last_reply": world_model.last_reply,
+        "last_selected_agent": world_model.last_selected_agent,
+        "last_loop_id": world_model.last_loop_id,
+        "last_loop_at": world_model.last_loop_at,
+    })
+
+
+def _snapshot_callback(
+    *,
+    state: dict[str, Any],
+    world: Any,
+    identity: Any,
+    persona_service: PersonaService,
+    tiered_memory: Any,
+) -> Callable[[], None]:
+    def save() -> None:
+        payload = build_snapshot_payload(
+            world_model=world.model,
+            profile=identity.profile,
+            self_model=identity.self_model,
+            proactive_state=world.proactive_state,
+            tiered_memory=tiered_memory,
+        )
+        payload["persona"] = persona_service.get_active_persona().model_dump(mode="json")
+        world.snapshot_store.save_latest(payload)
+        state["last_snapshot_at"] = datetime.now(timezone.utc).isoformat()
+        logger.debug("snapshot saved")
+
+    return save
+
+
+def _start_runtime(container: AppContainer) -> None:
+    container.loop.start()
+    container.system_state["loop_ready"] = True
+    logger.info("cognition loop started")
+
+    container.github_poller = start_github_poller(
+        event_bus=container.event_bus,
+        token=settings.github_api_token,
+        poll_repos=settings.github_poll_repos,
+        interval_sec=settings.github_poll_interval_sec,
+    )
+    container.scheduler.start()
+    container.system_state["scheduler_ready"] = True
+    logger.info("scheduler started (tick=%ss)", settings.scheduler_tick_interval_sec)
+
+
+def _run_boot_diagnostic(container: AppContainer) -> DiagnosticReport:
+    return SystemDiagnostic().run_full(
+        container.store,
+        container.tiered_memory,
+        container.system_state,
+        snapshot_path=Path(settings.latest_snapshot_path),
+    )
+
 
 def _log_diagnostic(diagnostic: DiagnosticReport) -> None:
+    failed_count = len(diagnostic.failed_checks())
+    log = logger.info
     if diagnostic.overall == "critical":
-        logger.critical("boot diagnostic: score=%d overall=%s issues=%d",
-                        diagnostic.score, diagnostic.overall,
-                        len(diagnostic.failed_checks()))
+        log = logger.critical
     elif diagnostic.overall == "degraded":
-        logger.warning("boot diagnostic: score=%d overall=%s issues=%d",
-                       diagnostic.score, diagnostic.overall,
-                       len(diagnostic.failed_checks()))
-    else:
-        logger.info("boot diagnostic: score=%d overall=%s",
-                    diagnostic.score, diagnostic.overall)
+        log = logger.warning
+    log(
+        "boot diagnostic: score=%d overall=%s issues=%d",
+        diagnostic.score,
+        diagnostic.overall,
+        failed_count,
+    )

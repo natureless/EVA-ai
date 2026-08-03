@@ -3,7 +3,6 @@
 from unittest.mock import MagicMock
 
 import numpy as np
-import pytest
 
 from memory.hybrid_retrieval import hybrid_search, _l2_normalize
 

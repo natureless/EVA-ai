@@ -2,7 +2,6 @@
 
 from unittest.mock import MagicMock
 
-import pytest
 
 from event.event_bus import EventBus
 from runtime.scheduler import RuntimeScheduler

@@ -322,8 +322,7 @@ class LongTermMemoryStore:
             if rows:
                 return [dict(r) for r in rows]
         except Exception as e:
-            logger.debug("S2 search failed: %s", e)
-        return []
+            logger.debug("S3 FTS search failed, using LIKE fallback: %s", e)
 
         # fallback: substring LIKE scan
         rows = self.store.fetchall(

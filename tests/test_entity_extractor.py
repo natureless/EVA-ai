@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from core.entity_extractor import (
     ENTITY_EXTRACTION_PROMPT,
@@ -38,7 +37,8 @@ class TestLLMEntityExtractor:
 }
 ```'''
         # Verify the JSON parsing path works — the regex should find the JSON block
-        import re, json
+        import re
+        import json
 
         json_match = re.search(r'\{[\s\S]*"entities"[\s\S]*"relations"[\s\S]*\}', mock_response)
         assert json_match is not None
@@ -73,7 +73,6 @@ class TestLLMEntityExtractor:
 
     def test_llm_response_with_invalid_entity_skipped(self):
         """LLM response entities missing required fields are skipped."""
-        extractor = EntityExtractor()
         # Simulate parsing code path: entities without "type" or "name" are filtered
         data = {
             "entities": [
@@ -93,14 +92,14 @@ class TestLLMEntityExtractor:
 
     def test_unknown_entity_type_defaults_to_task(self):
         """Entity types not in the allowed set default to 'task'."""
-        extractor = EntityExtractor()
         data = {
             "entities": [
                 {"type": "unicorn", "name": "magic thing", "properties": {}},
             ],
             "relations": [],
         }
-        import re, json
+        import re
+        import json
         response = json.dumps(data)
         json_match = re.search(r'\{[\s\S]*"entities"[\s\S]*"relations"[\s\S]*\}', response)
         parsed = json.loads(json_match.group(0))
@@ -142,7 +141,8 @@ class TestLLMEntityExtractor:
                 {"source": "X", "target": "Y", "relation": "related_to"},
             ],
         }
-        import re, json
+        import re
+        import json
         response = json.dumps(data)
         json_match = re.search(r'\{[\s\S]*"entities"[\s\S]*"relations"[\s\S]*\}', response)
         parsed = json.loads(json_match.group(0))

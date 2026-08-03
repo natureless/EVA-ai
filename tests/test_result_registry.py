@@ -2,9 +2,8 @@
 
 import time
 
-import pytest
 
-from runtime.result_registry import ResultRegistry, PendingResult
+from runtime.result_registry import ResultRegistry
 
 
 class TestResultRegistry:

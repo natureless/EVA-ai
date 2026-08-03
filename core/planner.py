@@ -182,7 +182,10 @@ class Planner:
                 agent="chat_agent",
                 task=AgentTask(
                     kind="chat",
-                    payload={"text": event.payload.get("message", "[proactive] reminder")},
+                    payload={
+                        "text": event.payload.get("message", "[proactive] reminder"),
+                        "tools_allowed": False,
+                    },
                 ),
             )
 
@@ -219,6 +222,9 @@ class Planner:
                     kind="chat",
                     payload={
                         "text": summary,
+                        # GitHub bodies are untrusted external input and must
+                        # never be allowed to drive file/network/code tools.
+                        "tools_allowed": False,
                         "context": {
                             "github_event": event.type,
                             "repo": repo_name,

@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
-from queue import Empty, Queue
+from queue import Empty, Full, Queue
 from typing import Any, Literal, Optional
 
 from event.event_schema import Event
@@ -89,7 +89,6 @@ class EventBus:
                         event.correlation_id,
                     ),
                 )
-                self._publish_count += 1
                 self._persist_count += 1
                 self._consecutive_failures = 0
                 if not self._persist_healthy:
@@ -97,7 +96,6 @@ class EventBus:
                     self._persist_healthy = True
                     self._alerted = False
             except Exception:
-                self._publish_count += 1
                 self._persist_failures += 1
                 self._consecutive_failures += 1
 
@@ -123,9 +121,7 @@ class EventBus:
         try:
             self._queue.put_nowait(event)
             return True
-        except Exception:
-            # Queue.Full — Python's queue module raises Full, not an Exception
-            # subclass we can catch by name, so we catch broadly here.
+        except Full:
             pass
 
         if self._overflow_policy == "drop_oldest":
@@ -138,7 +134,7 @@ class EventBus:
             try:
                 self._queue.put_nowait(event)
                 return True
-            except Exception:
+            except Full:
                 pass
 
         return False
@@ -186,4 +182,3 @@ class EventBus:
             "dropped": self._dropped_count,
             "overflow_policy": self._overflow_policy,
         }
-

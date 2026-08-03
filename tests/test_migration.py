@@ -3,7 +3,6 @@
 import tempfile
 from pathlib import Path
 
-import pytest
 
 from memory.sqlite_store import SQLiteStore
 from core.migration import MigrationRunner, _split_sql, MIGRATIONS_DIR

@@ -1,38 +1,39 @@
 """Authentication middleware tests."""
 
-import pytest
 from starlette.applications import Starlette
-from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
 
 from runtime.auth import AuthMiddleware
 
-
-async def _ok_endpoint(request: Request):
-    return JSONResponse({"ok": True})
-
-
 def _build_app(token: str = ""):
     app = Starlette()
     app.add_middleware(AuthMiddleware, token=token)
 
-    @app.route("/health/live")
-    async def health(request):
+    async def health(_request):
         return JSONResponse({"status": "alive"})
 
-    @app.route("/api/chat")
-    async def chat(request):
+    async def chat(_request):
         return JSONResponse({"reply": "hello"})
 
-    @app.route("/api/executors/code/execute", methods=["POST"])
-    async def code_execute(request):
+    async def code_execute(_request):
         return JSONResponse({"ok": True})
 
-    @app.route("/api/executors/file/write", methods=["POST"])
-    async def file_write(request):
+    async def file_write(_request):
         return JSONResponse({"ok": True})
 
+    async def tool_call(_request):
+        return JSONResponse({"ok": True})
+
+    async def health_recover(_request):
+        return JSONResponse({"ok": True})
+
+    app.add_route("/health/live", health)
+    app.add_route("/api/chat", chat)
+    app.add_route("/api/executors/code/execute", code_execute, methods=["POST"])
+    app.add_route("/api/executors/file/write", file_write, methods=["POST"])
+    app.add_route("/api/tools/call", tool_call, methods=["POST"])
+    app.add_route("/health/recover", health_recover, methods=["POST"])
     return app
 
 
@@ -63,10 +64,10 @@ class TestAuthMiddleware:
         resp = client.get("/api/chat", headers={"X-API-Token": "secret"})
         assert resp.status_code == 200
 
-    def test_query_param_token_passes(self):
+    def test_query_param_token_is_rejected(self):
         client = TestClient(_build_app(token="secret"))
         resp = client.get("/api/chat?token=secret")
-        assert resp.status_code == 200
+        assert resp.status_code == 401
 
     def test_health_still_open_with_token(self):
         client = TestClient(_build_app(token="secret"))
@@ -76,10 +77,10 @@ class TestAuthMiddleware:
     def test_metrics_open(self):
         client = TestClient(_build_app(token="secret"))
 
-        @client.app.route("/metrics")
-        async def metrics(request):
+        async def metrics(_request):
             return JSONResponse({"requests": 0})
 
+        client.app.add_route("/metrics", metrics)
         resp = client.get("/metrics")
         assert resp.status_code == 200
 
@@ -92,6 +93,16 @@ class TestAuthMiddleware:
     def test_dev_mode_blocks_file_write(self):
         client = TestClient(_build_app(token=""))
         resp = client.post("/api/executors/file/write")
+        assert resp.status_code == 401
+
+    def test_dev_mode_blocks_direct_tool_call(self):
+        client = TestClient(_build_app(token=""))
+        resp = client.post("/api/tools/call")
+        assert resp.status_code == 401
+
+    def test_health_recovery_is_not_public(self):
+        client = TestClient(_build_app(token=""))
+        resp = client.post("/health/recover")
         assert resp.status_code == 401
 
     def test_dev_mode_allows_read_endpoint(self):

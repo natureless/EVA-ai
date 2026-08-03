@@ -3,7 +3,6 @@
 import tempfile
 import os
 from pathlib import Path
-from unittest.mock import patch, MagicMock
 
 from agent_os.agent_task import (
     AGENT_EXECUTOR_MAP,
@@ -11,15 +10,12 @@ from agent_os.agent_task import (
 )
 from agent_os.orchestrator import AgentOrchestrator
 from agent_os.registry import AgentRegistry
-from agents.base_agent import AgentTask, AgentResult
+from agents.base_agent import AgentTask
 from agents.search_agent import SearchAgent
-from agents.coding_agent import CodingAgent
 from agents.chat_agent import ChatAgent
 from core.executor import (
     ExecutorAuditLog,
     FileExecutor,
-    BaseExecutor,
-    ExecutorDecision,
 )
 from memory.sqlite_store import SQLiteStore
 

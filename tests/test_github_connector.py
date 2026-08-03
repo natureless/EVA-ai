@@ -4,7 +4,6 @@ import asyncio
 import json
 from unittest.mock import MagicMock
 
-import pytest
 
 from connectors.github.event_normalizer import (
     normalize_webhook_payload,
@@ -82,12 +81,14 @@ class TestVerifySignature:
     def test_valid_signature(self):
         secret = "test-secret"
         body = b'{"action":"opened"}'
-        import hashlib, hmac
+        import hashlib
+        import hmac
         sig = "sha256=" + hmac.new(secret.encode(), body, hashlib.sha256).hexdigest()
         assert verify_signature(secret, sig, body) is True
 
     def test_wrong_secret(self):
-        import hashlib, hmac
+        import hashlib
+        import hmac
         body = b'{"action":"opened"}'
         # Sign with secret-A, verify with secret-B
         sig = "sha256=" + hmac.new(b"secret-a", body, hashlib.sha256).hexdigest()

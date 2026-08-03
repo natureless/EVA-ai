@@ -1,7 +1,6 @@
 import json
 import sqlite3
 import threading
-from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -19,10 +18,15 @@ class SQLiteStore(BaseStorageAdapter):
         self.db_path = db_path
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._local = threading.local()
+        self._connections: list[sqlite3.Connection] = []
+        self._connections_lock = threading.Lock()
 
     def _get_conn(self) -> sqlite3.Connection:
         if not hasattr(self._local, "conn") or self._local.conn is None:
-            conn = sqlite3.connect(str(self.db_path))
+            # Connections remain thread-local during normal operation, but
+            # check_same_thread=False lets the main shutdown path close every
+            # worker connection after those workers have stopped.
+            conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA synchronous=NORMAL")
@@ -30,12 +34,20 @@ class SQLiteStore(BaseStorageAdapter):
             conn.execute("PRAGMA cache_size=-8000")  # 8MB cache
             conn.execute("PRAGMA busy_timeout=2000")  # 2s busy wait
             self._local.conn = conn
+            with self._connections_lock:
+                self._connections.append(conn)
         return self._local.conn  # type: ignore[no-any-return]
 
     def close(self) -> None:
-        if hasattr(self._local, "conn") and self._local.conn is not None:
-            self._local.conn.close()
-            self._local.conn = None
+        with self._connections_lock:
+            connections = self._connections
+            self._connections = []
+        for conn in connections:
+            try:
+                conn.close()
+            except sqlite3.Error:
+                pass
+        self._local.conn = None
 
     def init_db(self) -> None:
         from core.migration import MigrationRunner

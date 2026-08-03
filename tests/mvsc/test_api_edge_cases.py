@@ -135,7 +135,7 @@ class TestMVSCErrorHandling:
         from packages.governance.governance import IdentityChangeManager
 
         icm = IdentityChangeManager()
-        pid = icm.propose("core_principles", "old", "new", "test")
+        icm.propose("core_principles", "old", "new", "test")
         proposals = icm.pending_proposals
         assert proposals[0]["risk_assessment"]["risk_level"] == "high"
         assert proposals[0]["risk_assessment"]["requires_approval"] is True

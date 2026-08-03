@@ -1,13 +1,12 @@
 """Tests for S1 session memory persistence, event bus durability,
 and policy state machine trigger completeness."""
 
-import json
 import tempfile
 import os
 from pathlib import Path
 
 from memory.sqlite_store import SQLiteStore
-from memory.tiered_store import SessionMemory, WorkingMemoryStore, TieredMemoryManager
+from memory.tiered_store import SessionMemory, WorkingMemoryStore
 from event.event_bus import EventBus
 from event.event_schema import Event
 

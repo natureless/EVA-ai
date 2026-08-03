@@ -1,6 +1,6 @@
 """WorldModelGraph + EntityExtractor unit tests."""
 
-from world.world_model import WorldModelGraph, Entity, Edge, _make_eid
+from world.world_model import WorldModelGraph
 from core.entity_extractor import EntityExtractor, entity_extractor
 from memory.tiered_store import WorldModelStore
 from memory.sqlite_store import SQLiteStore

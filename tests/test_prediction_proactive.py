@@ -2,10 +2,9 @@
 
 import time
 
-import pytest
 
 from core.prediction import PredictionTracker, PredictionRecord
-from core.proactive_engine import ProactiveEngine, ProactiveDecision
+from core.proactive_engine import ProactiveEngine
 
 
 class TestPredictionTracker:

@@ -24,8 +24,8 @@ from pathlib import Path
 
 
 def check(msg: str, ok: bool, detail: str = "") -> bool:
-    status = "✅" if ok else "❌"
-    print(f"  {status} {msg}" + (f" — {detail}" if detail and not ok else ""))
+    status = "[OK]" if ok else "[FAIL]"
+    print(f"  {status} {msg}" + (f" - {detail}" if detail and not ok else ""))
     return ok
 
 
@@ -136,9 +136,9 @@ def main():
 
     print("=" * 50)
     if all_ok:
-        print("✅ All checks passed — system ready for deployment")
+        print("[OK] All checks passed - system ready for deployment")
     else:
-        print("❌ Some checks failed — fix issues before deployment")
+        print("[FAIL] Some checks failed - fix issues before deployment")
         sys.exit(1)
 
 

@@ -1,6 +1,5 @@
 """Unit tests for ImportanceScorer and llm_helpers."""
 
-import pytest
 
 from memory.importance_scorer import ImportanceFeatures, ImportanceScorer
 from core.llm_helpers import build_context_text

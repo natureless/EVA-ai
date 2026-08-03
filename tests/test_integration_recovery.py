@@ -2,11 +2,8 @@
 
 import tempfile
 import os
-import time
 from pathlib import Path
 
-from memory.sqlite_store import SQLiteStore
-from memory.tiered_store import TieredMemoryManager
 from world.world_model import WorldModelGraph
 from core.policy_engine import PolicyEngine, State
 from core.prediction import PredictionTracker
@@ -171,6 +168,7 @@ class TestBootstrapRecovery:
         from app.bootstrap import shutdown_system
         shutdown_system(c)
         assert not c.system_state["ready"]
+        assert getattr(c.store._local, "conn", None) is None
 
     def test_double_bootstrap_no_crash(self):
         c1 = bootstrap_system()

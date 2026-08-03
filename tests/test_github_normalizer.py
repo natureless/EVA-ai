@@ -1,8 +1,6 @@
 """Tests for connectors.github.event_normalizer — webhook & poller payload → Event."""
 
-import json
 
-import pytest
 
 from connectors.github.event_normalizer import (
     normalize_webhook_payload,

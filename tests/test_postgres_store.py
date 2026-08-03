@@ -159,7 +159,7 @@ class TestPostgresStoreNoConnection:
             store.execute("SELECT 1")
             # If we get here, PG is available — skip assertion
             pytest.skip("PostgreSQL is running — skipping no-connection test")
-        except Exception as e:
+        except Exception:
             # Expected: either ImportError (no psycopg2) or OperationalError (no PG)
             assert True
 

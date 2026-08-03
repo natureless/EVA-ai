@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import secrets
 import time as _time
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -54,12 +56,26 @@ app.include_router(router)
 
 _rate_limiter = SlidingWindowLimiter()
 app.add_middleware(AuthMiddleware)
-app.add_middleware(RateLimitMiddleware, limiter=_rate_limiter)
+app.add_middleware(
+    RateLimitMiddleware,
+    limiter=_rate_limiter,
+    trust_proxy_headers=settings.trust_proxy_headers,
+)
 app.state.rate_limiter = _rate_limiter
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket) -> None:
+    expected_token = os.environ.get("EVA_API_TOKEN", "")
+    if expected_token:
+        provided_token = (
+            ws.headers.get("X-API-Token", "")
+            or ws.query_params.get("token", "")
+        )
+        if not secrets.compare_digest(provided_token, expected_token):
+            await ws.close(code=4401, reason="authentication required")
+            return
+
     ws_manager = app.state.container.ws_manager
     channel = ws.query_params.get("channel", "")
     await ws_manager.connect(ws, channel=channel)

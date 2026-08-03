@@ -67,6 +67,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("EVA_SCHEDULER_SNAPSHOT_INTERVAL_SEC", "60")
     monkeypatch.setenv("EVA_REQUEST_TIMEOUT_SEC", "5")
     monkeypatch.setenv("EVA_RESULT_TTL_SEC", "10")
+    monkeypatch.setenv("EVA_API_TOKEN", "test-token")
 
     # Force mock LLM for all tests — clear real API keys from .env
     for api_key_var in ("DEEPSEEK_API_KEY", "ANTHROPIC_API_KEY", "OPENAI_API_KEY"):
@@ -87,4 +88,5 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     importlib.reload(app.main)
 
     with TestClient(app.main.app) as test_client:
+        test_client.headers.update({"X-API-Token": "test-token"})
         yield test_client

@@ -1,282 +1,212 @@
 # EVA Development Guide
 
-## Development Environment Setup
+This guide applies to the stable runtime. Read `docs/architecture.md` before
+changing lifecycle, event flow, cognition, memory, or execution boundaries.
 
-### 1. Clone and Setup
-```bash
-git clone <repository-url>
-cd EVA-ai
+## Setup
+
+Requirements: Python 3.11 or newer.
+
+```powershell
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-### 2. Code Quality Tools
+macOS/Linux activation is `source .venv/bin/activate`.
 
-All development tools are installed with `requirements.txt`.
+Start the development server:
 
-#### Formatting
-```bash
-black app agents core event memory persona runtime tests ui
+```powershell
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-#### Linting
-```bash
-ruff check .
+Useful entry points:
+
+- Dashboard: `http://127.0.0.1:8000/`
+- Settings: `http://127.0.0.1:8000/settings`
+- OpenAPI: `http://127.0.0.1:8000/docs`
+- Liveness: `http://127.0.0.1:8000/health/live`
+
+Use one Uvicorn worker. The current event bus, result registry, scheduler, and
+some state are process-local.
+
+## Quality Gate
+
+Run before a commit or pull request:
+
+```powershell
+python -m ruff check .
+python -m pytest -q
+python scripts/preflight.py
 ```
 
-#### Type Checking
-```bash
-mypy app core agents
+Focused commands:
+
+```powershell
+python -m pytest -q tests/test_chat_flow.py
+python -m pytest -q tests/test_architecture.py
+python -m pytest -q -k "worker or registry"
+python -m black --check app core event agent_os agents memory persona runtime world tests
+python -m mypy app core agents
 ```
 
-#### Testing with Coverage
-```bash
-pytest --cov=app --cov=core --cov=agents --cov-report=html
+Ruff and the full test suite are mandatory. Black and mypy should be used on
+touched surfaces while legacy typing/formatting debt is reduced incrementally.
+
+## Repository Boundaries
+
+```text
+app/          FastAPI edge, lifecycle, configuration, composition
+event/        Event schema and bus
+core/         Cognition, context, planning, policy, proactive decisions
+agent_os/     Agent registry, routing, orchestration
+agents/       Task handlers with injected dependencies
+memory/       Persistence, retrieval, tiers, compaction, governance
+persona/      Persona, profile, relationship, self-model
+world/        Current world state, graph, snapshots
+runtime/      Workers, scheduling, auth, health, diagnostics, messaging
+connectors/   External event sources
+packages/     Experimental MVSC modules behind one bridge
+ui/web/       Dashboard templates and static assets
+tests/        Contract, component, integration, and architecture tests
 ```
 
-### 3. Running Locally
+The main dependency rules are:
 
-Development mode with auto-reload:
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+1. Domain modules do not import FastAPI, `app.config`, or `AppContainer`.
+2. Dependencies are constructed in `app/composition.py` and assembled in
+   `app/bootstrap.py`.
+3. API routes publish events or call application services; they do not build
+   domain components.
+4. Agents return `AgentResult`; they do not mutate memory or world state directly.
+5. External sources normalize input into stable events and never call agents.
+6. `packages/*` is reachable from stable code only through `app/experimental.py`.
 
-Production mode:
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
-```
+Architecture tests enforce these rules. Add a test when introducing a new rule.
 
-## Code Standards
+## AppContainer Usage
 
-### Style Guide
-- Use Black for formatting (line length: 100 characters)
-- Follow PEP 8 with Ruff for linting
-- Use type hints on all functions and methods
-- Add docstrings to modules, classes, and public methods
-
-### Type Hints
-```python
-from typing import Optional, List, Dict, Any
-
-def process_event(event: Event, timeout: float = 5.0) -> Optional[Dict[str, Any]]:
-    """Process an event with timeout.
-    
-    Args:
-        event: The event to process
-        timeout: Timeout in seconds
-        
-    Returns:
-        Result dictionary or None if timeout
-    """
-    ...
-```
-
-### Documentation
-- Module-level docstrings explaining purpose
-- Class docstrings with attributes
-- Method docstrings with Args, Returns, and Raises
-- Inline comments only for non-obvious logic
-
-```python
-class EventBus:
-    """Thread-safe event bus for publishing and consuming events.
-    
-    Manages a queue of events with configurable timeout behavior.
-    """
-    
-    def publish(self, event: Event) -> None:
-        """Publish an event to the bus.
-        
-        Args:
-            event: Event to publish
-            
-        Raises:
-            ValueError: If event is None
-        """
-        if event is None:
-            raise ValueError("Cannot publish None event")
-        self._queue.put(event)
-```
-
-### Error Handling
-- Use specific exception types
-- Log errors with context
-- Return error results for recoverable failures
-- Raise exceptions for unrecoverable failures
+New code should use the grouped subsystem model:
 
 ```python
-try:
-    result = process_data(data)
-except ValidationError as e:
-    logger.error("data validation failed: %s", e)
-    return AgentResult(ok=False, content=str(e), ...)
-except Exception as e:
-    logger.exception("unexpected error: %s", e)
-    raise
+container.memory.api
+container.persona.service
+container.world.model
+container.agents.registry
+container.runtime.event_bus
+container.integrations.github_poller
 ```
 
-### Logging
-- Use module-level logger: `logger = logging.getLogger(__name__)`
-- Log at appropriate levels (debug, info, warning, error)
-- Include context in log messages
-- Don't log sensitive data
+Flat properties such as `container.memory_api` are temporary compatibility
+aliases. Do not add new aliases.
 
-```python
-logger = logging.getLogger("eva.module")
+## Adding An Agent
 
-logger.debug("processing event: %s", event.id)
-logger.info("task completed in %d ms", duration_ms)
-logger.warning("file too large: %s (%s bytes)", path, size)
-logger.error("failed to save snapshot: %s", e, exc_info=True)
-```
+Create an agent that depends only on explicit constructor arguments:
 
-## Testing
-
-### Running Tests
-```bash
-# All tests
-pytest -v
-
-# Specific test file
-pytest tests/test_chat_flow.py -v
-
-# Specific test
-pytest tests/test_chat_flow.py::test_chat_returns_reply -v
-
-# With coverage
-pytest --cov=app --cov=core --cov-report=term-missing
-```
-
-### Writing Tests
-- Place tests in `tests/` directory
-- Name test files `test_*.py`
-- Use descriptive test names
-- Each test should be independent
-- Mock external dependencies
-
-```python
-def test_agent_returns_result():
-    """Test that agent processes task and returns result."""
-    task = AgentTask(kind="chat", payload={"text": "hello"})
-    agent = ChatAgent()
-    
-    result = agent.run(task)
-    
-    assert result.ok is True
-    assert "hello" in result.content.lower()
-```
-
-## Architecture
-
-### Event Flow
-1. User sends message via REST API
-2. Event published to EventBus
-3. CognitionLoop consumes event
-4. Planner decides which agent to route to
-5. AgentRouter selects agent
-6. Orchestrator executes agent
-7. Results stored in memory/trace
-8. Response returned to user
-
-### Key Components
-- **app/** - FastAPI configuration and routes
-- **core/** - Cognition loop, planner, proactive engine
-- **event/** - Event definitions and bus
-- **agents/** - Agent implementations
-- **agent_os/** - Agent registry, router, orchestrator
-- **memory/** - Persistence and memory management
-- **runtime/** - Health, scheduling, logging
-
-## Adding a New Agent
-
-1. Create `agents/my_agent.py`:
 ```python
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 
+
 class MyAgent(BaseAgent):
     name = "my_agent"
-    description = "What this agent does"
-    
+    description = "Handle my_kind tasks"
+
+    def __init__(self, service: object) -> None:
+        self.service = service
+
     def can_handle(self, task: AgentTask) -> bool:
         return task.kind == "my_kind"
-    
+
     def run(self, task: AgentTask) -> AgentResult:
-        # Implementation
-        return AgentResult(...)
+        content = str(task.payload.get("text", ""))
+        return AgentResult(
+            ok=True,
+            agent=self.name,
+            content=content,
+            summary=content[:120],
+        )
 ```
 
-2. Register in `app/bootstrap.py`:
-```python
-from agents.my_agent import MyAgent
-registry.register(MyAgent())
-```
+Then:
 
-3. Update `core/planner.py` if needed for routing
+1. Construct and register it in `app/composition.py`.
+2. Add planner intent mapping only if the task kind cannot already be selected.
+3. Add agent, routing, and end-to-end chat tests.
+4. Add capabilities through guarded tools/executors, not direct file/network access.
 
-4. Add tests in `tests/test_my_agent.py`
+Runtime registration through `/api/agents/register` creates an LLM-backed
+configured agent for an allowed task kind. It is not a plugin or arbitrary code
+loading mechanism.
 
-## Performance Optimization
+## Adding A Connector
 
-### Profiling
-```bash
-# Use cProfile for CPU profiling
-python -m cProfile -s cumulative app/main.py
-```
+1. Put provider code under `connectors/`.
+2. Inject credentials and configuration from the composition root.
+3. Normalize provider payloads into `event.event_schema.Event`.
+4. Persist cursor/delivery IDs when the provider supports replay.
+5. Publish to `EventBus`; do not invoke planner or agents directly.
+6. Add signature validation, deduplication, backoff, secret redaction, and health tests.
 
-### Key Metrics
-- Event queue size (monitor pending_events)
-- Agent execution time (in trace logs)
-- Memory usage (episodic_memory table)
-- Database query time (add indexes if needed)
+## Adding An API Route
 
-### Tips
-- Configure `queue_poll_timeout_sec` for responsiveness
-- Tune `scheduler_*_interval_sec` based on load
-- Adjust `result_ttl_sec` to manage cleanup frequency
-- Monitor SQLite with `.schema` command
+1. Add a focused router under `app/api_routes/`.
+2. Read the grouped container from `request.app.state.container`.
+3. Use Pydantic request/response models for mutable operations.
+4. Apply authentication/policy checks before privileged work.
+5. Include the router in `app/api.py` and verify `/openapi.json`.
+6. Add success, validation, authentication, and failure tests.
 
-## Deployment
+## Changing Events Or State
 
-### Docker Build
-```bash
-docker build -t eva:latest .
-```
+Event, result, snapshot, and memory shapes are persistence contracts.
 
-### Docker Run
-```bash
-docker run -p 8000:8000 \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/logs:/app/logs \
-  -e EVA_ENV=production \
-  eva:latest
-```
+- Add a version or migration instead of silently changing stored fields.
+- Preserve correlation and causation IDs through derived events.
+- Make handlers idempotent when external sources may redeliver.
+- Keep inference values separate from observed facts and record confidence/source.
+- Test recovery from an older snapshot/database fixture.
 
-### Docker Compose
-```bash
-docker-compose up -d
-```
+## Agent Worker Development
 
-## Troubleshooting
+`runtime/agent_worker.py` is the execution seam. The current thread backend is
+bounded but not an isolation boundary. A future process/container backend must
+preserve:
 
-### Tests Failing
-- Check Python version (3.11+)
-- Verify all dependencies installed
-- Clear pytest cache: `pytest --cache-clear`
+- sync and streaming execution contracts
+- structured timeout/cancellation/failure results
+- correlation and audit metadata
+- worker health and statistics
+- deterministic shutdown without orphan processes
 
-### Application Won't Start
-- Check logs in `logs/eva.log`
-- Verify `data/` directory is writable
-- Check port 8000 is available
+Never pass live database connections, locks, FastAPI objects, or executors over
+worker IPC.
 
-### Database Locked
-- Ensure only one instance running
-- Check for zombie processes
-- Remove lock file if corrupted
+## Configuration And Secrets
 
-## Resources
+All application settings use the `EVA_` environment prefix and are defined in
+`app/config.py`. Keep `.env.example` synchronized.
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Pydantic Documentation](https://docs.pydantic.dev/)
-- [Python Logging](https://docs.python.org/3/library/logging.html)
-- [APScheduler Documentation](https://apscheduler.readthedocs.io/)
+- Never commit API tokens, webhook secrets, cookies, or user-specific absolute paths.
+- Production requires `EVA_API_TOKEN` and should fail closed for privileged APIs.
+- Code and network tools remain disabled unless explicitly enabled.
+- Rotate a secret immediately if it appears in logs, chat, a commit, or test output.
+
+## Documentation
+
+Use `docs/README.md` as the index. Current behavior belongs in canonical docs;
+future behavior belongs in `docs/development-plan-v2.md`; MVSC-specific behavior
+belongs in experimental docs. OpenAPI is the endpoint schema authority.
+
+## Common Failures
+
+- Startup failure: run `python scripts/preflight.py` and inspect `logs/eva.log`.
+- SQLite lock: stop duplicate EVA processes; do not delete lock or database files blindly.
+- Chat accepted but no reply: poll `/api/chat/result/{task_id}`, inspect loop health,
+  worker statistics in `/api/config`, and recent trace/events.
+- LLM unavailable: verify provider-specific environment variables; mock mode should
+  still support deterministic local tests.
+- Connector silent: inspect connector health, repository/provider scope, checkpoint,
+  rate-limit state, and normalized event log.

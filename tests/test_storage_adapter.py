@@ -1,7 +1,12 @@
 """Storage adapter unit tests."""
 
+import sqlite3
 import tempfile
+import threading
 from pathlib import Path
+
+import pytest
+
 from memory.storage_adapter import BaseStorageAdapter
 from memory.sqlite_store import SQLiteStore
 
@@ -32,6 +37,24 @@ class TestBaseStorageAdapter:
         store.execute_many("INSERT INTO test VALUES (?)", [("a",), ("b",)])
         assert len(store.fetchall("SELECT * FROM test")) == 4
         store.close()
+
+    def test_close_releases_worker_thread_connections(self, tmp_path):
+        store = SQLiteStore(tmp_path / "threaded.db")
+        connections = []
+
+        def write_from_worker():
+            store.execute("CREATE TABLE test (id TEXT)")
+            connections.append(store._get_conn())
+
+        worker = threading.Thread(target=write_from_worker)
+        worker.start()
+        worker.join()
+
+        store.close()
+
+        assert store._connections == []
+        with pytest.raises(sqlite3.ProgrammingError):
+            connections[0].execute("SELECT 1")
 
 
 class TestStorageAbstraction:

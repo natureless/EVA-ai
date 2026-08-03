@@ -4,11 +4,8 @@ Phase 5: ExecutorToolAdapter wrapping existing Executors.
 Phase 6: Ablation config loading + bootstrap injection + runtime toggle.
 """
 
-import asyncio
 import os
 import sys
-import tempfile
-from pathlib import Path
 
 import pytest
 
@@ -20,7 +17,7 @@ from packages.tools.executor_adapter import (
     ToolRegistryAdapter,
     create_executor_adapters,
 )
-from packages.mvsc_lab.ablations import AblationConfig, AblationMetrics
+from packages.mvsc_lab.ablations import AblationConfig
 from packages.mvsc_lab.integration import (
     AblationMetricsCollector,
     inject_ablation_to_bootstrap,

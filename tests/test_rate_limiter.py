@@ -2,8 +2,6 @@
 
 from unittest.mock import MagicMock
 
-import pytest
-
 from runtime.rate_limiter import (
     RateLimitConfig,
     SlidingWindowLimiter,
@@ -64,11 +62,18 @@ class TestSlidingWindowLimiter:
 
 
 class TestRateLimitMiddleware:
-    def test_client_key_x_forwarded_for(self):
+    def test_client_key_x_forwarded_for_when_trusted(self):
         request = MagicMock()
         request.headers = {"X-Forwarded-For": "10.0.0.1, 10.0.0.2"}
-        key = RateLimitMiddleware._client_key(request)
+        key = RateLimitMiddleware._client_key(request, trust_proxy_headers=True)
         assert key == "10.0.0.1"
+
+    def test_client_key_ignores_x_forwarded_for_by_default(self):
+        request = MagicMock()
+        request.headers = {"X-Forwarded-For": "10.0.0.1"}
+        request.client.host = "192.168.1.1"
+        key = RateLimitMiddleware._client_key(request)
+        assert key == "192.168.1.1"
 
     def test_client_key_direct_ip(self):
         request = MagicMock()

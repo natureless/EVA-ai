@@ -1,231 +1,217 @@
 # EVA API Reference
 
-All endpoints grouped by architectural layer. Base: `http://localhost:8000`.
+Status: canonical overview. The generated schema at `/openapi.json` is the
+authority for request models and the complete endpoint list.
 
-Swagger UI: `/docs` | ReDoc: `/redoc` | OpenAPI: `/openapi.json`
+Base URL: `http://127.0.0.1:8000`
 
----
+- Swagger UI: `/docs`
+- ReDoc: `/redoc`
+- OpenAPI JSON: `/openapi.json`
 
-## 1. Cognition Core
+## Authentication
 
-### Chat
+Set `EVA_API_TOKEN` and send it in `X-API-Token` for protected HTTP routes.
+When no token is configured, read-only endpoints and chat remain available in
+development, while other state-changing endpoints fail closed.
+
+Public operational endpoints include liveness, readiness, metrics, API docs,
+and the GitHub webhook. The webhook uses its HMAC secret instead. WebSocket
+authentication accepts `X-API-Token` or `?token=...` when a token is configured.
+
+## Chat Contracts
+
+### Queue A Message
 
 `POST /api/chat`
 
-Send a message to EVA. Returns agent reply with metadata.
-
-**Request**:
-
 ```json
 {
-  "text": "Fix the login bug"
+  "text": "Summarize the current EVA architecture"
 }
 ```
 
-**Response** (200):
+The endpoint returns immediately:
 
 ```json
 {
   "accepted": true,
-  "completed": true,
-  "event_id": "...",
-  "correlation_id": "...",
-  "reply": "[EVA] Understood. Checking active tasks...",
-  "selected_agent": "chat_agent",
-  "loop_id": "loop_...",
-  "duration_ms": 12
+  "task_id": "correlation-id",
+  "event_id": "event-id",
+  "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}"
 }
 ```
 
-Timeout returns 202 with `completed: false`.
+Receive the result from the WebSocket `chat_reply` channel or poll:
 
-### System State
+`GET /api/chat/result/{task_id}`
 
-`GET /api/state`
+A pending result returns HTTP 202. A completed result is consumed from the
+registry and returns `reply`, `selected_agent`, `loop_id`, and `duration_ms`.
 
-Full system state snapshot including focus, mode, pending events/results, last agent/loop.
+### Synchronous Compatibility
 
----
+`POST /api/chat/sync`
 
-## 2. Policy Layer
+This publishes the same event but blocks for `EVA_REQUEST_TIMEOUT_SEC`. It
+returns HTTP 202 if processing continues beyond that window. Prefer the queued
+endpoint for applications.
 
-`GET /api/policy/state`
+### Server-Sent Events
 
-Current policy state. Query `?detail=true` for full token list + state history.
+`POST /api/chat/stream`
 
-```json
-{
-  "state": "dormant",
-  "state_since_seconds": 120,
-  "history_size": 3,
-  "active_tokens": 0
-}
-```
+This runs the full cognition pipeline and returns `text/event-stream`. Tokens
+arrive as `data:` frames, followed by `data: [DONE]`. The implementation uses
+the runtime WebSocket manager internally.
 
-`POST /api/policy/transition`
+## WebSocket
 
-Manual state transition. Allowed triggers: `manual_intervention`, `autonomy_granted`, `user_revoke`.
+Connect to `ws://127.0.0.1:8000/ws`. Send `ping` to receive a `pong` payload.
 
-```json
-{ "trigger": "manual_intervention" }
-```
+Important channels:
 
----
+| Channel | Purpose |
+| --- | --- |
+| `chat_token` | Incremental model/agent output with `task_id` |
+| `chat_reply` | Final normalized response with `task_id` |
+| `policy_state` | Policy transition updates |
+| `entity_created` | World-graph entity extraction |
+| `audit_event` | Executor and capability audit updates |
+| `system_state` | Runtime state updates |
 
-## 3. Memory Layer
+## Endpoint Families
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/memory/recent?limit=20` | Recent episodic memories |
-| GET | `/api/memory/tiers` | S1-S5 tier statistics |
-| GET | `/api/memory/working?limit=50` | S2 working memory entries |
-| GET | `/api/memory/longterm?limit=50&category=general` | S3 long-term memory (optional category filter) |
-| GET | `/api/memory/world?entity_type=task&limit=100` | S4 world model entities + edges |
-| GET | `/api/events/recent?limit=20` | Recent raw events |
-| GET | `/api/debug/trace?limit=20` | Recent cognition loop traces |
+### Runtime And Health
 
----
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/api/state` | Current focus, tasks, queue, agent, loop, and memory summary |
+| GET | `/health/live` | Process liveness |
+| GET | `/health/ready` | Component readiness |
+| GET | `/health/diagnostic` | Detailed diagnostic report |
+| GET | `/health/summary` | Compact health summary |
+| POST | `/health/recover` | Explicit recovery action |
+| GET | `/metrics` | Application metrics |
+| GET | `/metrics/prometheus` | Prometheus text format |
+| GET | `/api/config` | Redacted effective configuration and runtime worker stats |
+| GET | `/api/config/defaults` | Documented defaults |
 
-## 4. Executor Layer
+### Cognition, Policy, And Persona
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/executors` | List registered executors |
-| GET | `/api/executors/audit?type=file&limit=50&status=error` | Query executor audit log |
-| GET | `/api/executors/audit/replay?task_id=...&limit=20` | Timeline-style audit replay |
-| POST | `/api/executors/file/read` | Read file (token + path whitelist) |
-| POST | `/api/executors/file/write` | Write file |
-| POST | `/api/executors/file/list` | List directory |
-| POST | `/api/executors/code/execute` | Execute sandboxed code (python/bash) |
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/api/policy/state` | Current policy state and optional detail |
+| POST | `/api/policy/transition` | Explicit allowed state transition |
+| GET | `/api/policy/history` | Transition history |
+| GET | `/api/persona/active` | Active persona |
+| POST | `/api/persona/update` | Constrained persona update |
+| GET | `/api/persona/stats` | Persona stability/update statistics |
+| GET | `/api/proactive/state` | Proactive engine state |
+| POST | `/api/debug/maintenance/trigger` | Run maintenance now |
+| GET | `/api/scheduler/jobs` | Scheduler jobs |
+| GET | `/api/scheduler/stats` | Scheduler statistics |
 
-**File read example**:
+Self-model and constitution endpoints are grouped under `/api/mvsc/self/*` and
+`/api/constitution/*`. Inspect OpenAPI for their current schemas.
 
-```json
-POST /api/executors/file/read
-{
-  "path": "/data/eva/workspace/notes.txt",
-  "token_id": "tok_abc123",
-  "task_id": "task_xyz"
-}
-```
+### Agents And Tools
 
-**Code execute example**:
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/api/agents` | Registered agents |
+| POST | `/api/agents/register` | Register a constrained LLM-backed agent |
+| DELETE | `/api/agents/{name}` | Remove a non-built-in agent |
+| GET | `/api/agents/stats` | Agent and executor mapping summary |
+| GET | `/api/tools` | Available tools and schemas |
+| POST | `/api/tools/call` | Invoke a permitted tool |
+| GET | `/api/tools/stats` | Tool runtime statistics |
+| GET | `/api/tools/usage` | Tool usage history |
 
-```json
-POST /api/executors/code/execute
-{
-  "code": "print(sum(range(100)))",
-  "language": "python",
-  "token_id": "tok_abc123"
-}
-```
+Runtime registration accepts an agent name, description, and one allowed task
+kind. It does not load arbitrary Python code. Built-in agents cannot be removed.
 
----
+### Executors And Audit
 
-## 5. Persona Layer
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/api/executors` | Registered executors |
+| POST | `/api/executors/file/read` | Guarded file read |
+| POST | `/api/executors/file/write` | Guarded file write |
+| POST | `/api/executors/file/list` | Guarded directory list |
+| POST | `/api/executors/code/execute` | Opt-in subprocess code execution |
+| GET | `/api/executors/audit` | Filtered audit records |
+| GET | `/api/executors/audit/replay` | Task audit timeline |
+| GET | `/api/executors/audit/verify` | Audit integrity verification |
+| GET | `/api/executors/stats` | Executor statistics |
 
-`GET /api/persona/active`
+File operations remain restricted to configured roots. Code execution requires
+authentication, capability policy, and `EVA_ENABLE_CODE_TOOL=true`. The current
+subprocess executor is not equivalent to a hardened container sandbox.
 
-Active persona profile (name, role, tone, constraints, value weights).
+### Memory, Events, And Snapshots
 
-`POST /api/persona/update`
+| Method | Path | Purpose |
+| --- | --- | --- |
+| GET | `/api/memory/recent` | Recent episodic memory |
+| GET | `/api/memory/tiers` | S1-S5 tier summary |
+| GET | `/api/memory/working` | Working memory |
+| GET | `/api/memory/longterm` | Long-term memory |
+| GET | `/api/memory/world` | World entities and relations |
+| GET/POST | `/api/memory/search` | Memory search surfaces |
+| GET | `/api/memory/compaction/stats` | Compaction status |
+| GET | `/api/memory/db-stats` | Storage statistics |
+| GET | `/api/events/recent` | Recent normalized events |
+| GET | `/api/events/stats` | Event statistics |
+| GET | `/api/debug/trace` | Cognition traces |
+| GET | `/api/debug/snapshot` | Latest snapshot |
+| POST | `/api/debug/snapshot/save` | Save now |
+| GET | `/api/debug/snapshot/list` | Available snapshots |
+| GET | `/api/debug/snapshot/verify` | Verify snapshot integrity |
 
-Patch persona fields. Accepted keys: `name`, `role_definition`, `tone_style`, `hard_constraints`, `soft_preferences`, `value_weights`, `confidence`.
+Conversation import/export and memory explorer endpoints are also available
+under `/api/conversation/*` and `/api/memory/entry|entries/*`.
 
----
+### GitHub
 
-## 6. Proactive Engine
+| Method | Path | Purpose |
+| --- | --- | --- |
+| POST | `/api/webhooks/github` | Receive signed GitHub webhook deliveries |
+| GET | `/api/github/status` | Connector/poller status |
 
-`GET /api/proactive/state`
+The connector normalizes GitHub input into events. It must not directly execute
+an agent. Use a webhook secret and repository allowlist in non-local deployments.
 
-Proactive engine state: last user message, last reminder, stagnation status.
+### Experimental MVSC
 
-`POST /api/debug/maintenance/trigger`
+Endpoints under `/api/mvsc/*` expose state, ablation, lifecycle, integrity,
+trace, cache, vector, and observability data for the optional experimental
+pipeline. They are not part of the stable compatibility contract and may change
+while `EVA_ENABLE_MVSC_PIPELINE` remains disabled by default.
 
-Manually trigger a maintenance cycle (memory decay + compaction).
+## Agent Routing
 
----
+The planner recognizes explicit commands and intent keywords:
 
-## 7. Snapshot & Debug
+| Input | Default agent |
+| --- | --- |
+| General text | `chat_agent` |
+| `/search`, `search:`, `find:`, `lookup:` | `search_agent` |
+| `/code`, `code:`, `inspect:`, `review:` | `coding_agent` |
+| Document summary intent | `docs_agent` |
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/debug/snapshot` | Load latest snapshot |
-| POST | `/api/debug/snapshot/save` | Force snapshot save |
-| POST | `/api/debug/snapshot/restore` | Restore state from snapshot |
+All paths still pass through event normalization, cognition, policy, routing,
+worker execution, result integration, and memory/trace writeback.
 
----
-
-## 8. Health & Diagnostics
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health/live` | Liveness: `{"status":"alive"}` |
-| GET | `/health/ready` | Readiness: per-component boolean report |
-| GET | `/health/diagnostic` | Full diagnostic: DB, snapshot, config, memory, runtime |
-| GET | `/health/ws` | WebSocket connection statistics |
-| POST | `/health/recover` | Execute recovery action |
-
-**Recovery actions**:
-
-```json
-POST /health/recover
-{ "action": "reset_policy" }
-```
-Actions: `reset_policy`, `clear_registry`, `rebuild_db`, `rebuild_snapshot`.
-
----
-
-## 9. WebSocket
-
-`ws://localhost:8000/ws` (or `wss://` for HTTPS)
-
-Optional: `?channel=policy_state|entity_created|audit_event|system_state`
-
-Kept alive via `ping` → `pong` protocol.
-
-### Event Types
-
-| Channel | Payload | Trigger |
-|---------|---------|---------|
-| `policy_state` | `{"state_machine":{"current":"quarantined"},...}` | State changes, quarantine |
-| `entity_created` | `{"type":"task","name":"Fix bug","properties":{}}` | Entity extraction from agent reply |
-| `audit_event` | `{"executor_type":"file","action":"read","status":"success"}` | Executor audit entries |
-| `system_state` | Full system state snapshot | Periodic or on change |
-
----
-
-## 10. Agent Routing
-
-Agents are selected by command prefix or keyword match in the Planner:
-
-| Prefix / Keyword | Agent | Description |
-|------------------|-------|-------------|
-| (default) | `chat_agent` | General conversation (with LLM if API key configured) |
-| `/search`, `search:`, `find:`, `lookup:` | `search_agent` | Full-text search in local files |
-| `/code`, `code:`, `inspect:`, `review:` | `coding_agent` | Code file analysis |
-| `summary`, `docs`, `document`, `summarize` | `docs_agent` | Documentation processing |
-
----
-
-## 11. Scheduler
-
-`GET /api/scheduler/jobs`
-
-List scheduled APScheduler jobs with next run time.
-
-`GET /api/agents`
-
-List registered agent names.
-
----
-
-## Error Codes
+## Common Status Codes
 
 | Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 202 | Accepted (chat timeout — event still processing) |
-| 400 | Bad request (missing fields, invalid trigger) |
-| 404 | Not found (unknown executor, agent) |
-| 503 | Unavailable (component not initialized) |
+| --- | --- |
+| 200 | Completed request |
+| 202 | Accepted or still processing |
+| 400/422 | Invalid request or transition |
+| 401/403 | Missing token, invalid token, or denied capability |
+| 404 | Unknown task/resource/agent |
+| 409 | Duplicate runtime registration or conflicting state |
+| 429 | Rate limit exceeded |
+| 503 | Required runtime component unavailable |

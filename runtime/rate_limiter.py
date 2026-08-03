@@ -10,7 +10,7 @@ from __future__ import annotations
 import threading
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Callable
 
 from fastapi import Request, Response
@@ -102,16 +102,18 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         limiter: SlidingWindowLimiter,
         *,
         exclude_paths: set[str] | None = None,
+        trust_proxy_headers: bool = False,
     ) -> None:
         super().__init__(app)
         self.limiter = limiter
         self.exclude_paths = exclude_paths or {"/health/live", "/health/ready", "/metrics"}
+        self.trust_proxy_headers = trust_proxy_headers
 
     async def dispatch(self, request: Request, call_next: Callable[..., Any]) -> Response:
         if request.url.path in self.exclude_paths:
             return await call_next(request)  # type: ignore[no-any-return]  # type: ignore[no-any-return]
 
-        key = self._client_key(request)
+        key = self._client_key(request, trust_proxy_headers=self.trust_proxy_headers)
         if not self.limiter.allow(key):
             return Response(
                 content='{"detail":"rate limit exceeded"}',
@@ -123,10 +125,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return await call_next(request)  # type: ignore[no-any-return]
 
     @staticmethod
-    def _client_key(request: Request) -> str:
-        # Prefer X-Forwarded-For for proxied deployments
-        forwarded = request.headers.get("X-Forwarded-For")
-        if forwarded:
-            return forwarded.split(",")[0].strip()
+    def _client_key(request: Request, *, trust_proxy_headers: bool = False) -> str:
+        # Forwarded addresses are caller-controlled unless a trusted reverse
+        # proxy strips and replaces the header.
+        if trust_proxy_headers:
+            forwarded = request.headers.get("X-Forwarded-For")
+            if forwarded:
+                return forwarded.split(",")[0].strip()
         host = request.client.host if request.client else "unknown"
         return host

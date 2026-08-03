@@ -2,11 +2,10 @@
 
 from unittest.mock import MagicMock
 
-import pytest
 
 from core.memory_ingestor import MemoryIngestor
 from memory.memory_governor import MemoryGovernor
-from memory.memory_schema import MemoryRecord, MemoryType
+from memory.memory_schema import MemoryType
 
 
 class TestMemoryIngestor:

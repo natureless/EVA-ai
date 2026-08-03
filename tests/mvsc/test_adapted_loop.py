@@ -4,10 +4,7 @@ Tests the adapted loop using mock/fake backends to verify the full
 13-phase pipeline works end-to-end with existing EVA components.
 """
 
-import asyncio
-import os
 import sys
-import tempfile
 
 import pytest
 
@@ -15,8 +12,7 @@ sys.path.insert(0, ".")
 
 from agents.base_agent import AgentResult, AgentTask
 from event.event_bus import EventBus
-from packages.contracts.events import EventEnvelope, EventFamily
-from packages.contracts.state import ConsciousState, RuntimeMode
+from packages.contracts.events import EventEnvelope
 from packages.cognition.adapted_loop import AdaptedCognitionLoop, create_adapted_loop
 from packages.cognition.loop import (
     Attention,
@@ -25,7 +21,6 @@ from packages.cognition.loop import (
     Metacognition,
     Workspace,
 )
-from packages.kernel.state_bridge import conscious_to_system_state
 
 
 # ═══════════════════════════════════════════════════════════
@@ -171,7 +166,7 @@ class TestAdaptedCognitionLoop:
             source="user",
             payload={"text": "Sync test"},
         )
-        state = await adapted.run_once_and_sync(event)
+        await adapted.run_once_and_sync(event)
 
         # system_state should be synced
         assert container.system_state["focus"] == "Sync test"

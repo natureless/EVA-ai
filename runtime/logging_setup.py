@@ -20,6 +20,7 @@ def configure_logging(*, log_dir: Path, log_file: Path, level: str = "INFO") -> 
 
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(formatter)
+    stream_handler._eva_handler = True  # type: ignore[attr-defined]
 
     file_handler = RotatingFileHandler(
         log_path,
@@ -28,6 +29,7 @@ def configure_logging(*, log_dir: Path, log_file: Path, level: str = "INFO") -> 
         encoding="utf-8",
     )
     file_handler.setFormatter(formatter)
+    file_handler._eva_handler = True  # type: ignore[attr-defined]
 
     root.setLevel(level.upper())
     root.addHandler(stream_handler)
@@ -38,3 +40,15 @@ def configure_logging(*, log_dir: Path, log_file: Path, level: str = "INFO") -> 
     logging.getLogger("uvicorn.access").setLevel(level.upper())
 
     root._eva_configured = True  # type: ignore[attr-defined]
+
+
+def shutdown_logging() -> None:
+    """Close only handlers installed by EVA and allow clean reconfiguration."""
+    root = logging.getLogger()
+    for handler in list(root.handlers):
+        if not getattr(handler, "_eva_handler", False):
+            continue
+        root.removeHandler(handler)
+        handler.flush()
+        handler.close()
+    root._eva_configured = False  # type: ignore[attr-defined]

@@ -4,12 +4,9 @@ Phase 3: SelfModel migration from legacy JSON to 6 sub-models.
 Phase 4: TieredMemoryAdapter wrapping TieredMemoryManager.
 """
 
-import asyncio
 import json
-import os
 import sys
 import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -25,10 +22,6 @@ from packages.contracts.state import (
 from packages.models.self_model import (
     SelfModel,
     IdentityModel,
-    CapabilityModel,
-    AgencyModel,
-    NarrativeModel,
-    BoundaryModel,
 )
 from packages.models.migrator import (
     SelfModelMigrator,
@@ -165,7 +158,7 @@ class TestSelfModelMigrator:
 
             source.write_text(json.dumps(LEGACY_SELF_MODEL))
 
-            sm = migrate_self_model(source, target, subject_id="test-eva")
+            migrate_self_model(source, target, subject_id="test-eva")
 
             assert target.exists()
 

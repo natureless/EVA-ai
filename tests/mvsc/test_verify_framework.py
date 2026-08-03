@@ -23,6 +23,7 @@ import sys
 import tempfile
 
 import pytest
+from event.event_schema import Event as LegacyEvent
 
 sys.path.insert(0, ".")
 
@@ -47,31 +48,22 @@ try:
     from packages.contracts.events import EventEnvelope, EventFamily, from_legacy_event, LEGACY_EVENT_MAP
     from packages.contracts.state import (
         ConsciousState, BodyState, ViabilityBounds, ContentCandidate,
-        BroadcastContent, Goal, Plan, PlanStep, Commitment,
-        RuntimeMode, CognitionPhase,
+        RuntimeMode,
     )
     from packages.contracts.protocols import (
-        CognitiveModule, StateRepository, EventBusProtocol,
-        WorldModelProtocol, BodyModelProtocol, SelfModelProtocol,
         ContentEngineProtocol, AttentionProtocol, WorkspaceProtocol,
-        MetacognitionProtocol, DecisionEngineProtocol,
-        IntentParserProtocol, PlannerProtocol, ToolAdapterProtocol,
-        VerifierProtocol, MemoryProtocol,
-        Intent, ToolRequest, ToolResult, VerificationResult, Decision,
-        RuntimeContext,
+        MetacognitionProtocol,
     )
     from packages.models.self_model import (
-        SelfModel, IdentityModel, DigitalBodyModel, BoundaryModel,
-        AgencyModel, CapabilityModel, NarrativeModel,
-        ActionReceipt, IdentityChangeProposal, CapabilityEntry, NarrativeNode,
+        SelfModel, AgencyModel, NarrativeModel,
+        ActionReceipt, NarrativeNode,
     )
-    from packages.kernel.event_store import EventStore, DuplicateEventError, VersionConflictError
+    from packages.kernel.event_store import EventStore, DuplicateEventError
     from packages.cognition.loop import (
-        ContentEngine, Attention, Workspace, Metacognition, DecisionEngine,
-        PipelineCognitionLoop,
+        ContentEngine, Attention, Workspace, Metacognition, PipelineCognitionLoop,
     )
     from packages.mvsc_lab.ablations import (
-        AblationConfig, AblationMetrics, AblationRun, AblationRunner,
+        AblationConfig,
     )
     check("All imports clean")
 except Exception as e:
@@ -79,8 +71,6 @@ except Exception as e:
     sys.exit(1)
 
 # ─── 2. Legacy Event compatibility ───
-from event.event_schema import Event as LegacyEvent
-
 legacy = LegacyEvent(type="user_message", source="user", payload={"text": "hello"})
 envelope = from_legacy_event(legacy)
 assert envelope.event_id == legacy.id, f"{envelope.event_id} != {legacy.id}"
@@ -267,7 +257,6 @@ for fam in families:
 check(f"EventFamily: all {len(families)} families present")
 
 # ─── 15. Protocol compliance check ───
-from typing import runtime_checkable, Protocol
 # Verify ContentEngine conforms to ContentEngineProtocol
 assert isinstance(ContentEngine(), ContentEngineProtocol)
 # Verify Attention conforms to AttentionProtocol

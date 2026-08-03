@@ -12,10 +12,10 @@ the tool-calling loop.
 
 from __future__ import annotations
 
-import json
 import logging
 import os
-from dataclasses import dataclass, field
+import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
@@ -107,19 +107,36 @@ def _check_dangerous_code(code: str) -> str:
     return ""
 
 
+def _resolve_workspace_path(
+    raw_path: str,
+    workspace_root: Path | None = None,
+) -> tuple[Path | None, str]:
+    """Resolve a tool path and keep it inside EVA's configured workspace."""
+    root = (workspace_root or Path.cwd()).resolve()
+    candidate = Path(raw_path or ".")
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    target = candidate.resolve()
+
+    if target != root and not target.is_relative_to(root):
+        return None, f"path outside EVA workspace is not allowed: {target}"
+    return target, ""
+
+
 def _ingest_document(
     path: str = "",
     category: str = "",
+    tiered_memory: Any = None,
+    workspace_root: Path | None = None,
 ) -> dict[str, Any]:
     """Ingest a local file into EVA's long-term memory.
 
     Reads the file, chunks it, and stores each chunk in S3 long-term memory
     with FTS5 indexing for later semantic search.
     """
-    import re
-    from pathlib import Path
-
-    file_path = Path(path).resolve()
+    file_path, path_error = _resolve_workspace_path(path, workspace_root)
+    if file_path is None:
+        return {"ok": False, "error": path_error}
     if not file_path.exists():
         return {"ok": False, "error": f"file not found: {path}"}
     if not file_path.is_file():
@@ -149,23 +166,21 @@ def _ingest_document(
     chunks = _chunk_text(text, max_chunk_size=2000, overlap=200)
     cat = category or file_path.suffix.lstrip(".")
 
-    # Ingest into S3 via the tiered memory if available
+    # Ingest through the canonical memory manager so routing, indexing, and
+    # governance remain consistent with all other memory writes.
     ingested = 0
-    try:
-        from core.llm_adapter import get_llm, MockLLM
-        llm = get_llm()
-        has_real_llm = not isinstance(llm, MockLLM)
-    except Exception:
-        has_real_llm = False
-
     for i, chunk in enumerate(chunks[:50]):  # max 50 chunks
         try:
-            # Try to import and use tiered memory directly
-            # This is a best-effort; if tiered memory isn't available, we still report success
-            _store_chunk(chunk, source=str(file_path), category=cat, chunk_index=i)
-            ingested += 1
-        except Exception:
-            pass
+            if _store_chunk(
+                chunk,
+                source=str(file_path),
+                category=cat,
+                chunk_index=i,
+                tiered_memory=tiered_memory,
+            ):
+                ingested += 1
+        except Exception as exc:
+            logger.warning("document chunk ingest failed path=%s chunk=%d: %s", file_path, i, exc)
 
     return {
         "ok": True,
@@ -214,32 +229,24 @@ def _chunk_text(text: str, max_chunk_size: int = 2000, overlap: int = 200) -> li
     return chunks
 
 
-def _store_chunk(content: str, source: str = "", category: str = "", chunk_index: int = 0) -> None:
-    """Store a text chunk in the tiered memory system if available."""
-    import importlib
-    try:
-        # Try to access the running app's tiered memory
-        from app.config import settings
-        # Use direct SQLite insertion as a reliable fallback
-        import sqlite3
-        db_path = settings.db_path
-        if not db_path or not __import__('os').path.exists(db_path):
-            return
-
-        conn = sqlite3.connect(db_path)
-        conn.execute("PRAGMA journal_mode=WAL")
-        import uuid, json as _json
-        mid = str(uuid.uuid4())
-        now = __import__('datetime').datetime.now(__import__('datetime').timezone).utc.isoformat()
-        conn.execute(
-            """INSERT INTO long_term_memory (id, content, category, importance, source, created_at, status)
-               VALUES (?, ?, ?, ?, ?, ?, 'active')""",
-            (mid, content[:5000], category, 0.5, source, now),
-        )
-        conn.commit()
-        conn.close()
-    except Exception:
-        pass
+def _store_chunk(
+    content: str,
+    source: str = "",
+    category: str = "",
+    chunk_index: int = 0,
+    tiered_memory: Any = None,
+) -> bool:
+    """Store one document chunk through the canonical memory API."""
+    if tiered_memory is None:
+        return False
+    result = tiered_memory.ingest(
+        content,
+        importance=0.85,
+        source=source,
+        category=category or "document",
+        tags=["document", f"chunk:{chunk_index}"],
+    )
+    return "s3" in result
 
 
 def _search_files(
@@ -247,11 +254,14 @@ def _search_files(
     root: str = ".",
     file_pattern: str = "*",
     max_results: int = 10,
+    workspace_root: Path | None = None,
 ) -> dict[str, Any]:
     """Search for text in files under a directory."""
     import fnmatch
 
-    root_path = Path(root).resolve()
+    root_path, path_error = _resolve_workspace_path(root, workspace_root)
+    if root_path is None:
+        return {"ok": False, "error": path_error}
     if not root_path.exists():
         return {"ok": False, "error": f"path not found: {root}"}
 
@@ -311,14 +321,19 @@ def _read_file(
     path: str = "",
     max_lines: int = 100,
     start_line: int = 1,
+    workspace_root: Path | None = None,
 ) -> dict[str, Any]:
     """Read a file's contents."""
-    file_path = Path(path).resolve()
+    file_path, path_error = _resolve_workspace_path(path, workspace_root)
+    if file_path is None:
+        return {"ok": False, "error": path_error}
     if not file_path.exists():
         return {"ok": False, "error": f"file not found: {path}"}
     if not file_path.is_file():
         return {"ok": False, "error": f"not a file: {path}"}
 
+    max_lines = max(1, min(int(max_lines), 500))
+    start_line = max(1, int(start_line))
     max_size = 512 * 1024
     try:
         if file_path.stat().st_size > max_size:
@@ -357,14 +372,18 @@ def _read_file(
 def _list_directory(
     path: str = ".",
     max_entries: int = 50,
+    workspace_root: Path | None = None,
 ) -> dict[str, Any]:
     """List files and directories."""
-    dir_path = Path(path).resolve()
+    dir_path, path_error = _resolve_workspace_path(path, workspace_root)
+    if dir_path is None:
+        return {"ok": False, "error": path_error}
     if not dir_path.exists():
         return {"ok": False, "error": f"path not found: {path}"}
     if not dir_path.is_dir():
         return {"ok": False, "error": f"not a directory: {path}"}
 
+    max_entries = max(1, min(int(max_entries), 200))
     entries: list[dict[str, Any]] = []
     try:
         for entry in sorted(dir_path.iterdir()):
@@ -458,16 +477,38 @@ def _web_fetch(
     max_bytes: int = 100_000,
 ) -> dict[str, Any]:
     """Fetch a web page (HTTP GET)."""
+    import ipaddress
+    import socket
+    from urllib.parse import urlparse
+
     import httpx
 
     if not url:
         return {"ok": False, "error": "url is required"}
 
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        return {"ok": False, "error": "only absolute http/https URLs are allowed"}
+
+    try:
+        addresses = {
+            item[4][0]
+            for item in socket.getaddrinfo(parsed.hostname, parsed.port or 443)
+        }
+        for address in addresses:
+            ip = ipaddress.ip_address(address)
+            if any((ip.is_private, ip.is_loopback, ip.is_link_local,
+                    ip.is_reserved, ip.is_multicast, ip.is_unspecified)):
+                return {"ok": False, "error": f"private or reserved address blocked: {address}"}
+    except OSError as e:
+        return {"ok": False, "error": f"hostname resolution failed: {e}"}
+
+    max_bytes = max(1, min(int(max_bytes), 1_000_000))
     try:
         resp = httpx.get(
             url,
             timeout=15,
-            follow_redirects=True,
+            follow_redirects=False,
             headers={"User-Agent": "EVA/0.1 (cognitive-agent)"},
         )
         content_type = resp.headers.get("content-type", "")
@@ -501,14 +542,61 @@ def _read_memory(
 def create_builtin_tools(
     tiered_memory: Any = None,
     executors: dict[str, Any] | None = None,
+    *,
+    enable_code: bool = False,
+    enable_network: bool = False,
+    workspace_root: Path | None = None,
 ) -> list[ToolDef]:
     """Create the standard tool set with optional runtime dependencies.
 
     Args:
         tiered_memory: TieredMemoryManager for memory_search tool
-        executors: Dict of executors for gated tool execution
+        executors: Dict of executors for boundary checks and audit logging.
+        enable_code: Register host code execution tool (disabled by default).
+        enable_network: Register outbound network tools (disabled by default).
+        workspace_root: Root directory available to built-in file tools.
     """
     tools: list[ToolDef] = []
+    file_executor = (executors or {}).get("file")
+    code_executor = (executors or {}).get("code")
+    browser_executor = (executors or {}).get("browser")
+    workspace_root = (workspace_root or Path.cwd()).resolve()
+
+    def search_files(**kwargs: Any) -> dict[str, Any]:
+        return _search_files(**kwargs, workspace_root=workspace_root)
+
+    def read_file(**kwargs: Any) -> dict[str, Any]:
+        return _read_file(**kwargs, workspace_root=workspace_root)
+
+    def list_directory(**kwargs: Any) -> dict[str, Any]:
+        return _list_directory(**kwargs, workspace_root=workspace_root)
+
+    def guarded_file_handler(handler: Callable[..., dict[str, Any]], action: str, path_arg: str):
+        if file_executor is None:
+            return handler
+
+        def _guarded(**kwargs: Any) -> dict[str, Any]:
+            params = dict(kwargs)
+            params["path"] = kwargs.get(path_arg, ".")
+            params["action"] = action
+            decision = file_executor.check_boundaries(params)
+            started = time.perf_counter()
+            if not decision.allowed:
+                file_executor.audit_log.record(
+                    executor_type="file", action=action, task_id=f"tool_{action}",
+                    parameters=params, result_summary=decision.reason, status="denied",
+                )
+                return {"ok": False, "error": decision.reason, "status": "denied"}
+            result = handler(**kwargs)
+            file_executor.audit_log.record(
+                executor_type="file", action=action, task_id=f"tool_{action}",
+                parameters=params, result_summary=str(result.get("summary", ""))[:200],
+                duration_ms=int((time.perf_counter() - started) * 1000),
+                status="success" if result.get("ok") else "error",
+            )
+            return result
+
+        return _guarded
 
     # ── search_files ──
     tools.append(ToolDef(
@@ -537,7 +625,7 @@ def create_builtin_tools(
             },
             "required": ["query"],
         },
-        handler=_search_files,
+        handler=guarded_file_handler(search_files, "search", "root"),
     ))
 
     # ── read_file ──
@@ -563,7 +651,7 @@ def create_builtin_tools(
             },
             "required": ["path"],
         },
-        handler=_read_file,
+        handler=guarded_file_handler(read_file, "read", "path"),
     ))
 
     # ── list_directory ──
@@ -585,53 +673,71 @@ def create_builtin_tools(
             },
             "required": [],
         },
-        handler=_list_directory,
+        handler=guarded_file_handler(list_directory, "list", "path"),
     ))
 
     # ── run_code ──
-    tools.append(ToolDef(
-        name="run_code",
-        description="Execute a short Python or Bash script in a sandboxed environment. "
-                    "Use this for calculations, data processing, or quick automation.",
-        parameters={
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "description": "The code to execute",
+    if enable_code:
+        def _execute_code_tool(code: str = "", language: str = "python") -> dict[str, Any]:
+            if code_executor is None:
+                return _run_code(code=code, language=language)
+            return code_executor.execute(
+                "execute", {"code": code, "language": language},
+                task_id="tool_run_code",
+            )
+
+        tools.append(ToolDef(
+            name="run_code",
+            description="Execute a short Python or Bash script in a sandboxed environment. "
+                        "Use this for calculations, data processing, or quick automation.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "description": "The code to execute",
+                    },
+                    "language": {
+                        "type": "string",
+                        "enum": ["python", "bash"],
+                        "description": "Programming language (default: python)",
+                    },
                 },
-                "language": {
-                    "type": "string",
-                    "enum": ["python", "bash"],
-                    "description": "Programming language (default: python)",
-                },
+                "required": ["code"],
             },
-            "required": ["code"],
-        },
-        handler=_run_code,
-    ))
+            handler=_execute_code_tool,
+        ))
 
     # ── web_fetch ──
-    tools.append(ToolDef(
-        name="web_fetch",
-        description="Fetch content from a URL (HTTP GET). Use this to retrieve "
-                    "web pages, API responses, or online documentation.",
-        parameters={
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string",
-                    "description": "The URL to fetch (must be http or https)",
+    if enable_network:
+        def _execute_web_tool(url: str = "", max_bytes: int = 100_000, **_: Any) -> dict[str, Any]:
+            if browser_executor is None:
+                return _web_fetch(url=url, max_bytes=max_bytes)
+            return browser_executor.execute(
+                "fetch", {"url": url, "max_bytes": max_bytes},
+                task_id="tool_web_fetch",
+            )
+
+        tools.append(ToolDef(
+            name="web_fetch",
+            description="Fetch content from a URL (HTTP GET). Use this to retrieve "
+                        "web pages, API responses, or online documentation.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "The URL to fetch (must be http or https)",
+                    },
+                    "max_bytes": {
+                        "type": "integer",
+                        "description": "Maximum bytes to read (default: 100000)",
+                    },
                 },
-                "max_bytes": {
-                    "type": "integer",
-                    "description": "Maximum bytes to read (default: 100000)",
-                },
+                "required": ["url"],
             },
-            "required": ["url"],
-        },
-        handler=_web_fetch,
-    ))
+            handler=_execute_web_tool,
+        ))
 
     # ── search_memory ── (wired with tiered_memory at bootstrap)
     if tiered_memory is not None:
@@ -675,50 +781,39 @@ def create_builtin_tools(
             handler=_memory_search,
         ))
 
-    # ── browser tools ── (added in v0.2)
-    tools.append(ToolDef(
-        name="browse_web",
-        description="Navigate to a web page and extract its text content. "
-                    "Use this to read articles, documentation, or any web page.",
-        parameters={
-            "type": "object",
-            "properties": {
-                "url": {
-                    "type": "string",
-                    "description": "The URL to navigate to (must be http or https)",
+    # ── browser tool ── (explicit opt-in; shares the guarded fetch path)
+    if enable_network:
+        tools.append(ToolDef(
+            name="browse_web",
+            description="Navigate to a web page and extract its text content. "
+                        "Use this to read articles, documentation, or any web page.",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "description": "The URL to navigate to (must be http or https)",
+                    },
+                    "wait_until": {
+                        "type": "string",
+                        "enum": ["load", "domcontentloaded", "networkidle"],
+                        "description": "When to consider navigation complete (default: domcontentloaded)",
+                    },
                 },
-                "wait_until": {
-                    "type": "string",
-                    "enum": ["load", "domcontentloaded", "networkidle"],
-                    "description": "When to consider navigation complete (default: domcontentloaded)",
-                },
+                "required": ["url"],
             },
-            "required": ["url"],
-        },
-        handler=_web_fetch,  # fall back to HTTP fetch; bootstrap can replace with playwright
-    ))
-    tools.append(ToolDef(
-        name="web_search",
-        description="Search the web using a search engine and return results. "
-                    "Use this to find current information, news, or documentation.",
-        parameters={
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query string",
-                },
-                "max_results": {
-                    "type": "integer",
-                    "description": "Maximum number of results (default: 5, max: 10)",
-                },
-            },
-            "required": ["query"],
-        },
-        handler=_web_fetch,  # placeholder; bootstrap can replace with real search
-    ))
+            handler=_execute_web_tool,
+        ))
 
     # ── document ingestion ── (added in v0.2)
+    def _ingest_tool(path: str = "", category: str = "") -> dict[str, Any]:
+        return _ingest_document(
+            path,
+            category,
+            tiered_memory=tiered_memory,
+            workspace_root=workspace_root,
+        )
+
     tools.append(ToolDef(
         name="ingest_document",
         description="Read a local file and ingest its content into EVA's long-term memory. "
@@ -738,7 +833,7 @@ def create_builtin_tools(
             },
             "required": ["path"],
         },
-        handler=_ingest_document,
+        handler=guarded_file_handler(_ingest_tool, "read", "path"),
     ))
 
     return tools

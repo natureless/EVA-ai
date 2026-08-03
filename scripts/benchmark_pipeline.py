@@ -91,7 +91,7 @@ async def run_benchmark(iterations: int, ablation: str | None):
 
     for i in range(iterations):
         t0 = time.perf_counter()
-        state = await loop.run_once(event)
+        await loop.run_once(event)
         elapsed_ms = (time.perf_counter() - t0) * 1000
         timings.append(elapsed_ms)
 
@@ -100,15 +100,15 @@ async def run_benchmark(iterations: int, ablation: str | None):
 
     # Report
     print(f"\n{'='*60}")
-    print(f"  EVA-MVSC Pipeline Benchmark")
+    print("  EVA-MVSC Pipeline Benchmark")
     print(f"{'='*60}")
     print(f"  Iterations:    {iterations}")
     print(f"  Ablation:      {ablation or 'baseline'}")
     print(f"  Features:      {sum(1 for v in loop.feature_flags.values() if v)}/{len(loop.feature_flags)} enabled")
-    print(f"")
+    print("")
 
     sorted_t = sorted(timings)
-    print(f"  Total per tick:")
+    print("  Total per tick:")
     print(f"    Mean:   {statistics.mean(timings):.3f} ms")
     print(f"    Median: {statistics.median(timings):.3f} ms")
     print(f"    P50:    {sorted_t[len(sorted_t)//2]:.3f} ms")
@@ -116,9 +116,9 @@ async def run_benchmark(iterations: int, ablation: str | None):
     print(f"    P99:    {sorted_t[int(len(sorted_t)*0.99)]:.3f} ms")
     print(f"    Min:    {min(timings):.3f} ms")
     print(f"    Max:    {max(timings):.3f} ms")
-    print(f"")
+    print("")
 
-    print(f"  Per phase (mean):")
+    print("  Per phase (mean):")
     for phase in ['perceive', 'update_world', 'update_body', 'generate_content',
                    'select_attention', 'broadcast', 'attribute_self', 'evaluate',
                    'decide', 'plan', 'act', 'verify', 'consolidate']:

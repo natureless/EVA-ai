@@ -50,6 +50,7 @@ def get_config(request: Request) -> dict[str, Any]:
             "bootstrap_sec": container.system_state.get("bootstrap_sec", 0),
             "uptime_events": container.event_bus.size(),
             "agents_registered": len(container.registry.list_agents()),
+            "agent_worker": container.runtime.worker_backend.stats,
         },
     }
 
@@ -69,6 +70,8 @@ def config_defaults(request: Request) -> dict[str, Any]:
             "stagnation_threshold_sec": defaults.stagnation_threshold_sec,
             "enable_mvsc_pipeline": defaults.enable_mvsc_pipeline,
             "cognition_worker_count": defaults.cognition_worker_count,
+            "agent_worker_count": defaults.agent_worker_count,
+            "agent_execution_timeout_sec": defaults.agent_execution_timeout_sec,
             "llm_timeout_sec": defaults.llm_timeout_sec,
             "embedding_provider": defaults.embedding_provider,
         },

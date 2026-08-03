@@ -1,9 +1,8 @@
 """Unit tests for CodeExecutor rlimit preexec_fn and boundary checks."""
 
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 
 from core.executor import CodeExecutor, ExecutorAuditLog
 from memory.sqlite_store import SQLiteStore

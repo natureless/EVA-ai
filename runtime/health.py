@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import threading as _threading
 from typing import Any
 
 

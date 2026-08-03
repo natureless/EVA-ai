@@ -12,9 +12,7 @@ Also tests:
 """
 
 import asyncio
-import os
 import sys
-import tempfile
 from datetime import datetime, timezone
 
 import pytest
@@ -24,12 +22,10 @@ sys.path.insert(0, ".")
 from event.event_bus import EventBus
 from event.event_schema import Event as LegacyEvent
 from packages.contracts.events import EventEnvelope, EventFamily
-from packages.contracts.state import ConsciousState, RuntimeMode
+from packages.contracts.state import RuntimeMode
 from packages.kernel.event_bus_adapter import EventBusAdapter
-from packages.kernel.event_store import EventStore
 from packages.kernel.state_bridge import (
     conscious_to_system_state,
-    sync_system_state,
     system_state_to_conscious,
 )
 from packages.kernel.mvsc_bootstrap import integrate_mvsc, shutdown_mvsc
@@ -436,7 +432,7 @@ class TestBootstrapIntegration:
     def test_system_state_preserved_after_integration(self, container):
         """After integration, system_state should still work for existing APIs."""
         settings = self.FakeSettings()
-        result = integrate_mvsc(container, settings)
+        integrate_mvsc(container, settings)
 
         # system_state should have MVSC flags
         assert "mvsc_feature_flags" in container.system_state

@@ -1,10 +1,10 @@
 """Tests for tool registry and ChatAgent tool-calling."""
-import json
 import sys
 sys.path.insert(0, '.')
 
 from core.tool_registry import (
-    ToolRegistry, ToolDef, create_builtin_tools, execute_tool, format_tool_result,
+    ToolRegistry, ToolDef, _ingest_document, create_builtin_tools, execute_tool,
+    format_tool_result,
 )
 from agents.chat_agent import ChatAgent
 
@@ -29,8 +29,12 @@ def test_create_builtin_tools():
     assert "search_files" in names
     assert "read_file" in names
     assert "list_directory" in names
-    assert "run_code" in names
-    assert "web_fetch" in names
+    assert "run_code" not in names
+    assert "web_fetch" not in names
+
+    elevated = {t.name for t in create_builtin_tools(enable_code=True, enable_network=True)}
+    assert "run_code" in elevated
+    assert "web_fetch" in elevated
 
 
 def test_execute_search_files():
@@ -65,7 +69,7 @@ def test_execute_list_directory():
 
 def test_execute_run_code():
     registry = ToolRegistry()
-    for t in create_builtin_tools():
+    for t in create_builtin_tools(enable_code=True):
         registry.register(t)
 
     result = execute_tool("run_code", {"code": "print(42)", "language": "python"}, registry)
@@ -76,7 +80,7 @@ def test_execute_run_code():
 def test_execute_run_code_dangerous_blocked():
     """Dangerous code patterns are blocked before execution."""
     registry = ToolRegistry()
-    for t in create_builtin_tools():
+    for t in create_builtin_tools(enable_code=True):
         registry.register(t)
 
     # os.system is blocked
@@ -93,6 +97,48 @@ def test_execute_run_code_dangerous_blocked():
     result = execute_tool("run_code", {"code": "rm -rf /tmp/foo", "language": "bash"}, registry)
     assert result["ok"] is False
     assert "blocked for safety" in result["error"]
+
+
+def test_file_tool_rejects_path_outside_workspace(tmp_path):
+    registry = ToolRegistry()
+    for tool in create_builtin_tools():
+        registry.register(tool)
+
+    outside = tmp_path / "outside.txt"
+    outside.write_text("secret", encoding="utf-8")
+    result = execute_tool("read_file", {"path": str(outside)}, registry)
+
+    assert result["ok"] is False
+    assert "outside EVA workspace" in result["error"]
+
+
+def test_document_ingest_uses_tiered_memory(tmp_path, monkeypatch):
+    from app.config import settings
+
+    class FakeTieredMemory:
+        def __init__(self):
+            self.calls = []
+
+        def ingest(self, content, **kwargs):
+            self.calls.append((content, kwargs))
+            return {"s3": "ltm_test"}
+
+    monkeypatch.setattr(settings, "base_dir", tmp_path)
+    document = tmp_path / "notes.md"
+    document.write_text("A durable project note.", encoding="utf-8")
+    memory = FakeTieredMemory()
+
+    result = _ingest_document(
+        str(document),
+        "notes",
+        tiered_memory=memory,
+        workspace_root=tmp_path,
+    )
+
+    assert result["ok"] is True
+    assert result["ingested"] == 1
+    assert len(memory.calls) == 1
+    assert memory.calls[0][1]["importance"] == 0.85
 
 
 def test_execute_unknown_tool():

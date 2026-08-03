@@ -196,7 +196,7 @@ class BenchmarkRunner:
         }
 
         # ── memory tier ingest ───────────────────────────────
-        from memory.tiered_store import TieredMemoryManager, SessionMemory
+        from memory.tiered_store import TieredMemoryManager
         from memory.sqlite_store import SQLiteStore
         import tempfile
         tmp = tempfile.mkdtemp()

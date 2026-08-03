@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Iterable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from memory.importance_scorer import ImportanceFeatures, ImportanceScorer
 from memory.memory_compactor import MemoryCompactor, MemoryDecayPolicy

@@ -1,7 +1,6 @@
 """Unit tests for Planner semantic routing and embedding integration."""
 
 import numpy as np
-import pytest
 
 from core.planner import Planner, _best_keyword_match
 from event.event_schema import Event
@@ -214,6 +213,7 @@ class TestPlannerNonUserMessage:
         assert plan.decision == "act"
         assert plan.agent == "chat_agent"
         assert "idle" in plan.task.payload["text"]
+        assert plan.task.payload["tools_allowed"] is False
 
     def test_maintenance_event(self):
         planner = Planner()
@@ -239,6 +239,7 @@ class TestPlannerNonUserMessage:
         assert plan.agent == "chat_agent"
         assert "GitHub pull request" in plan.task.payload["text"]
         assert plan.task.payload["context"]["repo"] == "org/repo"
+        assert plan.task.payload["tools_allowed"] is False
 
     def test_unknown_event_type_ignored(self):
         planner = Planner()

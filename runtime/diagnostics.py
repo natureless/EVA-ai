@@ -69,6 +69,9 @@ class SystemDiagnostic:
             Path("config/executors.yaml"),
             Path("config/storage.yaml"),
         ]
+        self._config_signature: tuple[tuple[str, int | None], ...] | None = None
+        self._config_check: DiagnosticCheck | None = None
+        self._llm_check: DiagnosticCheck | None = None
 
     # ── individual checks ───────────────────────────────────
 
@@ -139,6 +142,13 @@ class SystemDiagnostic:
             )
 
     def check_config(self) -> DiagnosticCheck:
+        signature = tuple(
+            (str(path), path.stat().st_mtime_ns if path.exists() else None)
+            for path in self.config_paths
+        )
+        if signature == self._config_signature and self._config_check is not None:
+            return self._config_check
+
         missing = []
         unparseable = []
         found = []
@@ -155,24 +165,30 @@ class SystemDiagnostic:
                     unparseable.append(str(p))
 
         if not missing and not unparseable:
-            return DiagnosticCheck(
+            check = DiagnosticCheck(
                 name="config",
                 passed=True,
                 detail=f"{len(found)} config files valid",
                 metadata={"found": found},
             )
+            self._config_signature = signature
+            self._config_check = check
+            return check
         detail_parts = []
         if missing:
             detail_parts.append(f"missing: {', '.join(missing)}")
         if unparseable:
             detail_parts.append(f"unparseable: {', '.join(unparseable)}")
-        return DiagnosticCheck(
+        check = DiagnosticCheck(
             name="config",
             passed=len(unparseable) == 0,
             detail="; ".join(detail_parts),
             recommendation="restore missing config files",
             metadata={"missing": missing, "unparseable": unparseable},
         )
+        self._config_signature = signature
+        self._config_check = check
+        return check
 
     def check_memory_tiers(self, tiered_memory: Any) -> DiagnosticCheck:
         try:
@@ -238,47 +254,35 @@ class SystemDiagnostic:
         )
 
     def check_llm(self) -> DiagnosticCheck:
-        """Verify a real LLM provider is configured and responding."""
+        """Verify LLM configuration without making a billable network call."""
+        if self._llm_check is not None:
+            return self._llm_check
         try:
-            from core.llm_adapter import get_llm, get_llm_info, MockLLM
+            from core.llm_adapter import get_llm_info
             info = get_llm_info()
-            llm = get_llm()
-            if isinstance(llm, MockLLM):
-                return DiagnosticCheck(
+            if not info.get("configured") or info.get("provider") == "mock":
+                check = DiagnosticCheck(
                     name="llm",
                     passed=False,
                     detail=f"no LLM API key configured — using MockLLM (echo mode). Provider: {info['provider']}",
                     recommendation="set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable",
                 )
-            # Lightweight liveness probe — a real API call with minimal tokens
-            try:
-                reply = llm.chat([
-                    {"role": "user", "content": "Respond with exactly the word: OK"},
-                ])
-                if not reply.strip():
-                    return DiagnosticCheck(
-                        name="llm",
-                        passed=False,
-                        detail=f"LLM provider {llm.provider} returned empty response",
-                        recommendation="check API account status and rate limits",
-                    )
-            except Exception as e:
-                return DiagnosticCheck(
+            else:
+                check = DiagnosticCheck(
                     name="llm",
-                    passed=False,
-                    detail=f"LLM provider {llm.provider} failed liveness probe: {e}",
-                    recommendation="check API key validity, network connectivity, and rate limits",
+                    passed=True,
+                    detail=(
+                        f"LLM provider configured: {info['provider']}/"
+                        f"{info.get('model', 'unknown')} (network probe skipped)"
+                    ),
                 )
-            return DiagnosticCheck(
-                name="llm",
-                passed=True,
-                detail=f"LLM provider: {llm.provider} (liveness OK)",
-            )
         except Exception as e:
-            return DiagnosticCheck(
+            check = DiagnosticCheck(
                 name="llm", passed=False,
                 detail=str(e), recommendation="check LLM adapter configuration",
             )
+        self._llm_check = check
+        return check
 
     # ── full diagnostic ─────────────────────────────────────
 

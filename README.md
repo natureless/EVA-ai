@@ -1,347 +1,147 @@
-# EVA v0.1 → EVA-VM v1
+# EVA Cognitive Runtime
 
-EVA is an event-driven cognitive agent host designed to be:
+EVA is a continuously running, event-driven personal cognitive assistant host.
+It combines world state, structured memory, persona constraints, planning,
+agent execution, proactive scheduling, and observable interfaces in one stable
+single-node runtime.
 
-- continuously running
-- interactive
-- stateful
-- observable
+## What Works Today
+
+- FastAPI dashboard, REST, WebSocket, SSE, and async/sync chat flows
+- event bus and continuous cognition loop with traceable result integration
+- planner, policy engine, agent registry/router/orchestrator, runtime agent registration
+- chat, search, coding analysis, and documentation agents
+- mock and configured LLM providers with guarded file/memory/network/code tools
+- SQLite/JSON persistence, episodic and tiered memory, retrieval, compaction, snapshots
+- persona, relationship constraints, profile, self-model, and stability controls
+- lightweight world graph, context building, scheduler, cooldown, and proactive reminders
+- GitHub poller/webhook integration, health, diagnostics, metrics, audit, and recovery APIs
+- optional MVSC research pipeline behind a disabled-by-default feature flag
+
+Current limits are explicit: the stable runtime is single-process; the default
+agent worker uses bounded threads rather than hard process/container isolation;
+the world graph is lightweight; calendar/filesystem connectors and a fully
+durable proactive outbox remain planned.
+
+## Quick Start
+
+Python 3.11 or newer is required.
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Open:
+
+- Dashboard: `http://127.0.0.1:8000/`
+- API documentation: `http://127.0.0.1:8000/docs`
+- Liveness: `http://127.0.0.1:8000/health/live`
+
+Queue a message:
+
+```powershell
+$body = @{ text = "Show the current EVA state" } | ConvertTo-Json
+$queued = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/chat `
+  -ContentType "application/json" -Body $body
+Invoke-RestMethod "http://127.0.0.1:8000/api/chat/result/$($queued.task_id)"
+```
+
+For blocking local scripts, use `POST /api/chat/sync`. Applications should use
+`POST /api/chat` plus WebSocket `chat_reply`, SSE, or polling.
+
+## Architecture
+
+```text
+Interface / Connectors
+        -> EventBus
+        -> CognitionLoop
+        -> World + Memory + Persona context
+        -> Planner + Policy
+        -> AgentOS
+        -> AgentWorkerBackend
+        -> Agent + guarded tools
+        -> Result Event
+        -> Memory / World / Trace / Client
+```
+
+The application container is grouped into `memory`, `persona`, `world`,
+`agents`, `runtime`, and `integrations` subsystems. `app/bootstrap.py` owns
+lifecycle ordering and `app/composition.py` owns component construction.
+
+```text
+app/          API edge, configuration, composition, lifecycle
+event/        Stable event contracts and bus
+core/         Cognition, planning, policy, context, proactive decisions
+agent_os/     Agent registry, routing, orchestration
+agents/       Task handlers
+memory/       Persistence, retrieval, tiers, governance
+persona/      Persona, relationship, profile, self-model
+world/        Current state, graph, snapshots
+runtime/      Workers, scheduler, auth, health, diagnostics, messaging
+connectors/   External event sources
+packages/     Experimental MVSC extension through `app/experimental.py`
+ui/web/       Dashboard
+tests/        Behavior, integration, recovery, and architecture checks
+```
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [EVA-VM Architecture v1](docs/eva-vm-architecture.md) | System blueprint: host→VM→containers→core→memory→policy→action |
-| [Information Dynamics Consciousness Model](docs/consciousness_model.md) | L0-L5 theory: self-referential information loop, experience formula |
-| [API Reference](docs/api-reference.md) | All endpoints by layer (11 sections) |
-| [Operations Runbook](docs/runbook.md) | Deployment, monitoring, recovery, troubleshooting |
-| [Development Guide](DEVELOPMENT.md) | Setup, code standards, testing, adding agents |
+Start at [docs/README.md](docs/README.md).
 
-## Features
-
-### Core Capabilities
-
-- **FastAPI backend** - High-performance REST API with automatic documentation
-- **Event bus** - Asynchronous message passing between components
-- **Cognition loop** - Continuous event processing and agent orchestration
-- **Agent system** - Extensible agent registry with router and orchestrator
-- **SQLite persistence** - Events, memory, and trace logs stored persistently
-- **Snapshot/restore** - Full system state serialization and recovery
-- **Scheduler** - APScheduler-based periodic tasks and maintenance
-- **Proactive engine** - Stagnation detection and automatic reminders
-- **Observability** - Trace, memory, and event logging with querying
-
-### Built-in Agents
-
-- **chat_agent** - General conversational task handler
-- **search_agent** - Full-text search across local files
-- **coding_agent** - File summarization and code analysis
-- **docs_agent** - Documentation search and retrieval
-
-## Project Structure
-
-```text
-app/              FastAPI bootstrapping, config, API routes
-core/             Cognition loop, planner, proactive engine, context builder
-event/            Event schema, event bus implementation
-agents/           Base agent, specialized agent implementations
-agent_os/         Agent registry, router, orchestrator
-memory/           SQLite store, memory API, memory governor, profiles
-persona/          Persona service, self-model, personality management
-world/            World model, snapshot store
-runtime/          Health checks, scheduler, result registry, logging
-ui/web/           Dashboard templates and static assets
-tests/            Comprehensive test suite
-data/             Runtime data (SQLite, snapshots, profiles)
-logs/             Application logs
-```
-
-## Requirements
-
-- Python 3.11+
-- See `requirements.txt` for full dependency list
-
-## Installation
-
-### 1) Create virtual environment
-
-**Windows:**
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-```
-
-**macOS / Linux:**
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-### 2) Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3) Run the application
-
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-Access the application:
-- **Dashboard:** http://127.0.0.1:8000/
-- **API Docs:** http://127.0.0.1:8000/docs
-- **Health Check:** http://127.0.0.1:8000/health/live
+| Document | Purpose |
+| --- | --- |
+| [Current Architecture](docs/architecture.md) | Runtime topology, boundaries, status, and risks |
+| [Development Guide](DEVELOPMENT.md) | Setup, extension workflows, and quality gates |
+| [API Reference](docs/api-reference.md) | Chat contracts and endpoint families |
+| [Development Plan v2](docs/development-plan-v2.md) | Concrete 12-week prioritized roadmap |
+| [Production Runbook](docs/production-runbook.md) | Secure single-node operation and recovery |
 
 ## Configuration
 
-Configuration is controlled via environment variables with `EVA_` prefix:
+Application settings use the `EVA_` prefix. See `.env.example` and
+`app/config.py` for the complete set.
 
-### Core Settings
-- `EVA_ENV` - Environment: `dev` or `production` (default: `dev`)
-- `EVA_HOST` - Server bind address (default: `0.0.0.0`)
-- `EVA_PORT` - Server port (default: `8000`)
-- `EVA_LOG_LEVEL` - Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (default: `INFO`)
+Important defaults:
 
-### Path Configuration
-- `EVA_DATA_DIR` - Data directory (default: `data`)
-- `EVA_LOG_DIR` - Log directory (default: `logs`)
-- `EVA_DB_PATH` - Database path (default: `data/eva.db`)
-- `EVA_SNAPSHOT_DIR` - Snapshots directory (default: `data/snapshots`)
-
-### Timing Configuration (seconds)
-- `EVA_TICK_INTERVAL_SEC` - Cognition loop tick interval (default: `0.5`)
-- `EVA_QUEUE_POLL_TIMEOUT_SEC` - Event queue poll timeout (default: `0.5`)
-- `EVA_REQUEST_TIMEOUT_SEC` - API request timeout (default: `8.0`)
-- `EVA_RESULT_TTL_SEC` - Result registry TTL (default: `60.0`)
-- `EVA_SCHEDULER_TICK_INTERVAL_SEC` - Scheduler interval (default: `10`)
-- `EVA_SCHEDULER_MAINTENANCE_INTERVAL_SEC` - Maintenance interval (default: `60`)
-- `EVA_SCHEDULER_SNAPSHOT_INTERVAL_SEC` - Snapshot interval (default: `120`)
-- `EVA_STAGNATION_THRESHOLD_SEC` - Inactivity threshold (default: `86400`)
-- `EVA_REMINDER_COOLDOWN_SEC` - Reminder cooldown (default: `43200`)
-
-### Feature Flags
-- `EVA_ENABLE_V02_PIPELINE` - Enable experimental v0.2 pipeline (default: `false`)
-
-## Docker Deployment
-
-### Build and run with Docker Compose
-
-```bash
-docker-compose up --build
+```text
+EVA_COGNITION_WORKER_COUNT=1
+EVA_AGENT_WORKER_COUNT=4
+EVA_AGENT_EXECUTION_TIMEOUT_SEC=120
+EVA_ENABLE_CODE_TOOL=false
+EVA_ENABLE_NETWORK_TOOLS=false
+EVA_ENABLE_MVSC_PIPELINE=false
 ```
 
-Application will be available at http://localhost:8000
+Set `EVA_API_TOKEN` in production and send it as `X-API-Token`. Never commit
+provider keys, GitHub tokens, webhook secrets, or user-specific absolute paths.
+Code and network tools are privileged opt-in capabilities.
 
-### Build image manually
+## Verification
 
-```bash
-docker build -t eva:latest .
-docker run -p 8000:8000 -v $(pwd)/data:/app/data -v $(pwd)/logs:/app/logs eva:latest
+```powershell
+python -m ruff check .
+python -m pytest -q
+python scripts/preflight.py
 ```
 
-### Docker Compose Configuration
+Do not run multiple Uvicorn workers or multiple EVA replicas with the current
+in-memory bus/result registry and SQLite topology. The process/container worker
+and distributed-runtime prerequisites are tracked in the development plan.
 
-The `docker-compose.yml` includes:
-- Volume mounts for data persistence
-- Environment variable configuration
-- Health checks
-- Auto-restart policy
+## Docker
 
-## API Endpoints
-
-### Chat
-`POST /api/chat` - Send a message and get a response
-
-**Request:**
-```json
-{
-  "text": "Tell me about the current system state"
-}
+```powershell
+$env:EVA_API_TOKEN = "replace-with-a-long-random-token"
+docker compose up --build -d
 ```
 
-**Response:**
-```json
-{
-  "accepted": true,
-  "completed": true,
-  "event_id": "...",
-  "correlation_id": "...",
-  "reply": "...",
-  "selected_agent": "chat_agent",
-  "loop_id": "...",
-  "duration_ms": 123
-}
-```
-
-### State & Observability
-- `GET /api/state` - Current system state
-- `GET /api/memory/recent` - Recent memory entries
-- `GET /api/debug/trace` - Execution trace log
-- `GET /api/events/recent` - Recent events
-- `GET /api/agents` - Registered agents list
-- `GET /health/live` - Liveness probe
-- `GET /health/ready` - Readiness probe
-
-### Agent Commands
-Commands are prefixed with `/` and route to specialized agents:
-- `/search <query>` → search_agent (scans local files)
-- `/code <path>` → coding_agent (file summary and analysis)
-
-### Snapshot Management
-- `GET /api/debug/snapshot` - Export current snapshot
-- `POST /api/debug/snapshot/save` - Force save snapshot
-- `POST /api/debug/snapshot/restore` - Restore from snapshot
-
-### Proactive & Maintenance
-- `GET /api/proactive/state` - Proactive engine state
-- `POST /api/debug/maintenance/trigger` - Trigger maintenance
-- `GET /api/scheduler/jobs` - Scheduled jobs status
-
-## Testing
-
-Run the test suite:
-
-```bash
-pytest -v          # Verbose output
-pytest -q          # Quiet output
-pytest --cov       # With coverage report
-pytest -k "test_chat"  # Run specific tests
-```
-
-Test coverage:
-- Chat flow integration tests
-- Health check endpoints
-- Memory governor functions
-- Persona management
-- Proactive engine triggers
-- Snapshot save/restore
-
-## Runtime Flow
-
-### User Message Processing
-```
-HTTP /api/chat
-→ Event bus (publish)
-→ Cognition loop (consume)
-→ Planner (decide)
-→ Agent router (select)
-→ Orchestrator (execute)
-→ Memory/trace/state update
-→ Result registry (return)
-```
-
-### Periodic Maintenance
-```
-Scheduler (tick)
-→ System maintenance
-→ Memory governor maintenance
-→ Snapshot save
-→ Stagnation check
-```
-
-### Proactive Reminders
-```
-Proactive engine (evaluate)
-→ Detect stagnation/idle
-→ Generate reminder event
-→ Chat agent execution
-→ Update world state
-```
-
-## Logging
-
-Logs are written to `logs/eva.log` and console with configurable level.
-
-Key logger names:
-- `eva.bootstrap` - System startup/shutdown
-- `eva.cognition_loop` - Cognition loop events
-- `eva.search_agent` - File search operations
-- `eva.scheduler` - Scheduler operations
-
-## v0.1 Scope & Boundaries
-
-### Included
-- Single-node continuous operation
-- Event-driven architecture
-- Agent-based task execution
-- Local file search and code analysis
-- State persistence via SQLite
-- Snapshot-based recovery
-
-### Not Included (v0.2+)
-- Multi-device synchronization
-- Graph database backend
-- Multi-agent parallelism
-- Distributed deployment
-- Advanced reasoning engines
-
-## Development
-
-### Code Quality Tools
-
-Development tools are included in `requirements.txt`:
-- **black** - Code formatting
-- **ruff** - Linting
-- **mypy** - Type checking
-- **pytest-cov** - Coverage reporting
-
-Format code:
-```bash
-black app agents core event memory persona runtime tests
-```
-
-Lint code:
-```bash
-ruff check .
-```
-
-Type check:
-```bash
-mypy app core agents
-```
-
-### Performance Optimization
-
-Key performance considerations:
-- Event queue polling with configurable timeout
-- Result registry cleanup with TTL
-- Search agent file size and count limits
-- SQLite query optimization with indices
-- Snapshot interval tuning
-
-## Troubleshooting
-
-### Database Issues
-If you encounter SQLite errors, check:
-- `data/eva.db` file exists and is readable
-- No other processes have the database open
-- Disk space availability
-
-### Memory Usage
-Monitor memory with:
-```bash
-GET /api/state  # Check pending_events and pending_results
-GET /api/memory/recent  # Check stored memories
-```
-
-### Performance Degradation
-Check logs for:
-- Long agent execution times
-- Large numbers of pending events
-- Memory governor evictions
-
-## Contributing
-
-Follow the code quality standards:
-1. Use type hints on all functions
-2. Add docstrings to modules and classes
-3. Keep functions focused and testable
-4. Write tests for new features
-5. Format with black, lint with ruff
+The Compose topology intentionally runs one EVA API process with persistent
+data/log volumes and container-level resource limits.
 
 ## License
 
-See LICENSE file for details.
-
+See `LICENSE`.

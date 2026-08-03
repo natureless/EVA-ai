@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any
 
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
-from app.config import settings
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
 
@@ -22,6 +21,9 @@ class SearchAgent(BaseAgent):
     name = "search_agent"
     description = "Search local files and summarize results intelligently"
 
+    def __init__(self, base_dir: Path | None = None) -> None:
+        self.base_dir = (base_dir or Path.cwd()).resolve()
+
     def can_handle(self, task: AgentTask) -> bool:
         return task.kind == "search"
 
@@ -34,7 +36,7 @@ class SearchAgent(BaseAgent):
                     content="[search_agent] no query provided",
                     summary="no query", meta={"query": "", "matches": 0})
 
-            root = Path(task.payload.get("root") or settings.base_dir)
+            root = Path(task.payload.get("root") or self.base_dir).resolve()
             if not root.exists():
                 content = f"[search_agent] root path does not exist: {root}"
                 return AgentResult(ok=False, agent=self.name,
@@ -113,8 +115,10 @@ class SearchAgent(BaseAgent):
                         return matches, files_scanned, True
                     path = Path(dirpath) / filename
                     try:
-                        if path.stat().st_size > max_file_size: continue
-                    except OSError: continue
+                        if path.stat().st_size > max_file_size:
+                            continue
+                    except OSError:
+                        continue
                     try:
                         with path.open("r", encoding="utf-8", errors="ignore") as h:
                             for idx, line in enumerate(h, 1):
@@ -124,7 +128,8 @@ class SearchAgent(BaseAgent):
                                     if len(matches) >= max_matches:
                                         return matches, files_scanned + 1, True
                         files_scanned += 1
-                    except OSError: continue
+                    except OSError:
+                        continue
         except Exception:
             raise
         return matches, files_scanned, truncated

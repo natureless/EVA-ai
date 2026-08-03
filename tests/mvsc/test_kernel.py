@@ -15,8 +15,8 @@ sys.path.insert(0, ".")
 
 from event.event_bus import EventBus
 from event.event_schema import Event as LegacyEvent
-from packages.contracts.events import EventEnvelope, EventFamily
-from packages.contracts.state import ConsciousState, RuntimeMode
+from packages.contracts.events import EventEnvelope
+from packages.contracts.state import RuntimeMode
 from packages.kernel.event_bus_adapter import EventBusAdapter, to_legacy_event
 from packages.kernel.event_store import EventStore
 from packages.kernel.state_bridge import (

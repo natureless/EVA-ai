@@ -4,6 +4,9 @@ from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
 class Settings(BaseSettings):
     """EVA application settings with environment variable support.
     
@@ -18,19 +21,19 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    base_dir: Path = Path(".")
-    data_dir: Path = Path("data")
-    log_dir: Path = Path("logs")
+    base_dir: Path = PROJECT_ROOT
+    data_dir: Path = PROJECT_ROOT / "data"
+    log_dir: Path = PROJECT_ROOT / "logs"
     log_file: Path = Path("eva.log")
     log_level: str = "INFO"
-    db_path: Path = Path("data/eva.db")
-    ui_dir: Path = Path("ui/web")
-    template_dir: Path = Path("ui/web/templates")
-    static_dir: Path = Path("ui/web/static")
-    snapshot_dir: Path = Path("data/snapshots")
-    latest_snapshot_path: Path = Path("data/snapshots/latest.json")
-    profile_path: Path = Path("data/profile.json")
-    self_model_path: Path = Path("data/self_model.json")
+    db_path: Path = PROJECT_ROOT / "data/eva.db"
+    ui_dir: Path = PROJECT_ROOT / "ui/web"
+    template_dir: Path = PROJECT_ROOT / "ui/web/templates"
+    static_dir: Path = PROJECT_ROOT / "ui/web/static"
+    snapshot_dir: Path = PROJECT_ROOT / "data/snapshots"
+    latest_snapshot_path: Path = PROJECT_ROOT / "data/snapshots/latest.json"
+    profile_path: Path = PROJECT_ROOT / "data/profile.json"
+    self_model_path: Path = PROJECT_ROOT / "data/self_model.json"
 
     tick_interval_sec: float = 0.5
     queue_poll_timeout_sec: float = 0.5
@@ -49,6 +52,11 @@ class Settings(BaseSettings):
     llm_timeout_sec: float = 60.0       # timeout for individual LLM API calls
     llm_max_retries: int = 2            # max retries for transient LLM errors
 
+    # High-risk tools are opt-in. File and memory tools remain available.
+    enable_code_tool: bool = False
+    enable_network_tools: bool = False
+    trust_proxy_headers: bool = False
+
     # GitHub connector
     github_webhook_secret: str = ""
     github_api_token: str = ""
@@ -57,6 +65,8 @@ class Settings(BaseSettings):
 
     # Parallelism
     cognition_worker_count: int = 1     # number of parallel event-processing workers (1-8)
+    agent_worker_count: int = 4         # in-process agent execution workers (1-16)
+    agent_execution_timeout_sec: float = 120.0
 
     # MVSC feature flag — set to "true" to enable the new pipeline
     enable_mvsc_pipeline: bool = False
@@ -67,6 +77,20 @@ class Settings(BaseSettings):
     def validate_poll_interval(cls, v: int) -> int:
         if v < 30:
             raise ValueError(f"github_poll_interval_sec must be >= 30, got {v}")
+        return v
+
+    @field_validator("cognition_worker_count")
+    @classmethod
+    def validate_cognition_workers(cls, v: int) -> int:
+        if not 1 <= v <= 8:
+            raise ValueError(f"cognition_worker_count must be 1-8, got {v}")
+        return v
+
+    @field_validator("agent_worker_count")
+    @classmethod
+    def validate_agent_workers(cls, v: int) -> int:
+        if not 1 <= v <= 16:
+            raise ValueError(f"agent_worker_count must be 1-16, got {v}")
         return v
 
     # Vector search
@@ -98,7 +122,13 @@ class Settings(BaseSettings):
             raise ValueError(f"Log level must be one of {valid_levels}, got {v}")
         return v.upper()
 
-    @field_validator("tick_interval_sec", "queue_poll_timeout_sec", "request_timeout_sec", "result_ttl_sec")
+    @field_validator(
+        "tick_interval_sec",
+        "queue_poll_timeout_sec",
+        "request_timeout_sec",
+        "result_ttl_sec",
+        "agent_execution_timeout_sec",
+    )
     @classmethod
     def validate_positive_float(cls, v: float) -> float:
         # Convert to float if string

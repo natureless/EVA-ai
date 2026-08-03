@@ -43,6 +43,24 @@ class TestAgentRegistry:
         reg.register(FakeAgent("a"))
         assert reg.list_agents() == ["a", "b"]
 
+    def test_duplicate_registration_requires_explicit_replace(self):
+        reg = AgentRegistry()
+        reg.register(FakeAgent("chat_agent"))
+
+        with pytest.raises(ValueError, match="already registered"):
+            reg.register(FakeAgent("chat_agent"))
+
+        replacement = FakeAgent("chat_agent", kind="replacement")
+        reg.register(replacement, replace=True)
+        assert reg.get("chat_agent") is replacement
+
+    def test_unregister(self):
+        reg = AgentRegistry()
+        reg.register(FakeAgent("chat_agent"))
+
+        assert reg.unregister("chat_agent") is True
+        assert reg.unregister("chat_agent") is False
+
 
 class TestAgentRouter:
     def test_route_preferred_can_handle(self):

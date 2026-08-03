@@ -47,12 +47,15 @@ def register_agent(payload: AgentRegistration, request: Request) -> dict[str, An
         raise HTTPException(status_code=409, detail=f"agent '{payload.name}' already exists")
 
     try:
-        from agents.chat_agent import ChatAgent
+        from agents.chat_agent import ConfiguredChatAgent
 
-        agent = ChatAgent(tool_registry=getattr(container, "tool_registry", None))
-        # Override the name for routing purposes
-        agent.name = payload.name
-        agent.description = payload.description
+        agent = ConfiguredChatAgent(
+            name=payload.name,
+            description=payload.description,
+            task_kind=payload.kind,
+            tool_registry=container.tool_registry,
+            llm_max_retries=container.settings.llm_max_retries,
+        )
 
         registry.register(agent)
         logger.info("hot-registered agent: %s (kind=%s)", payload.name, payload.kind)
@@ -85,13 +88,9 @@ def unregister_agent(name: str, request: Request) -> dict[str, Any]:
     if registry.get(name) is None:
         raise HTTPException(status_code=404, detail=f"agent '{name}' not found")
 
-    # The registry doesn't have an unregister method — add one
-    if hasattr(registry, '_agents'):
-        del registry._agents[name]
-        logger.info("unregistered agent: %s", name)
-        return {"ok": True, "agent": name, "total_agents": len(registry.list_agents())}
-    else:
-        raise HTTPException(status_code=500, detail="registry does not support unregistration")
+    registry.unregister(name)
+    logger.info("unregistered agent: %s", name)
+    return {"ok": True, "agent": name, "total_agents": len(registry.list_agents())}
 
 
 @router.get("/api/agents/stats")
