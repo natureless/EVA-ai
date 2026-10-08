@@ -80,3 +80,14 @@ artifacts/**/*.sqlite-*
 EVA-Memory/
 storage/*.db
 storage/*.sqlite
+
+# Original GitHub repository template (AL / Business Central)
+.alcache/
+.alpackages/
+.snapshots/
+.output/
+*.app
+rad.json
+*.g.xlf
+*.flf
+TestResults.xml
