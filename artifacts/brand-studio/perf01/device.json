@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-01",
+  "scope": "Codex in-app browser; local fixture",
+  "computer": {
+    "Manufacturer": "HUAWEI",
+    "Model": "CREM-WXX9",
+    "TotalPhysicalMemory": 16487866368
+  },
+  "cpu": {
+    "Name": "AMD Ryzen 5 5600H with Radeon Graphics         ",
+    "NumberOfCores": 6,
+    "NumberOfLogicalProcessors": 12
+  },
+  "os": {
+    "Caption": "Microsoft Windows 11 家庭版 中文版",
+    "Version": "10.0.26200",
+    "BuildNumber": "26200"
+  },
+  "viewport": {
+    "width": 1015,
+    "height": 924
+  },
+  "requestedDurationMs": 620000,
+  "url": "http://127.0.0.1:8778/settings",
+  "limitations": [
+    "Not native Chrome/Edge certification",
+    "No compositor FPS measurement",
+    "Heap is browser-reported coarse usedJSHeapSize; no forced GC",
+    "Listener snapshots cover window, document and connected DOM only"
+  ]
+}

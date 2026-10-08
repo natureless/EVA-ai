@@ -1,0 +1,117 @@
+{
+  "retry": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+    "posts": [
+      {
+        "text": "深度请求：拒绝后沿用模式重发",
+        "remember": true,
+        "mode": "deep"
+      },
+      {
+        "text": "深度请求：拒绝后沿用模式重发",
+        "remember": false,
+        "mode": "deep"
+      }
+    ],
+    "messages": [
+      {
+        "id": 1,
+        "mode": "normal"
+      },
+      {
+        "id": 2,
+        "mode": "normal",
+        "status": "completed",
+        "taskId": "ui-preview-a8ea282372"
+      },
+      {
+        "id": 3,
+        "mode": "deep"
+      },
+      {
+        "id": 4,
+        "mode": "deep",
+        "status": "rejected"
+      },
+      {
+        "id": 5,
+        "mode": "deep"
+      },
+      {
+        "id": 6,
+        "mode": "deep",
+        "status": "completed",
+        "taskId": "ui-preview-d63cdc589c"
+      }
+    ],
+    "draft": "下一条草稿应保留",
+    "order": 2,
+    "selectedMode": "normal",
+    "solved": true,
+    "history": 0
+  },
+  "unknown": {
+    "traffic": [
+      {
+        "url": "/api/chat/stream",
+        "method": "POST"
+      }
+    ],
+    "message": [
+      {
+        "id": 2,
+        "status": "unknown",
+        "taskId": "ui-preview-fd297c9a42",
+        "text": "连接中断前收到的部分内容。",
+        "mode": "deep"
+      }
+    ],
+    "sendEnabled": true,
+    "retryButtons": 0
+  },
+  "query": {
+    "traffic": [
+      {
+        "url": "/api/chat/stream",
+        "method": "POST"
+      },
+      {
+        "url": "/api/chat/result/ui-preview-fd297c9a42",
+        "method": "GET"
+      }
+    ],
+    "message": [
+      {
+        "id": 2,
+        "status": "completed",
+        "taskId": "ui-preview-fd297c9a42",
+        "text": "这是深度思考预览，未连接模型，也不会保存消息。\n\n你可以继续测试三阶魔方的分析动效与布局。",
+        "mode": "deep"
+      }
+    ],
+    "focus": "2",
+    "solved": true,
+    "history": 0
+  },
+  "copyFailure": {
+    "feedback": "Copy failed. Select the text and copy it manually.",
+    "lang": "en",
+    "theme": "dark"
+  },
+  "copySuccess": {
+    "text": "这是正常对话预览，未连接模型，也不会保存消息。\n\n你可以继续测试二阶魔方的对话动效与布局。",
+    "feedback": "Copied"
+  },
+  "final": {
+    "lang": "zh-CN",
+    "theme": "light",
+    "status": "completed",
+    "taskId": "ui-preview-4dc4aaf437",
+    "order": 2,
+    "solved": true,
+    "history": 0,
+    "feedback": "已复制",
+    "testHooksPresent": false,
+    "phase": 0
+  }
+}

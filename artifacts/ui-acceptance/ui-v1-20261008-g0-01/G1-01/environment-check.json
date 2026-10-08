@@ -1,0 +1,34 @@
+{
+  "taskId": "G1-01",
+  "candidateId": "ui-v1-20261008-g0-01",
+  "status": "unverified",
+  "recordedAt": "2026-10-08T15:17:50.554564+00:00",
+  "startedAt": null,
+  "startTimeRecorded": false,
+  "browserConnector": {
+    "outcome": "timeout",
+    "error": "cua.getState call timed out after 300 seconds; no inventory returned"
+  },
+  "windowsComputerUse": {
+    "runtime": "@oai/sky through node_repl",
+    "browserWindowsReturned": {
+      "Chrome": 1,
+      "MSEdge": 1
+    },
+    "target": "Chrome window selected from returned list",
+    "observationOutcome": "blocked before page accessibility was returned",
+    "exactError": "Computer Use has been stopped for this turn because it could not determine the current browser URL on Windows with enough confidence to enforce policy. Stop your work and send a final message noting why Computer Use ended.",
+    "subsequentWindowsInputCalls": 0
+  },
+  "observed": {
+    "browserVersions": null,
+    "currentUrl": null,
+    "pageOperable": false,
+    "nativeZoom": null,
+    "systemReducedMotion": null,
+    "screenReader": null,
+    "phone": null
+  },
+  "limitation": "Tool policy check could not identify URL; this is not a product page failure or a confirmed browser disconnection.",
+  "noNativeSaveOfflineZoomOrPerformanceAcceptance": true
+}

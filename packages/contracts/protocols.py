@@ -11,18 +11,21 @@ from typing import Protocol, runtime_checkable
 from pydantic import BaseModel
 
 from packages.contracts.events import EventEnvelope
+from packages.contracts.actions import ActionIntent
 from packages.contracts.state import (
     BodyState,
     BroadcastContent,
     ConsciousState,
     ContentCandidate,
     Plan,
+    StateDelta,
 )
 
 
 # ═══════════════════════════════════════════════════════════════
 # RuntimeContext — 传递给每个模块的运行时上下文
 # ═══════════════════════════════════════════════════════════════
+
 
 class RuntimeContext:
     """传递给 CognitiveModule.handle() 的运行时上下文。
@@ -47,6 +50,7 @@ class RuntimeContext:
 # ═══════════════════════════════════════════════════════════════
 # CognitiveModule — 所有认知模块的基础协议
 # ═══════════════════════════════════════════════════════════════
+
 
 @runtime_checkable
 class CognitiveModule(Protocol):
@@ -84,6 +88,7 @@ class CognitiveModule(Protocol):
 # StateRepository — 状态持久化协议
 # ═══════════════════════════════════════════════════════════════
 
+
 @runtime_checkable
 class StateRepository(Protocol):
     """状态仓库 — 唯一有权持久化权威状态的组件。"""
@@ -109,7 +114,19 @@ class StateRepository(Protocol):
             新版本号
 
         Raises:
-            VersionConflictError: 版本冲突（并发修改）
+            StateConflictError: 版本冲突（并发修改）
+        """
+        ...
+
+    async def commit_delta(
+        self,
+        delta: StateDelta,
+        events: list[EventEnvelope] | None = None,
+    ) -> int:
+        """原子提交一个基于 ``delta.base_version`` 的状态增量。
+
+        实现必须在同一临界区检查当前 revision、应用增量并持久化；
+        revision 不匹配时抛出 ``StateConflictError``，且不得改变状态。
         """
         ...
 
@@ -127,8 +144,26 @@ class StateRepository(Protocol):
 
 
 # ═══════════════════════════════════════════════════════════════
-# EventBus — 事件总线协议
+# TransactionalStateRepository — 状态与行动意图原子提交
 # ═══════════════════════════════════════════════════════════════
+
+
+@runtime_checkable
+class TransactionalStateRepository(StateRepository, Protocol):
+    """Atomically commit a revision, source events and unclaimed action intents.
+
+    This does not commit effects or their later observations. External handlers
+    execute only through a separate claim boundary after the transaction commits.
+    """
+
+    async def commit_with_actions(
+        self,
+        previous_version: int,
+        new_state: ConsciousState,
+        events: list[EventEnvelope],
+        actions: list[ActionIntent],
+    ) -> int: ...
+
 
 @runtime_checkable
 class EventBusProtocol(Protocol):
@@ -137,6 +172,10 @@ class EventBusProtocol(Protocol):
     async def publish(self, event: EventEnvelope) -> bool:
         """发布事件。返回 True 表示成功入队。"""
         ...
+
+    # ═══════════════════════════════════════════════════════════════
+    # EventBus — 事件总线协议
+    # ═══════════════════════════════════════════════════════════════
 
     async def consume(self, timeout: float = 0.5) -> EventEnvelope | None:
         """消费事件。"""
@@ -154,6 +193,7 @@ class EventBusProtocol(Protocol):
 # ═══════════════════════════════════════════════════════════════
 # 模型层协议
 # ═══════════════════════════════════════════════════════════════
+
 
 @runtime_checkable
 class WorldModelProtocol(Protocol):
@@ -214,6 +254,7 @@ class SelfModelProtocol(Protocol):
 # ═══════════════════════════════════════════════════════════════
 # 认知层协议
 # ═══════════════════════════════════════════════════════════════
+
 
 @runtime_checkable
 class ContentEngineProtocol(Protocol):
@@ -300,8 +341,10 @@ class DecisionEngineProtocol(Protocol):
 # AgentOS 协议
 # ═══════════════════════════════════════════════════════════════
 
+
 class Intent(BaseModel):
     """结构化意图。"""
+
     intent_id: str
     description: str
     goal_id: str | None = None
@@ -311,6 +354,7 @@ class Intent(BaseModel):
 
 class ToolRequest(BaseModel):
     """工具调用请求。"""
+
     tool_id: str
     parameters: dict
     token_id: str | None = None
@@ -319,6 +363,7 @@ class ToolRequest(BaseModel):
 
 class ToolResult(BaseModel):
     """工具调用结果。"""
+
     ok: bool
     data: dict
     error: str | None = None
@@ -328,6 +373,7 @@ class ToolResult(BaseModel):
 
 class VerificationResult(BaseModel):
     """验证结果。"""
+
     passed: bool
     checks: list[dict]
     summary: str
@@ -335,6 +381,7 @@ class VerificationResult(BaseModel):
 
 class Decision(BaseModel):
     """决策结果。"""
+
     requires_action: bool
     intent: Intent | None = None
     reasoning: str = ""
@@ -390,6 +437,7 @@ class VerifierProtocol(Protocol):
 # ═══════════════════════════════════════════════════════════════
 # 记忆协议
 # ═══════════════════════════════════════════════════════════════
+
 
 @runtime_checkable
 class MemoryProtocol(Protocol):

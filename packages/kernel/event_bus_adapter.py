@@ -16,36 +16,12 @@ import threading
 from typing import Any
 
 from event.event_schema import Event as LegacyEvent
-from packages.contracts.events import EventEnvelope, EventFamily, from_legacy_event
+from event.codec import to_legacy_event
+from packages.contracts.events import EventEnvelope, from_legacy_event
 from packages.kernel.event_store import EventStore
+from packages.kernel.inbox_outbox import DurableInboxOutbox
 
 logger = logging.getLogger("eva.kernel.event_bus_adapter")
-
-
-# ═══════════════════════════════════════════════════════════════
-# 反向转换: EventEnvelope → LegacyEvent
-# ═══════════════════════════════════════════════════════════════
-
-# 新事件类型 → 旧事件类型映射 (best-effort)
-_ENVELOPE_TO_LEGACY: dict[str, str] = {
-    EventFamily.PERCEPTION.USER_MESSAGE: "user_message",
-    EventFamily.LIFECYCLE.MAINTENANCE_STARTED: "maintenance",
-    EventFamily.PERCEPTION.SYSTEM_EVENT: "reminder_trigger",
-    EventFamily.PERCEPTION.SCHEDULER_TICK: "system_tick",
-}
-
-
-def to_legacy_event(envelope: EventEnvelope) -> LegacyEvent:
-    """将 EventEnvelope 转换回 LegacyEvent（向下兼容）。"""
-    legacy_type = _ENVELOPE_TO_LEGACY.get(envelope.event_type, "system_tick")
-    return LegacyEvent(
-        id=envelope.event_id,
-        type=legacy_type,
-        source=envelope.source,
-        timestamp=envelope.timestamp,
-        payload=envelope.payload,
-        correlation_id=envelope.correlation_id,
-    )
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -80,10 +56,12 @@ class EventBusAdapter:
         legacy_bus: Any,  # event.event_bus.EventBus
         event_store: EventStore | None = None,
         subject_id: str = "eva-001",
+        durable_queue: DurableInboxOutbox | None = None,
     ) -> None:
         self._bus = legacy_bus
         self._store = event_store
         self._subject_id = subject_id
+        self._durable_queue = durable_queue
 
         # 订阅管理: {event_type_prefix: [handler, ...]}
         self._subscriptions: dict[str, list[Any]] = {}
@@ -106,7 +84,17 @@ class EventBusAdapter:
         Returns:
             True 如果事件成功入队
         """
+        EventEnvelope.model_validate(event.model_dump())
+        # Validate routability before any persistence or subscriber callback.
+        legacy = to_legacy_event(event)
         event.subject_id = self._subject_id
+        legacy.subject_id = self._subject_id
+
+        # Durable admission happens before the in-memory queue. A duplicate
+        # event_id is treated as already admitted and is not executed twice.
+        if self._durable_queue is not None:
+            if not self._durable_queue.enqueue_inbox(event):
+                return False
 
         # 1. 持久化到 EventStore
         if self._store is not None:
@@ -117,7 +105,7 @@ class EventBusAdapter:
                 logger.exception("failed to persist event to EventStore")
 
         # 2. 转换并发布到旧 EventBus
-        legacy = to_legacy_event(event)
+        legacy.sequence = event.sequence
         enqueued = self._bus.publish(legacy)
 
         # 3. 通知订阅者
@@ -204,6 +192,7 @@ class EventBusAdapter:
             "adapter_published": self._published_count,
             "adapter_consumed": self._consumed_count,
             "adapter_persisted": self._persisted_count,
+            "durable_inbox": self._durable_queue.stats() if self._durable_queue else None,
             "subscriptions": len(self._subscriptions),
             "legacy_bus": legacy_stats,
         }

@@ -1,0 +1,9 @@
+.goal-create{width:min(600px,calc(100% - 32px));max-height:85dvh;box-sizing:border-box;overflow:auto;background:var(--ui-panel,#fff);color:var(--text,#292631);border:1px solid var(--line,#ddd);border-radius:16px;padding:24px;font:14px/1.6 system-ui}
+.goal-create::backdrop{background:#0006}
+.goal-create header{display:flex;align-items:center;justify-content:space-between;gap:12px}.goal-create h2{margin:0;font-size:20px}
+.goal-create p{color:var(--muted,#777)}.goal-create label{display:block;margin:16px 0}.goal-create label span{display:block;font-weight:600;margin-bottom:6px}
+.goal-create input,.goal-create textarea{box-sizing:border-box;width:100%;padding:10px;border:1px solid var(--line,#ddd);border-radius:8px;background:var(--bg,#fafafa);color:inherit;font:inherit}
+.goal-create textarea{resize:vertical}.goal-create small{display:block;color:var(--muted,#777);margin-top:5px}
+.goal-create-actions{display:flex;flex-wrap:wrap;gap:8px}.goal-create button{padding:8px 12px;border:1px solid var(--line,#ddd);border-radius:8px;background:var(--bg,#fafafa);color:inherit;cursor:pointer;font:inherit}
+.goal-create button:disabled,.goal-create input:disabled,.goal-create textarea:disabled{opacity:.6;cursor:default}
+.goal-create [hidden]{display:none!important}#goalCreateStatus{white-space:pre-wrap;overflow-wrap:anywhere}

@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "provider": "mock",
+  "network_calls": 0,
+  "slow_cognition_blocked": {
+    "body_ticks_advanced": 4,
+    "attention_ticks": 5,
+    "processor_busy": true,
+    "workspace_first": "maintenance"
+  },
+  "execution_order": [
+    "first_user_request",
+    "maintenance",
+    "second_user_request"
+  ],
+  "completed_events": 3,
+  "duplicate_deliveries_ignored": 1,
+  "feedback_records": 3,
+  "pressure_after_recovery": 0.0,
+  "restored_feedback_records": 3,
+  "actions_reexecuted_on_restore": 0,
+  "scope": "Engineering demonstration; no claim of biological fidelity or consciousness."
+}

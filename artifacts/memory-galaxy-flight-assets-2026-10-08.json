@@ -1,0 +1,51 @@
+{
+  "client_date": "2026-10-08",
+  "origin": "http://127.0.0.1:8000",
+  "passed": 15,
+  "total": 15,
+  "checks": {
+    "memory_page_200": true,
+    "template_memory_graph.css": true,
+    "bytes_memory_graph.css": true,
+    "template_memory_galaxy.js": true,
+    "bytes_memory_galaxy.js": true,
+    "template_memory_galaxy_renderer.js": true,
+    "bytes_memory_galaxy_renderer.js": true,
+    "template_memory_graph.js": true,
+    "bytes_memory_graph.js": true,
+    "control_immersiveDetails": true,
+    "control_immersiveRelations": true,
+    "control_closeImmersiveDetail": true,
+    "control_galaxySystem": true,
+    "control_galaxySystemControl": true,
+    "control_cameraMotion": true
+  },
+  "assets": [
+    {
+      "path": "ui/web/static/memory_graph.css",
+      "version": 21,
+      "bytes": 39247,
+      "sha256": "cd9cf9b2e11c2192b1d12358b0ae78f0de3f05b9d830f52477deb77e9fc5fe0a"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy.js",
+      "version": 2,
+      "bytes": 8446,
+      "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy_renderer.js",
+      "version": 3,
+      "bytes": 14037,
+      "sha256": "1100a2391cb9e797e5f61df3b7fce7f20c125c242d1bef29c9e0e7b8655f6fdc"
+    },
+    {
+      "path": "ui/web/static/memory_graph.js",
+      "version": 27,
+      "bytes": 83506,
+      "sha256": "e116aa928947fe0774aa0315ebd45e0051f6efeb9ef89ef562e1e95bcb95f749"
+    }
+  ],
+  "memory_writes": false,
+  "model_requests": false
+}

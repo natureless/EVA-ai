@@ -30,6 +30,10 @@ class HealthService:
     def live(self) -> dict[str, Any]:
         return {"status": "alive"}
 
+    def set_cognition_loop(self, loop: Any) -> None:
+        """Observe the selected runtime service rather than an inactive adapter."""
+        self._loop = loop
+
     def ready(self) -> dict[str, Any]:
         result = {
             "status": "ready" if self.system_state.get("ready", False) else "not_ready",
@@ -58,15 +62,17 @@ class HealthService:
             },
         }
 
-        # ── MVSC status (when enabled) ──
-        mvsc_enabled = bool(self.system_state.get("mvsc_feature_flags"))
-        if mvsc_enabled:
-            result["mvsc"] = {
-                "enabled": True,
-                "tick": self.system_state.get("mvsc_tick", 0),
-                "mode": self.system_state.get("mvsc_runtime_mode", "unknown"),
-                "phase": self.system_state.get("mvsc_cognition_phase", "unknown"),
-            }
+        # When live dependencies are provided, stale startup flags cannot hide
+        # a stopped consumer or an unavailable store/scheduler.
+        for component, reference in (
+            ("db", self._store), ("event_bus", self._event_bus),
+            ("cognition_loop", self._loop), ("scheduler", self._scheduler),
+        ):
+            if reference is not None and result["components"][component] is not True:
+                result["status"] = "not_ready"
+
+        if "mvsc_status" in self.system_state:
+            result["mvsc"] = dict(self.system_state["mvsc_status"])
 
         return result
 
@@ -108,6 +114,12 @@ class HealthService:
     def _probe_cognition_loop(self) -> bool:
         if self._loop is not None:
             try:
+                running = getattr(self._loop, "is_running", None)
+                if isinstance(running, bool):
+                    return running
+                threads = getattr(self._loop, "_threads", None)
+                if isinstance(threads, (list, tuple)):
+                    return bool(threads) and all(t.is_alive() for t in threads)
                 t = getattr(self._loop, "_thread", None)
                 return t is not None and t.is_alive()
             except Exception:
@@ -117,6 +129,9 @@ class HealthService:
     def _probe_scheduler(self) -> bool:
         if self._scheduler is not None:
             try:
+                running = getattr(self._scheduler, "is_running", None)
+                if isinstance(running, bool):
+                    return running
                 sched = getattr(self._scheduler, "_scheduler", None)
                 if sched is not None:
                     return getattr(sched, "running", False)

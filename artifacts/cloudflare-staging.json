@@ -1,0 +1,21 @@
+{
+  "startup_ready": true,
+  "unauthenticated_http_denied": true,
+  "graph_http": 200,
+  "graph_nodes": 420,
+  "graph_edges": 709,
+  "websocket_ping": true,
+  "llm": "mock",
+  "database": "private staging copy",
+  "event_columns": [
+    "id",
+    "type",
+    "source",
+    "timestamp",
+    "payload",
+    "correlation_id",
+    "status",
+    "event_contract"
+  ],
+  "original_data_unchanged": true
+}

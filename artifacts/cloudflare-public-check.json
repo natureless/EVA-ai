@@ -1,0 +1,29 @@
+[
+  {
+    "path": "/",
+    "status": 302,
+    "redirect_host": "round-math-6deb.cloudflareaccess.com",
+    "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+    "server": "cloudflare",
+    "content_type": "text/html; charset=UTF-8",
+    "protected": true
+  },
+  {
+    "path": "/api/memory/graph",
+    "status": 302,
+    "redirect_host": "round-math-6deb.cloudflareaccess.com",
+    "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+    "server": "cloudflare",
+    "content_type": "text/html; charset=UTF-8",
+    "protected": true
+  },
+  {
+    "path": "/ws",
+    "status": 302,
+    "redirect_host": "round-math-6deb.cloudflareaccess.com",
+    "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+    "server": "cloudflare",
+    "content_type": "text/html; charset=UTF-8",
+    "protected": true
+  }
+]

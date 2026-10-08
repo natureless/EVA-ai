@@ -18,6 +18,8 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
+from core.tool_execution import invoke_tool
+from memory.provenance import memory_context_line, provenance
 
 logger = logging.getLogger("eva.tools")
 
@@ -30,6 +32,7 @@ class ToolDef:
     description: str
     parameters: dict[str, Any]  # JSON Schema
     handler: Callable[..., dict[str, Any]]
+    requires_user_authorization: bool = False
 
     def to_openai_schema(self) -> dict[str, Any]:
         """OpenAI function-calling format."""
@@ -60,6 +63,8 @@ class ToolRegistry:
         self._tools: dict[str, ToolDef] = {}
 
     def register(self, tool: ToolDef) -> None:
+        if tool.name in self._tools:
+            raise ValueError(f"tool already registered: {tool.name}")
         self._tools[tool.name] = tool
 
     def get(self, name: str) -> ToolDef | None:
@@ -183,7 +188,7 @@ def _ingest_document(
             logger.warning("document chunk ingest failed path=%s chunk=%d: %s", file_path, i, exc)
 
     return {
-        "ok": True,
+        "ok": ingested == min(len(chunks), 50) and ingested > 0,
         "path": str(file_path),
         "size": len(text),
         "chunks": len(chunks),
@@ -245,6 +250,8 @@ def _store_chunk(
         source=source,
         category=category or "document",
         tags=["document", f"chunk:{chunk_index}"],
+        origin=provenance(source=source),
+        allow_long_term=True,
     )
     return "s3" in result
 
@@ -545,6 +552,7 @@ def create_builtin_tools(
     *,
     enable_code: bool = False,
     enable_network: bool = False,
+    enable_us_market_snapshot: bool = False,
     workspace_root: Path | None = None,
 ) -> list[ToolDef]:
     """Create the standard tool set with optional runtime dependencies.
@@ -554,6 +562,7 @@ def create_builtin_tools(
         executors: Dict of executors for boundary checks and audit logging.
         enable_code: Register host code execution tool (disabled by default).
         enable_network: Register outbound network tools (disabled by default).
+        enable_us_market_snapshot: Fixed-source US index daily closes (disabled by default).
         workspace_root: Root directory available to built-in file tools.
     """
     tools: list[ToolDef] = []
@@ -708,6 +717,26 @@ def create_builtin_tools(
             handler=_execute_code_tool,
         ))
 
+    if enable_us_market_snapshot:
+        def _us_market_snapshot() -> dict[str, Any]:
+            from core.market_snapshot import fetch_snapshot
+
+            if browser_executor is None:
+                return {"ok": False, "error": "market_network_executor_unavailable"}
+            return fetch_snapshot(lambda url: browser_executor.execute(
+                "fetch", {"url": url}, task_id="tool_us_market_snapshot",
+            ))
+
+        tools.append(ToolDef(
+            name="us_market_snapshot",
+            description="Read the latest FRED daily closing values of S&P 500, Nasdaq Composite "
+                        "and Dow Jones. NOT intraday or guaranteed real-time data. Always include "
+                        "each trading date and source, and distinguish retrieval time. No individual "
+                        "stock quotes, news, weather, or arbitrary URL fetching.",
+            parameters={"type": "object", "properties": {}, "additionalProperties": False},
+            handler=_us_market_snapshot,
+        ))
+
     # ── web_fetch ──
     if enable_network:
         def _execute_web_tool(url: str = "", max_bytes: int = 100_000, **_: Any) -> dict[str, Any]:
@@ -834,6 +863,7 @@ def create_builtin_tools(
             "required": ["path"],
         },
         handler=guarded_file_handler(_ingest_tool, "read", "path"),
+        requires_user_authorization=True,
     ))
 
     return tools
@@ -845,6 +875,8 @@ def execute_tool(
     tool_name: str,
     tool_args: dict[str, Any],
     registry: ToolRegistry,
+    *,
+    authorized: bool = False,
 ) -> dict[str, Any]:
     """Execute a tool by name and return the result.
 
@@ -853,9 +885,14 @@ def execute_tool(
     tool = registry.get(tool_name)
     if tool is None:
         return {"ok": False, "error": f"unknown tool: {tool_name}"}
+    if tool.requires_user_authorization and authorized is not True:
+        return {
+            "ok": False, "denied": True,
+            "error": "This tool changes long-term memory. Submit the exact tool and arguments through /api/tools/call to authorize it.",
+        }
 
     try:
-        result = tool.handler(**tool_args)
+        result = invoke_tool(f"tool:{tool_name}", tool_args, lambda: tool.handler(**tool_args))
         return result
     except TypeError as e:
         logger.warning("tool %s called with wrong args: %s — args=%s", tool_name, e, tool_args)
@@ -913,8 +950,12 @@ def format_tool_result(tool_name: str, result: dict[str, Any]) -> str:
     if tool_name == "search_memory" and "memories" in result:
         lines = [f"[{tool_name}] {summary}"]
         for m in result["memories"]:
-            lines.append(f"  [{m.get('tier', '?')}] {m['content'][:200]}")
+            lines.append(f"  [{m.get('tier', '?')}] {memory_context_line(m)}")
         return "\n".join(lines)
+
+    if tool_name == "us_market_snapshot":
+        import json
+        return f"[{tool_name}] {summary}\n" + json.dumps(result, ensure_ascii=False)
 
     # generic fallback
     return f"[{tool_name}] {summary}"

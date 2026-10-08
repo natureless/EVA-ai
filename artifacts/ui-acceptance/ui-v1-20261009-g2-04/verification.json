@@ -1,0 +1,22 @@
+{
+  "candidateId": "ui-v1-20261009-g2-04",
+  "sourceSetSha256": "c1cd2024b4727477f844a9ac781cc2a885a5ec5a0631d6548a0fb87fe02f73d0",
+  "generatedAt": "2026-10-08T16:25:53.236557+00:00",
+  "status": "local-checks-passed; manual-gates-unverified",
+  "javascriptPassed": 489,
+  "uiPythonPassed": 34,
+  "addedListRegressions": 9,
+  "apiChecksPassed": 31,
+  "clientReplayChecksPassed": 17,
+  "releaseReport": "artifacts/ui-release/local-20261009-memory-status/report.json",
+  "apiEvidence": "artifacts/ui-acceptance/ui-v1-20261009-g2-04/run-0r8k8u6o/memory-api.json",
+  "replayEvidence": "artifacts/ui-acceptance/ui-v1-20261009-g2-04/client-replay.json",
+  "sourceStable": true,
+  "releasePassed": false,
+  "manualGates": [
+    "Native Chrome/Edge save and direct offline execution",
+    "Reliable foreground ten-minute 2x2/3x3 performance",
+    "Native 200% zoom",
+    "Real screen-reader acceptance"
+  ]
+}

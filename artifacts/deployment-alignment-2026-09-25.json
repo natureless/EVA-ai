@@ -1,0 +1,208 @@
+{
+  "checked_at": "2026-09-25T02:18:02.362562+00:00",
+  "zone": {
+    "http_status": 200,
+    "success": true,
+    "name": "bianhua.cc.cd",
+    "status": "active",
+    "name_servers": [
+      "ali.ns.cloudflare.com",
+      "porter.ns.cloudflare.com"
+    ]
+  },
+  "dns": {
+    "http_status": 200,
+    "success": true,
+    "records": [
+      {
+        "name": "eva.bianhua.cc.cd",
+        "type": "CNAME",
+        "content": "4867f04c-f50e-475d-96e2-5986bca73239.cfargotunnel.com",
+        "proxied": true
+      }
+    ]
+  },
+  "tunnel": {
+    "http_status": 200,
+    "success": true,
+    "name": "eva-bianhua",
+    "status": "healthy",
+    "connections": 4
+  },
+  "tunnel_config": {
+    "http_status": 200,
+    "success": true,
+    "ingress": [
+      {
+        "hostname": "eva.bianhua.cc.cd",
+        "service": "http://127.0.0.1:8000",
+        "access_required": true,
+        "aud_matches": true
+      },
+      {
+        "hostname": null,
+        "service": "http_status:404",
+        "access_required": null,
+        "aud_matches": false
+      }
+    ]
+  },
+  "access": {
+    "http_status": 200,
+    "success": true,
+    "name": "EVA Memory",
+    "domain": "eva.bianhua.cc.cd",
+    "type": "self_hosted",
+    "aud_matches": true,
+    "allowed_idps": [
+      "c914dd01-1695-4701-a1c9-a9073bd42e4a"
+    ],
+    "auto_redirect_to_identity": true
+  },
+  "policies": {
+    "http_status": 200,
+    "success": true,
+    "policies": [
+      {
+        "decision": "allow",
+        "include_rule_types": [
+          [
+            "email"
+          ]
+        ],
+        "exact_email_count": 1,
+        "emails_match_local": true,
+        "exclude_count": 0,
+        "require_count": 1
+      }
+    ]
+  },
+  "idps": {
+    "http_status": 200,
+    "success": true,
+    "providers": [
+      {
+        "id": "b9c9b13d-d2d7-45f8-93f0-a06007c857a0",
+        "type": "cloudflare",
+        "name": ""
+      },
+      {
+        "id": "c914dd01-1695-4701-a1c9-a9073bd42e4a",
+        "type": "onetimepin",
+        "name": "EVA Email PIN"
+      }
+    ]
+  },
+  "dns_google": {
+    "http_status": 200,
+    "dns_status": 0,
+    "answers": [
+      "porter.ns.cloudflare.com.",
+      "ali.ns.cloudflare.com."
+    ]
+  },
+  "dns_cloudflare": {
+    "http_status": 200,
+    "dns_status": 0,
+    "answers": [
+      "ali.ns.cloudflare.com.",
+      "porter.ns.cloudflare.com."
+    ]
+  },
+  "public_anonymous": [
+    {
+      "path": "/",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    },
+    {
+      "path": "/api/memory/graph",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    },
+    {
+      "path": "/api/memory/graph/dangling",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    },
+    {
+      "path": "/ws",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    }
+  ],
+  "origin": [
+    {
+      "path": "/",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "cloudflare_cache_control": "no-store",
+      "has_diagnostics_entry": true
+    },
+    {
+      "path": "/api/memory/graph",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "cloudflare_cache_control": "no-store",
+      "nodes": 420,
+      "edges": 660,
+      "dangling_world_edges": 206
+    },
+    {
+      "path": "/api/memory/graph/dangling",
+      "status": 404,
+      "cache_control": "private, no-store",
+      "cloudflare_cache_control": "no-store"
+    },
+    {
+      "path": "/static/memory_diagnostics.js?v=1",
+      "status": 200,
+      "cache_control": "private, no-store",
+      "cloudflare_cache_control": "no-store"
+    }
+  ],
+  "origin_anonymous": 401,
+  "connector_metrics": [
+    "cloudflared_tunnel_ha_connections 4"
+  ],
+  "connector_ready": 200,
+  "preview_diagnostics_status": 200,
+  "origin_check_note": "Direct loopback probes use trust_env=False; initial proxy-affected results discarded.",
+  "local_runtime": {
+    "production": {
+      "pid": 19812,
+      "listen": "127.0.0.1:8000",
+      "started_at": "2026-09-20T06:11:00.326614+08:00"
+    },
+    "tunnel": {
+      "pid": 19824,
+      "listen_metrics": "127.0.0.1:20241"
+    },
+    "readonly_preview": {
+      "pid": 26192,
+      "listen": "127.0.0.1:8774"
+    }
+  },
+  "scheduled_tasks": [
+    {
+      "name": "EVA Cloudflare App",
+      "state": "Running",
+      "trigger": "user_logon",
+      "restart_count": 3,
+      "last_run": "2026-09-20T06:10:45+08:00"
+    },
+    {
+      "name": "EVA Cloudflare Tunnel",
+      "state": "Running",
+      "trigger": "user_logon",
+      "restart_count": 3,
+      "last_run": "2026-09-20T06:10:45+08:00"
+    }
+  ],
+  "release_alignment": {
+    "diagnostics_frontend_served_by_production": true,
+    "diagnostics_backend_loaded_in_production": false,
+    "production_restarted_during_audit": false,
+    "cloudflare_configuration_changed_during_audit": false
+  }
+}

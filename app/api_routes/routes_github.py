@@ -8,6 +8,8 @@ from typing import Any
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.config import settings
+from app.api_routes.admission import admission_rejected, publish_event
+from event.codec import UnsupportedEvent
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +22,7 @@ async def github_webhook(
     x_github_event: str = Header(..., alias="X-GitHub-Event"),
     x_hub_signature_256: str = Header(..., alias="X-Hub-Signature-256"),
     x_github_delivery: str = Header(..., alias="X-GitHub-Delivery"),
-) -> dict[str, Any]:
+) -> Any:
     if not settings.github_webhook_secret:
         raise HTTPException(status_code=501, detail="webhook secret not configured")
 
@@ -32,7 +34,6 @@ async def github_webhook(
         raise HTTPException(status_code=401, detail="invalid signature")
 
     container = request.app.state.container
-    event_bus = container.event_bus
 
     dedup_set: set[str] = getattr(request.app.state, "_github_dedup_set", set())
     if x_github_delivery in dedup_set:
@@ -47,13 +48,19 @@ async def github_webhook(
 
     from connectors.github.event_normalizer import normalize_webhook_payload
 
-    dedup_set.add(x_github_delivery)
-    if len(dedup_set) > 10000:
-        dedup_set.clear()
-    request.app.state._github_dedup_set = dedup_set
+    try:
+        event = normalize_webhook_payload(x_github_event, x_github_delivery, payload)
+    except (UnsupportedEvent, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    if rejection := publish_event(container, event):
+        return admission_rejected(rejection, delivery_id=x_github_delivery)
 
-    event = normalize_webhook_payload(x_github_event, x_github_delivery, payload)
-    event_bus.publish(event)
+    # Only admitted deliveries are deduplicated. A rejected delivery must remain
+    # retryable when queue capacity returns or a new runtime starts.
+    if len(dedup_set) >= 10000:
+        dedup_set.clear()
+    dedup_set.add(x_github_delivery)
+    request.app.state._github_dedup_set = dedup_set
 
     logger.info("github webhook: %s %s → %s", x_github_event, x_github_delivery, event.id)
     return {"status": "ok", "event_id": event.id, "delivery_id": x_github_delivery}

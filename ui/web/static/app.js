@@ -107,19 +107,7 @@ langBtn.addEventListener("click", () => {
 updateLangButton();
 
 // ── Theme toggle ────────────────────────────────────────
-function loadTheme() {
-  const t = localStorage.getItem("eva-theme") || "light";
-  document.documentElement.setAttribute("data-theme", t);
-  themeBtn.innerHTML = t === "dark" ? "&#9789;" : "&#9788;";
-}
-themeBtn.addEventListener("click", () => {
-  const cur = document.documentElement.getAttribute("data-theme");
-  const next = cur === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("eva-theme", next);
-  themeBtn.innerHTML = next === "dark" ? "&#9789;" : "&#9788;";
-});
-loadTheme();
+globalThis.EvaTheme?.bind();
 
 // ── Card collapse ──────────────────────────────────────
 document.querySelectorAll(".card-header").forEach(h => {

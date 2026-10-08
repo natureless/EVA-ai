@@ -1,0 +1,51 @@
+{
+  "status": "verified_on_production_origin",
+  "verified_at": "2026-09-27T10:13:32.453853+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\local-path-20260927T180835",
+  "source_hashes": {
+    "ui/web/static/memory_graph.js": "5871519267fe063b8561726b23a9c8521b66fc9a628ee8a8ec4565b0956ddc52",
+    "ui/web/static/memory_graph.css": "d7d82098d2a4fa26ab44ebaf6f9fb92c63b056551dfb9c80478fd375165b3e41",
+    "ui/web/templates/memory_graph.html": "5fe1c76344972bd4faa66f92c253b4a8da7c1738949c81f02287836020c68441",
+    "tests/js/test_memory_graph.cjs": "e4d57e685b5e34805f0e454e37b9fc6caf674fd6e92635b38e582731b5568009",
+    "tests/js/test_memory_graph_interactions.cjs": "7c94f4d07ba786c567afec168962175de872c1e12171502412fce22cb6e128d8"
+  },
+  "tests": {
+    "javascript_passed": 61,
+    "python_graph_passed": 23,
+    "full_python_suite": "not run this turn; frontend-only change"
+  },
+  "browser": {
+    "loopback_preview": true,
+    "two_step_path_with_forward_and_reverse_edges": true,
+    "original_direction_preserved_in_relation_modal": true,
+    "fit_path_shows_all_route_nodes": true,
+    "filter_invalidates_unreachable_path": true,
+    "viewport_390x844": {
+      "page_width": 390,
+      "path_width": 302.33,
+      "horizontal_overflow": false
+    },
+    "viewport_restored": true,
+    "console_errors": []
+  },
+  "production_checks": {
+    "page_status": 200,
+    "template_markers": true,
+    "memory_graph.js": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "memory_graph.css": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "graph_status": 200,
+    "health_status": 200,
+    "ready": "ready"
+  },
+  "backend_restarted": false,
+  "not_verified": [
+    "Public authenticated browser interaction",
+    "Physical mobile device"
+  ]
+}

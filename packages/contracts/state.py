@@ -19,6 +19,60 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 
+class StateConflictError(RuntimeError):
+    """状态提交的乐观锁冲突。
+
+    当增量基于旧 revision 计算完成时，提交者必须重新读取最新状态，
+    不能把旧结果直接覆盖到权威状态上。
+    """
+
+
+class StateDelta(BaseModel):
+    """针对 :class:`ConsciousState` 的单次、可验证状态增量。
+
+    ``changes`` 只允许更新 ConsciousState 的顶层字段；版本号和完整性哈希
+    由提交规则统一生成，避免调用方伪造 revision 或绕过完整性计算。
+    """
+
+    delta_id: str = Field(default_factory=lambda: f"delta_{uuid4().hex}")
+    base_version: int = Field(ge=0)
+    source: str = Field(default="unknown", min_length=1)
+    changes: dict[str, Any] = Field(default_factory=dict)
+    event_ids: list[str] = Field(default_factory=list)
+    reason: str = ""
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    advance_tick: bool = False
+
+    def apply(self, state: "ConsciousState") -> "ConsciousState":
+        """在 revision 匹配时生成新状态；冲突时不修改输入状态。"""
+        if state.version != self.base_version:
+            raise StateConflictError(
+                f"state version {state.version} does not match delta base "
+                f"version {self.base_version} (delta_id={self.delta_id})"
+            )
+
+        known_fields = set(ConsciousState.model_fields)
+        reserved = {"version", "integrity_hash", "subject_id", "tick"}
+        unknown = set(self.changes) - known_fields
+        if unknown:
+            names = ", ".join(sorted(unknown))
+            raise ValueError(f"StateDelta contains unknown state fields: {names}")
+        forbidden = reserved.intersection(self.changes)
+        if forbidden:
+            names = ", ".join(sorted(forbidden))
+            raise ValueError(f"StateDelta cannot modify reserved fields: {names}")
+
+        payload = state.model_dump(mode="python")
+        payload.update(self.changes)
+        payload["version"] = self.base_version + 1
+        if self.advance_tick:
+            payload["tick"] = state.tick + 1
+
+        new_state = ConsciousState.model_validate(payload)
+        new_state.integrity_hash = new_state.compute_integrity_hash()
+        return new_state
+
+
 # ═══════════════════════════════════════════════════════════════
 # 运行模式 & 认知阶段
 # ═══════════════════════════════════════════════════════════════

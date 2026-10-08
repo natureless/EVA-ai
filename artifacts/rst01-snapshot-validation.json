@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "operation": "read_only_snapshot_decode",
+  "sample_sha256": "6b53bd981d2f1640be9b0fa4d1bb310d029d54e3f6570ea660ffcaee47a5d435",
+  "input_edges": 102013,
+  "distinct_input_edge_keys": 834,
+  "restored_edges": 834,
+  "input_entities": 183,
+  "restored_entities": 183,
+  "all_distinct_edge_keys_preserved": true,
+  "five_additional_roundtrips_identical": true,
+  "persisted_changes": false,
+  "limits": "Snapshot decoded only. No S4 merge, backup, data migration or running-service reload was performed.",
+  "validation": {
+    "full_pytest": {
+      "passed": 1163,
+      "seconds": 115.59
+    },
+    "new_regression_cases": 18,
+    "ruff": "passed",
+    "preflight": "passed"
+  }
+}

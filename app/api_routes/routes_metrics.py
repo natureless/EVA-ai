@@ -28,6 +28,9 @@ def metrics(request: Request) -> dict[str, Any]:
         "uptime_seconds": int(now - _START_TIME),
         "timestamp": now,
     }
+    controller = getattr(getattr(container, "runtime", None), "controller", None)
+    if controller is not None:
+        payload["runtime"] = controller.snapshot()
 
     # ── queue health ──
     payload["queues"] = {
@@ -145,6 +148,19 @@ def metrics_prometheus(request: Request) -> Any:
         f"eva_prediction_error {ss.get('mean_prediction_error', 0.0)}",
         "",
     ]
+
+    controller = getattr(getattr(container, "runtime", None), "controller", None)
+    if controller is not None:
+        runtime = controller.snapshot()
+        for name, value in (
+            ("running", runtime["consumer_running"]),
+            ("accepting_events", runtime["accepting_events"]),
+            ("execution_idle", runtime["execution_idle"]),
+        ):
+            lines.extend([
+                f"# TYPE eva_runtime_{name} gauge",
+                f"eva_runtime_{name} {int(value)}",
+            ])
 
     # MVSC metrics (when enabled)
     if ss.get("mvsc_feature_flags"):

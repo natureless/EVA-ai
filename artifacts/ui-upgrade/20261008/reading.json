@@ -1,0 +1,16 @@
+{
+  "scope": "IAB; synthetic long transcript and developer scroll fixture, actual jump button click; no request",
+  "before": {
+    "latestVisible": true,
+    "top": 0
+  },
+  "after": {
+    "latestVisible": true,
+    "top": 0
+  },
+  "jump": {
+    "distance": -0.33349609375,
+    "focusedMessage": "12",
+    "hidden": true
+  }
+}

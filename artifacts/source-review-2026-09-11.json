@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-09-11",
+  "sources": [
+    {
+      "id": "S01",
+      "attachment_id": "6529f02b-c739-4a02-807e-389926d609f5",
+      "title": "认知架构基础与 Transformer 边界",
+      "sha256": "ab223be2a2660ed8e57c003d653ae876179a67f7418fd77e99425e8c5a6372a3",
+      "characters": 13635,
+      "lines": 1572
+    },
+    {
+      "id": "S02",
+      "attachment_id": "c4b8c8eb-cf1e-4c74-be43-e317e03fbd20",
+      "title": "并行循环网络与多时间尺度",
+      "sha256": "19977367bdb8890c785b10d7459572cb3cb3d5024b4252773db2455542725716",
+      "characters": 9673,
+      "lines": 1226
+    },
+    {
+      "id": "S03",
+      "attachment_id": "25821970-4df9-4174-ac27-08242525be77",
+      "title": "数值状态与资源竞争",
+      "sha256": "a9112096b5bcfe09aa33b34a0d89e7b16126f063cd0345a6c7949202208e8710",
+      "characters": 7972,
+      "lines": 854
+    },
+    {
+      "id": "S04",
+      "attachment_id": "cb1cb1ff-cf97-4ee8-a773-3e76ebfc04bc",
+      "title": "Cognitive Dynamics v1",
+      "sha256": "677e356215ea3db592e04fdb20872e16bc528ec2ef22ba9ada3ff561911bb673",
+      "characters": 11392,
+      "lines": 1531
+    },
+    {
+      "id": "S05",
+      "attachment_id": "2ac280a6-ed17-4e1b-85ce-a6b9490d6a28",
+      "title": "Cognitive Kernel v0.1",
+      "sha256": "977e7f42ad0f56e39d094cd68cf9e8d5d46235d5d7265e200f488f98a9fe2994",
+      "characters": 9404,
+      "lines": 1138
+    },
+    {
+      "id": "S06",
+      "attachment_id": "11bb12cb-0f8f-4634-96da-1fc17752f7a9",
+      "title": "State Graph",
+      "sha256": "33aa69a1a2a4ef51b2a67e7b8cdd5e2e852e4206afbcf87ebb730c3a7e0c9876",
+      "characters": 8029,
+      "lines": 932
+    },
+    {
+      "id": "S07",
+      "attachment_id": "14b9343d-0692-4241-ba91-89396a921552",
+      "title": "Self / World / Memory 统一认知世界",
+      "sha256": "7e7480ae462ff47def0225640772b2356979614ee1f02c250f385993641e52ef",
+      "characters": 12499,
+      "lines": 1407
+    },
+    {
+      "id": "S08",
+      "attachment_id": "8d597a9e-f319-4b70-bea0-1046e187631e",
+      "title": "Belief System",
+      "sha256": "21a8ab2d094676e5877270e5cc61d73d8bae005e2a6c9146d99f72dfa2e7a384",
+      "characters": 8506,
+      "lines": 1115
+    },
+    {
+      "id": "S09",
+      "attachment_id": "5450c469-b863-47de-803d-8a290368e375",
+      "title": "Goal / Value / Drive",
+      "sha256": "1461a004fbdbbc3530d365c0e0ea9a7eb03011a2da2f8624a2b702643da148ba",
+      "characters": 10230,
+      "lines": 1265
+    },
+    {
+      "id": "S10",
+      "attachment_id": "c1cb7601-d152-492c-b259-f3eebd5fc949",
+      "title": "Planner / Simulation / Decision",
+      "sha256": "e5cffb8bda0f520caa8105df4c606f51ce66034087c6093b27f714260f8e2c87",
+      "characters": 9001,
+      "lines": 1213
+    },
+    {
+      "id": "S11",
+      "attachment_id": "b7614324-7872-4e5a-b1be-567081fac706",
+      "title": "Learning System",
+      "sha256": "e779298493d26db74ce39f91f0e5da0da56453845936dcc5dc79a5d7155c9cb2",
+      "characters": 7735,
+      "lines": 1105
+    },
+    {
+      "id": "S12",
+      "attachment_id": "fd9413ee-b0c3-4e60-b3ea-cb7d4414913c",
+      "title": "Self-Modification / Evolution",
+      "sha256": "63e4798c2a5419c6817b4e08c43fa6f76ad77f279615ac6356c59495f4fa75d2",
+      "characters": 9224,
+      "lines": 1313
+    },
+    {
+      "id": "S13",
+      "attachment_id": "aadb7d27-7cb5-466c-8ffe-37d5d23b8d99",
+      "title": "人脑式认知架构总图 v1",
+      "sha256": "3dccc45f528615696849f4bc31e8ec5c122386619c08261483550d204dac8b51",
+      "characters": 11460,
+      "lines": 1038
+    }
+  ],
+  "scope": "Local source-to-implementation review. Titles are editorial labels. No biological or capability validation.",
+  "observations": {
+    "world_restore_reproduction": {
+      "initial_edges": 1,
+      "after_each_snapshot_plus_s4_restore": [
+        2,
+        3,
+        4
+      ],
+      "isolated": true
+    },
+    "snapshot_sample": {
+      "bytes": 23596358,
+      "entities": 183,
+      "edges": 102013,
+      "unique_edge_triples": 834,
+      "duplicate_edges": 101179,
+      "max_multiplicity": 124
+    },
+    "s4_read_only_sample": {
+      "entities": 183,
+      "edges": 834
+    },
+    "sampling_limit": "Snapshot and database were sampled sequentially while the service was running; they are not a transactionally atomic pair.",
+    "runtime_read_only_sample": {
+      "mode": "legacy",
+      "phase": "running",
+      "accepting_events": true,
+      "consumer_running": true,
+      "execution_idle": true,
+      "worker_backend": "thread",
+      "worker_pending": 0,
+      "worker_max_workers": 4
+    },
+    "focused_tests": {
+      "command": "python -m pytest -q tests/test_world_model.py tests/test_evidence_governance.py tests/test_runtime_controller.py tests/test_event_bus.py tests/minimal_brain tests/mvsc/test_kernel.py",
+      "passed": 172,
+      "seconds": 7.53,
+      "full_suite_rerun": false
+    }
+  },
+  "review_completed_date": "2026-09-12"
+}

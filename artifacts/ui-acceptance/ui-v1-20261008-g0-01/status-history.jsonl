@@ -1,0 +1,2 @@
+{"recordedAt": "2026-10-08T15:17:50.554564+00:00", "taskId": "G1-01", "status": "unverified", "evidence": "G1-01/environment-check.json"}
+{"recordedAt": "2026-10-08T15:17:50.554564+00:00", "taskId": "G2-01", "status": "passed", "evidence": "G2-01/attempts.json"}

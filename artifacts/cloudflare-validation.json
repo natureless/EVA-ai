@@ -1,0 +1,154 @@
+{
+  "python_test_exit_code": 0,
+  "test_summary": "1357 passed in 125.22s (0:02:05)",
+  "before": {
+    "data/eva.db": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+    "data/snapshots/latest.json": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff",
+    "data/mvsc_event_store.db": "70ff5014f496e25db2ae40d4e2705160134f7b512d952813fd90c5281d55ee4b"
+  },
+  "after": {
+    "data/eva.db": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+    "data/snapshots/latest.json": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff",
+    "data/mvsc_event_store.db": "70ff5014f496e25db2ae40d4e2705160134f7b512d952813fd90c5281d55ee4b"
+  },
+  "deployment_status": "deployed_access_login_required",
+  "public_dns_created": true,
+  "production_started": true,
+  "javascript_tests_passed": 23,
+  "ruff_passed": true,
+  "powershell_syntax_passed": true,
+  "staging_smoke": {
+    "startup_ready": true,
+    "unauthenticated_http_denied": true,
+    "graph_http": 200,
+    "graph_nodes": 420,
+    "graph_edges": 709,
+    "websocket_ping": true,
+    "llm": "mock",
+    "database": "private staging copy",
+    "event_columns": [
+      "id",
+      "type",
+      "source",
+      "timestamp",
+      "payload",
+      "correlation_id",
+      "status",
+      "event_contract"
+    ],
+    "original_data_unchanged": true
+  },
+  "cloudflare": {
+    "credential_type": "user_selected_account_token",
+    "old_credential_used": false,
+    "token_active": true,
+    "access_enabled": true,
+    "access_team_domain": "round-math-6deb.cloudflareaccess.com",
+    "access_app_id": "436f8ecb-9834-4347-a584-268a9f3b7800",
+    "owner_only_policy_verified": true,
+    "tunnel_id": "4867f04c-f50e-475d-96e2-5986bca73239",
+    "tunnel_status": "healthy",
+    "tunnel_connections": 4,
+    "zone_status": "active",
+    "dns_created": true,
+    "target_zone_dns_permissions_added": [
+      "DNS Read",
+      "DNS Write",
+      "Zone Read"
+    ]
+  },
+  "checked_at": "2026-09-18T18:14:05.461130+00:00",
+  "url": "https://eva.bianhua.cc.cd",
+  "startup_tasks_configured": true,
+  "local_health_http": 200,
+  "production_websocket_pong": true,
+  "connector_ready_http": 200,
+  "public_checks": [
+    {
+      "path": "/",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com",
+      "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+      "server": "cloudflare",
+      "content_type": "text/html; charset=UTF-8",
+      "protected": true
+    },
+    {
+      "path": "/api/memory/graph",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com",
+      "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+      "server": "cloudflare",
+      "content_type": "text/html; charset=UTF-8",
+      "protected": true
+    },
+    {
+      "path": "/ws",
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com",
+      "redirect_path": "/cdn-cgi/access/login/eva.bianhua.cc.cd",
+      "server": "cloudflare",
+      "content_type": "text/html; charset=UTF-8",
+      "protected": true
+    }
+  ],
+  "authenticated_public_browser_test": "Cloudflare audit confirms allowed login; visual interactions not inspected because browser control timed out",
+  "protected_data_unchanged_before_production": true,
+  "production_data_note": "Normal production boot applied verified migrations and updates runtime memory/snapshots; pre-deployment backup retained.",
+  "authenticated_login_verified": {
+    "app_domain": "eva.bianhua.cc.cd",
+    "allowed": true,
+    "created_at": "2026-09-12T19:39:20Z",
+    "source": "Cloudflare Access authentication audit"
+  },
+  "post_login_check": {
+    "checked_at": "2026-09-12T19:49:08.944495+00:00",
+    "origin_graph_http": 200,
+    "nodes": 420,
+    "edges": 709,
+    "tunnel_http_200_responses": 167,
+    "browser_control": "timeout"
+  },
+  "post_deploy_regression": {
+    "python_cloudflare_auth_memory_tests": "65 passed",
+    "javascript_tests": "23 passed",
+    "ruff": "passed",
+    "local_ready_http": 200,
+    "local_graph_nodes": 420,
+    "local_graph_edges": 709,
+    "public_unauthenticated_paths": [
+      "/",
+      "/memory",
+      "/chat"
+    ],
+    "public_access_result": "302 to round-math-6deb.cloudflareaccess.com",
+    "full_python_regression": "1357 passed"
+  },
+  "login_session_handling": {
+    "ws_reconnect_backoff": "verified",
+    "expired_access_write_not_replayed": "verified",
+    "sse_login_html_not_parsed": "verified",
+    "obsidian_export_content_type_guard": "verified"
+  },
+  "live_recheck": {
+    "configuration_check": "passed",
+    "scheduled_tasks": {
+      "EVA Cloudflare App": "Running",
+      "EVA Cloudflare Tunnel": "Running"
+    },
+    "origin_listener": "127.0.0.1:8000",
+    "cloudflared_metrics": "127.0.0.1:20241",
+    "tunnel_api": "healthy",
+    "dns_cname": "proxied",
+    "access_app": "EVA Memory",
+    "public_unauthenticated": "302 to round-math-6deb.cloudflareaccess.com",
+    "browser_visual_verification": "not performed; browser control connection timed out"
+  },
+  "evt02_reference_implementation": "artifacts/evt02-validation.json",
+  "epi01_reference_implementation": "artifacts/epi01-validation.json",
+  "gol01_reference_implementation": "artifacts/gol01-validation.json"
+}

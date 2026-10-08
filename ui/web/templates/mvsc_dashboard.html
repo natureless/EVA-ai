@@ -1,34 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EVA-MVSC Dashboard</title>
-<style>
-:root{--bg:#0d1117;--fg:#c9d1d9;--accent:#58a6ff;--border:#30363d;--card:#161b22;--green:#3fb950;--red:#f85149;--yellow:#d2991d}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--fg);padding:20px}
-h1{font-size:20px;margin-bottom:16px;color:var(--accent)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px}
-.card h2{font-size:14px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
-.stat{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid var(--border)}
-.stat:last-child{border-bottom:none}
-.stat .val{font-weight:600;font-family:monospace}
-.val.green{color:var(--green)}.val.red{color:var(--red)}.val.yellow{color:var(--yellow)}
-#pipeline{grid-column:1/-1}
-.phase-bar{display:flex;gap:2px;margin-top:8px}
-.phase{flex:1;height:6px;border-radius:3px;background:var(--border);transition:background 0.3s}
-.phase.active{background:var(--accent)}
-.phase.done{background:var(--green)}
-#log{grid-column:1/-1;max-height:200px;overflow-y:auto;font-family:monospace;font-size:12px}
-.log-entry{padding:2px 0;border-bottom:1px solid var(--border)}
-.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
-.status-dot.ok{background:var(--green)}.status-dot.warn{background:var(--yellow)}.status-dot.err{background:var(--red)}
-</style>
+<link rel="stylesheet" href="/static/mvsc-dashboard.css?v=1">
+<link rel="stylesheet" href="/static/ui-system.css?v=6">
+<script src="/static/ui-theme.js?v=1"></script>
 </head>
-<body>
-<h1>⚙️ EVA-MVSC Dashboard</h1>
+<body class="runtime-dashboard">
+<header class="runtime-heading"><h1>EVA · MVSC 实验观察</h1><button id="themeBtn" type="button" aria-label="切换深浅主题">◐</button></header>
+<p id="runtimeStatus" role="status" style="margin-bottom:16px;font-size:13px">运行模式：读取中</p>
 <div class="grid">
   <div class="card">
     <h2>🧠 Cognition</h2>
@@ -38,7 +20,7 @@ h1{font-size:20px;margin-bottom:16px;color:var(--accent)}
     <div class="stat"><span>Focus</span><span class="val" id="focus" style="font-size:11px">—</span></div>
   </div>
   <div class="card">
-    <h2>📊 Pipeline (13 phases)</h2>
+    <h2>📊 实验循环（13 phases）</h2>
     <div class="phase-bar" id="phaseBar"></div>
     <div class="stat"><span>Last Phase Timing</span><span class="val" id="phaseTime">—</span></div>
   </div>
@@ -51,7 +33,7 @@ h1{font-size:20px;margin-bottom:16px;color:var(--accent)}
   </div>
   <div class="card">
     <h2>🔬 Ablation</h2>
-    <div class="stat"><span>MVSC Enabled</span><span class="val" id="mvscOn">—</span></div>
+    <div class="stat"><span>MVSC Attachment</span><span class="val" id="mvscOn">—</span></div>
     <div class="stat"><span>Features Disabled</span><span class="val" id="disabled">—</span></div>
     <div class="stat"><span>Error Rate</span><span class="val" id="errRate">—</span></div>
   </div>
@@ -109,11 +91,14 @@ ws.onmessage = (e) => {
 async function pollState() {
   try {
     const r = await fetch('/api/state');
+    if (!r.ok) throw new Error('state unavailable');
     const s = await r.json();
     document.getElementById('focus').textContent = (s.focus||'idle').substring(0,60);
-    document.getElementById('mvscOn').textContent = s.mvsc?.enabled ? '✅' : '❌';
-    document.getElementById('mvscOn').className = 'val ' + (s.mvsc?.enabled ? 'green' : 'yellow');
-  } catch(ex) {}
+    document.getElementById('mvscOn').textContent = s.mvsc?.status || 'unknown';
+    document.getElementById('mvscOn').className = 'val ' + (s.mvsc?.attached ? 'green' : 'yellow');
+  } catch(ex) {
+    document.getElementById('mvscOn').textContent = 'unknown';
+  }
 
   try {
     const r = await fetch('/health/ready');
@@ -128,9 +113,7 @@ async function pollState() {
     document.getElementById('sched').textContent = c.scheduler ? '✅' : '❌';
     document.getElementById('sched').className = 'val ' + (c.scheduler?'green':'red');
 
-    if (h.mvsc) {
-      document.getElementById('mvscOn').textContent = h.mvsc.enabled ? '✅' : '❌';
-    }
+
   } catch(ex) {}
 
   try {
@@ -147,5 +130,6 @@ setInterval(pollState, 2000);
 pollState();
 addLog('Dashboard connected', 'ok');
 </script>
+<script src="/static/runtime_status.js?v=1"></script>
 </body>
 </html>

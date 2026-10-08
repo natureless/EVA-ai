@@ -1,0 +1,24 @@
+{
+  "feature": "EVT-02",
+  "status": "reference_implementation_complete",
+  "tests": {
+    "targeted": "62 passed",
+    "full_python": "1342 passed",
+    "javascript": "23 passed",
+    "ruff": "passed"
+  },
+  "verified": [
+    "durable inbox admission",
+    "event_id deduplication",
+    "lease expiry recovery",
+    "retryable and terminal failure",
+    "durable outbox deduplication",
+    "optional EventBusAdapter admission"
+  ],
+  "production": {
+    "cloudflare_process_restarted": false,
+    "default_durable_queue_enabled": false,
+    "reason": "Production cutover requires a separate worker/recovery rehearsal and action reconciliation plan."
+  },
+  "exactly_once": "not claimed; external side effects still require idempotency keys or reconciliation"
+}

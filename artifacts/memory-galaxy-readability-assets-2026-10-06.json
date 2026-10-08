@@ -1,0 +1,39 @@
+{
+  "verified_at": "2026-10-06T14:17:18.606862+00:00",
+  "origin": "http://127.0.0.1:8000",
+  "assets": {
+    "memory_graph.css": {
+      "version": "14",
+      "http_status": 200,
+      "sha256": "abdb953ff6bb655c80ccaccdbe7200fe35a3a2ead0c7beb82e075274993f1a4e",
+      "response_matches_disk": true
+    },
+    "memory_galaxy.js": {
+      "version": "2",
+      "http_status": 200,
+      "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c",
+      "response_matches_disk": true
+    },
+    "memory_galaxy_renderer.js": {
+      "version": "2",
+      "http_status": 200,
+      "sha256": "eb9b06ae9536f32811453901c3250aca5e5128f96b55ea8db67087d8af68482a",
+      "response_matches_disk": true
+    },
+    "memory_graph.js": {
+      "version": "20",
+      "http_status": 200,
+      "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f",
+      "response_matches_disk": true
+    }
+  },
+  "script_order": [
+    "memory_galaxy.js",
+    "memory_galaxy_renderer.js",
+    "memory_graph.js"
+  ],
+  "script_order_valid": true,
+  "requests_trust_env": false,
+  "chat_sent": false,
+  "service_restarted": false
+}

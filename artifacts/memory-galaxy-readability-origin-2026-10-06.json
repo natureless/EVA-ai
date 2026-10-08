@@ -1,0 +1,112 @@
+{
+  "started_at": "2026-10-06T14:15:41.437209+00:00",
+  "checks": {
+    "origin_readiness": {
+      "status": "passed",
+      "details": {
+        "ready": true
+      }
+    },
+    "origin_assets": {
+      "status": "passed",
+      "details": {
+        "memory_graph.js": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f",
+        "memory_graph.css": "abdb953ff6bb655c80ccaccdbe7200fe35a3a2ead0c7beb82e075274993f1a4e",
+        "http.js": "16219d877ed8aa0f6815c791680461d44b1ab7b664e2e859bfb76d494b84a5a5",
+        "memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07"
+      }
+    },
+    "origin_graph_and_neighbors": {
+      "status": "passed",
+      "details": {
+        "nodes": 420,
+        "edges": 658,
+        "detail_ok": true,
+        "neighbor_page_edges": 7,
+        "next_offset": null
+      }
+    },
+    "origin_export": {
+      "status": "passed",
+      "details": {
+        "entries": 421,
+        "crc_valid": true,
+        "bytes": 386654
+      }
+    },
+    "anonymous_public:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "origin_websocket_reconnect": {
+      "status": "passed",
+      "details": {
+        "connections": 2,
+        "pong_received": 2
+      }
+    }
+  },
+  "chat_requests": [],
+  "pending": [
+    "Public authenticated browser interaction",
+    "Actual login expiration in browser",
+    "Physical phone",
+    "Windows login/crash recovery",
+    "Live chat disabled; use --chat for two marked test messages"
+  ],
+  "finished_at": "2026-10-06T14:15:52.481720+00:00",
+  "failed_checks": [],
+  "status": "automated_checks_passed_browser_pending"
+}

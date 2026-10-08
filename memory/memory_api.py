@@ -7,6 +7,7 @@ from typing import Any
 from uuid import uuid4
 
 from event.event_schema import Event, TraceRecord
+from event.codec import encode_event, decode_event
 from memory.storage_adapter import BaseStorageAdapter
 
 
@@ -59,8 +60,8 @@ class MemoryAPI:
         try:
             self.store.execute(
                 """
-                INSERT OR IGNORE INTO events (id, type, source, timestamp, payload, correlation_id, status)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT OR IGNORE INTO events (id, type, source, timestamp, payload, correlation_id, status, event_contract)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     event.id,
@@ -70,6 +71,7 @@ class MemoryAPI:
                     self.store.dumps_json(event.payload),
                     event.correlation_id,
                     event.status,
+                    encode_event(event),
                 ),
             )
             logger.debug("event stored: %s", event.id)
@@ -200,7 +202,7 @@ class MemoryAPI:
         """
         rows = self.store.fetchall(
             """
-            SELECT id, type, source, timestamp, payload, correlation_id, status
+            SELECT id, type, source, timestamp, payload, correlation_id, status, event_contract
             FROM events
             ORDER BY timestamp DESC
             LIMIT ?
@@ -211,4 +213,9 @@ class MemoryAPI:
             row["payload"] = self.store.loads_json(row["payload"])
         logger.debug("retrieved %d events", len(rows))
         return rows
+
+    def get_event(self, event_id: str) -> Event | None:
+        """Read one retained event through the versioned/legacy codec; no execution."""
+        row = self.store.fetchone("SELECT * FROM events WHERE id = ?", (event_id,))
+        return decode_event(row) if row else None
 

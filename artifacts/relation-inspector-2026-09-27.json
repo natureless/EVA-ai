@@ -1,0 +1,87 @@
+{
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\relation-inspector-20260927T095752Z",
+  "files": [
+    "ui/web/static/memory_graph.js",
+    "ui/web/static/memory_graph.css",
+    "ui/web/templates/memory_graph.html"
+  ],
+  "status": "verified_on_production_origin",
+  "production_checks": {
+    "page_status": 200,
+    "template_markers": true,
+    "memory_graph.js": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "memory_graph.css": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "graph_status": 200,
+    "source_node_status": 200,
+    "health_status": 200,
+    "health": {
+      "status": "ready",
+      "components": {
+        "db": true,
+        "event_bus": true,
+        "event_persistence": true,
+        "planner": true,
+        "registry": true,
+        "result_registry": true,
+        "snapshot": true,
+        "profile": true,
+        "persona": true,
+        "self_model": true,
+        "scheduler": true,
+        "proactive": true,
+        "cognition_loop": true,
+        "llm": true
+      },
+      "runtime": {
+        "scheduler_running": true,
+        "last_snapshot_at": "2026-09-27T10:04:03.723803+00:00",
+        "last_proactive_reason": "stagnation_detected",
+        "pending_events": 0,
+        "bootstrap_sec": 0.25
+      },
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      }
+    }
+  },
+  "source_hashes": {
+    "ui/web/static/memory_graph.js": "42ca6774499e547e1393024d386c50e60cfb1974e78e0c3331fb5e7e8f51f658",
+    "ui/web/static/memory_graph.css": "e838fa6bd3eec6c9f0a25fbd6f5db50187ca43275784b6601383036fc0b32cbf",
+    "ui/web/templates/memory_graph.html": "da045f66015588a803abd93023195aff1882cdb129ba252d8594aede88b4c612"
+  },
+  "verified_at": "2026-09-27T10:05:46.404916+00:00",
+  "backend_restarted": false,
+  "tests": {
+    "javascript_passed": 55,
+    "python_graph_passed": 23,
+    "full_python_suite": "not run this turn; frontend-only change"
+  },
+  "browser": {
+    "loopback_preview": true,
+    "neighbor_detail_button": true,
+    "canvas_line_click": true,
+    "source_event_read": true,
+    "endpoint_navigation_preserves_center": true,
+    "escape_close": true,
+    "viewport_390x844": {
+      "page_width": 390,
+      "dialog_width": 358,
+      "horizontal_overflow": false
+    },
+    "viewport_restored": true,
+    "console_errors": []
+  },
+  "not_verified": [
+    "Public authenticated browser interaction",
+    "Physical mobile device"
+  ]
+}

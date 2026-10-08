@@ -1,0 +1,1029 @@
+{
+  "candidateId": "ui-v1-20261008-g2-02",
+  "startedAt": "2026-10-08T15:48:13.360843+00:00",
+  "finishedAt": "2026-10-08T15:48:14.008159+00:00",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "normal WS admitted",
+      "passed": true,
+      "actual": {
+        "accepted": true,
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "event_id": "8e21b2a0-36a1-4858-ad94-653bd84d8d9f",
+        "mode": "normal",
+        "request_deadline_sec": 30.0,
+        "result_retention_sec": 60.0,
+        "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}"
+      }
+    },
+    {
+      "name": "normal WS gated",
+      "passed": true,
+      "actual": {
+        "modelGate": "entered"
+      }
+    },
+    {
+      "name": "normal WS pending",
+      "passed": true,
+      "actual": {
+        "completed": false,
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      }
+    },
+    {
+      "name": "normal WS identity",
+      "passed": true,
+      "actual": {
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f"
+      }
+    },
+    {
+      "name": "normal WS fixed mode",
+      "passed": true,
+      "actual": {
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离normalWS请求",
+        "selected_agent": "chat_agent",
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_337517c3",
+        "event_id": "8e21b2a0-36a1-4858-ad94-653bd84d8d9f",
+        "event_type": "user_message",
+        "duration_ms": 23,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded"
+      }
+    },
+    {
+      "name": "normal WS retained receipt",
+      "passed": true,
+      "actual": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离normalWS请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_337517c3",
+        "duration_ms": 23
+      }
+    },
+    {
+      "name": "normal SSE gated",
+      "passed": true,
+      "actual": {
+        "modelGate": "entered"
+      }
+    },
+    {
+      "name": "normal SSE one admission",
+      "passed": true,
+      "actual": {
+        "newTasks": [
+          "de7311cc-c3ba-4d81-bd47-05b08e2ac330"
+        ]
+      }
+    },
+    {
+      "name": "normal SSE pending",
+      "passed": true,
+      "actual": {
+        "completed": false,
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      }
+    },
+    {
+      "name": "normal SSE identity",
+      "passed": true,
+      "actual": {
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "header": "de7311cc-c3ba-4d81-bd47-05b08e2ac330"
+      }
+    },
+    {
+      "name": "normal SSE fixed mode",
+      "passed": true,
+      "actual": {
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离normalSSE请求",
+        "selected_agent": "chat_agent",
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_0094e892",
+        "event_id": "34103ba6-8260-4c21-a4ba-c742d838ed5b",
+        "event_type": "user_message",
+        "duration_ms": 14,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      }
+    },
+    {
+      "name": "normal SSE retained receipt",
+      "passed": true,
+      "actual": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 31.000000017229468,
+          "waiting_age_ms": null
+        },
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离normalSSE请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_0094e892",
+        "duration_ms": 14
+      }
+    },
+    {
+      "name": "deep WS admitted",
+      "passed": true,
+      "actual": {
+        "accepted": true,
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "event_id": "a8aa6f42-de81-4bb1-bc2e-70e78eff0b6f",
+        "mode": "deep",
+        "request_deadline_sec": 30.0,
+        "result_retention_sec": 60.0,
+        "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}"
+      }
+    },
+    {
+      "name": "deep WS gated",
+      "passed": true,
+      "actual": {
+        "modelGate": "entered"
+      }
+    },
+    {
+      "name": "deep WS pending",
+      "passed": true,
+      "actual": {
+        "completed": false,
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      }
+    },
+    {
+      "name": "deep WS identity",
+      "passed": true,
+      "actual": {
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f"
+      }
+    },
+    {
+      "name": "deep WS fixed mode",
+      "passed": true,
+      "actual": {
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离deepWS请求",
+        "selected_agent": "chat_agent",
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_8c5f0290",
+        "event_id": "a8aa6f42-de81-4bb1-bc2e-70e78eff0b6f",
+        "event_type": "user_message",
+        "duration_ms": 11,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded"
+      }
+    },
+    {
+      "name": "deep WS retained receipt",
+      "passed": true,
+      "actual": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离deepWS请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_8c5f0290",
+        "duration_ms": 11
+      }
+    },
+    {
+      "name": "deep SSE gated",
+      "passed": true,
+      "actual": {
+        "modelGate": "entered"
+      }
+    },
+    {
+      "name": "deep SSE one admission",
+      "passed": true,
+      "actual": {
+        "newTasks": [
+          "fe40d852-8d26-4e7e-b873-64365fdc0f35"
+        ]
+      }
+    },
+    {
+      "name": "deep SSE pending",
+      "passed": true,
+      "actual": {
+        "completed": false,
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      }
+    },
+    {
+      "name": "deep SSE identity",
+      "passed": true,
+      "actual": {
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "header": "fe40d852-8d26-4e7e-b873-64365fdc0f35"
+      }
+    },
+    {
+      "name": "deep SSE fixed mode",
+      "passed": true,
+      "actual": {
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离deepSSE请求",
+        "selected_agent": "chat_agent",
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_52e88f7b",
+        "event_id": "ebe4609a-4b4a-4cda-808a-7f7b43f49b21",
+        "event_type": "user_message",
+        "duration_ms": 10,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      }
+    },
+    {
+      "name": "deep SSE retained receipt",
+      "passed": true,
+      "actual": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.000000013969839,
+          "waiting_age_ms": null
+        },
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离deepSSE请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_52e88f7b",
+        "duration_ms": 10
+      }
+    },
+    {
+      "name": "Chinese boundary",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "codePoints": 4000,
+        "utf16Units": 4000
+      }
+    },
+    {
+      "name": "emoji boundary",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "codePoints": 4000,
+        "utf16Units": 8000
+      }
+    },
+    {
+      "name": "over boundary",
+      "passed": true,
+      "actual": {
+        "status": 422,
+        "codePoints": 4001,
+        "utf16Units": 4001
+      }
+    },
+    {
+      "name": "missing receipt",
+      "passed": true,
+      "actual": {
+        "completed": false,
+        "task_id": "no-such-test-request",
+        "error": "result_unknown_or_expired",
+        "detail": "No retained receipt exists for this task."
+      }
+    },
+    {
+      "name": "known admission rejection",
+      "passed": true,
+      "actual": {
+        "status": 503,
+        "receipt": {
+          "accepted": false,
+          "error": "result_capacity_full",
+          "detail": "EVA's result capacity is full. Please retry this message shortly."
+        }
+      }
+    },
+    {
+      "name": "rejection not queued",
+      "passed": true,
+      "actual": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    {
+      "name": "timeout worker running",
+      "passed": true,
+      "actual": {
+        "task_id": "bda21d88-447f-4a1e-8d1a-bf32a498e560"
+      }
+    },
+    {
+      "name": "started deadline remains uncertain",
+      "passed": true,
+      "actual": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 187.0000000053551,
+          "waiting_age_ms": null
+        },
+        "task_id": "bda21d88-447f-4a1e-8d1a-bf32a498e560",
+        "ok": false,
+        "error": "request_deadline_exceeded",
+        "terminal_state": "outcome_unknown",
+        "execution_state": "may_still_be_running",
+        "review": {
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false
+        },
+        "mode": "normal",
+        "mode_info": null,
+        "memory_write_ids": {},
+        "reply": "请求已超过等待期限，执行结果尚不确定。",
+        "reply_available": true,
+        "selected_agent": "system",
+        "loop_id": "",
+        "duration_ms": 0
+      }
+    },
+    {
+      "name": "late result cannot replace terminal",
+      "passed": true,
+      "actual": {
+        "lateAccepted": false,
+        "receipt": {
+          "completed": true,
+          "timing": {
+            "admission_to_execution_ms": 0.0,
+            "admission_to_terminal_ms": 187.0000000053551,
+            "waiting_age_ms": null
+          },
+          "task_id": "bda21d88-447f-4a1e-8d1a-bf32a498e560",
+          "ok": false,
+          "error": "request_deadline_exceeded",
+          "terminal_state": "outcome_unknown",
+          "execution_state": "may_still_be_running",
+          "review": {
+            "status": "not_assessed",
+            "passed": null,
+            "fact_verified": false
+          },
+          "mode": "normal",
+          "mode_info": null,
+          "memory_write_ids": {},
+          "reply": "请求已超过等待期限，执行结果尚不确定。",
+          "reply_available": true,
+          "selected_agent": "system",
+          "loop_id": "",
+          "duration_ms": 0
+        }
+      }
+    }
+  ],
+  "cases": [
+    {
+      "mode": "normal",
+      "transport": "WS",
+      "request": {
+        "text": "隔离normalWS请求",
+        "mode": "normal",
+        "remember": false
+      },
+      "selectedNextMode": "deep",
+      "ack": {
+        "accepted": true,
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "event_id": "8e21b2a0-36a1-4858-ad94-653bd84d8d9f",
+        "mode": "normal",
+        "request_deadline_sec": 30.0,
+        "result_retention_sec": 60.0,
+        "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}"
+      },
+      "pending": {
+        "completed": false,
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      },
+      "wsMessage": {
+        "channel": "chat_reply",
+        "payload": {
+          "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+          "ok": true,
+          "reply": "[EVA mock] received: 隔离normalWS请求",
+          "selected_agent": "chat_agent",
+          "mode": "normal",
+          "mode_info": {
+            "mode": "normal",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          },
+          "loop_id": "loop_337517c3",
+          "event_id": "8e21b2a0-36a1-4858-ad94-653bd84d8d9f",
+          "event_type": "user_message",
+          "duration_ms": 23,
+          "error": null,
+          "review": {
+            "schema_version": 1,
+            "status": "not_assessed",
+            "passed": null,
+            "fact_verified": false,
+            "findings": []
+          },
+          "memory_write_ids": {},
+          "terminal_state": "succeeded"
+        },
+        "ts": 1791474493.4563477
+      },
+      "receipt": {
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离normalWS请求",
+        "selected_agent": "chat_agent",
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_337517c3",
+        "event_id": "8e21b2a0-36a1-4858-ad94-653bd84d8d9f",
+        "event_type": "user_message",
+        "duration_ms": 23,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded"
+      },
+      "taskId": "3073247a-2603-44c7-a88d-1cacae9a383f",
+      "polled": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        "task_id": "3073247a-2603-44c7-a88d-1cacae9a383f",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离normalWS请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_337517c3",
+        "duration_ms": 23
+      }
+    },
+    {
+      "mode": "normal",
+      "transport": "SSE",
+      "request": {
+        "text": "隔离normalSSE请求",
+        "mode": "normal",
+        "remember": false
+      },
+      "selectedNextMode": "deep",
+      "pending": {
+        "completed": false,
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      },
+      "wire": "data: [EVA mock] received: 隔离normalSSE请求\n\nevent: result\ndata: {\"task_id\": \"de7311cc-c3ba-4d81-bd47-05b08e2ac330\", \"ok\": true, \"reply\": \"[EVA mock] received: 隔离normalSSE请求\", \"selected_agent\": \"chat_agent\", \"mode\": \"normal\", \"mode_info\": {\"mode\": \"normal\", \"strategy\": \"mock\", \"reasoning_style\": \"mock\"}, \"loop_id\": \"loop_0094e892\", \"event_id\": \"34103ba6-8260-4c21-a4ba-c742d838ed5b\", \"event_type\": \"user_message\", \"duration_ms\": 14, \"error\": null, \"review\": {\"schema_version\": 1, \"status\": \"not_assessed\", \"passed\": null, \"fact_verified\": false, \"findings\": []}, \"memory_write_ids\": {}, \"terminal_state\": \"succeeded\", \"completed\": true}\n\ndata: [DONE]\n\n",
+      "headerTaskId": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+      "receipt": {
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离normalSSE请求",
+        "selected_agent": "chat_agent",
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_0094e892",
+        "event_id": "34103ba6-8260-4c21-a4ba-c742d838ed5b",
+        "event_type": "user_message",
+        "duration_ms": 14,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      },
+      "taskId": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+      "polled": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 31.000000017229468,
+          "waiting_age_ms": null
+        },
+        "task_id": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "normal",
+        "mode_info": {
+          "mode": "normal",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离normalSSE请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_0094e892",
+        "duration_ms": 14
+      }
+    },
+    {
+      "mode": "deep",
+      "transport": "WS",
+      "request": {
+        "text": "隔离deepWS请求",
+        "mode": "deep",
+        "remember": false
+      },
+      "selectedNextMode": "normal",
+      "ack": {
+        "accepted": true,
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "event_id": "a8aa6f42-de81-4bb1-bc2e-70e78eff0b6f",
+        "mode": "deep",
+        "request_deadline_sec": 30.0,
+        "result_retention_sec": 60.0,
+        "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}"
+      },
+      "pending": {
+        "completed": false,
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      },
+      "wsMessage": {
+        "channel": "chat_reply",
+        "payload": {
+          "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+          "ok": true,
+          "reply": "[EVA mock] received: 隔离deepWS请求",
+          "selected_agent": "chat_agent",
+          "mode": "deep",
+          "mode_info": {
+            "mode": "deep",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          },
+          "loop_id": "loop_8c5f0290",
+          "event_id": "a8aa6f42-de81-4bb1-bc2e-70e78eff0b6f",
+          "event_type": "user_message",
+          "duration_ms": 11,
+          "error": null,
+          "review": {
+            "schema_version": 1,
+            "status": "not_assessed",
+            "passed": null,
+            "fact_verified": false,
+            "findings": []
+          },
+          "memory_write_ids": {},
+          "terminal_state": "succeeded"
+        },
+        "ts": 1791474493.592477
+      },
+      "receipt": {
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离deepWS请求",
+        "selected_agent": "chat_agent",
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_8c5f0290",
+        "event_id": "a8aa6f42-de81-4bb1-bc2e-70e78eff0b6f",
+        "event_type": "user_message",
+        "duration_ms": 11,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded"
+      },
+      "taskId": "13f84255-aedb-4101-8557-25fcf433a16f",
+      "polled": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        "task_id": "13f84255-aedb-4101-8557-25fcf433a16f",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离deepWS请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_8c5f0290",
+        "duration_ms": 11
+      }
+    },
+    {
+      "mode": "deep",
+      "transport": "SSE",
+      "request": {
+        "text": "隔离deepSSE请求",
+        "mode": "deep",
+        "remember": false
+      },
+      "selectedNextMode": "normal",
+      "pending": {
+        "completed": false,
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "state": "running",
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": null,
+          "waiting_age_ms": null
+        }
+      },
+      "wire": "data: [EVA mock] received: 隔离deepSSE请求\n\nevent: result\ndata: {\"task_id\": \"fe40d852-8d26-4e7e-b873-64365fdc0f35\", \"ok\": true, \"reply\": \"[EVA mock] received: 隔离deepSSE请求\", \"selected_agent\": \"chat_agent\", \"mode\": \"deep\", \"mode_info\": {\"mode\": \"deep\", \"strategy\": \"mock\", \"reasoning_style\": \"mock\"}, \"loop_id\": \"loop_52e88f7b\", \"event_id\": \"ebe4609a-4b4a-4cda-808a-7f7b43f49b21\", \"event_type\": \"user_message\", \"duration_ms\": 10, \"error\": null, \"review\": {\"schema_version\": 1, \"status\": \"not_assessed\", \"passed\": null, \"fact_verified\": false, \"findings\": []}, \"memory_write_ids\": {}, \"terminal_state\": \"succeeded\", \"completed\": true}\n\ndata: [DONE]\n\n",
+      "headerTaskId": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+      "receipt": {
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "ok": true,
+        "reply": "[EVA mock] received: 隔离deepSSE请求",
+        "selected_agent": "chat_agent",
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "loop_id": "loop_52e88f7b",
+        "event_id": "ebe4609a-4b4a-4cda-808a-7f7b43f49b21",
+        "event_type": "user_message",
+        "duration_ms": 10,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      },
+      "taskId": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+      "polled": {
+        "completed": true,
+        "timing": {
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.000000013969839,
+          "waiting_age_ms": null
+        },
+        "task_id": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+        "ok": true,
+        "error": null,
+        "terminal_state": "succeeded",
+        "execution_state": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "mode": "deep",
+        "mode_info": {
+          "mode": "deep",
+          "strategy": "mock",
+          "reasoning_style": "mock"
+        },
+        "memory_write_ids": {},
+        "reply": "[EVA mock] received: 隔离deepSSE请求",
+        "reply_available": true,
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_52e88f7b",
+        "duration_ms": 10
+      }
+    }
+  ],
+  "failure": null,
+  "sandbox": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g2-02\\run-313w0url",
+  "templateHashes": {
+    "static/app.js": "4ee39a59b8a34ae353a5db43cf1741d3673e566e5311731c06a49c6b4782b8e1",
+    "static/avatar.js": "35f122602551806d6ac0c44c12dd3a93ebb3ebce580e093b204cf86742ccf490",
+    "static/brand-assets.js": "e24695fc216996290be3f89406d2a6b78c34a85dbcdf1a43be495f211365547b",
+    "static/brand-config.js": "4d312dae141c6a1c67d402b623b80cc3d2d6b20a18d6f36ea4d7ed945446b671",
+    "static/brand-identity.js": "ab3782edd871a509e1b9329c7423fb0d1b4c25ebf1dcde1fa68f206d384517d9",
+    "static/brand-package.js": "a8f79b5e877c8b6a2b974cb64d5aeb4a2f391f96c94c4c6c83236a501f0e4299",
+    "static/brand-source.json": "f8e222d314c25c073dad552a2ee04f5e01fcb72cb2d2ffa18f2bac0133ea8d63",
+    "static/brand-studio.css": "53e7a3d9c0bbe6394815a10224b57fe2749eaa16694ab1c0756cd89bddf47ca2",
+    "static/brand-system.js": "b79a775650566137edf469b4668cf1f6bbb973eb1cec1b2f60499b91e5838d8b",
+    "static/chat.js": "b4e3d491174509aee6deeb9b142ec264fb52e39ecf906da4be2195d2d4857d1a",
+    "static/cube-animator.js": "49f6856494ea46c520f5fe9db244bfac3b639fcb03f0b473bfbecd6d36aa3ee8",
+    "static/cube-avatar.js": "22ed341f56ac7aa92f42bfd17a01cf5cfec1ebd7d155d69153707b4b50a5065d",
+    "static/cube-chat.css": "1d4e78a0481c9ed84063c901019b1cb5b84ae6260f764365ec6691da36c5ee5f",
+    "static/cube-geometry.css": "87228a956b498bbaa556828f71b4df303d29b7a9882a90e9479901214fd6bd5b",
+    "static/cube-logo.js": "115c579d607ba8147edc2c9a05245c5b9855b42dc729f3b0d561f86f20df9e7b",
+    "static/cube-state.js": "a5982757ed930a75f3083c7652255025f5df14020104b4f317308271124dcde6",
+    "static/eva-favicon.svg": "f43434db848ccc69d6a74c0552e33e6798537e2facf7d18b6b793d564000e9ac",
+    "static/eva-mark.svg": "29b3f4c4ac7e198dffedb450cf3a152655509aa62ff1cd85b9807a73728722c4",
+    "static/goal_create.css": "66fddfd31c76bec8b66d476593b87337d33811f54b59b7c4ad1e3e4b704fbac7",
+    "static/goal_create.js": "04f45636cc466b066a5cd18159e0fc91541bb98b5b83a45bff43287454e94da3",
+    "static/http.js": "16219d877ed8aa0f6815c791680461d44b1ab7b664e2e859bfb76d494b84a5a5",
+    "static/i18n.js": "82228718c2c5c816e38f7a7f8b2c6d83ec6e1cb042cb9885bf8bc7ee3dca2f24",
+    "static/logo-tokens.js": "30203d1b0e2fd1e88dc2093dce2ef7f4ecbc8b5c33228cf8b338f1b191ad86dd",
+    "static/main.css": "8d9dcf4936b71e5ef03493a74fe8e14b3268bb7d4398f25fb8e397afc5fa2a9d",
+    "static/memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07",
+    "static/memory_explorer.js": "95bce1e606c19996a2091547e4c731fdfd9b0eedd8e216b4c7b78d0f2df167d0",
+    "static/memory_galaxy.js": "4882a95fcfb1c5501de490a4eb40aa1f60727302de56dd6d272bc5976a7ec263",
+    "static/memory_galaxy_renderer.js": "882420a105d85750acf20020743a9ec41e272d3dafe14fa0e63121811276f69c",
+    "static/memory_graph.css": "2a6263d6b672560ead7614a12626c668c9ccf0c8ae5d3dd13f9c75dc3bc6f0c6",
+    "static/memory_graph.js": "75efda335f05910e1ae886de5dce7ab8768527abe5200228d5ed280d652e0164",
+    "static/mvsc-dashboard.css": "97c16c50400acf20b1fd4c81354eba38f49e52afd707f1f1aaf8188ce11d5b10",
+    "static/nav.js": "7560d73f179329ac29dd4792d5c4264fac100de523f1829448b79730ca518afb",
+    "static/runtime_status.js": "7041d6baf8de463e1df1724dfe6e77e80272eb0da7932b171de34ec7a96da344",
+    "static/settings.js": "99c1c88dce0e1edcf1a55382e9f147f6ecd059284541327f338c009153a9791b",
+    "static/styles.css": "1c79176438536b823324dfc28ee5cc2396bbadf4c9fee57a21bec144551b9006",
+    "static/ui-reading.js": "e47f970bb05a7cc11cf9ed18d82f9840a2e5b280a4b52a3135725aa12f3bc3a4",
+    "static/ui-sections.js": "2a69d193d4eac22c829c894861bff06987b8e22d84a37f6e4409a2c5f88ccb53",
+    "static/ui-system.css": "8e967e36dd41a72429a21310c5fa7797993fbafcd224b9370da8c29ab6d70980",
+    "static/ui-theme.js": "a4b98896f97a20a96681182d55f940b6f5e95fefe09d29dca01bdf51be4c6ee7",
+    "static/ui-workspace.js": "d8a66a06879e811a78dd6ef28646b76c50c045cdc3b3e31162a12f33e3d8d51b",
+    "static/_ref.png": "2a95e1420747f096698401b5386f9cc09e70c6d070c5c9e3d42189707bc5dfda",
+    "templates/chat.html": "cd75395be64d6f47f280f8941a95792cd2108ea794894ca6fa7d2e5b637a576e",
+    "templates/dashboard.html": "e46ab7a431995cada38a028aeb636cb3ded081dc64fe3d484cb1988128f7517c",
+    "templates/index.html": "a90f3200d048e1c5569547521c42b8af7c98e97d259276858fb75de8a6dbcd03",
+    "templates/memory.html": "2458d9e148a36f1ab07e1bd8120e05f9b3a3f3b70099498970c1363c305722c9",
+    "templates/memory_graph.html": "502a48429da8d69a92a48a89654229d3a597519c61f64739e72f82007f6aef19",
+    "templates/mvsc_dashboard.html": "4492c52846fd18a512b8b536a66f86fb623eb2fe5f296bc5de80cee767795aa5",
+    "templates/service_unavailable.html": "40391cdaac82245c5c7837192a8657773adfd62d8ddd19cd82e3c5bdb702075a",
+    "templates/settings.html": "5ffbe276d2c300b1b1e4e0c3ed5615ecb4b96646757666425e594c7d0f1b7abb"
+  },
+  "blockedAuditEvents": [],
+  "scope": "actual API/application lifecycle with gated MockLLM; TestClient WS/SSE, not browser rendering",
+  "injections": [
+    "ChatAgent MockLLM response gate",
+    "temporary receipt capacity",
+    "temporary pending deadline",
+    "controlled late registry fulfillment"
+  ],
+  "restored": "ChatAgent factory and registry settings restored; TestClient lifespan shut down",
+  "limits": [
+    "real remote model",
+    "browser input/paint/focus",
+    "literal TCP stream disconnect",
+    "enabled goal/ACT profiles"
+  ]
+}

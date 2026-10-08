@@ -1,0 +1,46 @@
+{
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\local-relations-20260925T033456Z",
+  "files": [
+    "ui/web/static/memory_graph.js",
+    "ui/web/static/memory_graph.css",
+    "ui/web/templates/memory_graph.html"
+  ],
+  "status": "deployed",
+  "verified_at": "2026-09-25T03:44:22.141621+00:00",
+  "production_pid": 23412,
+  "backend_restarted": false,
+  "checks": {
+    "template": true,
+    "memory_graph.js": true,
+    "memory_graph.css": true,
+    "graph_status": 200,
+    "runtime_phase": "running",
+    "anonymous_local_status": 401,
+    "anonymous_public_status": 302
+  },
+  "tests": {
+    "javascript_passed": 42,
+    "graph_python_passed": 16
+  },
+  "browser_validation": {
+    "surface": "loopback read-only preview with production database",
+    "cases": [
+      "fixed center while inspecting neighbors",
+      "expand 1 to 2 layers: 2 nodes/1 edge to 5 nodes/4 edges in sampled data",
+      "recenter then back",
+      "incoming-only traversal: isolated anchor retained",
+      "390x844: detail collapse and no horizontal overflow",
+      "global camera zoom restored: 49% before and after",
+      "manual refresh completed with center and depth=2 retained",
+      "no browser console errors observed"
+    ],
+    "phone_hardware_tested": false,
+    "public_interaction_tested": false
+  },
+  "scope": "Only loaded projection; 1-3 hop traversal, direction and edge kind filters; no cross-projection retrieval or relation editing",
+  "hashes": {
+    "ui/web/static/memory_graph.js": "1eba52e5d6c4eea5a8b06f9985af38bbcb4f338cc7816e3c9fb53fdbca4fe96c",
+    "ui/web/static/memory_graph.css": "8a1dd807fb7f3004f668ccfb582a157be910d0ec43edbc246811962b2230ecc6",
+    "ui/web/templates/memory_graph.html": "b9665c172a598afa669f9f55d4141cfaaa93331f74e988380c16a79d27432ae5"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "ui-v1-20261008-g0-01",
+  "sealedAt": "2026-10-08T12:55:39.739449+00:00",
+  "artifactHashes": {
+    "acceptance-index.json": "b420c5392f2cfa835997f16c430e3777d310e4a0b01f98707380b315c8bb262b",
+    "api-map.json": "f3bfda6331ed52d9d842da4d6ca1707ed8309d346e834cdd5d366265a09a6ac1",
+    "api-map.md": "4f25a62aac2fafe26da5ce970f996f474f827037fb76ecad03607092b3f3a0e3",
+    "capture_g0.py": "32ae17b4ec3270d463a8ee2ece2db87991303136318e667824d6bc8211ab0dc9",
+    "control-inventory.json": "3dd0ce147857db2ba299d9e709e41557fbc869603c73e66eadad0fb4a018e8c0",
+    "final-verification.json": "2a7e376897cd7bd6cae501dc3e2e48e3abd1d858f3f7b8b0bedaa371e8e43f67",
+    "findings.json": "0970d716d5273e9316344828f39fa4cc0a156c97dfe4749842bdd5077aaf2120",
+    "findings.md": "66d8c44b8362754f8e74cf8f20ed4ed519b2d869f0e52f9d03b1eb3d2402a719",
+    "g0-validation.json": "e92ec2ca3af0d8e0b79bec795c2228375ff6f12347d1fa2677352052752d16f4",
+    "README.md": "bff3ba18aa388993c07030d66afb0b43a5c1acb68006d609b6f4d1f97d176b42",
+    "route-catalog.json": "305029c4a4a61ca4ff2ab9192971d9a2d1d3e05f33f7219bdaa7078091db9835",
+    "source-baseline.json": "7ade91ac5346b9919fb6173392bad317d9006aba416bfd2f693d5603c46cbf2f",
+    "surface-inventory.md": "1a8b3b8ea2ae880bfc9ac723dd6550354c04f112fa528641094e2fcb20457af3",
+    "surfaces.json": "05334b8df32003e29d46947f8b5f849aa959b084aa2d9c7c71a7314248ab6b75",
+    "verify_g0.py": "10a9405daeddbcc9dc587ab5639fe29b6c246253cb58257dae6b6ba95451b2d3",
+    "working-tree-status.txt": "454343872bed6506244816254a81acec8e4eb8246dc9892710ccb46668269251"
+  },
+  "supportingDocumentHashes": {
+    "docs/README.md": "fe5055f7a109f3b5ec2153dc80ef6e3f000d6ef783a16dd72fd879d79335409e",
+    "docs/ui-logo-review-plan-20261008.md": "53a92afedd95a783f7a87eedcce3f120ea02bbb63b7159a4e854dc79e490863d",
+    "docs/ui-logo-task-breakdown-20261008.md": "add79c321ba78582973583bbdabcb8a79408d05a7debbe36af093ffe3b77f25e",
+    "docs/ui-logo-development-plan.md": "aa1dab7b114dcbd4c842ddc2700ac26848229fcd763efe7bf08d199fce08b9da"
+  },
+  "note": "Initial G0 evidence bytes; later task updates require explicit history, not recapture over this candidate."
+}

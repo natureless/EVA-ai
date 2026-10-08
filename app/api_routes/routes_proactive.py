@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Request
+from app.api_routes.admission import admission_rejected, publish_event
 
 from event.event_schema import Event
 
@@ -34,14 +35,15 @@ def proactive_state(request: Request) -> dict[str, Any]:
 
 
 @router.post("/api/debug/maintenance/trigger")
-def trigger_maintenance(request: Request) -> dict[str, Any]:
+def trigger_maintenance(request: Request) -> Any:
     container = request.app.state.container
     event = Event(
         type="maintenance",
         source="debug_api",
         payload={"kind": "manual_maintenance"},
     )
-    container.event_bus.publish(event)
+    if rejection := publish_event(container, event):
+        return admission_rejected(rejection, ok=False)
     return {
         "ok": True,
         "message": "maintenance event queued",

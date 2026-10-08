@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "work_item": "EVD-01",
+  "scope": "Migration and restore on isolated copies only. Default runtime data was not migrated.",
+  "legacy_bundle_v1_verified": true,
+  "bundle_v2_verified": true,
+  "copied_s4_counts": {
+    "entities": 183,
+    "edges": 834
+  },
+  "graph_counts": {
+    "entities": 183,
+    "edges": 834
+  },
+  "legacy_origins_all_unknown": true,
+  "repeated_startup_migration_succeeded": true,
+  "s4_original_payloads_and_timestamps_unchanged": true,
+  "s4_payload_sha256_before": "8b5adeece9a7cff33b12750641f305f26688c3e8f3f0442b129da70bfd0ac642",
+  "s4_payload_sha256_after": "8b5adeece9a7cff33b12750641f305f26688c3e8f3f0442b129da70bfd0ac642",
+  "non_world_snapshot_sections_preserved": true,
+  "applied_migrations": [
+    "001_initial_schema.sql",
+    "002_fts5_long_term_memory.sql",
+    "003_add_chain_hash.sql",
+    "003_fts5_long_term_memory.sql",
+    "004_working_memory_provenance.sql",
+    "005_long_term_memory_provenance.sql",
+    "006_world_entity_provenance.sql",
+    "007_world_edge_provenance.sql"
+  ],
+  "candidate_restore_verified": true
+}

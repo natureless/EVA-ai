@@ -15,6 +15,8 @@ Design rules:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
+import math
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
@@ -26,6 +28,7 @@ from pydantic import BaseModel, Field, field_validator
 
 CURRENT_PROTOCOL_VERSION = 1
 SUPPORTED_VERSIONS: frozenset[int] = frozenset({CURRENT_PROTOCOL_VERSION})
+MAX_MESSAGE_BYTES = 1024 * 1024
 
 
 # ── Capability Grants ─────────────────────────────────────────
@@ -77,6 +80,7 @@ class TaskOutcome(str, Enum):
     WORKER_CRASH = "worker_crash"
     PROTOCOL_ERROR = "protocol_error"
     RESOURCE_EXHAUSTED = "resource_exhausted"
+    EXECUTION_ERROR = "execution_error"
 
 
 # ── Serializable Models ───────────────────────────────────────
@@ -106,7 +110,7 @@ class WorkerRequest(BaseModel):
     loop_id: str = ""
 
     # ── deadline ──
-    deadline_sec: float = Field(default=120.0, gt=0)
+    deadline_sec: float = Field(default=120.0, gt=0, allow_inf_nan=False)
 
     # ── capability grants ──
     grants: list[dict[str, Any]] = Field(default_factory=list)
@@ -146,6 +150,23 @@ class WorkerRequest(BaseModel):
                 )
             )
         return grants
+
+    @field_validator("grants")
+    @classmethod
+    def check_grants(cls, values: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        for value in values:
+            Capability(value.get("capability", ""))
+            scope = value.get("scope", [])
+            expiry = value.get("expires_at", 0.0)
+            if not isinstance(scope, list) or not all(isinstance(p, str) for p in scope):
+                raise ValueError("Grant scope must be a list of strings")
+            if not isinstance(expiry, (int, float)) or not math.isfinite(expiry) or expiry < 0:
+                raise ValueError("Grant expiry must be finite and nonnegative")
+            try:
+                _assert_json_serializable(value, "WorkerRequest.grants")
+            except TypeError as exc:
+                raise ValueError(str(exc)) from exc
+        return values
 
 
 class WorkerProgress(BaseModel):
@@ -194,6 +215,9 @@ class WorkerResponse(BaseModel):
     trace_id: str = ""
 
     # ── outcome ──
+    correlation_id: str = ""
+    causation_id: str = ""
+    loop_id: str = ""
     ok: bool
     outcome: TaskOutcome = TaskOutcome.SUCCESS
 
@@ -236,6 +260,10 @@ class WorkerResponse(BaseModel):
                 "worker_id": self.worker_id,
                 "outcome": self.outcome.value,
                 "trace_id": self.trace_id,
+                "correlation_id": self.correlation_id,
+                "causation_id": self.causation_id,
+                "loop_id": self.loop_id,
+                **({"error": self.error} if self.error else {}),
             },
         )
 
@@ -271,66 +299,49 @@ class WorkerHeartbeat(BaseModel):
 
 # ── Serialization Guards ──────────────────────────────────────
 
-_NON_SERIALIZABLE_TYPES = (
-    type(lambda: None),       # function
-    type(object()),            # object
-)
-
-# Well-known non-serializable type names (no import needed)
-_NON_SERIALIZABLE_TYPE_NAMES: frozenset[str] = frozenset({
-    "function", "method", "module", "class", "traceback",
-    "frame", "code", "generator", "coroutine", "future",
-    "thread", "lock", "rlock", "condition", "semaphore",
-    "connection", "cursor", "session", "executor",
-    "Thread", "Lock", "RLock", "Condition", "Semaphore",
-    "Event",
-})
-
-
-def _assert_json_serializable(obj: Any, path: str) -> None:
-    """Recursively check that *obj* is JSON-serializable.
-
-    Raises TypeError with the offending path on failure.
-    """
-    import json
-
-    if obj is None:
+def _assert_json_serializable(obj: Any, path: str, _depth: int = 0) -> None:
+    """Reject live objects, cycles, non-string keys and non-finite numbers."""
+    if _depth > 64:
+        raise TypeError(f"{path}: nesting exceeds 64 levels (or contains a cycle)")
+    if obj is None or isinstance(obj, (bool, int, str)):
         return
-    if isinstance(obj, (bool, int, float, str)):
+    if isinstance(obj, float) and math.isfinite(obj):
         return
-    if isinstance(obj, (bytes, bytearray, memoryview)):
-        raise TypeError(
-            f"{path}: bytes/bytearray/memoryview are not JSON-serializable"
-        )
-
-    type_name = type(obj).__name__
-    if type_name in _NON_SERIALIZABLE_TYPE_NAMES:
-        raise TypeError(
-            f"{path}: {type_name!r} objects are not JSON-serializable"
-        )
-
     if isinstance(obj, dict):
-        for k, v in obj.items():
-            _assert_json_serializable(v, f"{path}.{k}")
+        for key, value in obj.items():
+            if not isinstance(key, str):
+                raise TypeError(f"{path}: JSON object keys must be strings")
+            _assert_json_serializable(value, f"{path}.{key}", _depth + 1)
         return
-    if isinstance(obj, (list, tuple, set, frozenset)):
-        for i, v in enumerate(obj):
-            _assert_json_serializable(v, f"{path}[{i}]")
+    if isinstance(obj, (list, tuple)):
+        for i, value in enumerate(obj):
+            _assert_json_serializable(value, f"{path}[{i}]", _depth + 1)
         return
-
-    # Final check: can json.dumps actually serialize it?
-    try:
-        json.dumps(obj, default=str)
-    except (TypeError, ValueError):
-        raise TypeError(
-            f"{path}: object of type {type(obj).__name__!r} is not JSON-serializable"
-        )
+    raise TypeError(f"{path}: {type(obj).__name__} is not a JSON value")
 
 
 def is_serializable(obj: Any) -> bool:
-    """Return True if *obj* is safe for IPC serialization."""
     try:
         _assert_json_serializable(obj, "<root>")
         return True
     except TypeError:
         return False
+
+
+def encode_message(message: dict[str, Any]) -> bytes:
+    """Bound every IPC frame; never pickle task data or stringify objects."""
+    _assert_json_serializable(message, "message")
+    data = json.dumps(message, ensure_ascii=False, allow_nan=False).encode("utf-8")
+    if len(data) > MAX_MESSAGE_BYTES:
+        raise ValueError("IPC message exceeds 1 MiB")
+    return data
+
+
+def decode_message(data: bytes) -> dict[str, Any]:
+    if len(data) > MAX_MESSAGE_BYTES:
+        raise ValueError("IPC message exceeds 1 MiB")
+    message = json.loads(data)
+    if not isinstance(message, dict):
+        raise ValueError("IPC message must be an object")
+    _assert_json_serializable(message, "message")
+    return message

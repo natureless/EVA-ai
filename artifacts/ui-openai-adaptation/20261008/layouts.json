@@ -1,0 +1,422 @@
+[
+  {
+    "route": "/chat",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/chat",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/chat",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/chat",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/chat",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/chat",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/settings",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/memory/list",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/dashboard",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/mvsc",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "light",
+    "width": 320,
+    "theme": "light",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "light",
+    "width": 768,
+    "theme": "light",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "light",
+    "width": 1440,
+    "theme": "light",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "dark",
+    "width": 320,
+    "theme": "dark",
+    "viewport": 320,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "dark",
+    "width": 768,
+    "theme": "dark",
+    "viewport": 768,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  },
+  {
+    "route": "/unavailable",
+    "expectedTheme": "dark",
+    "width": 1440,
+    "theme": "dark",
+    "viewport": 1440,
+    "overflow": false,
+    "font": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+    "bodySize": "15px"
+  }
+]

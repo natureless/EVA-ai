@@ -1,0 +1,23 @@
+{
+  "feature": "GOL-01",
+  "status": "business_goal_ledger_reference_complete",
+  "tests": {
+    "targeted": "5 passed",
+    "ruff": "passed"
+  },
+  "verified": [
+    "event acceptance does not imply goal completion",
+    "explicit success and failure predicates",
+    "dependency gating",
+    "optimistic goal version checks",
+    "cancelled and interrupted lifecycle states",
+    "restart interruption of active work",
+    "copied observations and evidence"
+  ],
+  "production": {
+    "durable_goal_table": false,
+    "worker_transaction_wiring": false,
+    "note": "Persistence and production cutover remain separate from the in-memory reference ledger."
+  },
+  "truth_claim": "A completed event receipt is not treated as proof that the business goal succeeded."
+}

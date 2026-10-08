@@ -1,0 +1,172 @@
+{
+  "started_at": "2026-10-06T13:14:08.410235+00:00",
+  "checks": {
+    "origin_readiness": {
+      "status": "passed",
+      "details": {
+        "ready": true
+      }
+    },
+    "origin_assets": {
+      "status": "passed",
+      "details": {
+        "memory_graph.js": "d75a6cf634635578b41719481db56144020346b337c1e8716e7ba98d4cf21bed",
+        "memory_graph.css": "691560e7ea17fdb994f7d59d9c3b0551cdb88d5daf9600b3ff3cf16fe1eef841",
+        "http.js": "16219d877ed8aa0f6815c791680461d44b1ab7b664e2e859bfb76d494b84a5a5",
+        "memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07"
+      }
+    },
+    "origin_graph_and_neighbors": {
+      "status": "passed",
+      "details": {
+        "nodes": 420,
+        "edges": 658,
+        "detail_ok": true,
+        "neighbor_page_edges": 7,
+        "next_offset": null
+      }
+    },
+    "origin_export": {
+      "status": "passed",
+      "details": {
+        "entries": 421,
+        "crc_valid": true,
+        "bytes": 386648
+      }
+    },
+    "anonymous_public:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "origin_websocket_reconnect": {
+      "status": "passed",
+      "details": {
+        "connections": 2,
+        "pong_received": 2
+      }
+    }
+  },
+  "chat_requests": [],
+  "pending": [
+    "Public authenticated browser interaction",
+    "Actual login expiration in browser",
+    "Physical phone",
+    "Windows login/crash recovery",
+    "Live chat disabled; use --chat for two marked test messages"
+  ],
+  "finished_at": "2026-10-06T13:14:14.007848+00:00",
+  "failed_checks": [],
+  "status": "automated_checks_passed_browser_pending",
+  "galaxy_release_verification": {
+    "status": "passed",
+    "verified_at": "2026-10-06T13:20:21.227832+00:00",
+    "origin": "http://127.0.0.1:8000",
+    "listener": {
+      "address": "127.0.0.1",
+      "port": 8000,
+      "pid": 17984,
+      "command": "python -m app.cloudflare_server",
+      "verified_by": "Get-NetTCPConnection and Get-CimInstance"
+    },
+    "html_versions": {
+      "memory_graph_js": "20",
+      "memory_graph_css": "13",
+      "memory_galaxy_js": "1",
+      "memory_galaxy_renderer_js": "1"
+    },
+    "script_order": [
+      "memory_galaxy.js",
+      "memory_galaxy_renderer.js",
+      "memory_graph.js"
+    ],
+    "script_order_valid": true,
+    "assets": {
+      "memory_graph.css": {
+        "version": "13",
+        "http_status": 200,
+        "sha256": "691560e7ea17fdb994f7d59d9c3b0551cdb88d5daf9600b3ff3cf16fe1eef841",
+        "response_matches_disk": true
+      },
+      "memory_galaxy.js": {
+        "version": "1",
+        "http_status": 200,
+        "sha256": "1cafe986698334f5cd61917be1265aa4aa753f9ca671da78efdb11dce8540a56",
+        "response_matches_disk": true
+      },
+      "memory_galaxy_renderer.js": {
+        "version": "1",
+        "http_status": 200,
+        "sha256": "9ed7215cb87859cb73f6c09dab6bcb54f1312eb9916602364b7243ca9d38c6df",
+        "response_matches_disk": true
+      },
+      "memory_graph.js": {
+        "version": "20",
+        "http_status": 200,
+        "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f",
+        "response_matches_disk": true
+      }
+    },
+    "authenticated_requests_fixed_loopback_only": true,
+    "requests_trust_env": false,
+    "service_restarted": false,
+    "chat_sent": false,
+    "limitations": [
+      "Public login and authenticated browser interaction not checked",
+      "Physical phone interaction not checked",
+      "Live dialogue and model responses not checked",
+      "Anonymous public 302 verifies Access redirect only"
+    ]
+  }
+}

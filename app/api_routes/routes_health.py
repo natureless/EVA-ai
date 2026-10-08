@@ -7,6 +7,7 @@ from typing import Any
 from fastapi import APIRouter, Request, HTTPException
 
 from app.config import settings
+from app.runtime_observation import runtime_observation
 from runtime.diagnostics import SystemDiagnostic
 
 router = APIRouter()
@@ -67,7 +68,7 @@ async def health_recover(request: Request) -> dict[str, Any]:
     elif action == "rebuild_snapshot":
         result = recovery.recover_snapshot(
             Path(settings.latest_snapshot_path),
-            world_model=container.world_model,
+            save_snapshot=container.save_runtime_snapshot,
         )
     else:
         raise HTTPException(status_code=400, detail=f"unknown action: {action}")
@@ -93,6 +94,7 @@ def health_summary(request: Request) -> dict[str, Any]:
     container = request.app.state.container
     ss = container.system_state
     ready_data = container.health.ready()
+    observation = runtime_observation(container)
 
     return {
         "status": ready_data["status"],
@@ -100,8 +102,8 @@ def health_summary(request: Request) -> dict[str, Any]:
         "events_dropped": container.event_bus.dropped,
         "cognition": {
             "focus": ss.get("focus", "idle"),
-            "tick": ss.get("mvsc_tick", 0),
-            "phase": ss.get("mvsc_cognition_phase", "unknown"),
+            "runtime_mode": observation["mode"],
+            "phase": observation["phase"],
         },
         "memory": {
             "working": len(container.tiered_memory.s2.list_recent(limit=1)) if container.tiered_memory else 0,

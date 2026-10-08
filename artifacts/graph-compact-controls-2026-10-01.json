@@ -1,0 +1,114 @@
+{
+  "status": "static_verified_public_authenticated_browser_pending",
+  "verified_at": "2026-10-01T07:47:53.026400+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\graph-compact-controls-20261001-152948",
+  "before_hashes": {
+    "ui/web/static/memory_graph.js": "9f53a1c7b29dad5ba2dadc03bc251f643cbfeccf5a53615fa573aaecd8ed189a",
+    "ui/web/static/memory_graph.css": "f6e8c6dc7fb4e6f8d54bbfbcc4217d0ed738a11a14650e1cd5e9aaae2f4d75c6",
+    "ui/web/templates/memory_graph.html": "2d0507a14518747402b9b808d23e99f33ef830229ce4bef3bea00732465ff401",
+    "tests/js/test_memory_graph_interactions.cjs": "a5ce77443e239c71de46692840b0cdf994290d05cb350666a16e166e5b376805"
+  },
+  "source_hashes": {
+    "ui/web/static/memory_graph.js": "12734c80366478bc90f3a25782cc12fce9f09b897d640a1e5d8d8b3ff8c2d98e",
+    "ui/web/static/memory_graph.css": "3c7ddb969714f8d256337131ff9c11b3d67dc201bb36142b8856c8232b0bf7e2",
+    "ui/web/templates/memory_graph.html": "6fc8b03dc26b48d772c4d708a40e5b9d3ac211dbd658f38c7167a53c054c1d73",
+    "tests/js/test_memory_graph_interactions.cjs": "78524d23e2b9a50c52c67e3a6146ed6585724ac32b4b13e29f5d235d9c5a2958"
+  },
+  "features": [
+    "Native collapsible relation filters with exact active-filter summary",
+    "Phone initial disclosure closed; wider screen initial disclosure open",
+    "Persistent disclosure choice during same-page graph navigation and refresh",
+    "Camera scale retained for both toggle/resize observer orders",
+    "Scrollable bounded local controls on short phone screens"
+  ],
+  "production": {
+    "pid": 34428,
+    "javascript_version": 17,
+    "stylesheet_version": 12,
+    "static_content_matches": true,
+    "backend_restarted": false,
+    "tunnel_restarted": false,
+    "scheduled_tasks": "Running",
+    "database_written_by_this_turn": false,
+    "model_requests_by_this_turn": 0,
+    "dns_or_access_changed": false
+  },
+  "tests": {
+    "javascript_passed": 379,
+    "graph_interaction_passed": 58,
+    "new_disclosure_regressions": 4,
+    "python_targeted_passed": 58,
+    "ruff": "passed",
+    "javascript_log": "artifacts/graph-compact-controls-js-2026-10-01.txt"
+  },
+  "origin": {
+    "passed": 13,
+    "report": "artifacts/graph-compact-controls-origin-2026-10-01.json"
+  },
+  "browser": {
+    "syntheticFixture": true,
+    "mobileClosed": {
+      "canvasHeight": 439.78125,
+      "canvasTop": 370.5520935058594,
+      "filtersOpen": false,
+      "scrollWidth": 390,
+      "summary": "1 层 · 双向 · 全部连接 · 全部名称",
+      "zoom": "172%"
+    },
+    "mobileOpened": {
+      "canvasHeight": 216.40625,
+      "filtersOpen": true,
+      "scrollWidth": 390,
+      "zoom": "172%"
+    },
+    "smallPhone": {
+      "canvasHeight": 168.6666717529297,
+      "controlsHeight": 238,
+      "controlsScrollHeight": 602,
+      "filterOpen": true,
+      "scrollWidth": 320,
+      "zoom": "38%"
+    },
+    "desktop": {
+      "canvasHeight": 400.21875,
+      "filtersOpen": true,
+      "scrollWidth": 1400,
+      "zoom": "150%"
+    },
+    "finalMobile": {
+      "canvasHeight": 439.78125,
+      "center": "模块化标识 · 1",
+      "filtersOpen": false,
+      "scrollWidth": 390,
+      "stats": "9 节点 · 8 连接",
+      "summary": "2 层 · 双向 · 全部连接 · 全部名称",
+      "zoomHit": "zoomIn"
+    },
+    "withDetails": {
+      "canvasHeight": 439.78125,
+      "center": "模块化标识 · 1",
+      "filtersOpen": false,
+      "selection": "模块化标识 · 1",
+      "usableHeight": 197.90625,
+      "zoomHit": "zoomIn"
+    },
+    "keyboardClosedNextFocus": "memoryCanvas",
+    "desktopSpaceCloseZoom": "150%",
+    "observedConsoleErrors": []
+  },
+  "screenshot": {
+    "path": "artifacts/graph-compact-controls-preview-2026-10-01.jpg",
+    "sha256": "c8649691e573906a5fb566215be34cf015193a5632ee85921fe1575def6384be",
+    "synthetic_fixture": true
+  },
+  "cleanup": {
+    "preview_pid": 21248,
+    "fixture_server_stopped": true,
+    "fixture_tab_closed": true,
+    "viewport_restored": true
+  },
+  "boundaries": [
+    "Browser fixtures do not verify authenticated public data or physical mobile touch.",
+    "Disclosure choice is page-local; a page reload initializes it for the current width."
+  ]
+}

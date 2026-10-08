@@ -1,0 +1,21 @@
+{
+  "feature": "EVD-02",
+  "status": "assertion_contract_complete",
+  "tests": {
+    "targeted": "25 passed",
+    "ruff": "passed",
+    "full_python": "1347 passed",
+    "javascript": "23 passed"
+  },
+  "verified": [
+    "observation time is separate from validity window",
+    "expired assertions are excluded from current views",
+    "retraction preserves historical record",
+    "supersession links replacement without deletion",
+    "conflicting current values are not silently merged",
+    "unsupported schema versions downgrade to unknown",
+    "invalid temporal bounds and non-JSON values are rejected"
+  ],
+  "integration_scope": "Reusable contract implemented; entity/memory history-table migration and UI/API lifecycle display remain follow-up work.",
+  "truth_claim": "Provenance and temporal validity do not prove factual truth."
+}

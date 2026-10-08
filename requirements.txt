@@ -5,6 +5,7 @@ pydantic-settings==2.8.1
 jinja2==3.1.6
 pyyaml==6.0.3
 python-dotenv==1.0.1
+PyJWT[crypto]==2.14.0
 APScheduler==3.10.4
 httpx==0.28.1
 anthropic==0.45.0
@@ -19,4 +20,3 @@ pytest-cov==5.0.0
 # Phase 5: vector search
 sentence-transformers>=3.0.0
 faiss-cpu>=1.8.0
-

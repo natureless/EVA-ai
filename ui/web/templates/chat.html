@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f7f5" />
+  <title>{{ app_name }} · 对话空间</title>
+  <link rel="stylesheet" href="/static/main.css?v=8" />
+  <link rel="icon" type="image/svg+xml" href="/static/eva-favicon.svg" />
+  <link rel="stylesheet" href="/static/cube-geometry.css?v=2" />
+  <link rel="stylesheet" href="/static/cube-chat.css?v=13" />
+  <link rel="stylesheet" href="/static/ui-system.css?v=6" />
+  <script src="/static/ui-theme.js?v=1"></script>
+</head>
+<body class="cube-chat">
+  <a class="workspace-skip" href="#chatInput" data-i18n="ui.skipChat">跳到消息输入</a>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm0 10 9-5M12 12 3 7m9 5v10M7.5 4.5l9 5v10m-9 0v-10l9-5M3 12l9 5 9-5"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-8 8H4l1.3-4A8 8 0 1 1 20 11.5Z"/><path d="M8 10h8m-8 4h5"/></symbol>
+    <symbol id="i-memory" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="17" r="2.5"/><path d="m10.5 7-4 7.5m7-7 4 7M8 17h8"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="17" r="3"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+  </defs></svg>
+  <aside class="workspace-rail" aria-label="主导航" data-i18n-aria-label="ui.navMain">
+    <a class="brand-mark" href="/chat" aria-label="EVA 对话" data-i18n-aria-label="ui.chatHome"><img src="/static/eva-favicon.svg" width="32" height="32" alt="" /></a>
+    <nav>
+      <a class="rail-link active" href="/chat" aria-current="page" title="对话" data-i18n-title="chat.title"><svg><use href="#i-chat"/></svg><span data-zh="对话" data-en="Chat">对话</span></a>
+      <a class="rail-link" href="/memory" title="记忆图谱" data-i18n-title="ui.memory"><svg><use href="#i-memory"/></svg><span data-zh="记忆" data-en="Memory">记忆</span></a>
+      <a class="rail-link" href="/settings" title="设置" data-i18n-title="studio.settings"><svg><use href="#i-settings"/></svg><span data-zh="设置" data-en="Settings">设置</span></a>
+    </nav>
+    <div class="rail-bottom"><span class="rail-monogram">E</span><span class="rail-version">V 0.1</span></div>
+  </aside>
+  <div class="workspace-main">
+    <header class="workspace-header">
+      <div class="wordmark">EVA<span class="wordmark-divider"></span><span data-zh="对话空间" data-en="Conversation space">对话空间</span></div>
+      <div class="header-actions"><span class="edition">MODULAR INTELLIGENCE</span><button id="langBtn" class="quiet-button" title="切换语言 / Switch language" data-i18n-aria-label="ui.language">EN</button><button id="themeBtn" class="quiet-button" title="切换深浅主题" aria-label="切换深浅主题"><svg><use href="#i-sun"/></svg></button></div>
+    </header>
+    {% if preview_mode %}<div class="preview-notice" role="note" data-i18n="ui.previewNotice">交互预览 · 未连接模型，回复为测试文本，不保存消息。</div>{% endif %}
+    <main class="conversation-layout">
+      <section class="cube-panel" id="cubePanel" aria-labelledby="cubeHeading">
+        <div class="cube-panel-heading"><div class="panel-eyebrow" data-zh="与你一起思考" data-en="HERE TO THINK WITH YOU">与你一起思考</div><button type="button" class="cube-disclosure" id="cubeDisclosure" aria-expanded="false" aria-controls="cubeDetails cubeOrderControls" hidden><span>展开魔方演示</span></button></div>
+        <div class="cube-order-controls" id="cubeOrderControls" role="group" aria-label="切换魔方模型" data-i18n-aria-label="ui.models">
+          <button data-cube-order="2" aria-pressed="true"><span class="order-grid order-grid-two" aria-hidden="true"></span><span data-zh="二阶魔方" data-en="2 × 2 cube">二阶魔方</span></button>
+          <button data-cube-order="3" aria-pressed="false"><span class="order-grid order-grid-three" aria-hidden="true"></span><span data-zh="三阶魔方" data-en="3 × 3 cube">三阶魔方</span></button>
+        </div>
+        <div class="cube-hero">
+          <div class="cube-stage" id="cubeStage" data-debug="false" tabindex="0" role="group" aria-label="交互式二阶魔方。拖动或使用方向键旋转，Home 键复位。">
+            <div class="cube-debug" aria-hidden="true"><div class="stage-coordinate coordinate-top">Y</div><div class="stage-coordinate coordinate-left">Z</div><div class="stage-coordinate coordinate-right">X</div><div class="stage-orbit"></div></div>
+            <div class="cube-shadow" aria-hidden="true"></div>
+            <img id="cubeFallback" class="cube-fallback" src="/static/eva-mark.svg" alt="EVA" hidden />
+            <div class="cube-camera"><div class="cube-presence" id="cubePresence"><div class="cube-model" id="cubeModel" aria-hidden="true"><div class="cube-rotor" id="cubeRotor"></div></div></div></div>
+          </div>
+          <div class="cube-intro"><h1 id="cubeHeading">EVA</h1><div class="cube-model-label" id="cubeModelLabel">2 × 2 · 正常对话</div><p data-zh="让思考旋转，让灵感重组。" data-en="A new perspective. A new connection.">让思考旋转，让灵感重组。</p><div class="stage-caption"><span class="state-dot"></span><span id="avatarStateLabel" data-i18n="avatar.idle">EVA 已就绪</span></div></div>
+        </div>
+        <div id="cubeRecovery" class="cube-recovery" hidden><p id="cubeRecoveryNote" role="status">动效已停止，暂用静态标识；对话仍可继续。</p><button type="button" id="cubeRetry">重试动效</button></div>
+        <div class="cube-details" id="cubeDetails">
+        <div class="cube-interaction-hint"><span data-zh="拖动探索 · 方向键旋转" data-en="Drag to explore · Arrow keys to rotate">拖动探索 · 方向键旋转</span><button class="reset-view" id="resetCube" title="复位视角" aria-label="复位视角" data-i18n-title="ui.resetView" data-i18n-aria-label="ui.resetView"><svg><use href="#i-reset"/></svg></button></div>
+        <div class="view-controls" role="group" aria-label="魔方视角" data-i18n-aria-label="ui.views">
+          <button data-view="front" data-zh="正面" data-en="Front" aria-pressed="false">正面</button><button data-view="side" data-zh="侧面" data-en="Side" aria-pressed="false">侧面</button><button data-view="top" data-zh="顶部" data-en="Top" aria-pressed="false">顶部</button><button data-view="iso" data-zh="三视角" data-en="Isometric" aria-pressed="true">三视角</button><button data-view="oblique" data-zh="斜视图" data-en="Oblique" aria-pressed="false">斜视图</button><button data-view="bottom" data-zh="底部" data-en="Bottom" aria-pressed="false">底部</button>
+        </div>
+        <div class="evolution-panel">
+          <div class="evolution-header"><span data-zh="形态演变" data-en="FORM EVOLUTION">形态演变</span><button id="playEvolution" aria-pressed="false"><span class="play-glyph">▷</span><span id="playLabel">播放演变</span></button></div>
+          <div class="evolution-steps" role="group" aria-label="演变阶段" data-i18n-aria-label="ui.phases">
+            <button data-phase="0" aria-pressed="true"><span class="step-mark">01</span><span data-zh="原始" data-en="Origin">原始</span></button><button data-phase="1" aria-pressed="false"><span class="step-mark">02</span><span data-zh="旋转" data-en="Rotate">旋转</span></button><button data-phase="2" aria-pressed="false"><span class="step-mark">03</span><span data-zh="分解" data-en="Expand">分解</span></button><button data-phase="3" aria-pressed="false"><span class="step-mark">04</span><span data-zh="重组" data-en="Reform">重组</span></button><button data-phase="4" aria-pressed="false"><span class="step-mark">05</span><span data-zh="延展" data-en="Extend">延展</span></button><button data-phase="5" aria-pressed="false"><span class="step-mark">∞</span><span data-zh="连续旋转" data-en="Flow">连续旋转</span></button>
+          </div>
+          <p id="phaseDescription" aria-live="polite">八个独立模块，一个完整的思考起点。</p>
+          <details class="cube-inspector" id="cubeInspector"><summary data-zh="查看运动细节" data-en="Motion details">查看运动细节</summary><p data-zh="坐标与转动记录" data-en="Coordinates and move journal">坐标与转动记录</p><output id="cubeMoveStatus" hidden aria-live="off"></output></details>
+        </div>
+        <div class="cube-panel-footer"><span data-zh="小小单元，无限可能。" data-en="Small units. Infinite possibilities.">小小单元，无限可能。</span></div>
+        </div>
+      </section>
+      <section class="dialogue-panel" aria-label="与 EVA 对话" data-i18n-aria-label="ui.conversation">
+        <div class="dialogue-header"><div><span class="dialogue-title" data-zh="与 EVA 对话" data-en="Talk to EVA">与 EVA 对话</span><span class="dialogue-subtitle">A SPACE FOR YOUR MIND</span></div><span id="wsIndicator" class="badge disconnected" role="status">连接中</span></div>
+        <div class="conversation-body">
+          <div class="chat-empty" id="chatEmpty">
+            <div class="welcome-symbol"><img src="/static/eva-favicon.svg" width="32" height="32" alt="" /></div>
+            <p class="welcome-eyebrow" data-zh="每一个想法，都是新的起点" data-en="EVERY IDEA IS A NEW BEGINNING">每一个想法，都是新的起点</p>
+            <h2><span data-zh="你好，我是 EVA。" data-en="Hello, I’m EVA.">你好，我是 EVA。</span><br><span class="welcome-soft" data-zh="今天，一起探索什么？" data-en="What’s on your mind?">今天，一起探索什么？</span></h2>
+            <p class="welcome-copy" data-zh="一个问题、一闪而过的灵感，或还没成形的想法。" data-en="A question, a spark, or an idea still taking shape.">一个问题、一闪而过的灵感，或还没成形的想法。</p>
+            <div class="prompt-suggestions">
+              <button data-prompt-zh="帮我梳理一个想法。请先问我想法的主题和希望达成的目标。" data-prompt-en="Help me develop an idea. First ask about its topic and what I want to achieve."><span class="suggestion-icon">⌘</span><span><strong data-zh="梳理一个想法" data-en="Untangle an idea">梳理一个想法</strong><small data-zh="从模糊的直觉，到清晰的思路" data-en="From a spark to a clear direction">从模糊的直觉，到清晰的思路</small></span><span class="suggestion-arrow">↗</span></button>
+              <button data-prompt-zh="和我一起探索一个新问题。请先问我对什么领域感兴趣。" data-prompt-en="Explore a new question with me. First ask what field interests me."><span class="suggestion-icon">✳</span><span><strong data-zh="探索新的可能" data-en="Explore a possibility">探索新的可能</strong><small data-zh="换个角度，发现不一样的答案" data-en="A different angle, a fresh answer">换个角度，发现不一样的答案</small></span><span class="suggestion-arrow">↗</span></button>
+            </div>
+            <p id="promptFeedback" class="prompt-feedback" role="status" aria-live="polite" hidden></p>
+          </div>
+          <div class="chat-messages" id="chatMessages" role="log" aria-label="对话记录" aria-live="off" data-i18n-aria-label="ui.transcript"></div>
+          <div id="chatAnnouncement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+        </div>
+        <div class="chat-reading-actions"><button id="chatLatest" type="button" aria-controls="chatMessages" hidden>↓ 回到最新消息</button></div>
+        <div class="composer-section">
+          <div class="chat-delivery-row"><span id="chatDeliveryStatus" role="status" aria-live="polite"></span><span id="chatActionFeedback" role="status" aria-live="polite"></span></div>
+          <div class="chat-mode-row">
+            <span class="chat-mode-caption" data-zh="回答模式" data-en="RESPONSE MODE">回答模式</span>
+            <div class="chat-mode-controls" role="group" aria-label="回答模式" data-i18n-aria-label="ui.responseMode">
+              <button type="button" data-chat-mode="normal" aria-pressed="true" data-zh="正常对话" data-en="Conversation">正常对话</button>
+              <button type="button" data-chat-mode="deep" aria-pressed="false"><span aria-hidden="true">✳</span><span data-zh="深度思考" data-en="Deep thinking">深度思考</span></button>
+            </div>
+          </div>
+          <p class="chat-mode-hint" id="chatModeHint" aria-live="polite">所选模式随每条消息发送。</p>
+          <div id="cubeModeStatus" class="sr-only" role="status" aria-live="polite">正常对话 · 二阶动效</div>
+          <form class="chat-form" id="chatForm">
+            <label class="sr-only" for="chatInput" data-zh="发送给 EVA 的消息" data-en="Message EVA">发送给 EVA 的消息</label>
+            <textarea id="chatInput" placeholder="说说你的想法…" rows="2" maxlength="32000" aria-describedby="chatInputLimit chatInputFeedback"></textarea>
+            <div class="composer-actions"><label class="remember-option" title="仅将本条消息作为用户陈述存入长期记忆" data-i18n-title="ui.memoryHint"><input type="checkbox" id="rememberToggle"><svg><use href="#i-memory"/></svg><span data-zh="记住这条消息" data-en="Remember this message">记住这条消息</span></label><button type="submit" class="send-btn" id="sendBtn" aria-label="发送消息" title="发送消息">↑</button></div>
+          </form>
+          <p id="chatInputFeedback" class="chat-mode-hint chat-input-feedback" role="status" aria-live="polite" hidden></p>
+          <p id="chatInputLimit" class="chat-mode-hint" data-zh="每条消息最多 4,000 个字符；长草稿可保留。" data-en="Up to 4,000 characters per message. Longer drafts can be kept.">每条消息最多 4,000 个字符；长草稿可保留。</p>
+          <div class="composer-meta"><label class="stream-option"><input type="checkbox" id="streamToggle" checked><span data-zh="流式回复" data-en="Stream replies">流式回复</span></label><span data-zh="Enter 发送 · Shift + Enter 换行" data-en="Enter to send · Shift + Enter for a new line">Enter 发送 · Shift + Enter 换行</span></div>
+          <div class="dialogue-footer">{% if preview_mode %}<span data-zh="交互预览 · 未连接模型" data-en="UI preview · No model connected">交互预览 · 未连接模型</span>{% else %}<span id="runtimeStatus" role="status">运行模式：读取中</span>{% endif %}<span class="footer-wordmark">EVA / OPEN POSSIBILITIES</span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="/static/i18n.js?v=9"></script>
+  <script src="/static/nav.js?v=3"></script>
+  <script src="/static/ui-workspace.js?v=3"></script>
+  <script src="/static/logo-tokens.js?v=4"></script>
+  <script src="/static/cube-state.js?v=2"></script>
+  <script src="/static/cube-animator.js?v=5"></script>
+  <script src="/static/cube-logo.js?v=3"></script>
+  <script src="/static/brand-assets.js?v=3"></script>
+  <script src="/static/cube-avatar.js?v=9"></script>
+  <script src="/static/http.js?v=1"></script>
+  <script src="/static/ui-reading.js?v=1"></script>
+  <script src="/static/chat.js?v=19"></script>
+  <script src="/static/runtime_status.js?v=2"></script>
+</body>
+</html>

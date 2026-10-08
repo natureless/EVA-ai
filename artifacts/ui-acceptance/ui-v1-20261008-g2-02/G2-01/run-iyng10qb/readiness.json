@@ -1,0 +1,233 @@
+{
+  "taskId": "G2-01",
+  "candidateId": "ui-v1-20261008-g2-02",
+  "startedAt": "2026-10-08T15:55:03.183944+00:00",
+  "finishedAt": "2026-10-08T15:55:05.852932+00:00",
+  "status": "passed",
+  "environmentPath": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g2-02\\G2-01\\run-iyng10qb\\environment.json",
+  "checks": [
+    {
+      "name": "auth_missing",
+      "passed": true,
+      "actual": {
+        "status": 401
+      }
+    },
+    {
+      "name": "actual_runtime_ready",
+      "passed": true,
+      "actual": {
+        "status": "ready",
+        "components": {
+          "db": true,
+          "event_bus": true,
+          "event_persistence": true,
+          "planner": true,
+          "registry": true,
+          "result_registry": true,
+          "snapshot": true,
+          "profile": true,
+          "persona": true,
+          "self_model": true,
+          "scheduler": true,
+          "proactive": true,
+          "cognition_loop": true,
+          "llm": false
+        },
+        "runtime": {
+          "scheduler_running": true,
+          "last_snapshot_at": null,
+          "last_proactive_reason": null,
+          "pending_events": 0,
+          "bootstrap_sec": 0.04
+        },
+        "mvsc": {
+          "requested": false,
+          "status": "disabled",
+          "attached": false,
+          "is_http_consumer": false
+        }
+      }
+    },
+    {
+      "name": "sandbox_identity",
+      "passed": true,
+      "actual": {
+        "acceptanceOnly": true,
+        "sandbox": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g2-02\\G2-01\\run-iyng10qb",
+        "model": "mock",
+        "featureFlags": {
+          "business_goals": false,
+          "processing_episodes": false,
+          "durable_requests": false,
+          "action_context": false,
+          "minimal_brain": false,
+          "mvsc_pipeline": false,
+          "resume_durable_requests": false
+        },
+        "ready": true
+      }
+    },
+    {
+      "name": "template_/",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 20752
+      }
+    },
+    {
+      "name": "template_/chat",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 15567
+      }
+    },
+    {
+      "name": "template_/settings",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 19939
+      }
+    },
+    {
+      "name": "template_/memory",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 20752
+      }
+    },
+    {
+      "name": "template_/memory/list",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 2777
+      }
+    },
+    {
+      "name": "template_/mvsc",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 5785
+      }
+    },
+    {
+      "name": "actual_mode_capabilities",
+      "passed": true,
+      "actual": {
+        "modes": [
+          {
+            "mode": "normal",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          },
+          {
+            "mode": "deep",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual_graph_projection",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "nodes": 0
+      }
+    },
+    {
+      "name": "goals_disabled_contract",
+      "passed": true,
+      "actual": {
+        "status": 503,
+        "body": {
+          "detail": "business goals are not enabled"
+        }
+      }
+    },
+    {
+      "name": "action_context_disabled_contract",
+      "passed": true,
+      "actual": {
+        "status": 503,
+        "body": {
+          "detail": "durable requests are not enabled"
+        }
+      }
+    },
+    {
+      "name": "pipeline_smoke_normal",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "receipt": {
+          "accepted": true,
+          "completed": true,
+          "task_id": "3ae9579a-4405-4958-bf32-38ddfaf1b6ad",
+          "ok": true,
+          "error": null,
+          "terminal_state": "succeeded",
+          "execution_state": null,
+          "review": {
+            "schema_version": 1,
+            "status": "not_assessed",
+            "passed": null,
+            "fact_verified": false,
+            "findings": []
+          },
+          "mode": "normal",
+          "mode_info": {
+            "mode": "normal",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          },
+          "memory_write_ids": {},
+          "reply": "[EVA mock] received: 隔离联调准备检查",
+          "reply_available": true,
+          "selected_agent": "chat_agent",
+          "loop_id": "loop_ddd6d429",
+          "duration_ms": 11
+        }
+      }
+    },
+    {
+      "name": "same_retained_receipt",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "task_id": "3ae9579a-4405-4958-bf32-38ddfaf1b6ad"
+      }
+    },
+    {
+      "name": "server_4001_rejected",
+      "passed": true,
+      "actual": {
+        "status": 422
+      }
+    },
+    {
+      "name": "actual_websocket_ping",
+      "passed": true,
+      "actual": {
+        "pong": true
+      }
+    },
+    {
+      "name": "database_isolated",
+      "passed": true,
+      "actual": {
+        "db_path": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g2-02\\G2-01\\run-iyng10qb\\data\\eva.db"
+      }
+    }
+  ],
+  "blockedAuditEvents": [],
+  "failure": null,
+  "scope": "actual API/bootstrap readiness in TestClient; not end-to-end browser or full G2-02 acceptance"
+}

@@ -1,0 +1,853 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "ui-v1-20261008-g0-01",
+  "candidateSourceSetSha256": "50d0ab96a5599dcf14501c1cb38a7335eaa970be4b62a8a20b899e91059b4925",
+  "generatedAt": "2026-10-08T12:55:18.045486+00:00",
+  "scope": "30 task working sheet; first four source-review tasks passed only",
+  "overallStatus": "G0-passed; G1-G5-not-executed; release-unverified",
+  "tasks": [
+    {
+      "taskId": "G0-01",
+      "title": "候选源码基线",
+      "priority": "P0",
+      "status": "passed",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": "2026-10-08T12:55:18.045486+00:00",
+      "dependencyText": "现有报告",
+      "dependsOnTasks": [],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "核对当前工作树与最新报告；记录 UI 源码、生成资产、组件版本及关联 API 文件，使用 `scripts/check_ui_release.py` 现有指纹机制",
+      "deliverable": "候选基线记录、与旧报告差异清单",
+      "acceptanceCriteria": "区分已有报告／新候选；新增或变更文件有说明；源码变化后旧报告不被当作新候选结果",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "源码与现有报告",
+      "evidencePaths": [
+        "source-baseline.json",
+        "working-tree-status.txt"
+      ],
+      "referenceEvidence": [
+        "artifacts/ui-release/local-20261008-config-review/report.json"
+      ],
+      "findings": [],
+      "note": "源码审阅和产物一致性通过；不表示 G1–G5 通过"
+    },
+    {
+      "taskId": "G0-02",
+      "title": "页面和子状态清单",
+      "priority": "P0",
+      "status": "passed",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": "2026-10-08T12:55:18.045486+00:00",
+      "dependencyText": "G0-01",
+      "dependsOnTasks": [
+        "G0-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "清点 `ui/web/templates` 与对应脚本：七类界面及星图详情、目标、历史引用、工具观测、配置审阅、错误恢复等子区域",
+      "deliverable": "每个入口的控件、数据源、加载／空／成功／失败状态表",
+      "acceptanceCriteria": "可从每个用户入口找到对应工作单；标明语言、键盘、窄屏、主题及只读／写入边界；隐藏或开关关闭入口也登记",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "源码与现有报告",
+      "evidencePaths": [
+        "surface-inventory.md",
+        "control-inventory.json",
+        "surfaces.json"
+      ],
+      "referenceEvidence": [
+        "artifacts/ui-release/local-20261008-config-review/report.json"
+      ],
+      "findings": [],
+      "note": "源码审阅和产物一致性通过；不表示 G1–G5 通过"
+    },
+    {
+      "taskId": "G0-03",
+      "title": "API 与变更边界",
+      "priority": "P0",
+      "status": "passed",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": "2026-10-08T12:55:18.045486+00:00",
+      "dependencyText": "G0-02",
+      "dependsOnTasks": [
+        "G0-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "对照 `chat.js`、`memory_graph.js`、`runtime_status.js` 和 `app/api_routes`；核对 WS／SSE／GET／POST、请求身份、版本冲突、功能开关；整理混合工作树",
+      "deliverable": "UI 文件／API／测试对应表及可审阅变更清单",
+      "acceptanceCriteria": "每项读取和写入有实际接口依据；UI 与关联后端变更不机械按目录割裂；不提交、清理或重置无关工作树",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "源码与现有报告",
+      "evidencePaths": [
+        "api-map.md",
+        "api-map.json",
+        "route-catalog.json",
+        "findings.md"
+      ],
+      "referenceEvidence": [
+        "artifacts/ui-release/local-20261008-config-review/report.json"
+      ],
+      "findings": [],
+      "note": "源码审阅和产物一致性通过；不表示 G1–G5 通过"
+    },
+    {
+      "taskId": "G0-04",
+      "title": "验收工作单",
+      "priority": "P0",
+      "status": "passed",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": "2026-10-08T12:55:18.045486+00:00",
+      "dependencyText": "G0-03",
+      "dependsOnTasks": [
+        "G0-03"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "整理任务状态、支持环境、截图／日志位置、已知限制；统一文档入口；保留专项历史证据",
+      "deliverable": "候选验收目录与工作单模板",
+      "acceptanceCriteria": "30 项都有状态、依赖、证据要求；原生与内置结果分开；不以占位记录替代实际结果",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "源码与现有报告",
+      "evidencePaths": [
+        "README.md",
+        "acceptance-index.json",
+        "g0-validation.json"
+      ],
+      "referenceEvidence": [
+        "artifacts/ui-release/local-20261008-config-review/report.json"
+      ],
+      "findings": [],
+      "note": "源码审阅和产物一致性通过；不表示 G1–G5 通过"
+    },
+    {
+      "taskId": "G1-01",
+      "title": "环境核验",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G0-04",
+      "dependsOnTasks": [
+        "G0-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "核验实际 Windows Chrome／Edge、设备、窗口与页面可操作性；登记系统减少动态效果、浏览器缩放和候选指纹",
+      "deliverable": "实际环境记录或明确阻断记录",
+      "acceptanceCriteria": "浏览器清单登记不等于可操作；可读取目标页且能执行一次界面操作；未知项保持未知",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G1-02",
+      "title": "下载落盘",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1-01",
+      "dependsOnTasks": [
+        "G1-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "用 `brand-system.js` 原生保存路径分别输出二阶 Primary／iso／512px、三阶 Dark／bottom／2048px；每个声明支持的浏览器各两组",
+      "deliverable": "实际落盘文件、生成选择与保存结果",
+      "acceptanceCriteria": "自动保存或保留的手动链接至少一条可用；文件真实存在、独立读取通过；不以 DOM 链接字节捕获替代原生保存",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G1-03",
+      "title": "直接离线运行",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1-02",
+      "dependsOnTasks": [
+        "G1-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "解压 G1-02 的实际包，直接打开 `preview.html`；使用浏览器限定的离线环境测试，不改动系统网络设置",
+      "deliverable": "打开方式、网络观测、双阶动作／主题记录",
+      "acceptanceCriteria": "脚本、样式、图片来自包内；断网后双阶循环、逆序、视角、主题、减少动态效果可用；结束标准状态，未知限制记录",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G1-04",
+      "title": "原生缩放与键盘",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1-01、G0-02",
+      "dependsOnTasks": [
+        "G1-01",
+        "G0-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "原生 200% 缩放，检查聊天输入／阅读、设置定位／审阅、星图详情；Tab、Enter／Space、Esc、方向键、Home／End；补强制色彩检查",
+      "deliverable": "布局、焦点序列与缺陷记录",
+      "acceptanceCriteria": "正文和关键操作可读可达；无页面级意外横向溢出、遮挡或键盘陷阱；代码内容允许独立横向滚动",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F03",
+        "G0-F06"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G1-05",
+      "title": "屏幕阅读器",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1-04",
+      "dependsOnTasks": [
+        "G1-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "用一种实际可用的 Windows 屏幕阅读器，记录名称和版本；检查消息终态、未知结果、配置错误／差异／取消、魔方连续运动、星图列表入口",
+      "deliverable": "操作步骤、实际播报及焦点记录",
+      "acceptanceCriteria": "新状态可获知，运动不逐步反复播报；错误关联输入；取消／应用／撤销焦点落点正确；画布有可用列表路径",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G1-06",
+      "title": "真实手机输入",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G0-04、实机可用",
+      "dependsOnTasks": [
+        "G0-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "在实际可用手机上检查输入法组合、软键盘开合、长草稿、长回答、演示展开／收起与设置／星图面板",
+      "deliverable": "设备、浏览器、方向及输入操作记录",
+      "acceptanceCriteria": "发送按钮与草稿可达；组合输入不误提交；软键盘关闭后布局恢复；切换面板不丢有效选择。未实测平台不宣称支持",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-01",
+      "title": "隔离联调环境",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G0-03、G0-04",
+      "dependsOnTasks": [
+        "G0-03",
+        "G0-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "使用明确隔离的服务、测试库与可控服务响应；登记已有功能开关的启用／关闭状态；核对接口和预览数据边界",
+      "deliverable": "服务配置说明、测试数据来源、读取／写入范围",
+      "acceptanceCriteria": "可区分合成预览与实际 API；不连接生产数据执行变更；缺少后端契约时记录依赖，不在前端模拟成功",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-02",
+      "title": "正常与深度主流程",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-01",
+      "dependsOnTasks": [
+        "G2-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "`chat.js`、`cube-avatar.js`、聊天 API；各测 normal／deep 与 WS／SSE；处理中选择下一模式，再收到原请求终态",
+      "deliverable": "至少四组请求／回执／魔方状态记录",
+      "acceptanceCriteria": "请求固定原模式，下一模式不改当前请求；正常二阶／深度三阶；结束位置和朝向复原，草稿保持，状态来自公开契约",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F01"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-03",
+      "title": "不确定结果与竞争回执",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-02",
+      "dependsOnTasks": [
+        "G2-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "受控断流、已知拒绝、迟到终态、查询失败与旧查询后到；核对请求 ID、POST／GET 次数及显式重发",
+      "deliverable": "状态转移与网络请求记录，必要的竞争回归",
+      "acceptanceCriteria": "未知结果不自动再次 POST；查询原 ID；已知失败重发建立新身份；旧回执不结束新请求动效，输入继续可用",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F01",
+        "G0-F05"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-04",
+      "title": "记忆基础与局部关系",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-01",
+      "dependsOnTasks": [
+        "G2-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "`memory_graph.js`、图谱 API；加载、空数据、读取失败／重试、选择、过滤、邻居分页、相机及主题切换",
+      "deliverable": "数据／选择／相机前后记录",
+      "acceptanceCriteria": "所见范围与数据契约一致；旧读取不覆盖新选择；重试不丢有效状态；主题只更新呈现，不额外请求数据",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F03"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-05",
+      "title": "目标和检查子界面",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-04、相关后端可用",
+      "dependsOnTasks": [
+        "G2-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "`goal_create.js`、星图目标视图、目标 API；验证已有入口、功能开关、历史分页、显式操作与版本冲突",
+      "deliverable": "子面板状态和操作影响表",
+      "acceptanceCriteria": "开关关闭时有明确不可用呈现；浏览／刷新不触发检查或动作重放；测试写入仅作用于隔离数据；冲突不假装成功",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F02",
+        "G0-F03"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-06",
+      "title": "历史输入与工具观测",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-04、相关后端可用",
+      "dependsOnTasks": [
+        "G2-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "星图详情、历史行动引用、工具观测 API；核对只读查询、已有证据、缺失引用、独立观察与结果未知",
+      "deliverable": "引用与来源记录、显式操作前后对照",
+      "acceptanceCriteria": "不补造不存在连接或证据；读记录与新观察明确区分；失败保留原记录，遵循当前 API 的显式操作语义",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G2-07",
+      "title": "系统与提示界面",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G2-01、G0-02",
+      "dependsOnTasks": [
+        "G2-01",
+        "G0-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "`runtime_status.js`、`settings.js`、记忆列表、旧／MVSC 监控和受限提示模板；连通、无数据、连接失败、恢复",
+      "deliverable": "真实服务状态与七类公共界面覆盖表",
+      "acceptanceCriteria": "不把未连接显示为健康或零活动；错误／加载／成功文案明确；重试不重复注册资源；主题、语言与窄屏入口可达",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F02",
+        "G0-F03",
+        "G0-F04",
+        "G0-F05"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G3-01",
+      "title": "测量环境与探针",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1-01、G2 核心记录、前置 P0 已关闭",
+      "dependsOnTasks": [
+        "G1-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "核对 `scripts/cube_ui_probe.js`、当前源码和原生前台条件；先做短窗完整性核验",
+      "deliverable": "环境、探针来源、采样配置记录",
+      "acceptanceCriteria": "覆盖起点／终点；停止快照冻结；性能只绑定实际测量的源码；宿主节流与后台时段可识别",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G3-02",
+      "title": "二阶长测",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G3-01",
+      "dependsOnTasks": [
+        "G3-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "二阶连续运行十分钟；中间切视角、真实页面隐藏／返回、用户暂停／继续，最后显式复原",
+      "deliverable": "独立二阶长测和生命周期证据",
+      "acceptanceCriteria": "同时转动不超过 1；8 块身份、位置与朝向复原；用户暂停不被返回解除；日志有界，无持续任务／层增长",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G3-03",
+      "title": "三阶长测",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G3-01",
+      "dependsOnTasks": [
+        "G3-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "同样操作序列单独运行三阶十分钟，不能拼接调试窗口代替完整长测",
+      "deliverable": "独立三阶长测和生命周期证据",
+      "acceptanceCriteria": "同时转动不超过 1；26 个可见块复原；日志有界；无残留转层；后台与前台数据分别解释",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G3-04",
+      "title": "导出与清理",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G3-01、G1-02",
+      "dependsOnTasks": [
+        "G3-01",
+        "G1-02"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "两阶各做三次 2048px PNG／ZIP 生成，记录失败恢复、临时 URL、离开／返回工作区与停止后的资源",
+      "deliverable": "导出耗时、成功数、URL／DOM／任务采样",
+      "acceptanceCriteria": "导出捕获原选择；URL 及时释放；没有未解释的未完成任务；记录生成与原生保存各自耗时范围",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G3-05",
+      "title": "设备预算与解释",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G3-02、03、04",
+      "dependsOnTasks": [
+        "G3-02",
+        "G3-03",
+        "G3-04"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "汇总帧间隔分布、长任务、导出分布、可观测堆与资源趋势；若有显著回退，用相同环境对照",
+      "deliverable": "实测设备预算、异常解释与优化单",
+      "acceptanceCriteria": "回调间隔不冒充绘制 FPS；粗粒度堆不证明无泄漏；严重可用性回退已处理，预算和适用设备明确；无依据不承诺 60 FPS",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G4-01",
+      "title": "阻断缺陷修复",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "有实际缺陷即启动",
+      "dependsOnTasks": [],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "对 G1–G3 发现的丢草稿、错模式、非法状态、重复请求、下载／离线失败、关键焦点或输入阻断逐项定位",
+      "deliverable": "可复现步骤、最小修复、针对性回归和复验证据",
+      "acceptanceCriteria": "问题在同一环境不再复现；真实状态与契约保持；需要后端修复时明确接线依赖，不用 UI 掩盖；触及性能则重测相关长测",
+      "estimateHours": [
+        4,
+        8
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F01",
+        "G0-F05"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G4-02",
+      "title": "全界面视觉收敛",
+      "priority": "P1",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1／G2 观察、关键流程稳定",
+      "dependsOnTasks": [],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "依据 G0 清单复核 `ui-system.css` 与各页面布局：字号、间距、状态色、焦点、长文本、目标／工具子面板",
+      "deliverable": "样式偏差清单与修复前后对照",
+      "acceptanceCriteria": "同角色使用共享 Token；主题切换保留状态；颜色非唯一提示；已稳定布局不为装饰再次重做",
+      "estimateHours": [
+        2,
+        4
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F03",
+        "G0-F06"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G4-03",
+      "title": "按变更抽取职责",
+      "priority": "P1",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G4-01／02 后维护问题明确",
+      "dependsOnTasks": [
+        "G4-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "对实际反复修改的配置审阅、交付反馈或星图详情边界选一处整理；优先 `brand-system.js`／`memory_graph.js`，不以行数强制拆分",
+      "deliverable": "单一职责调整及调用契约说明，或有依据的暂缓说明",
+      "acceptanceCriteria": "API 与状态语义保持；挂载／释放明确；不重复建立几何、主题、存储来源；无需整理时说明理由而非制造改动",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G4-04",
+      "title": "复验与回归整理",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "每项实际修复后",
+      "dependsOnTasks": [],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "针对实际修复维护 `tests/js`、关联 Python 子集与浏览器场景；整理重要路径的重复执行步骤",
+      "deliverable": "修复到测试的映射、受影响界面复验",
+      "acceptanceCriteria": "回归验证真实风险，不镜像 CSS 实现；共享组件变更覆盖聊天／品牌／便携调用端；失败记录与最终通过绑定不同源码",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G5-01",
+      "title": "最终自动检查",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G1–G3 必要项通过、P0 关闭",
+      "dependsOnTasks": [],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "在稳定候选上执行 `scripts/check_ui_release.py`，按实际变更补关联 API 子集；记录生成资产检查与双阶源码包",
+      "deliverable": "同版 report、日志、源码指纹",
+      "acceptanceCriteria": "检查全部通过且源码前后一致；测试数量按实际输出记录，不能固定追求 475；不宣称覆盖全后端",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G5-02",
+      "title": "最终完整包",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G5-01、同版 G1 证据",
+      "dependsOnTasks": [
+        "G5-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "原生生成并保存二阶／三阶代表完整包；使用现有独立验证器核对 Manifest、组件来源、SVG、PNG、透明留白与离线引用",
+      "deliverable": "双阶实际完整包及校验记录",
+      "acceptanceCriteria": "文件数按当前版本核对；格式／版本／来源一致；实际内容与标准几何一致；直接离线证据绑定同一便携组件来源",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G5-03",
+      "title": "门槛对账",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G5-01、02及专项证据",
+      "dependsOnTasks": [
+        "G5-01"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "对照 G0 清单汇总原生、服务、实机、辅助技术及性能结果，检查证据是否属于最终候选",
+      "deliverable": "逐项通过／失败／未验证／延期表",
+      "acceptanceCriteria": "必要门槛缺项仍未通过；旧版证据只有相关字节与契约未变且理由明确时可作为限定参考；关键路径最终复验",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    },
+    {
+      "taskId": "G5-04",
+      "title": "文档与交付说明",
+      "priority": "P0",
+      "status": "planned",
+      "startedAt": null,
+      "startTimeRecorded": false,
+      "completedAt": null,
+      "dependencyText": "G5-03",
+      "dependsOnTasks": [
+        "G5-03"
+      ],
+      "dependenciesNeedExternalState": "前置 P0/环境/实机/开关按 dependencyText 单独判断，不伪造通过",
+      "scope": "更新 `docs/brand-system.md`、`ui-logo-release-checks.md`、计划状态和索引；只有版本变化才更新对应变更记录",
+      "deliverable": "候选版本说明、支持范围、已知限制、资产来源与验收入口",
+      "acceptanceCriteria": "文档与代码、包和报告一致；历史证据保留原版本；明确候选通过与实际发布的区别，不自动部署或宣布生产上线",
+      "estimateHours": [
+        1,
+        2
+      ],
+      "environmentNeeds": "对应任务定义的原生设备／隔离服务／稳定候选，尚未核验",
+      "evidencePaths": [],
+      "referenceEvidence": [],
+      "findings": [
+        "G0-F04"
+      ],
+      "note": "未执行，不引用历史材料冒充本候选结果"
+    }
+  ],
+  "referenceEvidenceSeparated": true,
+  "supportScope": {
+    "nativeBrowsers": "Chrome/Edge requested; current connection not checked",
+    "screenReader": "not checked",
+    "phone": "not checked",
+    "languages": "partial Chinese/English; see G0-F03"
+  },
+  "manualGates": [
+    "Native Chrome/Edge save and direct offline execution",
+    "Reliable foreground ten-minute 2x2/3x3 performance",
+    "Native 200% zoom",
+    "Real screen-reader acceptance"
+  ],
+  "nextTaskIds": [
+    "G1-01",
+    "G2-01"
+  ]
+}

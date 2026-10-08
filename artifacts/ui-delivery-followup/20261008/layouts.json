@@ -1,0 +1,110 @@
+[
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 320,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 768,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 1440,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 320,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 768,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 1440,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 320,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 768,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 1440,
+    "current": "当前选择：3 × 3 · 深色背景 · 正面 · 1024px",
+    "generated": "已生成文件：3 × 3 · 深色背景 · 正面 · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 320,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 768,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 1440,
+    "current": "Current selection: 3 × 3 · Dark · Front · 1024px",
+    "generated": "Generated file: 3 × 3 · Dark · Front · 512px",
+    "matches": "false",
+    "overflow": false
+  }
+]

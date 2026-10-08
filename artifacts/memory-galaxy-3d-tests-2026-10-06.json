@@ -1,0 +1,73 @@
+{
+  "client_date": "2026-10-06",
+  "status": "passed",
+  "scope": "Static frontend and existing memory graph / business goal / Cloudflare acceptance test suites; no runtime acceptance or browser claim.",
+  "javascript": {
+    "command": "node --test tests/js/*.cjs",
+    "passed": 414,
+    "failed": 0,
+    "skipped": 0,
+    "exit_code": 0,
+    "log": "artifacts/memory-galaxy-3d-js-tests-2026-10-06.txt"
+  },
+  "python": {
+    "command": "python -m pytest -q tests/test_memory_graph.py tests/test_business_goal_api.py tests/test_acceptance_cloudflare.py",
+    "passed": 58,
+    "failed": 0,
+    "exit_code": 0,
+    "log": "artifacts/memory-galaxy-3d-python-tests-2026-10-06.txt"
+  },
+  "ruff": {
+    "command": "python -m ruff check tests/test_memory_graph.py tests/test_business_goal_api.py tests/test_acceptance_cloudflare.py scripts/preview_cube_chat.py",
+    "exit_code": 0,
+    "result": "All checks passed!"
+  },
+  "syntax": [
+    {
+      "path": "ui/web/static/memory_galaxy.js",
+      "exit_code": 0
+    },
+    {
+      "path": "ui/web/static/memory_galaxy_renderer.js",
+      "exit_code": 0
+    },
+    {
+      "path": "ui/web/static/memory_graph.js",
+      "exit_code": 0
+    }
+  ],
+  "source_hashes": [
+    {
+      "path": "ui/web/static/memory_galaxy.js",
+      "sha256": "1cafe986698334f5cd61917be1265aa4aa753f9ca671da78efdb11dce8540a56"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy_renderer.js",
+      "sha256": "9ed7215cb87859cb73f6c09dab6bcb54f1312eb9916602364b7243ca9d38c6df"
+    },
+    {
+      "path": "ui/web/static/memory_graph.js",
+      "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f"
+    },
+    {
+      "path": "ui/web/static/memory_graph.css",
+      "sha256": "691560e7ea17fdb994f7d59d9c3b0551cdb88d5daf9600b3ff3cf16fe1eef841"
+    },
+    {
+      "path": "ui/web/templates/memory.html",
+      "sha256": "95363f76880c86bbd0b387cd27d52a567b8205a1d61a7327f3e1b3275ec33e5b"
+    },
+    {
+      "path": "tests/js/test_memory_galaxy.cjs",
+      "sha256": "d20283cd28399e41f3c646873c2cf82ab5ddeb40c993ef0c6d112938b00dbaf5"
+    },
+    {
+      "path": "tests/js/test_memory_galaxy_renderer.cjs",
+      "sha256": "24b77c92244785e8da0821c9e3d01902068aa290a34427997f3db474cf7effd3"
+    },
+    {
+      "path": "tests/js/test_memory_graph_interactions.cjs",
+      "sha256": "4e958ac90520cc69debc0898c8da854167a82946675b6ff938bf0f63748f755d"
+    }
+  ]
+}

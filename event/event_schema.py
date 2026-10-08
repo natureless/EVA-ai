@@ -1,21 +1,19 @@
 from datetime import datetime, timezone
-from typing import Any, Dict, Literal
+from typing import Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
+
+from event.contracts import EventMetadata
 
 
 EventType = Literal["user_message", "system_tick", "reminder_trigger", "maintenance", "github_push", "github_pr", "github_issue", "github_workflow"]
 
 
-class Event(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid4()))
+class Event(EventMetadata):
+    """Stable consumer facade over the v1 event metadata contract."""
+    id: str = Field(default_factory=lambda: str(uuid4()), min_length=1, max_length=256)
     type: EventType
-    source: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    payload: Dict[str, Any] = Field(default_factory=dict)
-    correlation_id: str | None = None
-    status: str = "pending"
 
 
 class TraceRecord(BaseModel):

@@ -1,0 +1,11 @@
+{
+  "work_item": "EVT-00",
+  "scope": "isolated in-memory pre-fix reproduction",
+  "background_admitted_over_interactive": true,
+  "interactive_request_evicted": true,
+  "pending_removed_by_cleanup": true,
+  "first_terminal_overwritten": true,
+  "unknown_poll_http_status": 202,
+  "cleanup_reproduction": "Tracked pre-change registry, pending item aged 120 seconds, cleanup TTL 60 seconds. Initial same-clock-instant ttl=0 probe was inconclusive.",
+  "prechange_registry_source_sha256": "53a537fdfe2a858bebbb439087cb5bfee7e0f89223b2d19bdbf1fc16ac3b2a53"
+}

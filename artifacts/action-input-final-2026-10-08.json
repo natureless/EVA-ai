@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-08",
+  "python_exit_code": 0,
+  "elapsed_seconds": 296.8,
+  "isolation": "temporary storage; normal policy/source root; dotenv disabled; mock model; guarded multiprocessing entry point",
+  "production_feature_flags_changed": false,
+  "browser_visual_acceptance": false
+}

@@ -1,0 +1,432 @@
+{
+  "date": "2026-10-01",
+  "scope": "Codex in-app browser; synthetic UI fixture",
+  "layouts": [
+    {
+      "route": "/memory",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "light",
+      "width": 320,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "light",
+      "width": 768,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "light",
+      "width": 1440,
+      "bg": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "dark",
+      "width": 320,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "dark",
+      "width": 768,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/chat",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/settings",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/memory/list",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/mvsc",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/dashboard",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    },
+    {
+      "route": "/unavailable",
+      "theme": "dark",
+      "width": 1440,
+      "bg": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif",
+      "overflow": []
+    }
+  ],
+  "graphChange": {
+    "before": {
+      "selection": "模块化标识 · 1",
+      "stats": "75 节点 · 100 连接",
+      "zoom": "122%"
+    },
+    "after": {
+      "selection": "模块化标识 · 1",
+      "stats": "75 节点 · 100 连接",
+      "theme": "dark",
+      "zoom": "122%"
+    },
+    "requestsBefore": 2,
+    "requestsAfter": 2
+  },
+  "layoutMotion": "System reduced motion enabled to measure settled theme colors without transitional frames",
+  "preferenceChecks": {
+    "systemDark": {
+      "preference": "system",
+      "theme": "dark",
+      "saved": true
+    },
+    "systemLight": {
+      "preference": "system",
+      "theme": "light",
+      "saved": true
+    },
+    "explicitDarkUnderLightSystem": {
+      "preference": "dark",
+      "theme": "dark",
+      "saved": true
+    },
+    "chatNavigation": {
+      "preference": "dark",
+      "theme": "dark"
+    }
+  },
+  "storageFailure": {
+    "theme": "light",
+    "status": "主题已应用，但浏览器无法保存。"
+  },
+  "keyboardTier": {
+    "tag": "BUTTON",
+    "tier": "S2",
+    "title": "Browsing S2",
+    "version": "http://127.0.0.1:8779/static/memory_explorer.js?v=3"
+  },
+  "languageThemeLabel": "Switch to dark theme"
+}

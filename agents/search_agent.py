@@ -6,6 +6,7 @@ from typing import Any
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
+from core.chat_mode import configure_chat_llm
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ class SearchAgent(BaseAgent):
 
             # ── LLM summary ────────────────────────────────
             context = task.payload.get("context")
-            llm = get_llm()
+            llm = configure_chat_llm(get_llm(), task.payload.get("mode", "normal"))
             raw_output = "\n".join(matches[:15])
             summary = self._llm_summarize(llm, query, raw_output, files_scanned, truncated, context)
 
@@ -63,7 +64,7 @@ class SearchAgent(BaseAgent):
                 content=summary, summary=summary[:120],
                 meta={"query": query, "root": str(root), "matches": len(matches),
                       "files_scanned": files_scanned, "truncated": truncated,
-                      "llm_provider": llm.provider})
+                      "llm_provider": llm.provider, "mode_info": llm.mode_info})
 
         except Exception as e:
             logger.exception("search_agent error: %s", e)
@@ -72,7 +73,7 @@ class SearchAgent(BaseAgent):
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
     def _llm_summarize(self, llm: Any, query: Any, raw_output: Any, files_scanned: Any, truncated: Any, context: Any = None) -> str:
-        if isinstance(llm, MockLLM):
+        if isinstance(getattr(llm, "inner", llm), MockLLM):
             lines = "\n".join(raw_output.splitlines()[:20])
             return f"[search_agent] matches for '{query}' (scanned {files_scanned} files):\n{lines}"
 

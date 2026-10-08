@@ -1,0 +1,10 @@
+{
+  "candidateId": "ui-v1-20261008-g0-01",
+  "verifiedAt": "2026-10-08T12:55:39.739449+00:00",
+  "status": "passed",
+  "sourceHashesStillMatch": true,
+  "artifactReferencesExist": true,
+  "taskAndSurfaceMappingValid": true,
+  "allMarkdownFileLinksExist": true,
+  "scope": "G0 evidence only; no new product regression, browser or API execution"
+}

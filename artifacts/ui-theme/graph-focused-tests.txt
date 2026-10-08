@@ -1,0 +1,40 @@
+✔ theme changes recolor the existing graph without reloading, replacing focused nodes or moving the camera (33.6143ms)
+✔ goal mode renders real references, distinct outcomes and file evidence without invoking verification (8.8457ms)
+✔ goal detail loads earlier checks through a read-only paged request (5.4632ms)
+✔ goal actions are explicit, version-checked and refresh the evidence projection (5.3785ms)
+✔ mode switches fence stale memory, detail and goal responses and recover from disabled goals (4.593ms)
+✔ goal pagination failures retain the displayed page and search resets the offset (5.8023ms)
+✔ relation name selection synchronizes visible nodes, details and paths; reset preserves depth (3.1458ms)
+✔ refresh keeps an unavailable selected relation at zero instead of silently broadening the graph (2.7118ms)
+✔ neighbor pages add relation options while preserving the current exact filter and pagination (3.847ms)
+✔ a local two-step path opens exact relationship details and node navigation keeps its center (3.0288ms)
+✔ reverse path arrows preserve relationship direction and center selection needs no path (2.4508ms)
+✔ filtering and refresh discard paths that are no longer in the visible graph (4.3294ms)
+✔ relation details show stored direction and fields without treating weight as confidence (3.5255ms)
+✔ relation endpoints navigate to the exact node while retaining the local center (2.2547ms)
+✔ source reads use the edge reference and cannot update a reopened relation after close (1.9081ms)
+✔ source failures and timeouts stay retryable and do not claim a missing source was verified (1.779ms)
+✔ a relationship omitted by refresh closes its details without claiming database deletion (1.9173ms)
+✔ canvas relation clicks open details; dragging the same line pans instead (8.0826ms)
+✔ local inspection holds its anchor; expansion, recenter and back preserve exploration (2.9674ms)
+✔ local filters restore the anchor when the inspected neighbor is hidden; global camera returns (3.6455ms)
+✔ refresh preserves a distinct local anchor, chosen depth and navigation history (2.7359ms)
+✔ an omitted anchor returns to global while keeping an inspected node still in the projection (2.4688ms)
+✔ narrow-screen local mode can hide details without losing the center or reopening on late reads (2.1928ms)
+✔ database neighbors add unseen nodes, deduplicate pages and stop after the terminal page (2.8082ms)
+✔ late neighbor reads cannot overwrite another center or refreshed graph (4.0163ms)
+✔ neighbor failures retain data and retry the same page, while incomplete results stay explicit (2.5501ms)
+✔ manual refresh preserves zoom, pan, local selection and list position while rereading detail (4.0081ms)
+✔ node omitted by refresh clears selection without claiming the record was deleted (3.929ms)
+✔ failed refresh retains data and camera; later retry succeeds (5.1001ms)
+✔ new search resets the view; stale responses and pending debounce cannot overwrite it (3.6033ms)
+✔ switching selection aborts the old detail; timeout falls back to the latest summary (3.5623ms)
+✔ modal and hidden document stop drawing, including queued frames; closing resumes without duplicate loops (3.31ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 249.2699

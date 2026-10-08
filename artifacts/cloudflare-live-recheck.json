@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-09-19",
+  "configuration_check": "passed",
+  "scheduled_tasks": {
+    "EVA Cloudflare App": "Running",
+    "EVA Cloudflare Tunnel": "Running"
+  },
+  "origin": {
+    "address": "127.0.0.1:8000",
+    "process_listening": true
+  },
+  "cloudflared": {
+    "metrics": "127.0.0.1:20241",
+    "active_connections": 4,
+    "tunnel_status": "healthy"
+  },
+  "cloudflare_api": {
+    "access_app": "EVA Memory",
+    "access_hostname": "eva.bianhua.cc.cd",
+    "dns_record": {
+      "type": "CNAME",
+      "proxied": true,
+      "target": "4867f04c-f50e-475d-96e2-5986bca73239.cfargotunnel.com"
+    }
+  },
+  "public_unauthenticated": {
+    "/": 302,
+    "/api/memory/graph": 302
+  },
+  "browser_visual_verification": "not performed; browser control connection timed out"
+}

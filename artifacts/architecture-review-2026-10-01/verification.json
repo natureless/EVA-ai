@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-01",
+  "python": "3.11.9",
+  "exit_code": 0,
+  "elapsed_sec": 200.97,
+  "isolation": "temporary configured storage; MockLLM; dotenv disabled; optional features disabled unless test enables them",
+  "protected_default_files_unchanged": false,
+  "changed_protected_paths": [
+    "data/eva.db"
+  ],
+  "output": "artifacts/architecture-review-2026-10-01/pytest.txt",
+  "junit": "artifacts/architecture-review-2026-10-01/pytest.xml"
+}

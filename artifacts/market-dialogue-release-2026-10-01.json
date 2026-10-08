@@ -1,0 +1,174 @@
+{
+  "status": "deployed_and_verified",
+  "started_at": "2026-10-01T04:15:59.161285+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\market-dialogue-20261001T041559Z",
+  "source_hashes": {
+    "agents/chat_agent.py": "d245b6d47e456d4450f2a661ebb52f4c265f20dc371f7a0086ebb560bec5a5e6",
+    "tests/test_market_tool_dialogue.py": "b765d60cb94a56a6c923f1eb03bb32d2e2324a160c6082a83f3bd4dfaa16d663"
+  },
+  "database_backups": [
+    {
+      "name": "eva.db",
+      "integrity": "ok",
+      "sha256": "b8dd0902cfc8c085939dad50a6b8f5af3ef9bbee8438b5fd72aa8223efc58c19"
+    },
+    {
+      "name": "mvsc_event_store.db",
+      "integrity": "ok",
+      "sha256": "0ca0dd0c8e3cb66620722dc47e9382d911a25fb21f241676423e08ef77f8ecc9"
+    }
+  ],
+  "production": {
+    "old_pid": 29148,
+    "ready": true,
+    "source_check": {
+      "ok": true,
+      "data_kind": "daily_close",
+      "is_realtime": false,
+      "observations": [
+        {
+          "series": "SP500",
+          "as_of_date": "2026-09-30"
+        },
+        {
+          "series": "NASDAQCOM",
+          "as_of_date": "2026-09-30"
+        },
+        {
+          "series": "DJIA",
+          "as_of_date": "2026-09-30"
+        }
+      ]
+    },
+    "new_pid": 34428,
+    "origin_checks_passed": 13,
+    "origin_report": "artifacts/market-dialogue-origin-acceptance-2026-10-01.json",
+    "scheduled_tasks": {
+      "EVA Cloudflare App": "Running",
+      "EVA Cloudflare Tunnel": "Running"
+    },
+    "sample_numbers_match_independent_source": true
+  },
+  "chat_requests": [
+    {
+      "kind": "complex_chinese",
+      "source_event_id": "MARKET_DIALOGUE_4d79bbe16e304ef8a965febf4f1958e2",
+      "remember": false,
+      "started_at": "2026-10-01T04:18:00.734656+00:00",
+      "http_status": 200,
+      "task_id": "a58f81b8-8e4e-4b1a-b7aa-1f1d3afe8e3d",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "contract_checked",
+        "passed": true,
+        "fact_verified": false,
+        "findings": [
+          {
+            "code": "overconfident_inference",
+            "message": "助手推断的置信度可能过高",
+            "severity": "warning"
+          }
+        ]
+      },
+      "error": null,
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "0a461f12aa821cc1539d7557cb7e918c2ec4713d625ecdb751b30557817b14da"
+    },
+    {
+      "kind": "complex_english",
+      "source_event_id": "MARKET_DIALOGUE_10cd9cf6a2e647238bad30206c4bf1a6",
+      "remember": false,
+      "started_at": "2026-10-01T04:18:14.961401+00:00",
+      "http_status": 200,
+      "task_id": "f5c50143-c328-46bb-aa63-83b4710a6b62",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "contract_checked",
+        "passed": true,
+        "fact_verified": false,
+        "findings": []
+      },
+      "error": null,
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "fab1e74965c90188d2394107a9bab4612362c612c80c71ddbeefcff0fc17e5ee"
+    },
+    {
+      "kind": "ordinary_chinese",
+      "source_event_id": "MARKET_DIALOGUE_1507191eb022484f90808319fca2bbfd",
+      "remember": false,
+      "started_at": "2026-10-01T04:18:28.158642+00:00",
+      "http_status": 200,
+      "task_id": "ab5c06a6-25b1-4432-9c36-d9deda94a81d",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "contract_checked",
+        "passed": true,
+        "fact_verified": false,
+        "findings": [
+          {
+            "code": "overconfident_inference",
+            "message": "助手推断的置信度可能过高",
+            "severity": "warning"
+          },
+          {
+            "code": "overconfident_inference",
+            "message": "助手推断的置信度可能过高",
+            "severity": "warning"
+          },
+          {
+            "code": "overconfident_inference",
+            "message": "助手推断的置信度可能过高",
+            "severity": "warning"
+          }
+        ]
+      },
+      "error": null,
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "873735f7a3a499c107f7c88433a3936a68564be7586a0b831cb3ec3eb059ae24"
+    }
+  ],
+  "tests": {
+    "python_passed": 1672,
+    "python_skipped": 1,
+    "javascript_passed": 327,
+    "ruff": "passed"
+  },
+  "boundaries": [
+    "Daily close only; not intraday data.",
+    "Contract checks do not prove model analysis or market facts.",
+    "Public authenticated browser and phone interaction not verified."
+  ],
+  "before_restart": {
+    "queues": {
+      "pending_events": 0,
+      "pending_results": 0
+    },
+    "execution_idle": true
+  },
+  "snapshot_valid": true,
+  "shutdown": {
+    "old_pid": 29148,
+    "signal": "console_interrupt",
+    "graceful_shutdown_log_verified": true,
+    "forced_termination": false
+  },
+  "verified_at": "2026-10-01T04:20:46.315646+00:00",
+  "operational_test_events": {
+    "submitted": 3,
+    "succeeded": 3,
+    "remember": false,
+    "note": "Operational events remain; two direct source reads also created executor audit entries."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "originalMessageId": 48,
+  "busy": false,
+  "draft": "保留这个草稿",
+  "history": 0,
+  "id": 50,
+  "mode": "deep",
+  "order": 2,
+  "requests": [
+    {
+      "mode": "deep",
+      "remember": false,
+      "text": "Failure matrix {\"reduced\":true,\"language\":\"en\",\"theme\":\"dark\",\"mode\":\"deep\"}"
+    },
+    {
+      "mode": "deep",
+      "remember": false,
+      "text": "Failure matrix {\"reduced\":true,\"language\":\"en\",\"theme\":\"dark\",\"mode\":\"deep\"}"
+    }
+  ],
+  "selected": "normal",
+  "solved": true,
+  "status": "completed",
+  "taskId": "ui-preview-590e8b2818"
+}

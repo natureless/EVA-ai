@@ -4,29 +4,119 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ app_name }} · 设置</title>
-  <link rel="stylesheet" href="/static/main.css" />
+  <link rel="stylesheet" href="/static/main.css?v=8" />
+  <link rel="icon" href="/static/eva-favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/static/cube-geometry.css?v=2" />
+  <link rel="stylesheet" href="/static/brand-studio.css?v=12" />
+  <link rel="stylesheet" href="/static/ui-system.css?v=6" />
+  <script src="/static/ui-theme.js?v=1"></script>
 </head>
-<body>
+<body class="settings-studio" data-preview="{{ 'true' if preview_mode else 'false' }}">
+  <a class="workspace-skip" href="#studioContent" data-i18n="ui.skipSettings">跳到设置内容</a>
   <header class="topbar">
     <div class="topbar-left">
       <h1>{{ app_name }} <span class="ver">v0.1</span></h1>
-      <span class="sub" data-i18n="settings.heading">系统仪表盘</span>
+      <span class="sub" data-i18n="studio.settings">设置与品牌</span>
     </div>
     <div class="topbar-right">
+      {% if preview_mode %}<span class="badge">UI PREVIEW</span>{% else %}
       <span id="wsIndicator" class="badge disconnected">WS</span>
       <span id="autoRefresh" class="badge ok" data-i18n="settings.autoRefresh">自动刷新</span>
-      <a href="/" class="icon-btn" data-i18n-title="nav.backToChat" title="返回对话">
+      {% endif %}
+      <a href="/chat" class="icon-btn" data-i18n-title="nav.backToChat" title="返回对话">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
       </a>
-      <button id="langBtn" class="lang-btn" title="Switch Language / 切换语言">中</button>
-      <button id="themeBtn" class="icon-btn" data-i18n-title="btn.theme" title="切换深色/浅色模式">
+      <button id="langBtn" class="lang-btn" title="Switch Language / 切换语言" data-i18n-aria-label="ui.language">中</button>
+      <button id="themeBtn" class="icon-btn" title="切换深色/浅色模式">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-10-10h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
       </button>
     </div>
   </header>
 
   <div class="settings-page">
-    <main class="grid">
+
+    <nav class="settings-nav" aria-label="设置导航" data-i18n-aria-label="ui.settingsNav">
+      <a class="studio-home" href="/chat" data-i18n-aria-label="ui.chatHome"><img src="/static/eva-favicon.svg" alt="" /><span>EVA <small>OPEN POSSIBILITIES</small></span></a>
+      <div class="studio-nav-label" data-i18n="studio.workspace">工作空间</div>
+      <div role="tablist" aria-label="设置分类" aria-orientation="vertical" data-i18n-aria-label="ui.settingsCategories">
+        <button id="brandTab" type="button" role="tab" aria-selected="true" aria-controls="brandWorkspace" data-settings-tab="brand" data-i18n="studio.brand">品牌与 Logo</button>
+        <button id="runtimeTab" type="button" role="tab" tabindex="-1" aria-selected="false" aria-controls="runtimeWorkspace" data-settings-tab="runtime" data-i18n="studio.runtime">系统运行</button>
+      </div><p class="nav-footnote" data-i18n="studio.navNote">一个标准，贯穿每一次呈现。</p>
+    </nav>
+    <main class="studio-content" id="studioContent" tabindex="-1">
+    <div id="brandWorkspace" role="tabpanel" aria-labelledby="brandTab">
+      <div class="studio-page-heading"><div><span class="studio-eyebrow">IDENTITY / 01</span><h2 data-i18n="studio.heading">让每一种形态，都属于 EVA。</h2><p data-i18n="studio.description">预览标识、检验动效，取得适合产品使用的品牌资产。</p></div><button id="brandReset" type="button" class="studio-reset" data-i18n="studio.reset">恢复默认</button></div>
+      <nav class="studio-section-nav" aria-label="品牌页内导航" data-i18n-aria-label="ui.brandSections"><a href="#appearanceSettings" data-i18n="ui.appearance">外观</a><a href="#brandPreviewCard" data-i18n="studio.preview">标识预览</a><a href="#brandConfigCard" data-i18n="config.title">显示配置</a><a href="#brandAssetLibrary" data-i18n="studio.library">资产库</a><a href="#brandDelivery" data-i18n="ui.delivery">交付包</a></nav>
+      <section class="appearance-settings" id="appearanceSettings" tabindex="-1" aria-labelledby="appearanceHeading"><h3 id="appearanceHeading" data-i18n="theme.heading">统一外观</h3><p data-i18n="theme.description">记忆星图、对话、设置与运行界面使用同一主题。</p><label for="themePreference" data-i18n="theme.preference">主题模式</label><select id="themePreference" data-theme-preference><option value="system" data-i18n="theme.system">跟随系统</option><option value="light" data-i18n="theme.light">浅色</option><option value="dark" data-i18n="theme.dark">深色</option></select><p data-theme-status role="status" aria-live="polite"></p></section>
+      <section class="studio-preview-card" id="brandPreviewCard" tabindex="-1" aria-label="Logo 预览" data-i18n-aria-label="ui.logoPreview">
+        <div class="studio-card-top"><span data-i18n="studio.preview">标识预览</span><span class="studio-live" data-i18n="studio.engine">真实魔方状态</span></div>
+        <div class="brand-system-body">
+          <div class="brand-preview-panel">
+            <div class="brand-preview-stage cube-stage" id="brandPreviewStage" data-variant="primary" data-phase="5" data-static="false" data-solved="true">
+              <span class="clear-space-guide" aria-hidden="true"></span><img id="brandStaticMark" alt="EVA 魔方标识" data-i18n-alt="ui.logoAlt" />
+              <div class="cube-shadow" aria-hidden="true"></div>
+              <div class="cube-camera"><div class="cube-model"><div class="cube-rotor" id="brandRotor" aria-hidden="true"></div></div></div>
+            </div>
+            <div class="brand-preview-caption" id="brandPreviewCaption">L1 / DYNAMIC MASTER · 2 × 2</div>
+            <div class="brand-view-actions" role="group" aria-label="魔方视角" data-i18n-aria-label="ui.views">
+              <button type="button" data-brand-view="front" aria-pressed="false" data-i18n="studio.front">正面</button>
+              <button type="button" data-brand-view="side" aria-pressed="false" data-i18n="studio.side">侧面</button>
+              <button type="button" data-brand-view="top" aria-pressed="false" data-i18n="studio.top">顶部</button>
+              <button type="button" data-brand-view="iso" aria-pressed="true" data-i18n="studio.iso">三视角</button>
+              <button type="button" data-brand-view="oblique" aria-pressed="false" data-i18n="studio.oblique">斜视图</button>
+              <button type="button" data-brand-view="bottom" aria-pressed="false" data-i18n="studio.bottom">底部</button>
+            </div>
+            <div class="brand-preview-actions" role="group" aria-label="Logo 动效操作" data-i18n-aria-label="ui.logoControls">
+              <button type="button" class="brand-motion-btn" data-brand-motion="cycle" data-i18n="studio.cycle">演示一轮</button>
+              <button type="button" class="brand-motion-btn" data-brand-motion="continuous" data-i18n="studio.continuous">∞ 连续旋转</button>
+              <button type="button" class="brand-motion-btn" data-brand-motion="scramble" data-i18n="brand.scramble">打乱</button>
+              <button type="button" class="brand-motion-btn" data-brand-motion="solve" data-i18n="brand.solve">复原</button>
+              <button type="button" class="brand-motion-btn" id="brandPause" aria-pressed="false" disabled data-i18n="studio.pause">暂停</button>
+            </div><p id="brandMotionStatus" class="brand-motion-status" aria-live="off" data-i18n="studio.ready">标准状态</p><p id="brandMotionAnnouncement" class="sr-only" role="status" aria-live="polite"></p>
+            <div id="brandRecovery" class="brand-recovery" hidden><p id="brandRecoveryNote" role="status">动效已停止，暂用标准静态标识。动作记录已保留。</p><button type="button" id="brandRetry">重试动效</button></div>
+          </div>
+          <div class="brand-controls">
+            <h3 data-i18n="studio.configure">呈现方式</h3><p class="studio-help" data-i18n="studio.configureNote">选择场景，核心比例始终保持一致。</p>
+            <label class="brand-control-label" for="brandVariant" data-i18n="brand.variant">Logo 变体</label>
+            <select id="brandVariant" class="brand-select">
+              <option value="primary" data-i18n="brand.primary">Primary · 主标</option>
+              <option value="monochrome" data-i18n="brand.monochrome">Monochrome · 单色</option>
+              <option value="dark" data-i18n="brand.dark">Dark · 深色背景</option>
+              <option value="light" data-i18n="brand.light">Light · 浅色背景</option>
+              <option value="favicon" data-i18n="brand.favicon">Favicon · 微标</option>
+            </select>
+
+            <label class="brand-control-label" for="brandOrder" data-i18n="studio.order">结构</label>
+            <select id="brandOrder" class="brand-select"><option value="2" data-i18n="studio.two">二阶 · 正常对话</option><option value="3" data-i18n="studio.three">三阶 · 深度思考</option></select>
+            <label class="studio-switch"><span data-i18n="studio.static">静态标识</span><input id="brandStatic" type="checkbox" /></label>
+            <label class="studio-switch"><span data-i18n="studio.reduce">减少动态效果</span><input id="brandReduced" type="checkbox" /></label>
+            <p class="studio-help" data-i18n="studio.systemMotion">遵循系统的减少动态效果偏好。</p><details class="studio-token-details"><summary data-i18n="ui.geometryDetails">查看标准几何参数</summary><dl class="brand-token-grid" id="brandTokenGrid"></dl></details>
+          </div>
+        </div>
+        <div class="studio-preview-footer"><span data-i18n="studio.exportNote">导出使用已复原的标准标识。</span><div class="studio-export-controls"><label for="brandPngSize" data-i18n="studio.pngSize">PNG 尺寸</label><select id="brandPngSize"><option value="256">256px</option><option value="512">512px</option><option value="1024" selected>1024px</option><option value="2048">2048px</option></select><button id="brandExportSvg" type="button">↓ SVG</button><button id="brandExportPng" type="button">↓ PNG</button><button id="brandExportTokens" type="button">↓ Tokens</button></div></div>
+      </section><p id="brandFeedback" role="status" class="studio-feedback"></p>
+      <section id="brandConfigCard" tabindex="-1" class="studio-config-card" aria-labelledby="brandConfigHeading">
+        <div class="studio-section-title"><h3 id="brandConfigHeading" data-i18n="config.title">显示配置</h3><button id="brandConfigExport" class="quiet-button" type="button" data-i18n="config.export">导出配置</button></div>
+        <p class="studio-help" data-i18n="config.help">读取或粘贴 JSON，先检查差异，再应用到预览。</p>
+        <label class="brand-control-label" for="brandConfigFile" data-i18n="config.file">读取 JSON 文件</label><input id="brandConfigFile" type="file" accept=".json,application/json" />
+        <label class="brand-control-label" for="brandConfigInput" data-i18n="config.json">配置 JSON</label><textarea id="brandConfigInput" rows="5" maxlength="65536" spellcheck="false" placeholder="{ … }" aria-describedby="brandConfigStatus"></textarea>
+        <div class="studio-config-actions"><button id="brandConfigPreview" class="quiet-button" type="button" data-i18n="config.preview">预览差异</button><button id="brandConfigUndo" class="quiet-button" type="button" disabled data-i18n="config.undo">撤销上一次变更</button></div>
+        <div id="brandConfigReview" tabindex="-1" role="region" aria-labelledby="brandConfigReviewHeading" hidden><h4 id="brandConfigReviewHeading" data-i18n="config.review">待应用的变更</h4><table class="studio-config-diff"><thead><tr><th scope="col" data-i18n="config.field">设置</th><th scope="col" data-i18n="config.current">当前</th><th scope="col" data-i18n="config.incoming">导入</th></tr></thead><tbody id="brandConfigDiff"></tbody></table><p id="brandConfigNoChanges" class="studio-help" data-i18n="config.noChanges">配置与当前一致，无需应用。</p><p id="brandConfigSystemNote" class="studio-help" hidden data-i18n="config.system">系统已启用减少动态效果，导入的个人偏好不会覆盖系统设置。</p><div class="studio-config-actions"><button id="brandConfigApply" class="quiet-button" type="button" disabled data-i18n="config.apply">应用此配置</button><button id="brandConfigCancel" class="quiet-button" type="button" data-i18n="config.cancel">取消审阅</button></div></div>
+        <p id="brandConfigStatus" class="studio-feedback" role="status" aria-live="polite"></p>
+      </section>
+      <section class="studio-assets" id="brandAssetLibrary" tabindex="-1" aria-label="品牌资产" data-i18n-aria-label="ui.brandAssets"><div class="studio-section-title"><h3 data-i18n="studio.library">资产库</h3><span data-i18n="studio.libraryNote">按场景选择，按比例使用。</span></div><div class="asset-grid">
+        <article class="asset-tile"><button class="asset-image" type="button" data-brand-select="primary" aria-label="Primary" data-i18n-aria-label="brand.primary"><img data-brand-asset="primary" alt="" /></button><h4>Primary</h4><p data-i18n="studio.master">L1 / 完整主标 · 160px+</p></article>
+        <article class="asset-tile"><button class="asset-image" type="button" data-brand-select="monochrome" aria-label="Monochrome" data-i18n-aria-label="brand.monochrome"><img data-brand-asset="monochrome" alt="" /></button><h4>Monochrome</h4><p data-i18n="studio.product">L2 / 单色产品标识 · 48–160px</p></article>
+        <article class="asset-tile"><button class="asset-image dark-surface" type="button" data-brand-select="dark" aria-label="Dark" data-i18n-aria-label="brand.dark"><img data-brand-asset="dark" alt="" /></button><h4>Dark</h4><p data-i18n="studio.dark">L2 / 深色背景标识</p></article>
+        <article class="asset-tile"><button class="asset-image micro" type="button" data-brand-select="favicon" aria-label="Micro mark" data-i18n-aria-label="brand.favicon"><img data-brand-asset="favicon" alt="" /></button><h4>Micro mark</h4><p data-i18n="studio.micro">L3 / 微型标识 · 16–48px</p></article>
+      </div></section>
+      <section class="studio-delivery-card" id="brandDelivery" tabindex="-1" aria-labelledby="brandPackageHeading">
+        <div><span class="studio-eyebrow">DELIVERY / 02</span><h3 id="brandPackageHeading" data-i18n="studio.package">品牌交付包</h3><p data-i18n="studio.packageNote">全部变体与视角、当前 PNG、微标及动态组件，一次取得。</p><p id="brandPackageSummary" class="studio-package-summary"></p><p id="brandPackageVersion" class="studio-package-summary"></p><p id="brandSelectionSummary" class="studio-selection-summary"></p><p id="brandPackageSelection" class="studio-selection-summary" hidden></p><p id="brandPackageFreshness" class="studio-help" role="status" aria-live="polite" hidden></p></div>
+        <div class="studio-delivery-action"><button id="brandExportPackage" type="button" data-i18n="studio.packageDownload">↓ 下载交付包 · ZIP</button><br /><a id="brandPackageSave" hidden>保存已生成的 ZIP</a><p id="brandPackageStatus" role="status" aria-live="polite"></p></div>
+      </section>
+      <section class="studio-guidelines"><div><span class="studio-eyebrow">USAGE / 03</span><h3 data-i18n="studio.rules">保持一致，也保留变化。</h3><p data-i18n="studio.rulesNote">留白至少为标识宽度的 25%，整体等比缩放。小尺寸使用简化微标。</p><p data-i18n="studio.forbidden">禁止拉伸、独立缩放模块、修改间隙或添加霓虹与复杂纹理。</p></div><details><summary data-i18n="studio.journal">查看逆序复原记录</summary><output id="brandJournal">—</output><p data-i18n="studio.journalNote">复原严格撤销已完成动作，切换结构前先恢复标准状态。</p></details></section>
+    </div>
+    <div id="runtimeWorkspace" role="tabpanel" aria-labelledby="runtimeTab" hidden><div class="studio-page-heading"><div><span class="studio-eyebrow">SYSTEM / 02</span><h2 data-i18n="studio.runtime">系统运行</h2></div></div><div class="grid">
       <!-- Policy -->
       <section class="card">
         <div class="card-header" data-card="policy">
@@ -114,11 +204,22 @@
           <div id="agentsPanel" class="kv-grid"></div>
         </div>
       </section>
-    </main>
+    </div></div></main>
   </div>
 
-  <script src="/static/i18n.js"></script>
-  <script src="/static/nav.js"></script>
-  <script src="/static/settings.js"></script>
+  <script src="/static/i18n.js?v=9"></script>
+  <script src="/static/nav.js?v=3"></script>
+  <script src="/static/ui-workspace.js?v=3"></script>
+  <script src="/static/ui-sections.js?v=1"></script>
+  <script src="/static/logo-tokens.js?v=4"></script>
+  <script src="/static/cube-state.js?v=2"></script>
+  <script src="/static/cube-animator.js?v=5"></script>
+  <script src="/static/cube-logo.js?v=3"></script>
+  <script src="/static/brand-assets.js?v=3"></script>
+  <script src="/static/brand-identity.js?v=5"></script>
+  <script src="/static/brand-package.js?v=5"></script>
+  <script src="/static/brand-config.js?v=1"></script>
+  <script src="/static/brand-system.js?v=12"></script>
+  <script src="/static/settings.js?v=3"></script>
 </body>
 </html>

@@ -1,0 +1,165 @@
+{
+  "status": "deployed_and_verified",
+  "started_at": "2026-10-01T03:54:17.170070+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\market-snapshot-20261001T035417Z",
+  "source_hashes": {
+    "agents/chat_agent.py": "7ddd51fb20c9588cde77084aaa9a1b00d4d89a9da6950f0503412af7beccb879",
+    "core/market_snapshot.py": "5045e891ac47fe3945d421d7ca873ca0a5eae084d0dc91d07199e07dce8d760a",
+    "core/tool_registry.py": "ba2bba9f530585201b00f1d7362e61702228421a6db3078aa9503842ec7db1a8",
+    "core/executor.py": "71ad768fbabe39731fa8ae7072fce97177585713cb1ec7fcc7c6a0c51cef8d55",
+    "app/config.py": "04422f12ed162b36d2d17e4e4e5ca82dea76cd17b5a78d1a255bad9aed539392",
+    "app/bootstrap.py": "85e4aa0b9406e1ec138958e8f2b1d6b9a96bb34be07f90dc0c7278a74fe7d9cf",
+    "app/composition.py": "08dadf50b11dfc108b414589c9180a0eb46a1d486b5804eaf9b4c843bd204f85",
+    ".env.example": "d162b7aa3cce1a27c77a4a8c37418b0f4433acf55a016b289d0483fa4bc402ed",
+    "tests/test_market_snapshot.py": "3c9fde8d6a269f7d4db98903caebdef7d547d5d4db01a97d64586cc46ca806a6"
+  },
+  "database_backups": [
+    {
+      "name": "eva.db",
+      "integrity": "ok",
+      "sha256": "b4b0e14589e941f3a8a94ea1492b74b0d03343cd3336f9191f1b5e2dbbe4d2c6"
+    },
+    {
+      "name": "mvsc_event_store.db",
+      "integrity": "ok",
+      "sha256": "0ca0dd0c8e3cb66620722dc47e9382d911a25fb21f241676423e08ef77f8ecc9"
+    }
+  ],
+  "production": {
+    "old_pid": 14340,
+    "source_check": {
+      "ok": true,
+      "generic_web_tools_enabled": false,
+      "observations": [
+        {
+          "series": "SP500",
+          "as_of_date": "2026-09-30",
+          "previous_date": "2026-09-29",
+          "stale": false
+        },
+        {
+          "series": "NASDAQCOM",
+          "as_of_date": "2026-09-30",
+          "previous_date": "2026-09-29",
+          "stale": false
+        },
+        {
+          "series": "DJIA",
+          "as_of_date": "2026-09-30",
+          "previous_date": "2026-09-29",
+          "stale": false
+        }
+      ],
+      "retrieved_at": "2026-10-01T03:57:58.055644+00:00"
+    },
+    "new_pid": 29148,
+    "origin_checks_passed": 13,
+    "origin_report": "artifacts/us-market-origin-acceptance-2026-10-01.json",
+    "scheduled_tasks": {
+      "EVA Cloudflare App": "Running",
+      "EVA Cloudflare Tunnel": "Running"
+    }
+  },
+  "capability": {
+    "provider": "FRED",
+    "data_kind": "daily_close",
+    "is_realtime": false,
+    "generic_web_tools_enabled": false
+  },
+  "chat_requests": [
+    {
+      "kind": "daily_close_chinese",
+      "source_event_id": "MARKET_SNAPSHOT_a5f6100949d44ca09646fc1d8ab7f439",
+      "remember": false,
+      "started_at": "2026-10-01T03:57:58.111778+00:00",
+      "http_status": 200,
+      "task_id": "fb800fce-da95-44f7-8837-0937ce879663",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "contract_checked",
+        "passed": true,
+        "fact_verified": false,
+        "findings": []
+      },
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "7017c529d1b3a9466f4e223bd7256bf368cfbe94131fddb6b6dcc904e3a20b23"
+    },
+    {
+      "kind": "daily_close_english",
+      "source_event_id": "MARKET_SNAPSHOT_7e22d277aae54b8187314fc9f6069e54",
+      "remember": false,
+      "started_at": "2026-10-01T03:58:04.139643+00:00",
+      "http_status": 200,
+      "task_id": "40e37210-b5bf-4179-9e05-36b4854d28b5",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "contract_checked",
+        "passed": true,
+        "fact_verified": false,
+        "findings": []
+      },
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "75dcbd11861088e98979e41d7a70b48daa13ec793cf1abd90cdebc30c84725bc"
+    },
+    {
+      "kind": "unrelated_capability_boundary",
+      "source_event_id": "MARKET_SNAPSHOT_e1063de52005428b9fd1aa91b4bf03f7",
+      "remember": false,
+      "started_at": "2026-10-01T03:58:07.957617+00:00",
+      "http_status": 200,
+      "task_id": "86c7b2e3-469c-4003-9ec3-cbc1abfbbc79",
+      "completed": true,
+      "terminal_state": "succeeded",
+      "sse_done": true,
+      "review": {
+        "schema_version": 1,
+        "status": "not_assessed",
+        "passed": null,
+        "fact_verified": false,
+        "findings": []
+      },
+      "behavior_matches": true,
+      "sse_poll_matches": true,
+      "reply_sha256": "4a46e752c8d27b4b47509e573f51d388258c5eaa6879b7ce73ef51751a65bac2"
+    }
+  ],
+  "boundaries": [
+    "Daily closing data, not live intraday quotes.",
+    "Public authenticated browser and phone interaction not verified by origin checks."
+  ],
+  "before_restart": {
+    "queues": {
+      "pending_events": 0,
+      "pending_results": 0
+    },
+    "execution_idle": true
+  },
+  "tests": {
+    "python_passed": 1652,
+    "python_skipped": 1,
+    "javascript_passed": 327,
+    "targeted_market_executor_chat_passed": 232,
+    "ruff": "passed"
+  },
+  "shutdown": {
+    "old_pid": 14340,
+    "signal": "console_interrupt",
+    "graceful_shutdown_log_verified": true,
+    "forced_termination": false
+  },
+  "verified_at": "2026-10-01T04:00:17.499405+00:00",
+  "operational_test_events": {
+    "submitted": 3,
+    "succeeded": 3,
+    "remember": false,
+    "note": "Operational event records remain even with remember=false. A separate direct tool check also produced an executor audit entry."
+  }
+}

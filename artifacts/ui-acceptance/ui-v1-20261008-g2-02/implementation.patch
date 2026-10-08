@@ -1,0 +1,210 @@
+--- a/ui/web/static/chat.js
++++ b/ui/web/static/chat.js
+@@ -9,6 +9,8 @@
+   _settleTimer: null,
+   _responseGeneration: 0,
+   _messageSequence: 0,
++  _inputLengthError: null,
++  _maxMessageCharacters: 4000,
+ 
+   init() {
+     this._messages = [];
+@@ -20,6 +22,7 @@
+     window.addEventListener("lang-changed", () => {
+       this._rerenderMessages();
+       this._actionFeedback("");
++      this._renderInputError();
+       if (this._wsState) this._setWsIndicator(this._wsState);
+       this._renderDeliveryStatus();
+     });
+@@ -165,11 +168,19 @@
+       }
+     });
+ 
++    input.addEventListener("input", () => {
++      if (this._inputLengthError === null) return;
++      const count = Array.from(input.value.trim()).length;
++      this._inputLengthError = count > this._maxMessageCharacters ? count : null;
++      this._renderInputError();
++    });
++
+     form.addEventListener("submit", async (e) => {
+       e.preventDefault();
+       if (this._sending) return;
+       const text = input.value.trim();
+       if (!text) return;
++      if (!this._validateSubmission(text, input)) return;
+       const mode = ParticleController.getConversationMode?.() === "deep" ? "deep" : "normal";
+       input.value = "";
+       input.style.height = "auto";
+@@ -184,6 +195,7 @@
+ 
+   async _submit(text, mode, stream, remember = false) {
+     if (this._sending) return false;
++    if (!this._validateSubmission(text)) return false;
+     this._sending = true;
+     const generation = this._beginResponse();
+     const button = document.getElementById("sendBtn");
+@@ -205,6 +217,40 @@
+   },
+ 
+   _t(zh, en) { return typeof I18N !== "undefined" && I18N.lang?.() === "en" ? en : zh; },
++
++  _inputLimitText(count) {
++    const length = count.toLocaleString("en-US");
++    return this._t(`每条消息最多 4,000 个字符，当前为 ${length} 个。请精简后再发送；完整草稿已保留。`,
++      `Messages can contain up to 4,000 characters; this message has ${length}. Shorten it before sending. Your complete draft has been kept.`);
++  },
++
++  _validateSubmission(text, input = null) {
++    // Pydantic counts Unicode code points; JS string.length counts UTF-16 units.
++    const count = Array.from(text).length;
++    if (count <= this._maxMessageCharacters) {
++      if (input) { this._inputLengthError = null; this._renderInputError(); }
++      return true;
++    }
++    if (input) {
++      this._inputLengthError = count;
++      this._renderInputError();
++      input.focus?.();
++    } else this._actionFeedback(this._inputLimitText(count));
++    return false;
++  },
++
++  _renderInputError() {
++    if (typeof document === "undefined") return;
++    const input = document.getElementById("chatInput");
++    const feedback = document.getElementById("chatInputFeedback");
++    const invalid = this._inputLengthError !== null;
++    if (invalid) input?.setAttribute?.("aria-invalid", "true");
++    else input?.removeAttribute?.("aria-invalid");
++    if (feedback) {
++      feedback.hidden = !invalid;
++      feedback.textContent = invalid ? this._inputLimitText(this._inputLengthError) : "";
++    }
++  },
+ 
+   _createReply(text, mode, stream, responseGeneration) {
+     const message = { id: ++this._messageSequence, role: "eva", text: "", mode, time: Date.now(),
+@@ -314,8 +360,9 @@
+ 
+   async _retryMessage(message) {
+     if (this._sending || message.retried || !message.request || !["failed", "rejected"].includes(message.status)) return false;
++    const { text, mode, stream } = message.request;
++    if (!this._validateSubmission(text)) return false;
+     message.retried = true;
+-    const { text, mode, stream } = message.request;
+     // A retry is a new explicit write; never inherit memory consent or the draft.
+     return this._submit(text, mode, stream, false);
+   },
+--- a/ui/web/static/cube-chat.css
++++ b/ui/web/static/cube-chat.css
+@@ -120,6 +120,7 @@
+ .chat-mode-controls button[aria-pressed="true"] { background:var(--surface); border-color:var(--border); color:var(--text); }
+ .chat-mode-controls button:hover,.cube-order-controls button:hover { color:var(--text); }
+ .chat-mode-hint { font-size:10px; color:var(--dim); line-height:1.6; margin:-4px 2px 10px; }
++.cube-chat .chat-input-feedback { color:var(--ui-danger); margin-top:8px; }
+ .message-mode { color:var(--tertiary); font-family:inherit; font-size:9px; font-weight:400; }
+ .message-strategy { color:var(--dim); font-family:inherit; font-size:9px; font-weight:400; }
+ .cube-chat .chat-form { border:1px solid var(--border); border-radius:12px; padding:16px 16px 12px; gap:15px; background:var(--bg); transition:border-color .2s,box-shadow .2s; }
+--- a/ui/web/templates/chat.html
++++ b/ui/web/templates/chat.html
+@@ -8,7 +8,7 @@
+   <link rel="stylesheet" href="/static/main.css?v=8" />
+   <link rel="icon" type="image/svg+xml" href="/static/eva-favicon.svg" />
+   <link rel="stylesheet" href="/static/cube-geometry.css?v=2" />
+-  <link rel="stylesheet" href="/static/cube-chat.css?v=12" />
++  <link rel="stylesheet" href="/static/cube-chat.css?v=13" />
+   <link rel="stylesheet" href="/static/ui-system.css?v=6" />
+   <script src="/static/ui-theme.js?v=1"></script>
+ </head>
+@@ -101,9 +101,11 @@
+           <div id="cubeModeStatus" class="sr-only" role="status" aria-live="polite">正常对话 · 二阶动效</div>
+           <form class="chat-form" id="chatForm">
+             <label class="sr-only" for="chatInput" data-zh="发送给 EVA 的消息" data-en="Message EVA">发送给 EVA 的消息</label>
+-            <textarea id="chatInput" placeholder="说说你的想法…" rows="2" maxlength="32000"></textarea>
++            <textarea id="chatInput" placeholder="说说你的想法…" rows="2" maxlength="32000" aria-describedby="chatInputLimit chatInputFeedback"></textarea>
+             <div class="composer-actions"><label class="remember-option" title="仅将本条消息作为用户陈述存入长期记忆" data-i18n-title="ui.memoryHint"><input type="checkbox" id="rememberToggle"><svg><use href="#i-memory"/></svg><span data-zh="记住这条消息" data-en="Remember this message">记住这条消息</span></label><button type="submit" class="send-btn" id="sendBtn" aria-label="发送消息" title="发送消息">↑</button></div>
+           </form>
++          <p id="chatInputFeedback" class="chat-mode-hint chat-input-feedback" role="status" aria-live="polite" hidden></p>
++          <p id="chatInputLimit" class="chat-mode-hint" data-zh="每条消息最多 4,000 个字符；长草稿可保留。" data-en="Up to 4,000 characters per message. Longer drafts can be kept.">每条消息最多 4,000 个字符；长草稿可保留。</p>
+           <div class="composer-meta"><label class="stream-option"><input type="checkbox" id="streamToggle" checked><span data-zh="流式回复" data-en="Stream replies">流式回复</span></label><span data-zh="Enter 发送 · Shift + Enter 换行" data-en="Enter to send · Shift + Enter for a new line">Enter 发送 · Shift + Enter 换行</span></div>
+           <div class="dialogue-footer">{% if preview_mode %}<span data-zh="交互预览 · 未连接模型" data-en="UI preview · No model connected">交互预览 · 未连接模型</span>{% else %}<span id="runtimeStatus" role="status">运行模式：读取中</span>{% endif %}<span class="footer-wordmark">EVA / OPEN POSSIBILITIES</span></div>
+         </div>
+@@ -121,7 +123,7 @@
+   <script src="/static/cube-avatar.js?v=9"></script>
+   <script src="/static/http.js?v=1"></script>
+   <script src="/static/ui-reading.js?v=1"></script>
+-  <script src="/static/chat.js?v=18"></script>
++  <script src="/static/chat.js?v=19"></script>
+   <script src="/static/runtime_status.js?v=2"></script>
+ </body>
+ </html>
+--- /dev/null
++++ b/tests/js/test_chat_input.cjs
+@@ -0,0 +1,65 @@
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const {test} = require('node:test');
++
++function harness(stream = true) {
++  const node = () => ({value:'',style:{},attrs:{},events:{},hidden:true,textContent:'',
++    setAttribute(k,v){this.attrs[k]=v;},removeAttribute(k){delete this.attrs[k];},
++    addEventListener(k,fn){this.events[k]=fn;},focus(){this.focused=true;}});
++  const ids = Object.fromEntries(['chatForm','chatInput','sendBtn','rememberToggle',
++    'streamToggle','chatInputFeedback','chatActionFeedback'].map(id=>[id,node()]));
++  ids.streamToggle.checked=stream;ids.rememberToggle.checked=true;
++  let lang='zh';const calls=[];
++  const context={document:{getElementById:id=>ids[id]||null},Event,
++    I18N:{lang:()=>lang},ParticleController:{getConversationMode:()=> 'deep',setResponding(mode){calls.push({kind:'motion',mode});}}};
++  const source=fs.readFileSync(path.join(__dirname,'../../ui/web/static/chat.js'),'utf8');
++  vm.runInNewContext(source.slice(0,source.indexOf('// ── Init'))+'\nthis.chat=Chat;',context);
++  const chat=context.chat;chat._renderMessages=()=>{};
++  chat._addMessage=(role,text,mode)=>calls.push({kind:'message',role,text,mode});
++  chat._sendStream=chat._sendViaWS=async(text,remember,generation,mode)=>calls.push({kind:'request',text,remember,mode});
++  chat._bindForm();
++  return {chat,ids,calls,submit:()=>ids.chatForm.events.submit({preventDefault(){}}),
++    english(){lang='en';chat._renderInputError();}};
++}
++
++for(const stream of [false,true]) test(`${stream?'SSE':'WS'} oversize submission preserves draft and consent without starting response`,async()=>{
++  const h=harness(stream);const draft='界'.repeat(4001);h.ids.chatInput.value=draft;
++  await h.submit();
++  assert.equal(h.ids.chatInput.value,draft);
++  assert.equal(h.ids.rememberToggle.checked,true);
++  assert.equal(h.calls.length,0);
++  assert.equal(h.ids.chatInput.attrs['aria-invalid'],'true');
++  assert.equal(h.ids.chatInputFeedback.hidden,false);
++  assert.match(h.ids.chatInputFeedback.textContent,/4,000/);
++  assert.match(h.ids.chatInputFeedback.textContent,/4,001/);
++  assert.equal(h.ids.chatInput.focused,true);
++  h.english();assert.match(h.ids.chatInputFeedback.textContent,/draft.*kept/i);
++});
++
++test('4000 Unicode code points can be sent despite using 8000 UTF-16 units',async()=>{
++  const h=harness();const text='🙂'.repeat(4000);h.ids.chatInput.value=text;
++  await h.submit();
++  const request=h.calls.find(c=>c.kind==='request');
++  assert.equal(request.text,text);assert.equal(request.remember,true);assert.equal(request.mode,'deep');
++  assert.equal(h.ids.chatInput.value,'');assert.equal(h.ids.rememberToggle.checked,false);
++});
++
++test('editing an oversized draft clears its error once the sent text is within the limit',async()=>{
++  const h=harness();h.ids.chatInput.value='界'.repeat(4001);await h.submit();
++  h.ids.chatInput.value='界'.repeat(4000);h.ids.chatInput.events.input();
++  assert.equal(h.ids.chatInput.attrs['aria-invalid'],undefined);
++  assert.equal(h.ids.chatInputFeedback.hidden,true);
++  assert.equal(h.calls.length,0);assert.equal(h.ids.rememberToggle.checked,true);
++});
++
++test('direct submission and explicit retry cannot bypass the server length contract',async()=>{
++  const h=harness();h.ids.chatInput.value='保留正在编辑的草稿';
++  const text='界'.repeat(4001);
++  assert.equal(await h.chat._submit(text,'deep',true),false);
++  const old={status:'rejected',request:{text,mode:'deep',stream:false}};
++  assert.equal(await h.chat._retryMessage(old),false);
++  assert.notEqual(old.retried,true);assert.equal(h.calls.length,0);
++  assert.equal(h.ids.chatInput.value,'保留正在编辑的草稿');
++});

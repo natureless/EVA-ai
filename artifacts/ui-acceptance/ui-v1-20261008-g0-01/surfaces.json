@@ -1,0 +1,671 @@
+{
+  "candidateId": "ui-v1-20261008-g0-01",
+  "surfaces": [
+    {
+      "surfaceId": "COMMON-01",
+      "page": "*",
+      "title": "共享主题",
+      "members": [
+        "themeBtn",
+        "themePreference"
+      ],
+      "states": "系统／浅／深；保存失败；跨页面更新",
+      "focus": "原按钮／下拉；不更改业务焦点",
+      "effect": "本地偏好写入，无业务 API",
+      "tasks": [
+        "G1-04",
+        "G2-07",
+        "G4-02"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "COMMON-02",
+      "page": "*",
+      "title": "共享语言",
+      "members": [
+        "langBtn"
+      ],
+      "states": "中／英；存储不可用",
+      "focus": "原语言按钮，状态文案刷新",
+      "effect": "本地语言偏好",
+      "tasks": [
+        "G1-04",
+        "G2-07",
+        "G4-02"
+      ],
+      "gate": "仅含语言控制器的页面；MAP／MVSC／PROMPT 无该入口",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "page": "*",
+      "title": "页面导航与跳转",
+      "members": [],
+      "states": "常规导航／跳到内容",
+      "focus": "原生链接；跳转目标",
+      "effect": "导航，本身不提交业务请求",
+      "tasks": [
+        "G1-04",
+        "G2-07"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-01",
+      "page": "CHAT",
+      "title": "输入与提交",
+      "members": [
+        "chatForm",
+        "chatInput",
+        "rememberToggle",
+        "sendBtn",
+        "streamToggle"
+      ],
+      "states": "草稿／输入法组合／提交／接纳／拒绝／未确认",
+      "focus": "输入与消息焦点；发送不丢草稿",
+      "effect": "POST 提交任务；remember 可写长期记忆",
+      "tasks": [
+        "G2-02",
+        "G2-03",
+        "G1-06"
+      ],
+      "gate": "always",
+      "sourceRefs": [
+        {
+          "path": "ui/web/static/chat.js",
+          "line": 632
+        },
+        {
+          "path": "app/api_routes/routes_chat.py",
+          "line": 32
+        }
+      ]
+    },
+    {
+      "surfaceId": "CHAT-02",
+      "page": "CHAT",
+      "title": "正常／深度模式",
+      "members": [],
+      "states": "能力读取／normal／deep／下一请求选择",
+      "focus": "模式按钮，当前请求模式固定",
+      "effect": "GET 能力；提交时固定 mode",
+      "tasks": [
+        "G2-02",
+        "G2-03"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-03",
+      "page": "CHAT",
+      "title": "回答、复制、重发与查询",
+      "members": [
+        "chatMessages",
+        "chatLatest"
+      ],
+      "states": "长答／代码／等待／完成／已知失败／未知／迟到终态",
+      "focus": "操作移除时原消息；回到最新定位末条",
+      "effect": "剪贴板；GET 原结果；显式重发 POST 新任务",
+      "tasks": [
+        "G2-03",
+        "G1-05"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "page": "CHAT",
+      "title": "魔方演示、模型、视角与演变",
+      "members": [
+        "cubePanel",
+        "cubeDisclosure",
+        "cubeDetails",
+        "cubeOrderControls",
+        "cubeStage",
+        "resetCube",
+        "playEvolution",
+        "cubeInspector"
+      ],
+      "states": "双阶／六视角／连续／折叠／暂停／复原／减少动态",
+      "focus": "折叠与 Esc 回到展开按钮，Home 复位",
+      "effect": "本地展示和合法动作，无任务提交",
+      "tasks": [
+        "G3-02",
+        "G3-03",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-05",
+      "page": "CHAT",
+      "title": "魔方错误恢复",
+      "members": [
+        "cubeRecovery",
+        "cubeRetry"
+      ],
+      "states": "静态替代／重试／再次失败／恢复",
+      "focus": "重试入口保持可达",
+      "effect": "保留状态日志，重建呈现器并逆序，不重发对话",
+      "tasks": [
+        "G2-03",
+        "G3-02",
+        "G3-03"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-06",
+      "page": "CHAT",
+      "title": "建议卡与空对话",
+      "members": [
+        "chatEmpty"
+      ],
+      "states": "空／填入建议／重复／长度反馈",
+      "focus": "填入输入框；保留草稿",
+      "effect": "仅编辑本地草稿",
+      "tasks": [
+        "G1-06",
+        "G2-03"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "CHAT-07",
+      "page": "CHAT",
+      "title": "连接、运行与终态",
+      "members": [
+        "wsIndicator",
+        "runtimeStatus"
+      ],
+      "states": "连接中／连通／失败／登录更新／运行读取",
+      "focus": "独立状态区域；无逐 token 播报",
+      "effect": "WS 订阅与 GET 观察",
+      "tasks": [
+        "G2-02",
+        "G2-07",
+        "G1-05"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-01",
+      "page": "SET",
+      "title": "设置分类与页内定位",
+      "members": [
+        "brandTab",
+        "runtimeTab"
+      ],
+      "states": "分类切换／五区定位／阅读位置／窄屏换行",
+      "focus": "方向键 Home End；锚点原生焦点",
+      "effect": "本地呈现；切运行标签暂停预览",
+      "tasks": [
+        "G1-04",
+        "G2-07"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-02",
+      "page": "SET",
+      "title": "品牌预览与偏好",
+      "members": [
+        "brandPreviewCard",
+        "brandReset",
+        "brandRecovery",
+        "brandRetry"
+      ],
+      "states": "变体／双阶／视角／静态／减少动态／复原事务／错误",
+      "focus": "原控件；错误可重试",
+      "effect": "本地存储；必要时合法复原",
+      "tasks": [
+        "G1-04",
+        "G3-02",
+        "G3-03"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-03",
+      "page": "SET",
+      "title": "配置读入、审阅、取消、应用与撤销",
+      "members": [
+        "brandConfigCard"
+      ],
+      "states": "文件读取／编辑／非法／一致／差异／应用／取消／撤销／存储失败",
+      "focus": "成功审阅进差异区；错误回输入；取消回预览；应用回撤销",
+      "effect": "本地文件读；本地偏好写；无服务配置导入",
+      "tasks": [
+        "G1-04",
+        "G1-05",
+        "G4-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-04",
+      "page": "SET",
+      "title": "资产库与规范",
+      "members": [
+        "brandAssetLibrary",
+        "brandJournal"
+      ],
+      "states": "主标／单色／深色／微标／动作日志",
+      "focus": "资产按钮；原生 details",
+      "effect": "本地选择／查看；正式导出标准状态",
+      "tasks": [
+        "G1-04",
+        "G4-02"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-05",
+      "page": "SET",
+      "title": "资产导出与交付",
+      "members": [
+        "brandDelivery",
+        "brandExportSvg",
+        "brandExportPng",
+        "brandExportTokens"
+      ],
+      "states": "生成中／成功／失败／选择变化／旧包保存",
+      "focus": "导出按钮／保留保存链接",
+      "effect": "浏览器生成与保存资产；读取本地同源组件文件",
+      "tasks": [
+        "G1-02",
+        "G1-03",
+        "G3-04",
+        "G5-02"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "SET-06",
+      "page": "SET",
+      "title": "系统运行卡片",
+      "members": [
+        "runtimeWorkspace",
+        "entityFilter"
+      ],
+      "states": "预览未连接／轮询／数据／空／失败／WS 更新／折叠",
+      "focus": "卡片点击；实体筛选；折叠键盘待 G1 核验",
+      "effect": "GET 运行、健康、记忆、审计；WS 订阅",
+      "tasks": [
+        "G2-07",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-01",
+      "page": "MAP",
+      "title": "目录、来源、搜索、分页与刷新",
+      "members": [
+        "explorer",
+        "graphSource",
+        "graphSearch",
+        "tierFilters",
+        "goalPaging",
+        "nodeList",
+        "reloadGraph",
+        "explorerToggle"
+      ],
+      "states": "memory／goals／加载／空／错误／搜索／分页／选择",
+      "focus": "节点列表；/ 搜索；移动目录 Esc 回开关",
+      "effect": "GET 投影；本地过滤；不运行目标检查",
+      "tasks": [
+        "G2-04",
+        "G2-05",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-02",
+      "page": "MAP",
+      "title": "星图、全局／局部与相机",
+      "members": [
+        "graphStage",
+        "memoryCanvas",
+        "globalView",
+        "localView",
+        "graphDimension",
+        "orbitPlayback",
+        "cameraOptions",
+        "graphNavigation",
+        "galaxyAngle",
+        "galaxySystem",
+        "resetCamera",
+        "zoomIn",
+        "zoomOut",
+        "fitGraph"
+      ],
+      "states": "2D／3D／暂停／运转／选中／拖动／触控取消",
+      "focus": "画布方向键 Home 缩放；节点列表替代",
+      "effect": "本地绘制、相机与已加载范围",
+      "tasks": [
+        "G2-04",
+        "G1-04",
+        "G1-06"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-03",
+      "page": "MAP",
+      "title": "显示设置",
+      "members": [
+        "displayPanel",
+        "displayToggle"
+      ],
+      "states": "开／关／渲染选项／减少动态",
+      "focus": "打开首控件；Esc 返回 displayToggle",
+      "effect": "本地展示设置",
+      "tasks": [
+        "G2-04",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-04",
+      "page": "MAP",
+      "title": "局部扩展、筛选、路径与历史",
+      "members": [
+        "localControls",
+        "localPath"
+      ],
+      "states": "局部中心／筛选／邻居加载／超时／返回／路径",
+      "focus": "按钮与原生 details；编辑区不抢快捷键",
+      "effect": "GET 邻居；其余本地范围和路径",
+      "tasks": [
+        "G2-04",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-05",
+      "page": "MAP",
+      "title": "节点详情、邻接与正文",
+      "members": [
+        "inspector"
+      ],
+      "states": "无选择／详情加载／记录缺失／失败／清除／邻接选择",
+      "focus": "保持选择；详情收起与相机可用范围；实机焦点待验",
+      "effect": "GET 详情；展示已记录来源，不补造事实",
+      "tasks": [
+        "G2-04",
+        "G1-05"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-06",
+      "page": "MAP",
+      "title": "目标操作和检查历史",
+      "members": [
+        "goalDetail"
+      ],
+      "states": "active／pending_verification／interrupted／终态；历史分页；409 冲突",
+      "focus": "目标按钮；操作中禁用；焦点衔接待实机",
+      "effect": "POST 显式 verify/cancel；GET 历史",
+      "tasks": [
+        "G2-05"
+      ],
+      "gate": "目标节点；business_goals 可用",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-07",
+      "page": "MAP",
+      "title": "历史行动与输入引用",
+      "members": [
+        "actionInputs",
+        "loadActionInputs"
+      ],
+      "states": "未记录／未启用／加载／来源冲突／已加载",
+      "focus": "加载按钮；保留选择和原图",
+      "effect": "GET ACT 图；不复制正文、不核验现内容",
+      "tasks": [
+        "G2-06"
+      ],
+      "gate": "ACT／durable 服务可用",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-08",
+      "page": "MAP",
+      "title": "工具独立观测",
+      "members": [
+        "toolChecks"
+      ],
+      "states": "已有核验／unknown／追加中／达到上限／冲突／超时",
+      "focus": "动态按钮；同 action 防重复；后续焦点待验",
+      "effect": "GET 历史；POST 采样文件并追加记录，不重做工具动作",
+      "tasks": [
+        "G2-06"
+      ],
+      "gate": "Episode 且有受支持 reconciliation",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-09",
+      "page": "MAP",
+      "title": "关系详情和来源事件",
+      "members": [
+        "relationInspector"
+      ],
+      "states": "选择歧义／详情／缺失引用／来源读取／失败",
+      "focus": "原生 dialog；端点按钮；返回落点待实机",
+      "effect": "本地边记录；GET 引用事件",
+      "tasks": [
+        "G2-04",
+        "G2-06",
+        "G1-05"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-10",
+      "page": "MAP",
+      "title": "悬空关系诊断",
+      "members": [
+        "relationDiagnostics",
+        "openDiagnostics"
+      ],
+      "states": "列表／分页／失败重试／记录详情／记录过期",
+      "focus": "详情标题；返回原 opener；dialog 键盘待实机",
+      "effect": "GET dangling 与 node，无修复写入",
+      "tasks": [
+        "G2-04",
+        "G1-05"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-11",
+      "page": "MAP",
+      "title": "登记目标表单",
+      "members": [
+        "goalCreateDialog",
+        "newGoal"
+      ],
+      "states": "idle／busy／uncertain／success／404 可重填／校验失败",
+      "focus": "原生 modal autofocus；另一个目标聚焦 task；返回待验",
+      "effect": "POST 登记；GET by-task 可能同步落库回执",
+      "tasks": [
+        "G2-05",
+        "G1-04",
+        "G1-05"
+      ],
+      "gate": "非只读模板；切目标视图后入口可见；服务开关决定能力",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-12",
+      "page": "MAP",
+      "title": "笔记导出与 Obsidian 链接",
+      "members": [
+        "exportNotes",
+        "openVault",
+        "openNote"
+      ],
+      "states": "无链接／已检测镜像／导出中／失败",
+      "focus": "原生链接与导出按钮",
+      "effect": "GET 生成 ZIP；外部 obsidian URI 打开；不主动改 vault",
+      "tasks": [
+        "G2-04",
+        "G1-02"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MAP-13",
+      "page": "MAP",
+      "title": "沉浸面板和退出",
+      "members": [
+        "immersiveHud",
+        "immersiveToggle"
+      ],
+      "states": "进入／退出／详情抽屉／局部抽屉／尺寸变化",
+      "focus": "Esc 优先级；焦点返回待实机",
+      "effect": "本地布局与相机范围",
+      "tasks": [
+        "G1-04",
+        "G1-06",
+        "G2-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "LIST-01",
+      "page": "LIST",
+      "title": "记忆层与条目",
+      "members": [
+        "memTiers",
+        "memEntries"
+      ],
+      "states": "层读取／层选择／加载／空／失败",
+      "focus": "动态层按钮保留焦点；条目展示",
+      "effect": "GET tiers／entries",
+      "tasks": [
+        "G2-07",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "LIST-02",
+      "page": "LIST",
+      "title": "跨层搜索",
+      "members": [
+        "memSearch",
+        "memSearchBtn"
+      ],
+      "states": "编辑／搜索中／成功／空／失败",
+      "focus": "Enter 查询；原输入",
+      "effect": "POST 搜索读取，不按 HTTP 方法误判为写入",
+      "tasks": [
+        "G2-07"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MON-01",
+      "page": "MON",
+      "title": "旧监控卡片与刷新",
+      "members": [
+        "refreshBtn",
+        "entityFilter"
+      ],
+      "states": "轮询／空／失败／筛选／卡片折叠",
+      "focus": "卡片点击，键盘待验",
+      "effect": "多路 GET／WS；未在完整 UI 路由登记",
+      "tasks": [
+        "G2-07",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MON-02",
+      "page": "MON",
+      "title": "旧监控对话",
+      "members": [
+        "chatForm",
+        "chatInput",
+        "streamToggle",
+        "sendBtn"
+      ],
+      "states": "提交／WS 或 SSE／回复／失败",
+      "focus": "输入与发送，模式无新选择入口",
+      "effect": "POST 聊天；旧客户端接线另验",
+      "tasks": [
+        "G2-02",
+        "G2-03",
+        "G2-07"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "MVSC-01",
+      "page": "MVSC",
+      "title": "MVSC 阶段、健康与开关观察",
+      "members": [],
+      "states": "阶段事件／未启用／GET 数据／失败",
+      "focus": "仅主题按钮与静态观察；无 language 入口",
+      "effect": "GET state/ready/ablation/runtime；WS mvsc_phase",
+      "tasks": [
+        "G2-07",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    },
+    {
+      "surfaceId": "PROMPT-01",
+      "page": "PROMPT",
+      "title": "受限只读提示",
+      "members": [],
+      "states": "提示／返回图谱",
+      "focus": "原生链接",
+      "effect": "导航，不恢复完整服务能力",
+      "tasks": [
+        "G2-07",
+        "G1-04"
+      ],
+      "gate": "always",
+      "sourceRefs": []
+    }
+  ]
+}

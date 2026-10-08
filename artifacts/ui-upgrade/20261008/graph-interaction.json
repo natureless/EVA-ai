@@ -1,0 +1,10 @@
+{
+  "before": "模块化标识 · 1",
+  "openedFocus": "particleBodies",
+  "after": {
+    "focus": "displayToggle",
+    "panelClosed": true,
+    "selected": true,
+    "title": "模块化标识 · 1"
+  }
+}

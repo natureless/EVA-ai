@@ -1,0 +1,42 @@
+{
+  "verified_at": "2026-10-06T14:47:00+08:00",
+  "preview_origin": "http://127.0.0.1:8779",
+  "fixture_nodes": 75,
+  "local_nodes": 9,
+  "local_edges": 8,
+  "selection": {
+    "selected": "品牌规则 · 3",
+    "center": "模块化标识 · 1",
+    "path": "2 步连接",
+    "camera_preset": "俯视",
+    "angle": "方位 0° · 仰角 0°",
+    "focus_scale": "150%"
+  },
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 720,
+      "display_panel_after_focus": "hidden",
+      "console_warnings_and_errors": []
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "canvas": {"x": 43, "y": 491.3333, "width": 347, "height": 321.6667, "bottom": 813.0000},
+      "drawer": {"x": 43, "y": 636.0834, "width": 347, "height": 176.9167, "bottom": 813.0000},
+      "zoom_controls": {"x": 197.6667, "y": 570.75, "width": 179.3333, "height": 51.3333, "bottom": 622.0833},
+      "filter_panel_bottom": 596.7396,
+      "focus_button_visible": true,
+      "display_panel_after_focus": "hidden",
+      "console_warnings_and_errors": []
+    }
+  },
+  "checks": [
+    "selected satellite opens real detail and retains the local center",
+    "two-step path remains visible after focus",
+    "top view retains selection, filters, path and data",
+    "focus closes the display panel before recentering",
+    "mobile zoom controls remain above the detail drawer"
+  ],
+  "synthetic_fixture_notice": "This preview uses 75 synthetic nodes and does not replace the authenticated public-domain or physical-phone check."
+}

@@ -1,0 +1,12 @@
+{
+  "baseline": "D:\\EVA-ai\\artifacts\\ui-release\\local-20261001-final-interactions\\report.json",
+  "baselineSha256": "a17023177bf28c94957b88e940f61f236bbe145941e0e805047904aea4a648d0",
+  "sourceFiles": 67,
+  "mismatches": [],
+  "currentSourceMatches": true,
+  "deltaFromMatrixBaseline": [
+    "ui/web/static/brand-system.js PNG failure text and catch",
+    "ui/web/templates/settings.html script cache version"
+  ],
+  "status": "local-checks-passed; manual-gates-unverified"
+}

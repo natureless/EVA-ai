@@ -1,18 +1,19 @@
 """Typed component factories for the EVA composition root.
 
-This module creates subsystems but never starts the cognition loop or scheduler.
+Factories create subsystems without starting background work. The explicit
+reindex scheduling helper submits to an already-owned runtime worker.
 Startup and shutdown ordering remain the responsibility of ``app.bootstrap``.
 """
 
 from __future__ import annotations
 
+from concurrent.futures import Future
 from dataclasses import dataclass
 from importlib.util import find_spec
 import logging
 from pathlib import Path
 import platform
-import threading
-from typing import Any
+from typing import Any, Callable
 
 import yaml
 
@@ -154,42 +155,50 @@ def load_constitution(settings: Settings) -> dict[str, Any]:
 
 def build_memory(settings: Settings, state: dict[str, Any]) -> MemoryComponents:
     store = _build_store(settings)
-    state["db_ready"] = True
+    try:
+        state["db_ready"] = True
 
-    embedding_service, vector_store = _build_vector_search(settings)
-    tiered = TieredMemoryManager(
-        store,
-        config={
-            "S1_session": {"max_entries": 200, "ttl_minutes": 30},
-            "S2_working": {"max_entries": 500, "ttl_hours": 72},
-            "S3_long_term": {"max_entries": 10000},
-        },
-        embedding_service=embedding_service,
-        vector_store=vector_store,
-    )
+        embedding_service, vector_store = _build_vector_search(settings)
+        tiered = TieredMemoryManager(
+            store,
+            config={
+                "S1_session": {"max_entries": 200, "ttl_minutes": 30},
+                "S2_working": {"max_entries": 500, "ttl_hours": 72},
+                "S3_long_term": {"max_entries": 10000},
+            },
+            embedding_service=embedding_service,
+            vector_store=vector_store,
+        )
+        if settings.enable_action_context:
+            from memory.versioned_reads import install_memory_revisions
 
-    repository = MemoryRepository(store)
-    governor = MemoryGovernor(
-        repository,
-        tiered_memory=tiered,
-        llm=_memory_compactor_llm(),
-    )
-    tiered._governor = governor
+            install_memory_revisions(store)
+            tiered.versioned_context_reads = True
 
-    _schedule_reindex_if_stale(store, tiered, embedding_service, vector_store)
-    restored = tiered.s1.restore_from_s2(tiered.s2)
-    if restored:
-        logger.info("restored %d session entries from S2", restored)
+        repository = MemoryRepository(store)
+        governor = MemoryGovernor(
+            repository,
+            tiered_memory=tiered,
+            llm=_memory_compactor_llm(),
+        )
+        tiered._governor = governor
 
-    return MemoryComponents(
-        store=store,
-        api=MemoryAPI(store),
-        repository=repository,
-        governor=governor,
-        tiered=tiered,
-        embedding_service=embedding_service,
-        vector_store=vector_store,
-    )
+        restored = tiered.s1.restore_from_s2(tiered.s2)
+        if restored:
+            logger.info("restored %d session entries from S2", restored)
+
+        return MemoryComponents(
+            store=store,
+            api=MemoryAPI(store),
+            repository=repository,
+            governor=governor,
+            tiered=tiered,
+            embedding_service=embedding_service,
+            vector_store=vector_store,
+        )
+    except BaseException:
+        _close_failed_store(store)
+        raise
 
 
 def build_identity(settings: Settings, state: dict[str, Any]) -> IdentityComponents:
@@ -201,11 +210,13 @@ def build_identity(settings: Settings, state: dict[str, Any]) -> IdentityCompone
         profile=profile_store.load_or_init(),
         self_model=self_model_store.load_or_init(),
     )
-    state.update({
-        "profile_ready": True,
-        "persona_ready": True,
-        "self_model_ready": True,
-    })
+    state.update(
+        {
+            "profile_ready": True,
+            "persona_ready": True,
+            "self_model_ready": True,
+        }
+    )
     logger.info("profile and self-model loaded")
     return result
 
@@ -227,6 +238,8 @@ def build_world(
     else:
         model = WorldModelGraph()
         source = "S4"
+    # Before producers start: merge by identity and record time. S4 wins ties
+    # or unknown ordering; snapshot-only records remain available.
     model.load_from_store(tiered_memory.s4)
     logger.info(
         "world model loaded from %s (entities=%d, edges=%d)",
@@ -312,7 +325,9 @@ def build_executors(
     }
     if is_playwright_available():
         try:
-            executors["playwright_browser"] = PlaywrightBrowserExecutor(audit_log, config)
+            executors["playwright_browser"] = PlaywrightBrowserExecutor(
+                audit_log, config
+            )
             logger.info("playwright browser executor enabled")
         except Exception as exc:
             logger.warning("playwright browser executor init failed: %s", exc)
@@ -388,7 +403,9 @@ def start_github_poller(
             interval_sec=interval_sec,
         )
         poller.start()
-        logger.info("github poller started (%d repos, interval=%ss)", len(repos), interval_sec)
+        logger.info(
+            "github poller started (%d repos, interval=%ss)", len(repos), interval_sec
+        )
         return poller
     except Exception:
         logger.exception("failed to start github poller")
@@ -399,22 +416,38 @@ def _build_store(settings: Settings) -> BaseStorageAdapter:
     if settings.storage_backend == "postgresql":
         from memory.postgres_store import PostgresStore
 
-        store = PostgresStore(database_url=settings.database_url) if settings.database_url else PostgresStore()
+        store = (
+            PostgresStore(database_url=settings.database_url)
+            if settings.database_url
+            else PostgresStore()
+        )
+    else:
+        store = SQLiteStore(settings.db_path)
+    try:
         store.init_db()
-        logger.info("database initialized (PostgreSQL)")
-        return store
-
-    store = SQLiteStore(settings.db_path)
-    store.init_db()
-    logger.info("database initialized at %s", settings.db_path)
+    except BaseException:
+        _close_failed_store(store)
+        raise
+    logger.info("database initialized (%s)", settings.storage_backend)
     return store
+
+
+def _close_failed_store(store: BaseStorageAdapter) -> None:
+    try:
+        store.close()
+    except Exception:
+        logger.exception(
+            "failed to release untransferred storage after construction error"
+        )
 
 
 def _build_vector_search(settings: Settings) -> tuple[Any, Any]:
     if settings.embedding_provider != "local":
         return None, None
     if find_spec("sentence_transformers") is None or find_spec("faiss") is None:
-        logger.warning("sentence-transformers or faiss not installed; vector search disabled")
+        logger.warning(
+            "sentence-transformers or faiss not installed; vector search disabled"
+        )
         return None, None
     try:
         from memory.embedding_service import EmbeddingService
@@ -443,12 +476,14 @@ def _memory_compactor_llm() -> Any:
     return None
 
 
-def _schedule_reindex_if_stale(
+def schedule_memory_reindex_if_stale(
     store: BaseStorageAdapter,
     tiered: TieredMemoryManager,
+    submit: Callable[..., Future[Any]],
     embedding_service: Any,
     vector_store: Any,
-) -> None:
+) -> Future[Any] | None:
+    """Schedule only after runtime ownership; the worker tracks real completion."""
     if vector_store is None or embedding_service is None:
         return
     try:
@@ -457,7 +492,10 @@ def _schedule_reindex_if_stale(
             (),
         )
         active_count = rows[0]["cnt"] if rows else 0
-        if active_count <= 0 or abs(active_count - vector_store.size()) <= active_count * 0.1:
+        if (
+            active_count <= 0
+            or abs(active_count - vector_store.size()) <= active_count * 0.1
+        ):
             return
         from memory.reindex_job import reindex_all
 
@@ -466,17 +504,26 @@ def _schedule_reindex_if_stale(
             active_count,
             vector_store.size(),
         )
-        threading.Thread(
-            target=reindex_all,
-            args=(embedding_service, vector_store, tiered.s3),
-            daemon=True,
-            name="eva-reindex",
-        ).start()
+        future = submit(reindex_all, embedding_service, vector_store, tiered.s3)
+        future.add_done_callback(_report_reindex_completion)
+        return future
     except Exception:
         logger.exception("vector staleness check failed")
 
 
-def _executor_config(settings: Settings, constitution: dict[str, Any]) -> dict[str, Any]:
+def _report_reindex_completion(future: Future[Any]) -> None:
+    if future.cancelled():
+        logger.info("vector reindex cancelled before execution")
+        return
+    try:
+        future.result()
+    except Exception:
+        logger.exception("managed vector reindex failed")
+
+
+def _executor_config(
+    settings: Settings, constitution: dict[str, Any]
+) -> dict[str, Any]:
     config: dict[str, Any] = {}
     boundaries = constitution.get("boundaries", {})
     fs_boundary = boundaries.get("filesystem", {})
@@ -522,6 +569,13 @@ def _executor_config(settings: Settings, constitution: dict[str, Any]) -> dict[s
     if override_path.exists():
         with override_path.open("r", encoding="utf-8") as fh:
             _deep_merge(config, yaml.safe_load(fh) or {})
+
+    # Explicit fixed-source capability; general browsing stays separately opt-in.
+    if settings.enable_us_market_snapshot:
+        browser_config = config.setdefault("executors", {}).setdefault("browser", {})
+        domains = browser_config.setdefault("allowed_domains", [])
+        if "fred.stlouisfed.org" not in domains:
+            domains.append("fred.stlouisfed.org")
 
     file_config = config.setdefault("executors", {}).setdefault("file", {})
     allowed_paths = file_config.setdefault("allowed_paths", [])

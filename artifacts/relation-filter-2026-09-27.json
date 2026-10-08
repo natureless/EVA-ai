@@ -1,0 +1,50 @@
+{
+  "status": "verified_on_production_origin",
+  "verified_at": "2026-09-27T10:20:09.580669+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\relation-filter-20260927T181604",
+  "source_hashes": {
+    "ui/web/static/memory_graph.js": "e93a64da299013d41bc6c6ce2e2a32e50eab74214989c689383636c1ecb1bcb2",
+    "ui/web/static/memory_graph.css": "b401534e8ac18538a018b86604baf5fe3784b934c1376fd1d0c96e7a2aa72cd6",
+    "ui/web/templates/memory_graph.html": "9917d9925b68a976a189c569f99950e2d5f9fec6591c13f5178e5999fd6a91d2",
+    "tests/js/test_memory_graph.cjs": "c454bba0cc5bed832d47794595de5d43990ea742e52a803688d7cc96cfc79d42",
+    "tests/js/test_memory_graph_interactions.cjs": "2de3a0228832c77f2ec293e1d7b0540dae91c8e67731545af383cae174f222ac"
+  },
+  "tests": {
+    "javascript_passed": 66,
+    "full_python_suite": "not run this turn; frontend-only change",
+    "python_graph_passed": 23
+  },
+  "browser": {
+    "loopback_preview": true,
+    "exact_relation_filter": "3 nodes / 3 edges -> 2 nodes / 1 edge",
+    "path_and_neighbor_list_match": true,
+    "incompatible_category_keeps_zero_selection": true,
+    "reset_restores_nodes_and_edges": true,
+    "viewport_390x844": {
+      "page_width": 390,
+      "horizontal_overflow": false
+    },
+    "viewport_restored": true,
+    "console_errors": []
+  },
+  "production_checks": {
+    "page_status": 200,
+    "template_markers": true,
+    "memory_graph.js": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "memory_graph.css": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "graph_status": 200,
+    "health_status": 200,
+    "ready": "ready"
+  },
+  "backend_restarted": false,
+  "not_verified": [
+    "Public authenticated browser interaction",
+    "Physical mobile device"
+  ]
+}

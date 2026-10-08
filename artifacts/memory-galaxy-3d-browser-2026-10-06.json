@@ -1,0 +1,72 @@
+{
+  "client_date": "2026-10-06",
+  "observed_at": "2026-10-06T13:21:37.053Z",
+  "url": "http://127.0.0.1:8779/memory",
+  "environment": "Codex in-app browser; synthetic UI fixture, 75 nodes / 100 edges; no real memory writes",
+  "observations": {
+    "default_dimension": "3D 星系",
+    "desktop": {
+      "viewport": [
+        1280,
+        720
+      ],
+      "global_nodes": 75,
+      "local_depth": 2,
+      "local_nodes": 9,
+      "local_edges": 8,
+      "light_and_dark_rendered": true,
+      "page_refresh_preserved_orientation": true
+    },
+    "mobile": {
+      "viewport": [
+        390,
+        844
+      ],
+      "clicked_canvas_node": "品牌规则 · 8",
+      "retained_local_center": "模块化标识 · 1",
+      "drag_rotation_before": "方位 -19° · 仰角 32°",
+      "drag_rotation_after": "方位 2° · 仰角 40°",
+      "zoom_button_before": "111%",
+      "zoom_button_after": "138%",
+      "dimension_switch_retained_selection": true,
+      "expanded_filters_and_detail": {
+        "controls_height": 320,
+        "canvas_height": 321.66668701171875,
+        "drawer_height": 176.9166717529297,
+        "zoom_button_height": 44,
+        "zoom_button_above_drawer": true
+      }
+    },
+    "small_mobile": {
+      "viewport": [
+        320,
+        568
+      ],
+      "expanded_filters_and_detail": {
+        "controls_height": 128,
+        "canvas_height": 237.6666717529297,
+        "drawer_height": 130.70834350585938,
+        "zoom_button_height": 44,
+        "zoom_button_above_drawer": true
+      }
+    },
+    "final_console_errors_or_warnings": []
+  },
+  "screenshots": [
+    "memory-galaxy-3d-preview-2026-10-06.jpg",
+    "memory-galaxy-3d-local-2026-10-06.jpg",
+    "memory-galaxy-3d-local-dark-2026-10-06.jpg",
+    "memory-galaxy-3d-mobile-2026-10-06.jpg",
+    "memory-galaxy-3d-mobile-expanded-2026-10-06.jpg",
+    "memory-galaxy-3d-small-expanded-2026-10-06.jpg"
+  ],
+  "restored": {
+    "viewport": true,
+    "original_light_theme": true
+  },
+  "not_verified": [
+    "Authenticated public Cloudflare Access browser",
+    "Physical mobile device / native multitouch",
+    "Live model responses or SSE"
+  ]
+}

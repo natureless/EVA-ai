@@ -1,0 +1,22 @@
+{
+  "pngZh": {
+    "enabled": true,
+    "feedback": "PNG 图像生成或保存失败，请重试导出。",
+    "solved": "true"
+  },
+  "pngEn": {
+    "enabled": true,
+    "feedback": "PNG generation or saving failed. Try exporting again.",
+    "solved": "true"
+  },
+  "pngRecovered": {
+    "enabled": true,
+    "feedback": "已导出 1024px 透明 PNG。",
+    "solved": "true"
+  },
+  "previousImmediateRecoveryObservation": {
+    "enabled": false,
+    "feedback": "PNG generation or saving failed. Try exporting again.",
+    "solved": "true"
+  }
+}

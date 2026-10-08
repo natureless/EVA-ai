@@ -43,10 +43,12 @@ def get_cognition_stats(request: Request) -> dict[str, Any]:
         "mode": container.system_state.get("mvsc_runtime_mode", "unknown"),
     }
 
-    # Legacy loop stats
-    legacy_loop = container.loop
-    if legacy_loop and hasattr(legacy_loop, "stats"):
-        stats["legacy"] = legacy_loop.stats
+    controller = container.runtime.controller
+    if controller is not None:
+        stats["runtime"] = controller.snapshot()
+    # Keep the old key for clients; label it with the actual FIFO consumer mode.
+    if controller is not None and controller.mode == "legacy":
+        stats["legacy"] = controller.consumer.stats
 
     # MVSC loop stats
     if container.mvsc_components:

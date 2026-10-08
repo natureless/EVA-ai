@@ -1,0 +1,205 @@
+{
+  "date": "2026-10-01T02:42:53.105777+00:00",
+  "status": "local-checks-passed; manual-gates-unverified",
+  "checks": [
+    {
+      "name": "javascript",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "--test",
+        "D:\\EVA-ai\\tests\\js\\test_brand_config.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_identity.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_package.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_system.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_chat_receipts.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_animator.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_chat.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_logo.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_state.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_ui_probe.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_http.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_diagnostics.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_graph.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_graph_interactions.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_runtime_status.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_ui_theme.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_ui_workspace.cjs"
+      ]
+    },
+    {
+      "name": "generated-assets",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/build_brand_assets.cjs",
+        "--check"
+      ]
+    },
+    {
+      "name": "python-ui",
+      "exitCode": 0,
+      "command": [
+        "C:\\Users\\origi\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_ui_release.py",
+        "tests/test_memory_graph.py",
+        "-q"
+      ]
+    },
+    {
+      "name": "export-2",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/export_brand_kit.cjs",
+        "--out",
+        "D:\\EVA-ai\\artifacts\\ui-release\\local-20261001-portable-theme-final\\eva-2x2-source.zip",
+        "--order",
+        "2",
+        "--variant",
+        "primary",
+        "--view",
+        "iso",
+        "--size",
+        "2048"
+      ]
+    },
+    {
+      "name": "export-3",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/export_brand_kit.cjs",
+        "--out",
+        "D:\\EVA-ai\\artifacts\\ui-release\\local-20261001-portable-theme-final\\eva-3x3-source.zip",
+        "--order",
+        "3",
+        "--variant",
+        "dark",
+        "--view",
+        "iso",
+        "--size",
+        "2048"
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-release\\local-20261001-portable-theme-final\\eva-2x2-source.zip",
+      "sha256": "76c3b0c9bc97ffd6e95d41b56774b090f31a9f8f0bbd58d6e36ccf53e2bcb894",
+      "files": 67,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.0",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 2,
+        "variant": "primary",
+        "view": "iso",
+        "size": 2048
+      },
+      "pngDimensions": {},
+      "previewResources": "local references verified; browser execution not certified"
+    },
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-release\\local-20261001-portable-theme-final\\eva-3x3-source.zip",
+      "sha256": "8a85aa3b17a2608e266cac5a55d38d818dc8fd3cf5e6b5a66272b35ad2de8cbc",
+      "files": 67,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.0",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 3,
+        "variant": "dark",
+        "view": "iso",
+        "size": 2048
+      },
+      "pngDimensions": {},
+      "previewResources": "local references verified; browser execution not certified"
+    }
+  ],
+  "unverifiedGates": [
+    "Native Chrome/Edge save and direct offline execution",
+    "Reliable foreground ten-minute 2x2/3x3 performance",
+    "Native 200% zoom",
+    "Real screen-reader acceptance"
+  ],
+  "scope": "Local automated checks only; not approval to publish or full release certification",
+  "sourceHashes": {
+    "app/memory_preview.py": "a0fd11f084526ff7dbc5b9e0a24e0ffb61e0cab6121e0d885ff4aef6262238ea",
+    "scripts/build_brand_assets.cjs": "5262f2509ed126a5d87a4c9e1f8635f96a05599e5c3208523de755848f1f2a44",
+    "scripts/check_ui_release.py": "9458087fe55ee76d8718e3ddcb86426525cb2b00223abe2204ad3cc30b087b68",
+    "scripts/cube_ui_probe.js": "50b4323ad6c50dfaa3f7c50778ba77bced002ead2699a58206659dcdec159c94",
+    "scripts/export_brand_kit.cjs": "c64ba677496de20eaec09f6ddbe9b1af579472f5bcfbdfc5963e3bae9af4bd68",
+    "tests/js/test_brand_config.cjs": "f478b1ddf40251cb21f2eeef620eb1e864b4d521a026ce7ad497096eb4f371d9",
+    "tests/js/test_brand_identity.cjs": "a4f108b1cbfc6fd397f737c8e3b2851805057fbd3fe46129626f2282ea947a7e",
+    "tests/js/test_brand_package.cjs": "6cc6e373bf6ede60951ecaad5e5e0b6867f43376f3fc0faccb81e3217eef2c8e",
+    "tests/js/test_brand_system.cjs": "40114cb16f013dd8c3b908a425428161c6cb412878d79d0b5d5b6e036952a99d",
+    "tests/js/test_chat_receipts.cjs": "86069189fdfc04015017f9433f9f072bc225cb84ea16321e153b69f63b1f7a08",
+    "tests/js/test_cube_animator.cjs": "06d329396560fd3365e17073416be66475037b6b2e1b4c142be6c3e0f2d1d6eb",
+    "tests/js/test_cube_chat.cjs": "3017bc7f95f9ab47105ec24b4f59ff17434bba3507816328202e793b8d8f0ffa",
+    "tests/js/test_cube_logo.cjs": "371b1dff76f2fc59fe32a3c08f9bf644032540f969ea2cc1695bd7f55dd99cf4",
+    "tests/js/test_cube_state.cjs": "077f2a59b57ca13ce7c0a1e3cd29bceef7ecbfb2312a207a24593500037b37f8",
+    "tests/js/test_cube_ui_probe.cjs": "20cd7d5e694af5ea0ac1320d455959cd3f39f44588de82a3d66f3d9c51ccbd08",
+    "tests/js/test_http.cjs": "2ba9d28447fbe1cb01bedb87ac3fc88539688031a3c48a5ca15c3ba9fe841fcf",
+    "tests/js/test_memory_diagnostics.cjs": "932ee422f07232b3b30261b10a25b580fc6bad414b7569157a30a08e7c70e5f1",
+    "tests/js/test_memory_graph.cjs": "c454bba0cc5bed832d47794595de5d43990ea742e52a803688d7cc96cfc79d42",
+    "tests/js/test_memory_graph_interactions.cjs": "8156fa4fcc327f960645f7479f3ebe92f8752065cd1c9504fd073f955389a5c4",
+    "tests/js/test_runtime_status.cjs": "2fd1bf61bbcb55355adb0e1581cfd34f2531e87e8edbc7e5c42562c216a0be4c",
+    "tests/js/test_ui_theme.cjs": "cf0ba0218d2197b41c14633958728a59888303570378eeaf71867bc2210df104",
+    "tests/js/test_ui_workspace.cjs": "fe76bcf7023c7775937e69bbb484ff02321d428b3f47e09e500773acebfc4efe",
+    "tests/test_memory_graph.py": "c7273f798c2da9cbf9c43ab7d75117f821a9565b2c51a2518e0ac325c11d4643",
+    "tests/test_ui_release.py": "eacd16b1b751147474513f10f05c424fc146cd861848a00bc623dd13c8636b47",
+    "ui/web/static/_ref.png": "2a95e1420747f096698401b5386f9cc09e70c6d070c5c9e3d42189707bc5dfda",
+    "ui/web/static/app.js": "4ee39a59b8a34ae353a5db43cf1741d3673e566e5311731c06a49c6b4782b8e1",
+    "ui/web/static/avatar.js": "35f122602551806d6ac0c44c12dd3a93ebb3ebce580e093b204cf86742ccf490",
+    "ui/web/static/brand-assets.js": "e24695fc216996290be3f89406d2a6b78c34a85dbcdf1a43be495f211365547b",
+    "ui/web/static/brand-config.js": "4d312dae141c6a1c67d402b623b80cc3d2d6b20a18d6f36ea4d7ed945446b671",
+    "ui/web/static/brand-identity.js": "12327a09da89f49f5b68fe9131f97a7e456bbe1c1ecf6512204c07c005fd7ee6",
+    "ui/web/static/brand-package.js": "1fc7fc77e50191d4005a7ac2f613a3c2006bbd3993322e0786a7646e1179aaaa",
+    "ui/web/static/brand-source.json": "fe54b971608e80ee139e9ebc13295cac6ed44ca8dccccdd0c3ed63834168f9eb",
+    "ui/web/static/brand-studio.css": "adca31839a44982f63f66680c0ddae11902f6ec9b127f64026e4088e79df7a53",
+    "ui/web/static/brand-system.js": "b54c33ed6425cdff4efbe98e0d6298111ae11a3c2445a74c4fd5e42acd36a7fa",
+    "ui/web/static/chat.js": "e811d78a1bcca25f0a646e3b364423051cca223a999ca54de0f1fe9a7a54b41f",
+    "ui/web/static/cube-animator.js": "49f6856494ea46c520f5fe9db244bfac3b639fcb03f0b473bfbecd6d36aa3ee8",
+    "ui/web/static/cube-avatar.js": "a657a399ace4992da52ff0e04b24574c9f392d7d1a1204764003b44fbc8a0ad9",
+    "ui/web/static/cube-chat.css": "e2fb4a06d66e3c256acc74bbc3f157e71eecc01a1f5058ce913ce71f1ed8f2c6",
+    "ui/web/static/cube-geometry.css": "87228a956b498bbaa556828f71b4df303d29b7a9882a90e9479901214fd6bd5b",
+    "ui/web/static/cube-logo.js": "115c579d607ba8147edc2c9a05245c5b9855b42dc729f3b0d561f86f20df9e7b",
+    "ui/web/static/cube-state.js": "a5982757ed930a75f3083c7652255025f5df14020104b4f317308271124dcde6",
+    "ui/web/static/eva-favicon.svg": "f43434db848ccc69d6a74c0552e33e6798537e2facf7d18b6b793d564000e9ac",
+    "ui/web/static/eva-mark.svg": "29b3f4c4ac7e198dffedb450cf3a152655509aa62ff1cd85b9807a73728722c4",
+    "ui/web/static/http.js": "ecbad5bbc0539dec9a7f6acde9445796f9490e7447884206ecdf782ef52ab571",
+    "ui/web/static/i18n.js": "491274c17503d6e57ea8693097db738ed4cf7c89b5db5cb8d0855f2b99559c8e",
+    "ui/web/static/logo-tokens.js": "30203d1b0e2fd1e88dc2093dce2ef7f4ecbc8b5c33228cf8b338f1b191ad86dd",
+    "ui/web/static/main.css": "8d9dcf4936b71e5ef03493a74fe8e14b3268bb7d4398f25fb8e397afc5fa2a9d",
+    "ui/web/static/memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07",
+    "ui/web/static/memory_explorer.js": "95bce1e606c19996a2091547e4c731fdfd9b0eedd8e216b4c7b78d0f2df167d0",
+    "ui/web/static/memory_graph.css": "0b56e8135a98b268838d434b6ddfa69367093877da43d7a412440383b39e8b44",
+    "ui/web/static/memory_graph.js": "487c417f7e27c20add9f31bd80ce5f4cfceb06312e4a41905dfbf8e5525524c8",
+    "ui/web/static/mvsc-dashboard.css": "97c16c50400acf20b1fd4c81354eba38f49e52afd707f1f1aaf8188ce11d5b10",
+    "ui/web/static/nav.js": "7560d73f179329ac29dd4792d5c4264fac100de523f1829448b79730ca518afb",
+    "ui/web/static/runtime_status.js": "7041d6baf8de463e1df1724dfe6e77e80272eb0da7932b171de34ec7a96da344",
+    "ui/web/static/settings.js": "99c1c88dce0e1edcf1a55382e9f147f6ecd059284541327f338c009153a9791b",
+    "ui/web/static/styles.css": "1c79176438536b823324dfc28ee5cc2396bbadf4c9fee57a21bec144551b9006",
+    "ui/web/static/ui-system.css": "6d1de12a0eb6e0eadcc03f765e08e577ad5a4de1c547de9c34664e8bff225bfe",
+    "ui/web/static/ui-theme.js": "a4b98896f97a20a96681182d55f940b6f5e95fefe09d29dca01bdf51be4c6ee7",
+    "ui/web/static/ui-workspace.js": "60f0dabba18e36745e4dd4c6f8321813cacfa2c7f40597194a83c0181a1d6f42",
+    "ui/web/templates/chat.html": "4627ef1963eddc312302e2960e0c924a6986bdb1a4f2594179aa06a1ca3ec114",
+    "ui/web/templates/dashboard.html": "68a61aa5045743e421eda3e3a1dd2b286a7e81b361673bb457d74a22c82c44de",
+    "ui/web/templates/index.html": "a90f3200d048e1c5569547521c42b8af7c98e97d259276858fb75de8a6dbcd03",
+    "ui/web/templates/memory.html": "95363f76880c86bbd0b387cd27d52a567b8205a1d61a7327f3e1b3275ec33e5b",
+    "ui/web/templates/memory_graph.html": "0b8c16645ec85b0d1400a4e9416ac41fcd7309af994780c81411b90a227908fd",
+    "ui/web/templates/mvsc_dashboard.html": "a28a20d45c5ed40c0ac9ab25107e41246dba5d2db981331b4649c82e472c91cd",
+    "ui/web/templates/service_unavailable.html": "256d3e0b0026e63f56b8acd894625a854703ce1d788acdca8f6fb7b989d92e39",
+    "ui/web/templates/settings.html": "8bf34c0f1d0b62924975757bf02c2ed3eb537a88f0d2dd668f9aaac2e351ceb1"
+  },
+  "sourcesStable": true
+}

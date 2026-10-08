@@ -2,6 +2,8 @@
 
 
 
+import pytest
+
 from connectors.github.event_normalizer import (
     normalize_webhook_payload,
     normalize_poller_payload,
@@ -55,9 +57,9 @@ def test_normalize_workflow_webhook():
     assert event.type == "github_workflow"
 
 
-def test_unknown_webhook_type_defaults_to_push():
-    event = normalize_webhook_payload("unknown_type", "del-005", WEBHOOK_PUSH_PAYLOAD)
-    assert event.type == "github_push"
+def test_unknown_webhook_type_is_rejected():
+    with pytest.raises(ValueError, match="unsupported GitHub"):
+        normalize_webhook_payload("unknown_type", "del-005", WEBHOOK_PUSH_PAYLOAD)
 
 
 def test_webhook_missing_repo_key():

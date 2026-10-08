@@ -1,0 +1,18 @@
+{
+  "candidateId": "ui-v1-20261008-g2-02",
+  "findings": [
+    {
+      "id": "G0-F01",
+      "status": "fixed-and-automatically-verified; browser acceptance pending",
+      "changedFiles": [
+        "ui/web/static/chat.js",
+        "ui/web/static/cube-chat.css",
+        "ui/web/templates/chat.html"
+      ],
+      "testFile": "tests/js/test_chat_input.cjs",
+      "reproduction": "Previous submit cleared 4001-character draft and memory consent before API rejection; new regressions initially failed 4 of 5 cases.",
+      "behavior": "4000 Unicode-code-point send limit; longer draft retained with bilingual feedback; direct retry cannot bypass limit.",
+      "remaining": "Actual browser keyboard/input/focus and language behavior; other G0 findings unchanged"
+    }
+  ]
+}

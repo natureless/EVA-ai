@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark"><title>EVA · 记忆星图</title>
+  <link rel="stylesheet" href="/static/memory_graph.css?v=24">
+  <link rel="stylesheet" href="/static/ui-system.css?v=6">
+  <link rel="stylesheet" href="/static/goal_create.css?v=1">
+  <link rel="icon" type="image/svg+xml" href="/static/eva-favicon.svg">
+  <script src="/static/ui-theme.js?v=1"></script>
+</head>
+<body class="memory-star-map">
+  <div class="workspace">
+    <nav class="rail" aria-label="主导航">
+      <a class="brand" href="/" title="EVA"><img src="/static/eva-favicon.svg" alt="EVA 魔方标识"></a>
+      <button class="rail-button active" id="explorerToggle" title="切换记忆目录" aria-label="切换记忆目录">◈</button>
+      <a class="rail-button" href="/chat" title="与 EVA 对话" aria-label="与 EVA 对话">◌</a>
+      <a class="rail-button" href="/memory/list" title="记忆列表" aria-label="记忆列表">▤</a>
+      <div class="rail-spacer"></div>
+      <button id="themeBtn" class="rail-button" title="切换深浅主题" aria-label="切换深浅主题">◐</button>
+      <a class="rail-button" href="/settings" title="设置" aria-label="设置">⚙</a>
+      <span class="rail-caption">EVA</span>
+    </nav>
+    <aside class="explorer" id="explorer">
+      <div class="vault-heading"><span class="vault-icon">◇</span><div><strong>EVA Memory</strong><small>认知记忆空间</small></div><span class="local-tag">{% if preview_mode %}UI PREVIEW{% else %}LOCAL{% endif %}</span></div>
+      <label class="graph-source">数据视图 <select id="graphSource"><option value="memory">记忆关系</option><option value="goals" {% if read_only_preview %}disabled{% endif %}>目标与检查</option></select></label>
+      <label class="search-field"><span>⌕</span><input id="graphSearch" type="search" placeholder="搜索全部记忆…" maxlength="200" aria-label="搜索全部记忆"><kbd>/</kbd></label>
+      <div class="section-heading"><span id="tierHeading">记忆层级</span><span id="countHeading">显示 / 总数</span></div>
+      <div id="tierFilters" class="tier-filters"></div>
+      <div id="goalPaging" class="goal-paging" hidden><button id="previousGoals" disabled>上一页</button><span id="goalPageStatus" role="status"></span><button id="nextGoals" disabled>下一页</button></div>
+      <p id="goalScope" class="goal-scope" hidden>只读已存记录。每页最多 40 个目标，每个目标最近 5 次检查及已有执行记录引用；未记录 Episode 不补造连接。刷新不会检查文件或重放动作。分页期间新记录可能改变页边界。</p>
+      <div class="section-heading node-heading">当前图谱 <span id="listCount">—</span></div>
+      <div class="node-list" id="nodeList" aria-label="图谱节点列表"></div>
+      <div class="vault-footer"><span class="status-dot"></span><div><div id="sourceStatus">正在连接记忆库…</div><div id="graphRefreshStatus" role="status" aria-live="polite"></div></div><button id="reloadGraph" title="刷新记忆并保留当前视图" aria-label="刷新记忆">↻</button></div>
+    </aside>
+    <main class="graph-main">
+      <header class="graph-header"><div class="tab active-tab"><span>✧</span> 关系图谱 <small>Memory graph</small></div><div class="header-actions"><button id="newGoal" hidden aria-haspopup="dialog" {% if read_only_preview %}disabled{% endif %}>＋ 登记目标</button><button id="immersiveToggle" aria-pressed="false" title="进入沉浸式星图">◉ <span>沉浸地图</span></button><button id="exportNotes" title="下载默认投影的 Obsidian 笔记">↓ <span>导出笔记</span></button><a id="openVault" class="obsidian-button" hidden>◇ <span>在 Obsidian 中打开</span> ↗</a></div></header>
+      <div class="graph-toolbar"><div class="segmented" aria-label="图谱范围"><button id="globalView" class="chosen">全局图谱</button><button id="localView" disabled>局部关系</button></div><span class="toolbar-separator"></span><span id="graphStats">读取记忆中</span><button id="displayToggle" class="display-toggle" aria-expanded="false">☷ <span>显示设置</span></button></div>
+      <div class="spatial-toolbar" aria-label="星图空间操作">
+        <label>空间 <select id="graphDimension"><option value="3d" selected>3D 粒子</option><option value="2d">2D 关系</option></select></label>
+        <button id="orbitPlayback" title="保留所选记忆和局部范围，切换轨道运转" disabled>开启运转</button>
+        <details id="cameraOptions" class="camera-options"><summary>视角选项</summary><div class="camera-options-body" role="group" aria-label="星图视角控制"><label>拖动方式 <select id="graphNavigation"><option value="rotate">旋转</option><option value="pan">平移</option></select></label><output id="galaxyAngle" aria-label="当前星图方向"></output><p>拖动探索 · 方向键旋转<br>Shift + 方向键平移 · Home 复位</p></div></details>
+        <label id="galaxySystemControl" hidden>定位 <select id="galaxySystem" aria-label="定位星系" title="只调整相机，保留已加载节点和关系"><option value="">全部星系</option></select></label>
+        <button id="resetCamera" title="恢复初始方向并适应窗口（Home）">复位视角</button>
+        <output id="orbitStatus" aria-label="轨道运转状态"></output>
+      </div>
+      <section id="localControls" class="local-controls" aria-label="局部关系探索" hidden>
+        <div class="local-heading"><span class="local-center-mark">◎</span><div><small>当前中心</small><strong id="localCenterLabel"></strong></div><button id="localBack" disabled>← 返回上个中心</button></div>
+        <nav id="localBreadcrumbs" class="local-breadcrumbs" aria-label="局部探索路径"></nav>
+        <p id="localSummary" class="local-summary" role="status" aria-live="polite"></p>
+        <div class="local-actions">
+          <button id="expandLocal">展开一层 ＋</button><button id="recenterLocal" disabled>以所选为中心</button><button id="toggleLocalDetail" aria-controls="inspector" aria-expanded="true">收起详情</button>
+          <button id="loadNeighbors">加载库中直接邻居</button>
+        </div>
+        <details id="localFilterPanel" class="local-filter-panel" open>
+          <summary>关系筛选 <span id="localFilterSummary"></span></summary>
+          <div class="local-filter-body"><div class="local-filters">
+          <label>范围 <select id="localDepth"><option value="1">1 层 · 直接关系</option><option value="2">2 层 · 间接关系</option><option value="3">3 层 · 延伸关系</option></select></label>
+          <label>方向 <select id="localDirection"><option value="both">双向探索</option><option value="outgoing">沿出向扩展 →</option><option value="incoming">沿入向扩展 ←</option></select></label>
+          <label>类别 <select id="localKind"><option value="all">全部连接</option><option value="stored_relation">已存储关系</option><option value="provenance">事件来源</option><option value="goal_evidence">目标证据引用</option><option value="action_input">历史输入引用</option></select></label>
+          <label>关系名称 <select id="localRelation" aria-describedby="relationFilterNotice"><option value="">全部名称</option></select></label><button id="resetLocalFilters" title="重置方向、类别和关系名称；保留层数与记忆层">重置关系筛选</button>
+          </div><p id="relationFilterNotice"></p><p id="localProjectionNotice"></p></div>
+        </details>
+        <div class="local-notices"><p id="localScope"></p><p id="localLoadedScope"></p><p id="neighborReadStatus" role="status" aria-live="polite"></p></div>
+      </section>
+      <section class="graph-stage" id="graphStage" aria-label="交互式记忆关系图谱">
+        <div class="stage-caption" id="stageCaption"><p id="stageEyebrow">THE SHAPE OF MEMORY</p><h1 id="stageTitle">每段记忆，都有来处。</h1><span id="stageSubtitle">探索 EVA 记忆之间已记录的连接</span></div>
+        <div id="immersiveHud" class="immersive-hud" hidden><div class="immersive-brand"><span>EVA MEMORY UNIVERSE</span><strong id="immersiveScope">全局图谱</strong></div><div class="immersive-actions"><button id="immersiveDetails" aria-controls="inspector" aria-expanded="false" disabled>节点详情</button><button id="immersiveRelations" aria-controls="localControls" aria-expanded="false" hidden>关系导航</button><button id="immersiveReset">复位视角</button><button id="immersiveExit">退出沉浸</button></div><p id="immersiveHint">拖动旋转 · Shift 平移 · 滚轮缩放 · Esc 退出</p></div>
+        <canvas id="memoryCanvas" tabindex="0" aria-label="三维记忆星系。拖动旋转，Shift 拖动平移，滚轮或双指缩放；点击星体或关系线查看详情。方向键旋转，Home 复位，也可用节点列表选择。"></canvas>
+        <p id="galaxyGuide" class="galaxy-guide"></p>
+        <div id="graphMessage" class="graph-message" role="status">正在读取 EVA 的记忆…</div>
+        <div class="display-panel" id="displayPanel" role="region" aria-label="星图显示设置" hidden>
+          <strong>图谱显示</strong>
+          <label><input id="particleBodies" type="checkbox" checked> 三维粒子星体</label>
+          <label><input id="orbitMotion" type="checkbox" checked> 记忆轨道运转</label>
+          <label>运转速度 <input id="orbitSpeed" type="range" min="10" max="200" value="100" aria-label="运转速度"><output id="orbitSpeedValue" aria-label="当前运转速度">1.0×</output></label>
+          <p class="orbit-note">选择节点自动暂停；“继续运转”保留详情和局部范围，再次选择会暂停。主星、行星、卫星表示展示层级，关系线来自记录。</p>
+          <label>三维视角 <select id="cameraView" aria-label="三维视角" title="调整观察方向并适应当前范围"><option value="oblique">斜视</option><option value="top">俯视</option><option value="side">侧视</option><option value="custom" disabled>自由视角</option></select></label>
+          <label><input id="animateGraph" type="checkbox" checked> 流动粒子</label>
+          <label><input id="cameraMotion" type="checkbox" checked title="定位星系、聚焦节点和切换视角时平滑过渡；拖动或缩放会停止过渡">平滑镜头</label>
+          <label><input id="showLabels" type="checkbox" checked> 关键节点名称</label>
+          <label><input id="showOrphans" type="checkbox" checked> 无连接节点</label>
+          <label><input id="showOrigins" type="checkbox" checked> 来源关联（虚线）</label>
+          <label><input id="showOrbits" type="checkbox" checked> 星系轨道</label>
+          <label>连线亮度 <input id="edgeBrightness" type="range" min="10" max="100" value="38"></label>
+          <p>轨道和星体大小用于展示层级；关系线来自记录。光点流动不表示实时认知活动。</p>
+        </div>
+        <div class="graph-tooltip" id="graphTooltip" hidden></div>
+        <div class="graph-key"><span><i class="key-line"></i><span id="solidKey">已存储关系</span></span><span id="originKey"><i class="key-line dashed"></i>事件来源</span></div>
+        <div class="canvas-controls"><button id="zoomIn" title="放大" aria-label="放大">＋</button><button id="zoomOut" title="缩小" aria-label="缩小">−</button><span></span><button id="fitGraph" title="适应窗口" aria-label="适应窗口">⌗</button><output id="zoomLevel">100%</output></div>
+      </section>
+      <footer class="graph-footer"><span id="scopeStatus">有界投影 · 不生成推测连线</span><button id="openDiagnostics" aria-haspopup="dialog">关系诊断</button><span id="runtimeStatus">{% if read_only_preview %}只读记忆视图 · 认知运行时未启动{% else %}运行模式：读取中{% endif %}</span></footer>
+    </main>
+    <aside class="inspector" id="inspector" aria-label="记忆详情">
+      <div class="inspector-heading">记忆详情 <div><button id="closeImmersiveDetail" title="收起详情，保留所选节点" aria-label="收起节点详情" hidden>−</button><button id="clearSelection" title="清除选择" aria-label="清除选择">×</button></div></div>
+      <div id="detailEmpty" class="detail-empty"><div class="orbit-symbol"><span>✧</span></div><h2>沿着连接，找到记忆</h2><p>选择一个光点，查看它的内容、来源和关联记忆。</p><div class="detail-tip"><span>01</span> 点击节点，阅读记忆<br><span>02</span> 拖动空间，探索连接<br><span>03</span> 打开 Obsidian，继续整理</div></div>
+      <div id="detailContent" class="detail-content" hidden>
+        <span id="detailTier" class="detail-tier"></span><h2 id="detailTitle"></h2>
+        <button id="focusNode" class="relation-open" disabled title="居中并放大所选节点，保留当前范围、局部中心和方向">◎ 聚焦节点</button>
+        <section id="localPath" class="local-path" aria-label="从中心到所选节点的路径" hidden><h3>从中心到此节点</h3><p id="localPathSummary" role="status"></p><button id="fitLocalPath" class="relation-open">适应路径</button><div id="localPathSteps"></div><p class="path-note">箭头保留记录方向；可逆向经过。仅依据当前筛选后的连接，不代表因果或可信度，可能存在其他等长路径。</p></section>
+        <dl class="detail-meta"><dt>记录类型</dt><dd id="detailKind"></dd><dt>来源状态</dt><dd id="detailOrigin"></dd><dt>记录时间</dt><dd id="detailTime"></dd><dt>记录来源</dt><dd id="detailSource"></dd></dl>
+        <section id="goalDetail" class="goal-detail" hidden><h3 id="goalStatus"></h3><pre id="goalSummary"></pre><div class="goal-actions"><button id="verifyGoal" class="relation-open" hidden>重新检查指定文件</button><button id="cancelGoal" class="relation-open" hidden>取消跟踪目标</button></div><p id="goalActionStatus" class="detail-notice" role="status" aria-live="polite"></p><button id="loadGoalHistory" class="relation-open" hidden>加载更早检查</button><p id="goalHistoryStatus" class="detail-notice" role="status" aria-live="polite"></p><div id="goalHistoryList" class="goal-history-list"></div></section>
+        {% if not read_only_preview %}<section id="toolChecks" class="goal-history-list" aria-label="独立工具文件核验" hidden></section>{% endif %}
+        {% if not read_only_preview %}<section id="actionInputs" class="goal-detail" aria-label="行动的历史输入" hidden><h3>行动使用的输入</h3><button id="loadActionInputs" class="relation-open">加载行动与输入引用</button><p id="actionInputStatus" class="detail-notice" role="status" aria-live="polite"></p></section>{% endif %}
+        <h3 id="detailBodyHeading">记忆内容</h3><pre id="detailBody"></pre><p id="detailNotice" class="detail-notice" role="status"></p>
+        <details><summary>来源与字段记录</summary><pre id="detailProvenance"></pre></details>
+        <a id="openNote" class="note-link" hidden>在 Obsidian 中打开笔记 ↗</a>
+        <h3>当前图谱中的连接 <span id="neighborCount"></span></h3><div id="neighbors"></div>
+      </div>
+      <div class="inspector-footer">记忆记录 ≠ 已证实的事实</div>
+    </aside>
+  </div>
+  <dialog id="relationDiagnostics" class="relation-diagnostics" aria-labelledby="diagnosticTitle" aria-describedby="diagnosticScope">
+    <header><h2 id="diagnosticTitle">缺少实体的关系</h2><button id="closeDiagnostics" aria-label="关闭关系诊断" autofocus>×</button></header>
+    <p id="diagnosticScope">检查整个世界模型，不受图谱搜索和筛选影响。仅列出已存储关系中不存在的端点实体；此处不会修改记录。</p>
+    <p id="diagnosticStatus" role="status" aria-live="polite"></p>
+    <div id="diagnosticItems" class="diagnostic-items"></div>
+    <footer id="diagnosticPagination"><button id="diagnosticPrevious" disabled>上一页</button><button id="diagnosticRetry">重新读取</button><button id="diagnosticNext" disabled>下一页</button></footer>
+    <section id="diagnosticRecord" class="diagnostic-record" aria-labelledby="diagnosticRecordTitle" hidden>
+      <div class="diagnostic-record-actions"><button id="diagnosticRecordBack">← 返回关系列表</button><button id="diagnosticRecordRetry">重新读取记录</button></div>
+      <h3 id="diagnosticRecordTitle" tabindex="-1"></h3><code id="diagnosticRecordId"></code>
+      <p id="diagnosticRecordStatus" role="status" aria-live="polite"></p>
+      <div id="diagnosticRecordBody"></div>
+    </section>
+    <p class="diagnostic-note">每页读取当前数据，翻页期间记录可能变化。来源标注不等同于事实证明。</p>
+  </dialog>
+  <dialog id="relationInspector" class="relation-diagnostics relation-inspector" aria-labelledby="relationInspectorTitle">
+    <header><h2 id="relationInspectorTitle">关系详情</h2><button id="closeRelationInspector" aria-label="关闭关系详情" autofocus>×</button></header>
+    <p id="relationChoiceNotice" role="status"></p>
+    <div class="relation-inspector-body">
+      <div id="relationChoices" class="relation-choices" aria-label="此位置的连接" hidden></div>
+      <section id="relationFields" hidden>
+        <h3 id="relationName"></h3>
+        <div class="relation-endpoints"><div><span>起点</span><button id="relationFrom" title="查看起点节点"></button><code id="relationFromId"></code></div><span class="relation-direction" aria-label="指向">→</span><div><span>终点</span><button id="relationTo" title="查看终点节点"></button><code id="relationToId"></code></div></div>
+        <dl class="detail-meta"><dt>关系类别</dt><dd id="relationKind"></dd><dt>来源状态</dt><dd id="relationOrigin"></dd><dt>记录来源</dt><dd id="relationSource"></dd><dt>记录时间</dt><dd id="relationTime"></dd><dt>关系权重</dt><dd id="relationWeight"></dd></dl>
+        <p id="relationExplanation" class="detail-notice"></p>
+        <details><summary>关系原始字段</summary><pre id="relationRaw"></pre></details>
+        <button id="readRelationSource" class="note-link" hidden>读取来源事件</button>
+        <section id="relationSourceRecord" hidden><p id="relationSourceStatus" role="status" aria-live="polite"></p><pre id="relationSourceBody"></pre></section>
+      </section>
+    </div>
+    <p class="diagnostic-note">详情来自当前已加载的关系记录。来源引用和关系名称不等同于事实证明。</p>
+  </dialog>
+  <dialog id="goalCreateDialog" class="goal-create" aria-labelledby="goalCreateTitle" aria-describedby="goalCreateHelp">
+    <header><h2 id="goalCreateTitle">登记文件检查目标</h2><button id="closeGoalCreate" type="button" aria-label="关闭目标表单">×</button></header>
+    <p id="goalCreateHelp">绑定已登记的请求，固定期望文件内容。登记不会执行任务、修改文件或自动检查；一个请求只能绑定一个目标。</p>
+    <form id="goalCreateForm">
+      <label><span>请求 ID</span><input id="goalTask" required maxlength="256" autocomplete="off" autofocus><small>复制对话提交结果或任务回执中的 task_id。</small></label>
+      <label><span>目标描述</span><textarea id="goalDescription" required maxlength="1000" rows="3"></textarea></label>
+      <label><span>文件路径与期望 SHA-256</span><textarea id="goalFiles" required maxlength="6000" rows="5" spellcheck="false" placeholder="docs/report.md | 64 位十六进制 SHA-256"></textarea><small>每行：相对路径 | SHA-256，最多 16 个文件。路径基于 EVA 工作区，使用 /；每个文件最多 2 MiB。请使用事先确定的期望哈希。</small></label>
+      <label><span>截止时间（可选，按当前设备时区）</span><input id="goalDeadline" type="datetime-local"><small>提交时转换为带时区的 UTC 时间。</small></label>
+      <div class="goal-create-actions"><button id="submitGoal" type="submit">登记目标</button><button id="lookupGoal" type="button">查询登记结果</button><button id="viewCreatedGoal" type="button" hidden>在图谱中查看</button><button id="anotherGoal" type="button" hidden>登记另一个目标</button></div>
+      <p id="goalCreateStatus" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <script src="/static/http.js?v=2"></script>
+  <script src="/static/memory_galaxy.js?v=4"></script>
+  <script src="/static/memory_galaxy_renderer.js?v=5"></script>
+  <script src="/static/memory_graph.js?v=45"></script>
+  {% if not read_only_preview %}<script src="/static/goal_create.js?v=1"></script>{% endif %}
+  <script src="/static/memory_diagnostics.js?v=2"></script>
+  {% if not read_only_preview %}<script src="/static/runtime_status.js?v=2"></script>{% endif %}
+</body>
+</html>

@@ -1,0 +1,1042 @@
+[
+  {
+    "method": "GET",
+    "path": "/api/action-context/{task_id}",
+    "handler": "get_action_context",
+    "source": "app/api_routes/routes_action_context.py",
+    "line": 12,
+    "endLine": 25
+  },
+  {
+    "method": "GET",
+    "path": "/api/action-context/{task_id}/graph",
+    "handler": "get_action_context_graph",
+    "source": "app/api_routes/routes_action_context.py",
+    "line": 28,
+    "endLine": 43
+  },
+  {
+    "method": "GET",
+    "path": "/api/agents",
+    "handler": "list_agents",
+    "source": "app/api_routes/routes_agents.py",
+    "line": 21,
+    "endLine": 33
+  },
+  {
+    "method": "POST",
+    "path": "/api/agents/register",
+    "handler": "register_agent",
+    "source": "app/api_routes/routes_agents.py",
+    "line": 36,
+    "endLine": 71
+  },
+  {
+    "method": "DELETE",
+    "path": "/api/agents/{name}",
+    "handler": "unregister_agent",
+    "source": "app/api_routes/routes_agents.py",
+    "line": 74,
+    "endLine": 93
+  },
+  {
+    "method": "GET",
+    "path": "/api/agents/stats",
+    "handler": "agent_stats",
+    "source": "app/api_routes/routes_agents.py",
+    "line": 96,
+    "endLine": 113
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/modes",
+    "handler": "chat_modes",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 68,
+    "endLine": 75
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat",
+    "handler": "chat",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 78,
+    "endLine": 114
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat/stream",
+    "handler": "chat_stream",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 120,
+    "endLine": 185
+  },
+  {
+    "method": "POST",
+    "path": "/api/chat/sync",
+    "handler": "chat_sync",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 191,
+    "endLine": 255
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/result/{task_id}",
+    "handler": "get_chat_result",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 261,
+    "endLine": 319
+  },
+  {
+    "method": "GET",
+    "path": "/api/state",
+    "handler": "get_state",
+    "source": "app/api_routes/routes_chat.py",
+    "line": 325,
+    "endLine": 375
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/cognition/timings",
+    "handler": "get_phase_timings",
+    "source": "app/api_routes/routes_cognition.py",
+    "line": 17,
+    "endLine": 32
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/cognition/stats",
+    "handler": "get_cognition_stats",
+    "source": "app/api_routes/routes_cognition.py",
+    "line": 35,
+    "endLine": 62
+  },
+  {
+    "method": "GET",
+    "path": "/api/config",
+    "handler": "get_config",
+    "source": "app/api_routes/routes_config.py",
+    "line": 17,
+    "endLine": 64
+  },
+  {
+    "method": "GET",
+    "path": "/api/config/defaults",
+    "handler": "config_defaults",
+    "source": "app/api_routes/routes_config.py",
+    "line": 67,
+    "endLine": 101
+  },
+  {
+    "method": "GET",
+    "path": "/api/constitution",
+    "handler": "get_constitution",
+    "source": "app/api_routes/routes_constitution.py",
+    "line": 25,
+    "endLine": 41
+  },
+  {
+    "method": "POST",
+    "path": "/api/constitution/reload",
+    "handler": "reload_constitution",
+    "source": "app/api_routes/routes_constitution.py",
+    "line": 44,
+    "endLine": 78
+  },
+  {
+    "method": "GET",
+    "path": "/api/constitution/status",
+    "handler": "constitution_status",
+    "source": "app/api_routes/routes_constitution.py",
+    "line": 81,
+    "endLine": 96
+  },
+  {
+    "method": "GET",
+    "path": "/api/executors",
+    "handler": "list_executors",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 22,
+    "endLine": 30
+  },
+  {
+    "method": "GET",
+    "path": "/api/executors/audit",
+    "handler": "audit_log",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 33,
+    "endLine": 48
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/file/read",
+    "handler": "file_read",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 75,
+    "endLine": 83
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/file/write",
+    "handler": "file_write",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 86,
+    "endLine": 96
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/file/list",
+    "handler": "file_list",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 99,
+    "endLine": 106
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/code/execute",
+    "handler": "code_execute",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 109,
+    "endLine": 119
+  },
+  {
+    "method": "GET",
+    "path": "/api/executors/audit/replay",
+    "handler": "audit_replay",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 124,
+    "endLine": 156
+  },
+  {
+    "method": "GET",
+    "path": "/api/executors/audit/verify",
+    "handler": "audit_verify",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 161,
+    "endLine": 168
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/comms/log",
+    "handler": "comms_log",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 173,
+    "endLine": 182
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/comms/notify",
+    "handler": "comms_notify",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 185,
+    "endLine": 194
+  },
+  {
+    "method": "POST",
+    "path": "/api/executors/comms/alert",
+    "handler": "comms_alert",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 197,
+    "endLine": 206
+  },
+  {
+    "method": "GET",
+    "path": "/api/executors/stats",
+    "handler": "executor_stats",
+    "source": "app/api_routes/routes_executors.py",
+    "line": 209,
+    "endLine": 234
+  },
+  {
+    "method": "GET",
+    "path": "/api/conversation/export",
+    "handler": "export_conversation",
+    "source": "app/api_routes/routes_export.py",
+    "line": 34,
+    "endLine": 70
+  },
+  {
+    "method": "POST",
+    "path": "/api/conversation/import",
+    "handler": "import_conversation",
+    "source": "app/api_routes/routes_export.py",
+    "line": 149,
+    "endLine": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/conversation/stats",
+    "handler": "conversation_stats",
+    "source": "app/api_routes/routes_export.py",
+    "line": 234,
+    "endLine": 248
+  },
+  {
+    "method": "POST",
+    "path": "/api/webhooks/github",
+    "handler": "github_webhook",
+    "source": "app/api_routes/routes_github.py",
+    "line": 19,
+    "endLine": 66
+  },
+  {
+    "method": "GET",
+    "path": "/api/github/status",
+    "handler": "github_status",
+    "source": "app/api_routes/routes_github.py",
+    "line": 69,
+    "endLine": 80
+  },
+  {
+    "method": "POST",
+    "path": "/api/goals",
+    "handler": "create_goal",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 86,
+    "endLine": 105
+  },
+  {
+    "method": "GET",
+    "path": "/api/goals/by-task/{task_id}",
+    "handler": "goal_for_task",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 108,
+    "endLine": 112
+  },
+  {
+    "method": "GET",
+    "path": "/api/goals/graph",
+    "handler": "goal_graph",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 115,
+    "endLine": 126
+  },
+  {
+    "method": "GET",
+    "path": "/api/goals/{goal_id}/history",
+    "handler": "goal_history",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 129,
+    "endLine": 140
+  },
+  {
+    "method": "GET",
+    "path": "/api/goals/{goal_id}/episode",
+    "handler": "goal_episode",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 143,
+    "endLine": 148
+  },
+  {
+    "method": "GET",
+    "path": "/api/goals/{goal_id}",
+    "handler": "get_goal",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 151,
+    "endLine": 155
+  },
+  {
+    "method": "POST",
+    "path": "/api/goals/{goal_id}/cancel",
+    "handler": "cancel_goal",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 158,
+    "endLine": 162
+  },
+  {
+    "method": "POST",
+    "path": "/api/goals/{goal_id}/verify",
+    "handler": "verify_goal",
+    "source": "app/api_routes/routes_goals.py",
+    "line": 165,
+    "endLine": 172
+  },
+  {
+    "method": "GET",
+    "path": "/health/live",
+    "handler": "health_live",
+    "source": "app/api_routes/routes_health.py",
+    "line": 16,
+    "endLine": 19
+  },
+  {
+    "method": "GET",
+    "path": "/health/ready",
+    "handler": "health_ready",
+    "source": "app/api_routes/routes_health.py",
+    "line": 22,
+    "endLine": 24
+  },
+  {
+    "method": "GET",
+    "path": "/health/diagnostic",
+    "handler": "health_diagnostic",
+    "source": "app/api_routes/routes_health.py",
+    "line": 27,
+    "endLine": 38
+  },
+  {
+    "method": "POST",
+    "path": "/health/recover",
+    "handler": "health_recover",
+    "source": "app/api_routes/routes_health.py",
+    "line": 41,
+    "endLine": 81
+  },
+  {
+    "method": "GET",
+    "path": "/health/ws",
+    "handler": "websocket_stats",
+    "source": "app/api_routes/routes_health.py",
+    "line": 84,
+    "endLine": 88
+  },
+  {
+    "method": "GET",
+    "path": "/health/summary",
+    "handler": "health_summary",
+    "source": "app/api_routes/routes_health.py",
+    "line": 91,
+    "endLine": 114
+  },
+  {
+    "method": "GET",
+    "path": "/health/ws/channels",
+    "handler": "ws_channels",
+    "source": "app/api_routes/routes_health.py",
+    "line": 117,
+    "endLine": 128
+  },
+  {
+    "method": "GET",
+    "path": "/health/rate-limiter",
+    "handler": "rate_limiter_stats",
+    "source": "app/api_routes/routes_health.py",
+    "line": 131,
+    "endLine": 140
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/recent",
+    "handler": "recent_memory",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 11,
+    "endLine": 13
+  },
+  {
+    "method": "GET",
+    "path": "/api/debug/trace",
+    "handler": "recent_trace",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 16,
+    "endLine": 19
+  },
+  {
+    "method": "GET",
+    "path": "/api/events/stats",
+    "handler": "event_type_stats",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 22,
+    "endLine": 45
+  },
+  {
+    "method": "GET",
+    "path": "/api/events/recent",
+    "handler": "recent_events",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 48,
+    "endLine": 50
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/tiers",
+    "handler": "memory_tiers",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 55,
+    "endLine": 123
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/working",
+    "handler": "working_memory",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 126,
+    "endLine": 146
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/working/stats",
+    "handler": "working_memory_stats",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 149,
+    "endLine": 171
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/longterm",
+    "handler": "longterm_memory",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 174,
+    "endLine": 182
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/world",
+    "handler": "world_model",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 185,
+    "endLine": 194
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/search",
+    "handler": "semantic_search",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 197,
+    "endLine": 238
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/compaction/stats",
+    "handler": "compaction_stats",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 241,
+    "endLine": 251
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/db-stats",
+    "handler": "db_table_stats",
+    "source": "app/api_routes/routes_memory.py",
+    "line": 254,
+    "endLine": 278
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/entries/{tier}",
+    "handler": "get_memory_entries",
+    "source": "app/api_routes/routes_memory_explorer.py",
+    "line": 37,
+    "endLine": 151
+  },
+  {
+    "method": "POST",
+    "path": "/api/memory/search",
+    "handler": "search_memory",
+    "source": "app/api_routes/routes_memory_explorer.py",
+    "line": 156,
+    "endLine": 242
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/entry/{tier}/{entry_id}",
+    "handler": "get_memory_entry",
+    "source": "app/api_routes/routes_memory_explorer.py",
+    "line": 247,
+    "endLine": 280
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/graph",
+    "handler": "memory_graph",
+    "source": "app/api_routes/routes_memory_graph.py",
+    "line": 36,
+    "endLine": 48
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/graph/dangling",
+    "handler": "graph_dangling",
+    "source": "app/api_routes/routes_memory_graph.py",
+    "line": 51,
+    "endLine": 58
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/graph/node",
+    "handler": "graph_node",
+    "source": "app/api_routes/routes_memory_graph.py",
+    "line": 61,
+    "endLine": 73
+  },
+  {
+    "method": "GET",
+    "path": "/api/memory/graph/neighbors",
+    "handler": "graph_neighbors",
+    "source": "app/api_routes/routes_memory_graph.py",
+    "line": 76,
+    "endLine": 88
+  },
+  {
+    "method": "GET",
+    "path": "/api/obsidian/export",
+    "handler": "obsidian_export",
+    "source": "app/api_routes/routes_memory_graph.py",
+    "line": 91,
+    "endLine": 100
+  },
+  {
+    "method": "GET",
+    "path": "/metrics",
+    "handler": "metrics",
+    "source": "app/api_routes/routes_metrics.py",
+    "line": 21,
+    "endLine": 102
+  },
+  {
+    "method": "GET",
+    "path": "/metrics/prometheus",
+    "handler": "metrics_prometheus",
+    "source": "app/api_routes/routes_metrics.py",
+    "line": 105,
+    "endLine": 191
+  },
+  {
+    "method": "GET",
+    "path": "/metrics/llm",
+    "handler": "llm_status",
+    "source": "app/api_routes/routes_metrics.py",
+    "line": 194,
+    "endLine": 211
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/state",
+    "handler": "get_mvsc_state",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 39,
+    "endLine": 65
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/ablation",
+    "handler": "get_ablation_config",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 68,
+    "endLine": 87
+  },
+  {
+    "method": "POST",
+    "path": "/api/mvsc/ablation/toggle",
+    "handler": "toggle_ablation_feature",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 90,
+    "endLine": 116
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/metrics",
+    "handler": "get_ablation_metrics",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 119,
+    "endLine": 131
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/lifecycle",
+    "handler": "get_lifecycle_state",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 134,
+    "endLine": 147
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/verification/stats",
+    "handler": "get_verification_stats",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 150,
+    "endLine": 165
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/observability",
+    "handler": "get_observability_snapshot",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 168,
+    "endLine": 197
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/trace/{correlation_id}",
+    "handler": "get_trace",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 200,
+    "endLine": 229
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/integrity",
+    "handler": "verify_event_integrity",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 232,
+    "endLine": 260
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/events/chain/{event_id}",
+    "handler": "get_causal_chain",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 263,
+    "endLine": 292
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/events",
+    "handler": "list_events",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 295,
+    "endLine": 341
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/cache/stats",
+    "handler": "get_semantic_cache_stats",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 344,
+    "endLine": 356
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/vector/stats",
+    "handler": "vector_store_stats",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 359,
+    "endLine": 373
+  },
+  {
+    "method": "POST",
+    "path": "/api/mvsc/cache/invalidate",
+    "handler": "invalidate_semantic_cache",
+    "source": "app/api_routes/routes_mvsc.py",
+    "line": 376,
+    "endLine": 386
+  },
+  {
+    "method": "GET",
+    "path": "/api/persona/active",
+    "handler": "persona_active",
+    "source": "app/api_routes/routes_persona.py",
+    "line": 24,
+    "endLine": 27
+  },
+  {
+    "method": "POST",
+    "path": "/api/persona/update",
+    "handler": "persona_update",
+    "source": "app/api_routes/routes_persona.py",
+    "line": 30,
+    "endLine": 37
+  },
+  {
+    "method": "GET",
+    "path": "/api/persona/stats",
+    "handler": "persona_stats",
+    "source": "app/api_routes/routes_persona.py",
+    "line": 40,
+    "endLine": 53
+  },
+  {
+    "method": "GET",
+    "path": "/api/policy/state",
+    "handler": "get_policy_state",
+    "source": "app/api_routes/routes_policy.py",
+    "line": 16,
+    "endLine": 34
+  },
+  {
+    "method": "POST",
+    "path": "/api/policy/transition",
+    "handler": "trigger_state_transition",
+    "source": "app/api_routes/routes_policy.py",
+    "line": 37,
+    "endLine": 77
+  },
+  {
+    "method": "GET",
+    "path": "/api/policy/history",
+    "handler": "get_policy_history",
+    "source": "app/api_routes/routes_policy.py",
+    "line": 80,
+    "endLine": 96
+  },
+  {
+    "method": "GET",
+    "path": "/api/proactive/state",
+    "handler": "proactive_state",
+    "source": "app/api_routes/routes_proactive.py",
+    "line": 14,
+    "endLine": 34
+  },
+  {
+    "method": "POST",
+    "path": "/api/debug/maintenance/trigger",
+    "handler": "trigger_maintenance",
+    "source": "app/api_routes/routes_proactive.py",
+    "line": 37,
+    "endLine": 51
+  },
+  {
+    "method": "GET",
+    "path": "/api/runtime",
+    "handler": "runtime_state",
+    "source": "app/api_routes/routes_runtime.py",
+    "line": 11,
+    "endLine": 16
+  },
+  {
+    "method": "GET",
+    "path": "/api/scheduler/jobs",
+    "handler": "scheduler_jobs",
+    "source": "app/api_routes/routes_scheduler.py",
+    "line": 11,
+    "endLine": 14
+  },
+  {
+    "method": "GET",
+    "path": "/api/scheduler/stats",
+    "handler": "scheduler_stats",
+    "source": "app/api_routes/routes_scheduler.py",
+    "line": 17,
+    "endLine": 31
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/self/identity",
+    "handler": "get_identity",
+    "source": "app/api_routes/routes_self_model.py",
+    "line": 21,
+    "endLine": 33
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/self/capability",
+    "handler": "get_capability",
+    "source": "app/api_routes/routes_self_model.py",
+    "line": 36,
+    "endLine": 54
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/self/boundary",
+    "handler": "get_boundary",
+    "source": "app/api_routes/routes_self_model.py",
+    "line": 57,
+    "endLine": 68
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/self/narrative",
+    "handler": "get_narrative",
+    "source": "app/api_routes/routes_self_model.py",
+    "line": 71,
+    "endLine": 91
+  },
+  {
+    "method": "GET",
+    "path": "/api/mvsc/self/stability",
+    "handler": "get_stability",
+    "source": "app/api_routes/routes_self_model.py",
+    "line": 94,
+    "endLine": 105
+  },
+  {
+    "method": "GET",
+    "path": "/api/debug/snapshot",
+    "handler": "debug_snapshot",
+    "source": "app/api_routes/routes_snapshot.py",
+    "line": 14,
+    "endLine": 18
+  },
+  {
+    "method": "POST",
+    "path": "/api/debug/snapshot/save",
+    "handler": "save_snapshot_now",
+    "source": "app/api_routes/routes_snapshot.py",
+    "line": 21,
+    "endLine": 27
+  },
+  {
+    "method": "GET",
+    "path": "/api/debug/snapshot/list",
+    "handler": "list_snapshots",
+    "source": "app/api_routes/routes_snapshot.py",
+    "line": 30,
+    "endLine": 51
+  },
+  {
+    "method": "GET",
+    "path": "/api/debug/snapshot/status",
+    "handler": "snapshot_status",
+    "source": "app/api_routes/routes_snapshot.py",
+    "line": 54,
+    "endLine": 66
+  },
+  {
+    "method": "GET",
+    "path": "/api/debug/snapshot/verify",
+    "handler": "verify_snapshot",
+    "source": "app/api_routes/routes_snapshot.py",
+    "line": 69,
+    "endLine": 97
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/migrations",
+    "handler": "migration_status",
+    "source": "app/api_routes/routes_system.py",
+    "line": 25,
+    "endLine": 39
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/endpoints",
+    "handler": "list_endpoints",
+    "source": "app/api_routes/routes_system.py",
+    "line": 42,
+    "endLine": 61
+  },
+  {
+    "method": "POST",
+    "path": "/api/system/log-level",
+    "handler": "set_log_level",
+    "source": "app/api_routes/routes_system.py",
+    "line": 64,
+    "endLine": 73
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/versions",
+    "handler": "dependency_versions",
+    "source": "app/api_routes/routes_system.py",
+    "line": 76,
+    "endLine": 91
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/env",
+    "handler": "environment_info",
+    "source": "app/api_routes/routes_system.py",
+    "line": 94,
+    "endLine": 107
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/resources",
+    "handler": "system_resources",
+    "source": "app/api_routes/routes_system.py",
+    "line": 110,
+    "endLine": 147
+  },
+  {
+    "method": "GET",
+    "path": "/api/system/data-usage",
+    "handler": "data_usage",
+    "source": "app/api_routes/routes_system.py",
+    "line": 150,
+    "endLine": 174
+  },
+  {
+    "method": "GET",
+    "path": "/api/tool-observations/{action_id}",
+    "handler": "observation_history",
+    "source": "app/api_routes/routes_tool_observations.py",
+    "line": 36,
+    "endLine": 46
+  },
+  {
+    "method": "POST",
+    "path": "/api/tool-observations/{action_id}",
+    "handler": "reconcile_tool",
+    "source": "app/api_routes/routes_tool_observations.py",
+    "line": 49,
+    "endLine": 60
+  },
+  {
+    "method": "GET",
+    "path": "/api/tools",
+    "handler": "list_tools",
+    "source": "app/api_routes/routes_tools.py",
+    "line": 10,
+    "endLine": 28
+  },
+  {
+    "method": "POST",
+    "path": "/api/tools/call",
+    "handler": "call_tool",
+    "source": "app/api_routes/routes_tools.py",
+    "line": 31,
+    "endLine": 61
+  },
+  {
+    "method": "GET",
+    "path": "/api/tools/stats",
+    "handler": "tool_stats",
+    "source": "app/api_routes/routes_tools.py",
+    "line": 64,
+    "endLine": 91
+  },
+  {
+    "method": "GET",
+    "path": "/api/tools/usage",
+    "handler": "tool_usage_stats",
+    "source": "app/api_routes/routes_tools.py",
+    "line": 94,
+    "endLine": 116
+  },
+  {
+    "method": "GET",
+    "path": "/",
+    "handler": "index",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 13,
+    "endLine": 19
+  },
+  {
+    "method": "GET",
+    "path": "/chat",
+    "handler": "chat_page",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 22,
+    "endLine": 25
+  },
+  {
+    "method": "GET",
+    "path": "/settings",
+    "handler": "settings_page",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 28,
+    "endLine": 34
+  },
+  {
+    "method": "GET",
+    "path": "/mvsc",
+    "handler": "mvsc_dashboard",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 37,
+    "endLine": 44
+  },
+  {
+    "method": "GET",
+    "path": "/memory",
+    "handler": "memory_explorer_page",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 47,
+    "endLine": 49
+  },
+  {
+    "method": "GET",
+    "path": "/memory/list",
+    "handler": "memory_list_page",
+    "source": "app/api_routes/routes_ui.py",
+    "line": 52,
+    "endLine": 58
+  },
+  {
+    "method": "WEBSOCKET",
+    "path": "/ws",
+    "handler": "websocket_endpoint",
+    "source": "app/main.py",
+    "line": 72,
+    "endLine": 95
+  }
+]

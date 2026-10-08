@@ -1,0 +1,51 @@
+{
+  "date": "2026-09-30",
+  "scope": "Codex in-app browser / local UI fixture; archive bytes captured from generated data URL, not native save validation",
+  "unknownVersion": {
+    "saveHidden": true,
+    "selection": [
+      "3",
+      "dark"
+    ],
+    "status": "无法识别品牌包或规则版本，请更新工作区后重试。",
+    "versions": "品牌 1.0.0 · 组件 1.0.0 · Token 结构 1 · 包格式 2"
+  },
+  "generated": {
+    "filename": "eva-brand-1.0.0-components-1.0.0.zip",
+    "status": "Generated 69 files. Open preview.html offline."
+  },
+  "englishVersion": "Brand 1.0.0 · Components 1.0.0 · Token schema 1 · Package format 2",
+  "narrowVersion": {
+    "cardScrollWidth": 271,
+    "cardWidth": 271,
+    "pageWidth": 305,
+    "version": "Brand 1.0.0 · Components 1.0.0 · Token schema 1 · Package format 2",
+    "width": 320
+  },
+  "staleSource": {
+    "saveHidden": true,
+    "status": "品牌来源已变化，请重新生成资产并刷新工作区。"
+  },
+  "final": {
+    "busy": "false",
+    "height": 924,
+    "lang": "zh-CN",
+    "order": "2",
+    "pngSize": "1024",
+    "theme": "light",
+    "variant": "primary",
+    "version": "品牌 1.0.0 · 组件 1.0.0 · Token 结构 1 · 包格式 2",
+    "width": 1015
+  },
+  "testSummary": {
+    "javascript": 298,
+    "failed": 0,
+    "brandAssets": "passed",
+    "identityRegressions": 11
+  },
+  "limits": [
+    "Native browser download not verified",
+    "Direct file:// offline execution not verified",
+    "200% native zoom, actual screen reader and long-duration performance remain pending"
+  ]
+}

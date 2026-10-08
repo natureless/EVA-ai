@@ -8,20 +8,30 @@ single-node runtime.
 ## What Works Today
 
 - FastAPI dashboard, REST, WebSocket, SSE, and async/sync chat flows
+- [Obsidian memory graph](docs/obsidian-memory-graph.md): particle graph UI, provenance links, conflict-aware Markdown mirror and read-only local viewer
 - event bus and continuous cognition loop with traceable result integration
+- shared v1 event contracts, explicit legacy upgrades, source occurrence IDs, and isolated admission snapshots
+- shared EventProcessor and RuntimeController with ordered shutdown, retryable cleanup, and live runtime observations
 - planner, policy engine, agent registry/router/orchestrator, runtime agent registration
 - chat, search, coding analysis, and documentation agents
 - mock and configured LLM providers with guarded file/memory/network/code tools
 - SQLite/JSON persistence, episodic and tiered memory, retrieval, compaction, snapshots
+- provenance-aware memory, explicit S3 retention, and structured response receipt checks
 - persona, relationship constraints, profile, self-model, and stability controls
 - lightweight world graph, context building, scheduler, cooldown, and proactive reminders
 - GitHub poller/webhook integration, health, diagnostics, metrics, audit, and recovery APIs
-- optional MVSC research pipeline behind a disabled-by-default feature flag
+- optional MVSC experiment adapters behind a disabled-by-default flag; HTTP still uses the legacy consumer
+- optional [Minimal Brain v0.1](docs/minimal-brain-v01.md) with independent state-node timing, bounded attention/workspace, and the existing event processor
 
-Current limits are explicit: the stable runtime is single-process; the default
-agent worker uses bounded threads rather than hard process/container isolation;
+Current limits are explicit: the stable runtime has one Core process; the default
+agent worker uses threads. An opt-in [process backend](docs/process-workers.md)
+can terminate and replace text-agent workers, but has no tools or OS resource sandbox;
 the world graph is lightweight; calendar/filesystem connectors and a fully
 durable proactive outbox remain planned.
+
+Actual legacy/Minimal/MVSC wiring and the fixed offline HTTP benchmark are documented
+in [BASE-02](docs/runtime-baseline-base02.md). The UI reads the selected consumer from
+`/api/runtime`; requesting MVSC does not activate its experimental loop as that consumer.
 
 ## Quick Start
 
@@ -37,7 +47,8 @@ python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 Open:
 
-- Dashboard: `http://127.0.0.1:8000/`
+- Memory graph: `http://127.0.0.1:8000/`
+- Chat: `http://127.0.0.1:8000/chat`
 - API documentation: `http://127.0.0.1:8000/docs`
 - Liveness: `http://127.0.0.1:8000/health/live`
 
@@ -58,7 +69,8 @@ For blocking local scripts, use `POST /api/chat/sync`. Applications should use
 ```text
 Interface / Connectors
         -> EventBus
-        -> CognitionLoop
+        -> Selected consumer: FIFO loop or Minimal Brain
+        -> EventProcessor
         -> World + Memory + Persona context
         -> Planner + Policy
         -> AgentOS
@@ -69,8 +81,11 @@ Interface / Connectors
 ```
 
 The application container is grouped into `memory`, `persona`, `world`,
-`agents`, `runtime`, and `integrations` subsystems. `app/bootstrap.py` owns
-lifecycle ordering and `app/composition.py` owns component construction.
+`agents`, `runtime`, and `integrations` subsystems. `app/bootstrap.py` composes
+one `RuntimeController`; it owns consumer lifecycle and ordered cleanup.
+Minimal Brain adds recurring state/attention/goal updates alongside slow event
+processing. See [Runtime Refactor v0.2](docs/runtime-refactor-v02.md) and inspect
+the actual consumer, node timings and shutdown state at `GET /api/runtime`.
 
 ```text
 app/          API edge, configuration, composition, lifecycle
@@ -83,7 +98,7 @@ persona/      Persona, relationship, profile, self-model
 world/        Current state, graph, snapshots
 runtime/      Workers, scheduler, auth, health, diagnostics, messaging
 connectors/   External event sources
-packages/     Experimental MVSC extension through `app/experimental.py`
+packages/     Optional Minimal Brain and MVSC through `app/experimental.py`
 ui/web/       Dashboard
 tests/        Behavior, integration, recovery, and architecture checks
 ```
@@ -114,6 +129,7 @@ EVA_AGENT_EXECUTION_TIMEOUT_SEC=120
 EVA_ENABLE_CODE_TOOL=false
 EVA_ENABLE_NETWORK_TOOLS=false
 EVA_ENABLE_MVSC_PIPELINE=false
+EVA_ENABLE_MINIMAL_BRAIN=false
 ```
 
 Set `EVA_API_TOKEN` in production and send it as `X-API-Token`. Never commit
@@ -129,8 +145,8 @@ python scripts/preflight.py
 ```
 
 Do not run multiple Uvicorn workers or multiple EVA replicas with the current
-in-memory bus/result registry and SQLite topology. The process/container worker
-and distributed-runtime prerequisites are tracked in the development plan.
+in-memory bus/result registry and SQLite topology. Process agents do not change
+these Core limits. OS sandboxing and distributed-runtime prerequisites remain planned.
 
 ## Docker
 

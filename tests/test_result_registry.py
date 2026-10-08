@@ -52,8 +52,9 @@ class TestResultRegistry:
     def test_cleanup_removes_expired(self):
         reg = ResultRegistry()
         reg.create("corr-1")
-        # Manually set created_at far in the past
-        reg._pending["corr-1"].created_at = time.time() - 120
+        reg.fulfill("corr-1", {"ok": True})
+        # Retention starts at completion, not initial admission.
+        reg._pending["corr-1"].completed_at = time.monotonic() - 120
         removed = reg.cleanup(ttl_sec=60)
         assert removed == 1
         assert reg.size() == 0

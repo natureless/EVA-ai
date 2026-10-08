@@ -44,17 +44,9 @@ async def process_webhook(
         {"status": "duplicate", "delivery_id": "..."}
         {"status": "invalid"}
     """
-    if not verify_signature(secret, "", body) if False else True:
-        pass  # verification is done in the route handler
-
     if delivery_id in dedup_set:
         logger.debug("duplicate webhook delivery %s", delivery_id)
         return {"status": "duplicate", "delivery_id": delivery_id}
-
-    dedup_set.add(delivery_id)
-    # Bound memory: reset if set grows too large
-    if len(dedup_set) > 10000:
-        dedup_set.clear()
 
     try:
         payload = json.loads(body)
@@ -64,7 +56,14 @@ async def process_webhook(
 
     from connectors.github.event_normalizer import normalize_webhook_payload
 
-    event = normalize_webhook_payload(event_type, delivery_id, payload)
-    event_bus.publish(event)
+    try:
+        event = normalize_webhook_payload(event_type, delivery_id, payload)
+    except ValueError:
+        return {"status": "unsupported", "delivery_id": delivery_id}
+    if not event_bus.publish(event):
+        return {"status": "rejected", "delivery_id": delivery_id}
+    if len(dedup_set) >= 10000:
+        dedup_set.clear()
+    dedup_set.add(delivery_id)
     logger.info("webhook published: %s → %s", delivery_id, event.id)
     return {"status": "ok", "event_id": event.id, "delivery_id": delivery_id}

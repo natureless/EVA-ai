@@ -1,12 +1,12 @@
 from datetime import datetime
 from typing import Any
 
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
 from persona.models import PersonaProfile
 
 
 class PersonaRepository:
-    def __init__(self, store: SQLiteStore) -> None:
+    def __init__(self, store: BaseStorageAdapter) -> None:
         self.store = store
 
     def get_active(self) -> PersonaProfile | None:

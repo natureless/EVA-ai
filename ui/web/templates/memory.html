@@ -4,23 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ app_name }} · Memory Explorer</title>
-  <link rel="stylesheet" href="/static/main.css?v=6" />
+  <link rel="stylesheet" href="/static/main.css?v=8" />
+  <link rel="stylesheet" href="/static/ui-system.css?v=6" />
+  <script src="/static/ui-theme.js?v=1"></script>
 </head>
-<body>
+<body class="memory-list">
   <header class="topbar">
     <div class="topbar-left">
       <h1>{{ app_name }} <span class="ver">v0.1</span></h1>
       <span class="sub">Memory Explorer</span>
     </div>
     <div class="topbar-right">
-      <a href="/" class="icon-btn" data-i18n-title="nav.chat" title="返回对话">
+      <a href="/chat" class="icon-btn" data-i18n-title="nav.chat" title="返回对话">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </a>
       <a href="/settings" class="icon-btn" data-i18n-title="nav.settings" title="设置">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       </a>
       <button id="langBtn" class="lang-btn" title="Switch Language / 切换语言">中</button>
-      <button id="themeBtn" class="icon-btn" data-i18n-title="btn.theme" title="切换深色/浅色模式">
+      <button id="themeBtn" class="icon-btn" title="切换深色/浅色模式">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-10-10h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41"/></svg>
       </button>
     </div>
@@ -29,8 +31,8 @@
   <main class="mem-explorer">
     <!-- Search bar -->
     <section class="mem-search-bar">
-      <input type="text" id="memSearch" placeholder="Search across all memory tiers..." />
-      <button id="memSearchBtn">Search</button>
+      <input type="search" aria-label="搜索记忆" id="memSearch" placeholder="Search across all memory tiers..." />
+      <button type="button" id="memSearchBtn">Search</button>
     </section>
 
     <!-- Tier overview cards -->
@@ -38,20 +40,26 @@
       <div class="loading">Loading memory tiers…</div>
     </section>
 
+    <p id="memTierStatus" role="status" aria-live="polite"></p>
+    <button type="button" id="memTierRetry" hidden>重试</button>
+
     <!-- Browse / Results area -->
     <section class="mem-results" id="memResults">
       <div class="mem-results-header">
         <h3 id="memResultsTitle">Select a tier to browse</h3>
         <span id="memResultsCount"></span>
       </div>
+      <p id="memResultsStatus" role="status" aria-live="polite"></p>
+      <button type="button" id="memResultsRetry" hidden>重试</button>
       <div class="mem-entries" id="memEntries">
         <div class="empty-state">Click a tier card above to browse entries</div>
       </div>
     </section>
   </main>
 
-  <script src="/static/i18n.js"></script>
-  <script src="/static/nav.js"></script>
-  <script src="/static/memory_explorer.js"></script>
+  <script src="/static/i18n.js?v=9"></script>
+  <script src="/static/nav.js?v=3"></script>
+  <script src="/static/http.js?v=1"></script>
+  <script src="/static/memory_explorer.js?v=4"></script>
 </body>
 </html>

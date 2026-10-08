@@ -1,0 +1,354 @@
+[
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "2",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "3",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "2",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "3",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "2",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "3",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "2",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": false,
+      "order": "3",
+      "reduced": false,
+      "reducedDisabled": false,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "2",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "3",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "2",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "zh-CN",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "3",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "交付包生成失败，请检查来源记录后重试。",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "2",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "3",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "light",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "after": {
+      "cubies": 8,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "2",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "dark",
+      "view": "iso"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "after": {
+      "cubies": 26,
+      "enabled": true,
+      "lang": "en",
+      "linkHidden": true,
+      "motionDisabled": true,
+      "order": "3",
+      "reduced": true,
+      "reducedDisabled": true,
+      "solved": "true",
+      "status": "Kit export failed. Check the source record and try again.",
+      "theme": "dark",
+      "view": "iso"
+    }
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "phase": "app_import",
+  "startedAt": null,
+  "recordedAt": "2026-10-08T15:17:50.554564+00:00",
+  "sourceHashRecorded": false,
+  "type": "RuntimeError",
+  "message": "Could not determine home directory.",
+  "provenance": "Retrospective transcription of exec_command stderr; helper cleared USERPROFILE before Path.home import."
+}

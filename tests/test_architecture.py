@@ -51,6 +51,30 @@ def test_domain_packages_do_not_depend_on_application_layer() -> None:
     )
 
 
+def test_event_processing_is_independent_of_consumer_and_application() -> None:
+    path = PROJECT_ROOT / "core" / "event_processor.py"
+    forbidden = {"core.cognition_loop", "runtime.controller", "runtime.scheduler"}
+    assert not forbidden.intersection(_imports(path))
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    # A processor receives one event; the selected scheduler owns queue ACKs.
+    owned_queue_calls = [
+        node.func.attr for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+        and node.func.attr in {"consume", "task_done"}
+    ]
+    assert owned_queue_calls == []
+
+
+def test_http_observation_does_not_inspect_worker_threads() -> None:
+    violations = []
+    for path in (PROJECT_ROOT / "app" / "api_routes").glob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Attribute) and node.attr in {"_threads", "_thread", "_future"}:
+                violations.append(f"{path.name}:{node.lineno} -> {node.attr}")
+    assert violations == [], "HTTP adapters must use public runtime observations"
+
+
 def _python_files(package_dirs: tuple[str, ...]) -> list[Path]:
     return [
         path

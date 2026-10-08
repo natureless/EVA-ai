@@ -1,0 +1,93 @@
+{
+  "date": "2026-09-30",
+  "archives": [
+    {
+      "archive": "artifacts/brand-studio/m1/eva-brand-kit.zip",
+      "bytes": 213029,
+      "files": 66,
+      "selected": {
+        "order": 2,
+        "variant": "primary",
+        "view": "iso",
+        "size": 512
+      },
+      "assetState": "solved",
+      "zipIntegrity": "pass",
+      "manifestBytesAndCrc": "pass",
+      "currentComponents": "pass",
+      "offlineReferences": "pass",
+      "offlineRuntime": "not_verified",
+      "png": [
+        {
+          "path": "selected/eva-selected.png",
+          "size": [
+            512,
+            512
+          ],
+          "mode": "RGBA",
+          "alpha": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "icons/favicon-16.png",
+          "size": [
+            16,
+            16
+          ],
+          "mode": "RGBA",
+          "alpha": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "icons/favicon-32.png",
+          "size": [
+            32,
+            32
+          ],
+          "mode": "RGBA",
+          "alpha": [
+            0,
+            255
+          ]
+        },
+        {
+          "path": "icons/favicon-48.png",
+          "size": [
+            48,
+            48
+          ],
+          "mode": "RGBA",
+          "alpha": [
+            0,
+            255
+          ]
+        }
+      ],
+      "acquisition": "generated_DOM_download_link"
+    },
+    {
+      "archive": "artifacts/brand-studio/m1/eva-brand-kit-source.zip",
+      "bytes": 182056,
+      "files": 62,
+      "selected": {
+        "order": 3,
+        "variant": "dark",
+        "view": "top",
+        "size": 256
+      },
+      "assetState": "solved",
+      "zipIntegrity": "pass",
+      "manifestBytesAndCrc": "pass",
+      "currentComponents": "pass",
+      "offlineReferences": "pass",
+      "offlineRuntime": "not_verified",
+      "png": [],
+      "acquisition": "CLI"
+    }
+  ],
+  "nativeBrowserDownload": "not_verified"
+}

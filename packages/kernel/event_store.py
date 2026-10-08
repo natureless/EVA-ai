@@ -103,6 +103,9 @@ class EventStore:
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")
         conn.executescript(self.SCHEMA)
+        columns = {row[1] for row in conn.execute("PRAGMA table_info(event_log)")}
+        if "event_contract" not in columns:
+            conn.execute("ALTER TABLE event_log ADD COLUMN event_contract TEXT")
         conn.commit()
         self._conn = conn
         logger.info("event store initialized at %s (WAL mode)", self._db_path)
@@ -121,6 +124,7 @@ class EventStore:
         Raises:
             DuplicateEventError: event_id 已存在
         """
+        EventEnvelope.model_validate(event.model_dump())
         with self._lock:
             conn = self._get_conn()
             try:
@@ -128,14 +132,14 @@ class EventStore:
                     """INSERT INTO event_log
                        (event_id, event_type, source, timestamp,
                         correlation_id, causation_id, subject_id, session_id,
-                        payload_json, confidence, priority, sensitivity, schema_version)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        payload_json, confidence, priority, sensitivity, schema_version, event_contract)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (
                         event.event_id,
                         event.event_type,
                         event.source,
                         event.timestamp.isoformat(),
-                        event.correlation_id,
+                        event.correlation_id or "",
                         event.causation_id,
                         event.subject_id,
                         event.session_id,
@@ -143,7 +147,7 @@ class EventStore:
                         event.confidence,
                         event.priority,
                         event.sensitivity,
-                        event.schema_version,
+                        event.schema_version, event.model_dump_json(),
                     ),
                 )
                 conn.commit()
@@ -166,6 +170,8 @@ class EventStore:
 
     def append_batch(self, events: list[EventEnvelope]) -> list[int]:
         """批量追加事件（单事务）。"""
+        for event in events:
+            EventEnvelope.model_validate(event.model_dump())
         with self._lock:
             conn = self._get_conn()
             sequences: list[int] = []
@@ -175,14 +181,14 @@ class EventStore:
                         """INSERT INTO event_log
                            (event_id, event_type, source, timestamp,
                             correlation_id, causation_id, subject_id, session_id,
-                            payload_json, confidence, priority, sensitivity, schema_version)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                            payload_json, confidence, priority, sensitivity, schema_version, event_contract)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                         (
                             event.event_id,
                             event.event_type,
                             event.source,
                             event.timestamp.isoformat(),
-                            event.correlation_id,
+                            event.correlation_id or "",
                             event.causation_id,
                             event.subject_id,
                             event.session_id,
@@ -190,7 +196,7 @@ class EventStore:
                             event.confidence,
                             event.priority,
                             event.sensitivity,
-                            event.schema_version,
+                            event.schema_version, event.model_dump_json(),
                         ),
                     )
                     row = conn.execute(
@@ -377,13 +383,28 @@ class EventStore:
     @staticmethod
     def _row_to_envelope(row: dict[str, Any]) -> EventEnvelope:
         """将数据库行转换为 EventEnvelope。"""
+        if row.get("event_contract") is not None:
+            contract = json.loads(row["event_contract"])
+            if contract.get("schema_version") != row["schema_version"]:
+                raise ValueError("event contract version disagrees with stored version")
+            for key in ("event_id", "event_type", "source", "subject_id"):
+                if contract.get(key) != row[key]:
+                    raise ValueError(f"event contract disagrees with stored {key}")
+            if datetime.fromisoformat(contract["timestamp"]) != datetime.fromisoformat(row["timestamp"]):
+                raise ValueError("event contract disagrees with stored timestamp")
+            if (contract.get("correlation_id") or "") != row["correlation_id"]:
+                raise ValueError("event contract disagrees with stored correlation_id")
+            if contract.get("payload") != json.loads(row["payload_json"]):
+                raise ValueError("event contract disagrees with stored payload")
+            contract["sequence"] = row["sequence"]
+            return EventEnvelope.model_validate(contract)
         payload = json.loads(row.get("payload_json", "{}"))
         return EventEnvelope(
             event_id=row["event_id"],
             event_type=row["event_type"],
             source=row["source"],
             timestamp=datetime.fromisoformat(row["timestamp"]),
-            correlation_id=row["correlation_id"],
+            correlation_id=row["correlation_id"] or None,
             causation_id=row.get("causation_id"),
             subject_id=row.get("subject_id", "eva-001"),
             session_id=row.get("session_id"),

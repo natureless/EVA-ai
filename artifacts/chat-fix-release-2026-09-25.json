@@ -1,0 +1,188 @@
+{
+  "started_at": "2026-09-25T03:29:39.831315+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z",
+  "backup_files": [
+    {
+      "source": "data/eva.db",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\eva.db",
+      "sha256": "7c8ca2bca9f698bfae6a0681b788bfc318c125f97b0e362eab97aed06629195a"
+    },
+    {
+      "source": "data/mvsc_event_store.db",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\mvsc_event_store.db",
+      "sha256": "0ca0dd0c8e3cb66620722dc47e9382d911a25fb21f241676423e08ef77f8ecc9"
+    },
+    {
+      "source": "data/profile.json",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\profile.json",
+      "sha256": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08"
+    },
+    {
+      "source": "data/self_model.json",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\self_model.json",
+      "sha256": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+    },
+    {
+      "source": "data/persona.json",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\persona.json",
+      "sha256": "4bfefea992ec2643b41d2d43fbab9b97d3f87474fdac5c220bc8e41496fdc60c"
+    },
+    {
+      "source": "data/snapshots/latest.json",
+      "backup": "D:\\EVA-ai\\.cloudflare\\backups\\chat-fix-20260925T032939Z\\latest.json",
+      "sha256": "6f4c9e6d448c7f352e5e34d5cf0e590c1899476f8e662dd6781337994a6cb042"
+    }
+  ],
+  "source_files": {
+    "agents/chat_agent.py": "e685a26f2c11a9276ab67f25aef52947ed7706eafb1306ff0810e1a474ee1a3d",
+    "tests/test_chat_capabilities.py": "8a1fa92de2d37e2d71357bc237780448faa87e66cb3628fd376cad72c77dffe5"
+  },
+  "previous_pid": 31776,
+  "status": "deployed_and_replayed",
+  "scope": "Reply language and per-request callable tool descriptions; no network tools enabled",
+  "new_pid": 23412,
+  "tests": {
+    "pytest_passed": 1374,
+    "ruff": "passed",
+    "preflight": "Only port 8000 availability failed while production was running; all other checks passed"
+  },
+  "production_replay": [
+    {
+      "question": "你是谁",
+      "http_status": 200,
+      "receipt": {
+        "task_id": "d8d1a00d-a05d-4040-8178-e8495989dc0c",
+        "ok": true,
+        "reply": "我是 **EVA**，一个具有稳定身份的持久化认知助手。\n\n- **角色**：持久化认知助手\n- **风格**：精确、冷静、简洁\n- **原则**：不虚构记忆、不过度断言、不违反明确边界\n\n我可以帮你读取本地文件、搜索项目内容、检索记忆，以及协助处理任务。\n\n需要我做什么？",
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_50792e42",
+        "event_id": "78a7c9d3-64be-4259-b08b-cd507bc6c59e",
+        "event_type": "user_message",
+        "duration_ms": 7253,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      },
+      "sse_done": true
+    },
+    {
+      "question": "现在美股行情",
+      "http_status": 200,
+      "receipt": {
+        "task_id": "053cfd84-65c0-4182-8d37-b6255579ca4d",
+        "ok": true,
+        "reply": "我目前没有可用的联网或行情工具，无法获取美股实时行情。\n\n当前可用的工具只有本地文件搜索、文件读取、目录列表和记忆检索——都无法查询市场数据。\n\n**如果你需要，我可以：**\n- 分析你粘贴过来的行情数据（价格、涨跌幅、成交量等）\n- 在你提供数据后，帮你做简单的统计或对比\n\n请把数据贴过来，或告诉我你想分析哪只标的的历史数据。",
+        "selected_agent": "chat_agent",
+        "loop_id": "loop_c1b689aa",
+        "event_id": "6e3c0f29-fb3a-41b3-9425-7c17464be052",
+        "event_type": "user_message",
+        "duration_ms": 7032,
+        "error": null,
+        "review": {
+          "schema_version": 1,
+          "status": "not_assessed",
+          "passed": null,
+          "fact_verified": false,
+          "findings": []
+        },
+        "memory_write_ids": {},
+        "terminal_state": "succeeded",
+        "completed": true
+      },
+      "sse_done": true
+    }
+  ],
+  "runtime_after": {
+    "schema_version": 1,
+    "mode": "legacy",
+    "consumer_type": "core.cognition_loop.CognitionLoop",
+    "processor_type": "core.event_processor.EventProcessor",
+    "phase": "running",
+    "accepting_events": true,
+    "consumer_running": true,
+    "execution_idle": true,
+    "event_bus": {
+      "queue_size": 0,
+      "max_queue_size": 10000,
+      "published": 5,
+      "persisted": 5,
+      "persist_failures": 0,
+      "consecutive_failures": 0,
+      "persist_healthy": true,
+      "dropped": 0,
+      "evicted_background": 0,
+      "rejected_full": 0,
+      "overflow_policy": "drop_oldest",
+      "closed": false,
+      "accepting": true,
+      "rejected_closed": 0
+    },
+    "consumer": {
+      "worker_count": 1,
+      "total_processed": 2,
+      "total_errors": 0,
+      "consecutive_errors": 0,
+      "active_events": 0,
+      "stopping": false,
+      "agent_worker": {
+        "backend": "thread",
+        "max_workers": 4,
+        "timeout_sec": 120.0,
+        "submitted": 4,
+        "completed": 2,
+        "timed_out": 0,
+        "pending": 0
+      }
+    },
+    "processor": {
+      "total_processed": 2,
+      "total_errors": 0,
+      "consecutive_errors": 0,
+      "active_events": 0,
+      "stopping": false,
+      "agent_worker": {
+        "backend": "thread",
+        "max_workers": 4,
+        "timeout_sec": 120.0,
+        "submitted": 4,
+        "completed": 2,
+        "timed_out": 0,
+        "pending": 0
+      }
+    },
+    "worker": {
+      "backend": "thread",
+      "max_workers": 4,
+      "timeout_sec": 120.0,
+      "submitted": 4,
+      "completed": 2,
+      "timed_out": 0,
+      "pending": 0
+    },
+    "shutdown": {
+      "completed_steps": [],
+      "errors": {},
+      "pending_rejections": 0
+    },
+    "requested": {
+      "enable_minimal_brain": false,
+      "enable_mvsc_pipeline": false
+    },
+    "extensions": {
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      }
+    }
+  }
+}

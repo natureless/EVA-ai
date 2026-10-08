@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-01",
+  "files": {
+    "ui/web/static/ui-system.css": "0a15116c559c22a837e15715b210948d2cda778eeb96a4c258814031e30afc6d",
+    "ui/web/static/ui-theme.js": "a4b98896f97a20a96681182d55f940b6f5e95fefe09d29dca01bdf51be4c6ee7",
+    "ui/web/static/main.css": "c2184692f79088c76c0f115597a31bf531034b069242bbf85f98d49739f8eea3",
+    "ui/web/static/styles.css": "a921bc66bf7766305eb08e54ead0a30a2f08b163237ea175b1f460333f7745f6",
+    "ui/web/static/memory_graph.css": "0b56e8135a98b268838d434b6ddfa69367093877da43d7a412440383b39e8b44",
+    "ui/web/static/memory_graph.js": "487c417f7e27c20add9f31bd80ce5f4cfceb06312e4a41905dfbf8e5525524c8",
+    "ui/web/static/memory_explorer.js": "95bce1e606c19996a2091547e4c731fdfd9b0eedd8e216b4c7b78d0f2df167d0",
+    "ui/web/static/i18n.js": "491274c17503d6e57ea8693097db738ed4cf7c89b5db5cb8d0855f2b99559c8e",
+    "ui/web/static/nav.js": "7560d73f179329ac29dd4792d5c4264fac100de523f1829448b79730ca518afb",
+    "ui/web/static/app.js": "4ee39a59b8a34ae353a5db43cf1741d3673e566e5311731c06a49c6b4782b8e1",
+    "ui/web/static/mvsc-dashboard.css": "97c16c50400acf20b1fd4c81354eba38f49e52afd707f1f1aaf8188ce11d5b10",
+    "ui/web/templates/chat.html": "766341d907ab49efcd7521d14bcad5256caf1f3f48436af153ee7346fbf2b0e6",
+    "ui/web/templates/dashboard.html": "c6d910210ca8d617d75bd1ec6c46160523174b8aaaa6ee59f0ae93c538aef043",
+    "ui/web/templates/index.html": "a90f3200d048e1c5569547521c42b8af7c98e97d259276858fb75de8a6dbcd03",
+    "ui/web/templates/memory.html": "5c49d4a9010b299b2750498d1e4215beb39afa558d29c1df0803762751ab99d0",
+    "ui/web/templates/memory_graph.html": "8a96ad57c9da36640273125fd8a77989d1406e6553a17c54bc43ae095d6250b2",
+    "ui/web/templates/mvsc_dashboard.html": "4f2fa565b7dffd2e866cdb727df0796e3db39fcfc2281f56582ac7c3f6e1970c",
+    "ui/web/templates/service_unavailable.html": "47debcba271b222d260db0464969e570ae89a767b077dbebb845c3ebed9da045",
+    "ui/web/templates/settings.html": "6867f794853ee4a3354e3be6a53bc94222cf1f062445d39645ff9ef951354f6a",
+    "scripts/preview_cube_chat.py": "a1df8ede819a8be134a577682662dca900dbf9d6a21dd6e0b18095f78553dcb4",
+    "app/memory_preview.py": "a0fd11f084526ff7dbc5b9e0a24e0ffb61e0cab6121e0d885ff4aef6262238ea"
+  }
+}

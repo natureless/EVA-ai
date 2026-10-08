@@ -1,0 +1,42 @@
+{
+  "client_date": "2026-10-06",
+  "finished_at": "2026-10-06T23:15:00+08:00",
+  "status": "implemented_and_source_verified_public_browser_pending",
+  "request": "参考 Super Universe 的全屏宇宙地图结构升级 EVA 记忆星图",
+  "changes": [
+    "Add an immersive map mode with a full-viewport graph canvas",
+    "Keep the header, scope controls and spatial controls as sparse HUD overlays",
+    "Add EVA MEMORY UNIVERSE scope status with reset and exit actions",
+    "Preserve global/local relation state, node counts, camera and existing 3D renderer",
+    "Hide explorer, inspector and local drawer while immersive mode is active"
+  ],
+  "verification": {
+    "javascript_passed": 423,
+    "javascript_failed": 0,
+    "python_targeted_passed": 34,
+    "python_targeted_failed": 0,
+    "python_full_passed": 1954,
+    "python_full_failed": 1,
+    "python_full_note": "Existing date-sensitive market snapshot case invalid-source4 accepted a 2026-10-02 CSV; unrelated to this UI change.",
+    "ruff": "passed",
+    "origin_readonly_checks_passed": 9,
+    "source_report": "artifacts/memory-galaxy-immersive-assets-2026-10-06.json",
+    "browser_report": "artifacts/memory-galaxy-immersive-browser-2026-10-06.json",
+    "source_versions": {
+      "memory_graph.css": "17",
+      "memory_galaxy.js": "2",
+      "memory_galaxy_renderer.js": "2",
+      "memory_graph.js": "23"
+    }
+  },
+  "runtime": {
+    "production_pid": 17984,
+    "production_restarted": false,
+    "preview_port": 8779,
+    "preview_cleaned_up": true,
+    "chat_or_memory_writes": false,
+    "public_authenticated_browser": false,
+    "physical_phone": false
+  },
+  "backup": ".cloudflare/backups/memory-galaxy-immersive-20261006-231500"
+}

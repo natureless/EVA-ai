@@ -1,0 +1,322 @@
+[
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 18,
+      "language": "zh-CN",
+      "mode": "normal",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 9,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 20,
+      "language": "zh-CN",
+      "mode": "deep",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 10,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 22,
+      "language": "zh-CN",
+      "mode": "normal",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 11,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 24,
+      "language": "zh-CN",
+      "mode": "deep",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 12,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 26,
+      "language": "en",
+      "mode": "normal",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 13,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 28,
+      "language": "en",
+      "mode": "deep",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 14,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 30,
+      "language": "en",
+      "mode": "normal",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 15,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": false,
+      "language": "en",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 32,
+      "language": "en",
+      "mode": "deep",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 16,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 34,
+      "language": "zh-CN",
+      "mode": "normal",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 17,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 36,
+      "language": "zh-CN",
+      "mode": "deep",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 18,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 38,
+      "language": "zh-CN",
+      "mode": "normal",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 19,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "zh",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "未执行.  可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "id": 40,
+      "language": "zh-CN",
+      "mode": "deep",
+      "notice": "可显式重新发送：沿用原消息模式，创建独立请求；不会再次记入长期记忆。 UI acceptance rejection",
+      "requests": 20,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "light",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 42,
+      "language": "en",
+      "mode": "normal",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 21,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "light",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 44,
+      "language": "en",
+      "mode": "deep",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 22,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "light"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "dark",
+      "mode": "normal"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 46,
+      "language": "en",
+      "mode": "normal",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 23,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  },
+  {
+    "test": {
+      "reduced": true,
+      "language": "en",
+      "theme": "dark",
+      "mode": "deep"
+    },
+    "result": {
+      "announcement": "Not executed.  Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "id": 48,
+      "language": "en",
+      "mode": "deep",
+      "notice": "Send again with the original mode as a new request; it will not be added to long-term memory again. UI acceptance rejection",
+      "requests": 24,
+      "retryCount": 1,
+      "sending": false,
+      "status": "rejected",
+      "theme": "dark"
+    }
+  }
+]

@@ -1,0 +1,171 @@
+{
+  "started_at": "2026-09-27T10:28:48.519672+00:00",
+  "checks": {
+    "origin_readiness": {
+      "status": "passed",
+      "details": {
+        "ready": true
+      }
+    },
+    "origin_assets": {
+      "status": "passed",
+      "details": {
+        "memory_graph.js": "e93a64da299013d41bc6c6ce2e2a32e50eab74214989c689383636c1ecb1bcb2",
+        "memory_graph.css": "b401534e8ac18538a018b86604baf5fe3784b934c1376fd1d0c96e7a2aa72cd6",
+        "http.js": "ecbad5bbc0539dec9a7f6acde9445796f9490e7447884206ecdf782ef52ab571",
+        "memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07"
+      }
+    },
+    "origin_graph_and_neighbors": {
+      "status": "passed",
+      "details": {
+        "nodes": 420,
+        "edges": 671,
+        "detail_ok": true,
+        "neighbor_page_edges": 1,
+        "next_offset": null
+      }
+    },
+    "origin_export": {
+      "status": "passed",
+      "details": {
+        "entries": 421,
+        "crc_valid": true,
+        "bytes": 382647
+      }
+    },
+    "anonymous_public:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "anonymous_public:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 401,
+        "access_redirect": false
+      }
+    },
+    "origin_websocket_reconnect": {
+      "status": "passed",
+      "details": {
+        "connections": 2,
+        "pong_received": 2
+      }
+    },
+    "origin_sse_and_poll": {
+      "status": "passed",
+      "details": {
+        "completed": true,
+        "same_task_polled": true,
+        "sse_done": true
+      }
+    },
+    "origin_disconnect_then_poll": {
+      "status": "passed",
+      "details": {
+        "completed": true,
+        "same_task_polled": true,
+        "sse_done": null
+      }
+    }
+  },
+  "chat_requests": [
+    {
+      "marker": "EVA_ACCEPTANCE_749771e8d9c84e67a08284bf721c4b52",
+      "disconnect": false,
+      "remember": false,
+      "http_status": 200,
+      "task_id": "6831032d-16ff-42b8-aa62-eb78175ee4b1",
+      "terminal_state": "succeeded",
+      "completed": true,
+      "reply_matches": true
+    },
+    {
+      "marker": "EVA_ACCEPTANCE_0ae0d2efc63d412da00bbff707aadd42",
+      "disconnect": true,
+      "remember": false,
+      "http_status": 200,
+      "task_id": "31a05c17-9513-4059-b852-6809c75f4d0f",
+      "terminal_state": "succeeded",
+      "completed": true,
+      "reply_matches": true
+    }
+  ],
+  "pending": [
+    "Public authenticated browser interaction",
+    "Actual login expiration in browser",
+    "Physical phone",
+    "Windows login/crash recovery"
+  ],
+  "finished_at": "2026-09-27T10:29:08.052144+00:00",
+  "failed_checks": [],
+  "status": "automated_checks_passed_browser_pending",
+  "regression": {
+    "python_access_chat_websocket": 69,
+    "python_acceptance_script": 6,
+    "javascript_chat_http": 15,
+    "ruff": "passed",
+    "full_repository_suite": "not run"
+  },
+  "browser_control": {
+    "status": "unavailable",
+    "observations": [
+      "Public tab acquisition timed out",
+      "Browser inventory request failed"
+    ],
+    "page_state": "not observed"
+  },
+  "scheduled_tasks": {
+    "EVA Cloudflare App": "Running",
+    "EVA Cloudflare Tunnel": "Running",
+    "recovery_drill": "not performed"
+  },
+  "backend_restarted": false,
+  "script_final_sha256": "0b7ee6a2585f370b5836377ee345b7ace1fff4f4670d0bb9a93f6c39d5129a73",
+  "script_note": "Attempt-marker and task-ID persistence added after live run; verified by 6 isolated tests, no extra production messages sent."
+}

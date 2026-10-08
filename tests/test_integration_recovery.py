@@ -2,7 +2,10 @@
 
 import tempfile
 import os
+import importlib
 from pathlib import Path
+
+import pytest
 
 from world.world_model import WorldModelGraph
 from core.policy_engine import PolicyEngine, State
@@ -10,7 +13,45 @@ from core.prediction import PredictionTracker
 from core.entity_extractor import entity_extractor
 from persona.self_model_store import SelfModelStore
 from runtime.diagnostics import SystemDiagnostic, RecoveryActions
-from app.bootstrap import bootstrap_system
+
+
+@pytest.fixture
+def isolated_bootstrap(tmp_path, monkeypatch):
+    """Never bind the collection-time bootstrap to the user's default stores."""
+    bootstrap = importlib.import_module("app.bootstrap")
+    Settings = importlib.import_module("app.config").Settings
+    config = Settings(
+        _env_file=None, env="dev", base_dir=tmp_path,
+        data_dir=tmp_path / "data", db_path=tmp_path / "data" / "eva.db",
+        log_dir=tmp_path / "logs", log_file=Path("test.log"),
+        ui_dir=tmp_path / "ui", template_dir=tmp_path / "ui" / "templates",
+        static_dir=tmp_path / "ui" / "static",
+        snapshot_dir=tmp_path / "snapshots",
+        latest_snapshot_path=tmp_path / "snapshots" / "latest.json",
+        profile_path=tmp_path / "profile.json", self_model_path=tmp_path / "self_model.json",
+        vector_index_path=tmp_path / "vector.index", embedding_provider="none",
+        storage_backend="sqlite", database_url="", agent_worker_backend="thread",
+        enable_minimal_brain=False, enable_mvsc_pipeline=False,
+        github_api_token="", github_poll_repos="",
+        queue_poll_timeout_sec=0.01, scheduler_tick_interval_sec=60,
+        scheduler_maintenance_interval_sec=60, scheduler_snapshot_interval_sec=60,
+    )
+    monkeypatch.setattr(bootstrap, "settings", config)
+    # Track cleanup even when an assertion fails after successful construction.
+    original = bootstrap.bootstrap_system
+    containers = []
+
+    def start():
+        container = original()
+        containers.append(container)
+        assert container.store.db_path.is_relative_to(tmp_path)
+        assert container.snapshot_store.latest_snapshot_path.is_relative_to(tmp_path)
+        return container
+
+    monkeypatch.setattr(bootstrap, "bootstrap_system", start)
+    yield bootstrap
+    for container in containers:
+        bootstrap.shutdown_system(container)
 
 
 # ── Quarantine → Recovery Flow ─────────────────────────────
@@ -163,28 +204,25 @@ class TestMultiAgentConcurrent:
 # ── Bootstrap Recovery Flow ────────────────────────────────
 
 class TestBootstrapRecovery:
-    def test_bootstrap_shutdown_no_crash(self):
-        c = bootstrap_system()
-        from app.bootstrap import shutdown_system
-        shutdown_system(c)
+    def test_bootstrap_shutdown_no_crash(self, isolated_bootstrap):
+        c = isolated_bootstrap.bootstrap_system()
+        isolated_bootstrap.shutdown_system(c)
         assert not c.system_state["ready"]
         assert getattr(c.store._local, "conn", None) is None
 
-    def test_double_bootstrap_no_crash(self):
-        c1 = bootstrap_system()
-        from app.bootstrap import shutdown_system
-        shutdown_system(c1)
-        c2 = bootstrap_system()
+    def test_double_bootstrap_no_crash(self, isolated_bootstrap):
+        c1 = isolated_bootstrap.bootstrap_system()
+        isolated_bootstrap.shutdown_system(c1)
+        c2 = isolated_bootstrap.bootstrap_system()
         assert c2.system_state["ready"]
-        shutdown_system(c2)
+        isolated_bootstrap.shutdown_system(c2)
 
-    def test_diagnostic_after_bootstrap(self):
-        c = bootstrap_system()
+    def test_diagnostic_after_bootstrap(self, isolated_bootstrap):
+        c = isolated_bootstrap.bootstrap_system()
         diag = c.diagnostic
         assert diag.score >= 80
         assert diag.overall in ("healthy", "degraded")
-        from app.bootstrap import shutdown_system
-        shutdown_system(c)
+        isolated_bootstrap.shutdown_system(c)
 
 
 # ── Prediction Tracker Recovery ─────────────────────────────

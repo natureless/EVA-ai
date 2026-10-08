@@ -1,0 +1,170 @@
+[
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-bg",
+    "ratio": 14.374103304066274,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-bg",
+    "ratio": 5.289885869229577,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-bg",
+    "ratio": 5.211424019581683,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-panel",
+    "ratio": 15.016988616841005,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-panel",
+    "ratio": 5.526477318424202,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-panel",
+    "ratio": 5.444506243213869,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-surface",
+    "ratio": 13.267027120933228,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-surface",
+    "ratio": 4.8824652090719844,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-surface",
+    "ratio": 4.810046396905613,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-success",
+    "bg": "--ui-success-surface",
+    "ratio": 5.509336429554807,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-warning",
+    "bg": "--ui-warning-surface",
+    "ratio": 5.22911357047153,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-danger",
+    "bg": "--ui-danger-surface",
+    "ratio": 6.427771777606715,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-info",
+    "bg": "--ui-info-surface",
+    "ratio": 5.781208319101951,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-violet",
+    "bg": "--ui-violet-surface",
+    "ratio": 5.369194785765537,
+    "theme": "light"
+  },
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-bg",
+    "ratio": 14.670345713141787,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-bg",
+    "ratio": 7.962703425638093,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-bg",
+    "ratio": 6.9417917538855125,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-panel",
+    "ratio": 13.71182451431669,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-panel",
+    "ratio": 7.442441655215454,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-panel",
+    "ratio": 6.488233624851924,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-text",
+    "bg": "--ui-surface",
+    "ratio": 12.041383208337479,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-muted",
+    "bg": "--ui-surface",
+    "ratio": 6.535767131687851,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-secondary",
+    "bg": "--ui-surface",
+    "ratio": 5.697805375243014,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-success",
+    "bg": "--ui-success-surface",
+    "ratio": 7.729164890170135,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-warning",
+    "bg": "--ui-warning-surface",
+    "ratio": 7.532921841511314,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-danger",
+    "bg": "--ui-danger-surface",
+    "ratio": 9.169183118144428,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-info",
+    "bg": "--ui-info-surface",
+    "ratio": 7.230300926636553,
+    "theme": "dark"
+  },
+  {
+    "fg": "--ui-violet",
+    "bg": "--ui-violet-surface",
+    "ratio": 6.8834381194270335,
+    "theme": "dark"
+  }
+]

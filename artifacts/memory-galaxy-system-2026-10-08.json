@@ -1,0 +1,55 @@
+{
+  "client_date": "2026-10-08",
+  "status": "implemented_and_origin_verified_public_browser_pending",
+  "changes": [
+    "Locate each loaded memory-tier system from the spatial toolbar without filtering records or making a query",
+    "Frame the chosen system with space reserved for immersive HUD and mobile controls",
+    "Show observed-system record names even at low phone zoom; an outside selection does not dim the observed system",
+    "Restore system observation after local or dimensional navigation",
+    "Return to the overview if the observed or saved system disappears from the filtered projection",
+    "Reset returns to the overview; explicit node focus leaves system observation",
+    "Compact horizontally scrolling spatial controls prevent wrapped reset buttons on narrow screens"
+  ],
+  "scope": "System membership, primary star and orbit guides are display geometry. Counts refer only to the loaded projection. Navigation does not query the full memory database or create relationships.",
+  "validation": {
+    "javascript": {"passed": 432, "failed": 0, "new_regressions": 6, "command": "node --test tests/js/*.cjs"},
+    "python_targeted": {"passed": 34, "failed": 0, "paths": ["tests/test_memory_graph.py", "tests/test_ui_release.py"]},
+    "origin": {"passed": 14, "total": 14, "report": "artifacts/memory-galaxy-system-assets-2026-10-08.json"},
+    "asset_versions": {"css": 20, "layout": 2, "renderer": 3, "main": 26}
+  },
+  "browser": {
+    "target": "http://127.0.0.1:8779/memory",
+    "data": "synthetic preview fixture, not production memories",
+    "fixture": {"nodes": 75, "edges": 100, "systems": 5},
+    "observed_system": {"id": "S3", "label": "长期记忆", "loaded_nodes": 15},
+    "clicked_primary": "品牌规则 · 13",
+    "expanded_local": {"direct_neighbors": 3, "indirect_neighbors": 5, "edges": 8},
+    "returned_from_local": {"system": "S3", "selected_label": "品牌规则 · 13", "nodes": 75, "edges": 100},
+    "two_dimensional_navigation_hidden": true,
+    "three_dimensional_returned_system": "S3",
+    "overview_return": "全局图谱 · 75 节点",
+    "viewports": [{"width": 1280, "height": 720}, {"width": 390, "height": 844}, {"width": 320, "height": 568}],
+    "horizontal_overflow": false,
+    "mobile_spatial_toolbar_height": 50.33333587646485,
+    "console_warnings_and_errors": [],
+    "screenshots": [
+      "artifacts/memory-galaxy-system-desktop-2026-10-08.jpg",
+      "artifacts/memory-galaxy-system-mobile-2026-10-08.jpg",
+      "artifacts/memory-galaxy-system-small-2026-10-08.jpg"
+    ],
+    "temporary_tab_closed": true,
+    "viewport_reset": true,
+    "public_authenticated_browser_verified": false,
+    "physical_phone_verified": false
+  },
+  "runtime": {
+    "production_port": 8000,
+    "production_pid": 17984,
+    "production_restarted": false,
+    "preview_port": 8779,
+    "preview_pid": 37564,
+    "preview_stopped_and_port_closed": true,
+    "memory_writes": false,
+    "model_requests": false
+  }
+}

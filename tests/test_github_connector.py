@@ -3,6 +3,7 @@
 import asyncio
 import json
 from unittest.mock import MagicMock
+import pytest
 
 
 from connectors.github.event_normalizer import (
@@ -53,12 +54,9 @@ class TestNormalizeWebhook:
         )
         assert event.type == "github_issue"
 
-    def test_unknown_event_defaults_to_push(self):
-        event = normalize_webhook_payload(
-            "unknown_type", "delivery-004",
-            {"repository": {"full_name": "org/repo"}},
-        )
-        assert event.type == "github_push"
+    def test_unknown_event_is_rejected(self):
+        with pytest.raises(ValueError, match="unsupported GitHub"):
+            normalize_webhook_payload("unknown_type", "delivery-004", {"repository": {"full_name": "org/repo"}})
 
 
 class TestNormalizePoller:

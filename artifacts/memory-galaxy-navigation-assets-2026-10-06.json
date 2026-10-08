@@ -1,0 +1,55 @@
+{
+  "verified_at": "2026-10-06T14:45:00+08:00",
+  "origin": "http://127.0.0.1:8000",
+  "checks_passed": 9,
+  "checks_total": 9,
+  "checks": {
+    "memory_page": true,
+    "memory_graph.css": true,
+    "memory_galaxy.js": true,
+    "memory_galaxy_renderer.js": true,
+    "memory_graph.js": true,
+    "css_version": true,
+    "geometry_order": true,
+    "main_version": true,
+    "no_store": true
+  },
+  "assets": {
+    "memory_graph.css": {
+      "version": "15",
+      "http_status": 200,
+      "sha256": "06f5e856e26c28738d1926bf27275fb4d353f60bf5a0768175a52f6f801cd50d",
+      "disk_sha256": "06f5e856e26c28738d1926bf27275fb4d353f60bf5a0768175a52f6f801cd50d",
+      "response_matches_disk": true
+    },
+    "memory_galaxy.js": {
+      "version": "2",
+      "http_status": 200,
+      "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c",
+      "disk_sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c",
+      "response_matches_disk": true
+    },
+    "memory_galaxy_renderer.js": {
+      "version": "2",
+      "http_status": 200,
+      "sha256": "eb9b06ae9536f32811453901c3250aca5e5128f96b55ea8db67087d8af68482a",
+      "disk_sha256": "eb9b06ae9536f32811453901c3250aca5e5128f96b55ea8db67087d8af68482a",
+      "response_matches_disk": true
+    },
+    "memory_graph.js": {
+      "version": "21",
+      "http_status": 200,
+      "sha256": "81fcda99510e6472b2b05f465065f130b418e2b872d6f25b3f5f65b797443acf",
+      "disk_sha256": "81fcda99510e6472b2b05f465065f130b418e2b872d6f25b3f5f65b797443acf",
+      "response_matches_disk": true
+    }
+  },
+  "script_order": [
+    "memory_galaxy.js",
+    "memory_galaxy_renderer.js",
+    "memory_graph.js"
+  ],
+  "requests_trust_env": false,
+  "chat_sent": false,
+  "service_restarted": false
+}

@@ -15,6 +15,15 @@ from packages.kernel.state_bridge import (
     sync_system_state,
     system_state_to_conscious,
 )
+from packages.kernel.state_repository import InMemoryStateRepository
+from packages.kernel.sqlite_state_repository import SQLiteStateRepository
+from packages.kernel.action_dispatcher import ActionDispatcher
+from packages.kernel.inbox_outbox import (
+    DurableInboxOutbox,
+    InboxClaim,
+    OutboxClaim,
+)
+from packages.kernel.episode_store import DuplicateEpisodeError, EpisodeStore
 from packages.kernel.mvsc_bootstrap import (
     integrate_mvsc,
     shutdown_mvsc,
@@ -30,6 +39,14 @@ __all__ = [
     "conscious_to_system_state",
     "sync_system_state",
     "system_state_to_conscious",
+    "InMemoryStateRepository",
+    "SQLiteStateRepository",
+    "ActionDispatcher",
+    "DurableInboxOutbox",
+    "InboxClaim",
+    "OutboxClaim",
+    "DuplicateEpisodeError",
+    "EpisodeStore",
     "integrate_mvsc",
     "shutdown_mvsc",
 ]

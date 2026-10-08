@@ -1,0 +1,160 @@
+ M app/api.py
+ M app/api_routes/routes_chat.py
+ M app/api_routes/routes_cognition.py
+ M app/api_routes/routes_config.py
+ M app/api_routes/routes_github.py
+ M app/api_routes/routes_health.py
+ M app/api_routes/routes_memory_explorer.py
+ M app/api_routes/routes_metrics.py
+ M app/api_routes/routes_proactive.py
+ M app/api_routes/routes_tools.py
+ M app/api_routes/routes_ui.py
+ M app/bootstrap.py
+ M app/composition.py
+ M app/config.py
+ M app/container.py
+ M app/experimental.py
+ M app/main.py
+ M core/llm_adapter.py
+ M event/event_bus.py
+ M event/event_schema.py
+ M memory/memory_api.py
+ M memory/memory_compactor.py
+ M memory/memory_governor.py
+ M memory/sqlite_store.py
+ M memory/tiered_store.py
+ M packages/contracts/__init__.py
+ M packages/contracts/events.py
+ M packages/contracts/protocols.py
+ M packages/contracts/state.py
+ M packages/kernel/__init__.py
+ M packages/kernel/event_bus_adapter.py
+ M packages/kernel/event_store.py
+ M packages/kernel/mvsc_bootstrap.py
+ M runtime/agent_worker.py
+ M runtime/diagnostics.py
+ M runtime/health.py
+ M runtime/result_registry.py
+ M runtime/scheduler.py
+ M runtime/worker_main.py
+ M runtime/worker_protocol.py
+ M ui/web/static/app.js
+ M ui/web/static/chat.js
+ M ui/web/static/i18n.js
+ M ui/web/static/main.css
+ M ui/web/static/memory_explorer.js
+ M ui/web/static/nav.js
+ M ui/web/static/settings.js
+ M ui/web/static/styles.css
+ M ui/web/templates/dashboard.html
+ M ui/web/templates/index.html
+ M ui/web/templates/memory.html
+ M ui/web/templates/mvsc_dashboard.html
+ M ui/web/templates/settings.html
+?? app/api_routes/admission.py
+?? app/api_routes/routes_action_context.py
+?? app/api_routes/routes_goals.py
+?? app/api_routes/routes_memory_graph.py
+?? app/api_routes/routes_runtime.py
+?? app/api_routes/routes_tool_observations.py
+?? app/cloudflare_server.py
+?? app/memory_preview.py
+?? app/runtime_observation.py
+?? connectors/obsidian.py
+?? core/chat_mode.py
+?? event/codec.py
+?? event/contracts.py
+?? memory/action_context_graph.py
+?? memory/assertions.py
+?? memory/context_evidence.py
+?? memory/episodes.py
+?? memory/graph_neighbors.py
+?? memory/graph_projection.py
+?? memory/provenance.py
+?? memory/tool_observations.py
+?? memory/tool_receipts.py
+?? memory/versioned_reads.py
+?? packages/contracts/actions.py
+?? packages/kernel/action_dispatcher.py
+?? packages/kernel/episode_store.py
+?? packages/kernel/inbox_outbox.py
+?? packages/kernel/processing_episodes.py
+?? packages/kernel/request_action_context.py
+?? packages/kernel/request_dispatch_store.py
+?? packages/kernel/sqlite_state_repository.py
+?? packages/kernel/state_repository.py
+?? packages/kernel/tool_reconciliation.py
+?? runtime/cloudflare_access.py
+?? runtime/controller.py
+?? runtime/process_worker.py
+?? runtime/request_persistence.py
+?? runtime/request_recovery.py
+?? scripts/Run-EvaCloudflareProcess.ps1
+?? scripts/Start-EvaCloudflare.ps1
+?? scripts/acceptance_cloudflare.py
+?? scripts/benchmark_runtime.py
+?? scripts/benchmark_world_projection.py
+?? scripts/build_brand_assets.cjs
+?? scripts/check_ui_release.py
+?? scripts/cube_ui_probe.js
+?? scripts/export_brand_kit.cjs
+?? scripts/migrate_event_contracts.py
+?? scripts/preview_cube_chat.py
+?? scripts/sync_obsidian.py
+?? scripts/world_recovery.py
+?? tests/js/test_brand_config.cjs
+?? tests/js/test_brand_identity.cjs
+?? tests/js/test_brand_package.cjs
+?? tests/js/test_brand_system.cjs
+?? tests/js/test_chat_receipts.cjs
+?? tests/js/test_cube_animator.cjs
+?? tests/js/test_cube_chat.cjs
+?? tests/js/test_cube_logo.cjs
+?? tests/js/test_cube_state.cjs
+?? tests/js/test_cube_ui_probe.cjs
+?? tests/js/test_goal_create.cjs
+?? tests/js/test_http.cjs
+?? tests/js/test_memory_diagnostics.cjs
+?? tests/js/test_memory_galaxy.cjs
+?? tests/js/test_memory_galaxy_renderer.cjs
+?? tests/js/test_memory_graph.cjs
+?? tests/js/test_memory_graph_interactions.cjs
+?? tests/js/test_runtime_status.cjs
+?? tests/js/test_ui_reading.cjs
+?? tests/js/test_ui_sections.cjs
+?? tests/js/test_ui_theme.cjs
+?? tests/js/test_ui_workspace.cjs
+?? ui/web/static/brand-assets.js
+?? ui/web/static/brand-config.js
+?? ui/web/static/brand-identity.js
+?? ui/web/static/brand-package.js
+?? ui/web/static/brand-source.json
+?? ui/web/static/brand-studio.css
+?? ui/web/static/brand-system.js
+?? ui/web/static/cube-animator.js
+?? ui/web/static/cube-avatar.js
+?? ui/web/static/cube-chat.css
+?? ui/web/static/cube-geometry.css
+?? ui/web/static/cube-logo.js
+?? ui/web/static/cube-state.js
+?? ui/web/static/eva-favicon.svg
+?? ui/web/static/eva-mark.svg
+?? ui/web/static/goal_create.css
+?? ui/web/static/goal_create.js
+?? ui/web/static/http.js
+?? ui/web/static/logo-tokens.js
+?? ui/web/static/memory_diagnostics.js
+?? ui/web/static/memory_galaxy.js
+?? ui/web/static/memory_galaxy_renderer.js
+?? ui/web/static/memory_graph.css
+?? ui/web/static/memory_graph.js
+?? ui/web/static/mvsc-dashboard.css
+?? ui/web/static/runtime_status.js
+?? ui/web/static/ui-reading.js
+?? ui/web/static/ui-sections.js
+?? ui/web/static/ui-system.css
+?? ui/web/static/ui-theme.js
+?? ui/web/static/ui-workspace.js
+?? ui/web/templates/chat.html
+?? ui/web/templates/memory_graph.html
+?? ui/web/templates/service_unavailable.html

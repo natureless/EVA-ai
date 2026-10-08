@@ -46,9 +46,25 @@ class AgentWorkerBackend(Protocol):
     @property
     def stats(self) -> dict[str, Any]: ...
 
+    @property
+    def is_idle(self) -> bool: ...
+
+
+def worker_is_idle(backend: Any) -> bool:
+    """Observe actual completion; unknown capacity cannot authorize more work."""
+    try:
+        idle = getattr(backend, "is_idle", None)
+        if isinstance(idle, bool):
+            return idle
+        stats = backend.stats
+        pending = stats.get("pending") if isinstance(stats, dict) else None
+        return isinstance(pending, int) and not isinstance(pending, bool) and pending == 0
+    except Exception:
+        return False
+
 
 class ThreadAgentWorkerBackend:
-    """Bounded in-process backend used until process/container isolation lands."""
+    """Default in-process backend with full tool support (timeouts cannot kill threads)."""
 
     def __init__(
         self,
@@ -68,6 +84,7 @@ class ThreadAgentWorkerBackend:
         self._completed = 0
         self._timed_out = 0
         self._lock = threading.Lock()
+        self._in_flight: set[Future[Any]] = set()
 
     def execute(
         self,
@@ -106,12 +123,25 @@ class ThreadAgentWorkerBackend:
         return self._wait(future, agent_name, stop_event)
 
     def submit(self, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> Future[Any]:
+        future = self._pool.submit(fn, *args, **kwargs)
         with self._lock:
             self._submitted += 1
-        return self._pool.submit(fn, *args, **kwargs)
+            self._in_flight.add(future)
+        # Register outside the lock: completed futures invoke this immediately.
+        future.add_done_callback(self._release_future)
+        return future
+
+    def _release_future(self, future: Future[Any]) -> None:
+        with self._lock:
+            self._in_flight.discard(future)
 
     def shutdown(self) -> None:
         self._pool.shutdown(wait=False, cancel_futures=True)
+
+    @property
+    def is_idle(self) -> bool:
+        with self._lock:
+            return not self._in_flight
 
     @property
     def stats(self) -> dict[str, Any]:
@@ -123,6 +153,7 @@ class ThreadAgentWorkerBackend:
                 "submitted": self._submitted,
                 "completed": self._completed,
                 "timed_out": self._timed_out,
+                "pending": len(self._in_flight),
             }
 
     def _wait(
@@ -174,3 +205,26 @@ class ThreadAgentWorkerBackend:
             ),
             int(elapsed * 1000),
         )
+
+
+def create_agent_worker_backend(orchestrator: AgentOrchestrator, settings: Any) -> AgentWorkerBackend:
+    """Select explicitly; a failed process startup never falls back to threads.
+
+    Process startup is lazy, so constructing Core cannot leak a process pool if
+    a later bootstrap stage fails. The first accepted task creates the workers.
+    """
+    common = dict(max_workers=settings.agent_worker_count,
+                  timeout_sec=settings.agent_execution_timeout_sec)
+    if settings.agent_worker_backend == "thread":
+        return ThreadAgentWorkerBackend(orchestrator, **common)
+    if settings.agent_worker_backend == "process":
+        from runtime.process_worker import ProcessAgentWorkerBackend
+
+        return ProcessAgentWorkerBackend(
+            orchestrator, **common,
+            queue_capacity=settings.agent_worker_queue_capacity,
+            queue_timeout_sec=settings.agent_worker_queue_timeout_sec,
+            max_tasks_per_worker=settings.agent_worker_max_tasks,
+            llm_max_retries=settings.llm_max_retries,
+        )
+    raise ValueError("Unknown agent worker backend")

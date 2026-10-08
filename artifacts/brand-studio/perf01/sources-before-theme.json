@@ -1,0 +1,46 @@
+[
+  {
+    "path": "ui/web/static/logo-tokens.js",
+    "sha256": "30203d1b0e2fd1e88dc2093dce2ef7f4ecbc8b5c33228cf8b338f1b191ad86dd"
+  },
+  {
+    "path": "ui/web/static/cube-state.js",
+    "sha256": "a5982757ed930a75f3083c7652255025f5df14020104b4f317308271124dcde6"
+  },
+  {
+    "path": "ui/web/static/cube-animator.js",
+    "sha256": "49f6856494ea46c520f5fe9db244bfac3b639fcb03f0b473bfbecd6d36aa3ee8"
+  },
+  {
+    "path": "ui/web/static/cube-logo.js",
+    "sha256": "115c579d607ba8147edc2c9a05245c5b9855b42dc729f3b0d561f86f20df9e7b"
+  },
+  {
+    "path": "ui/web/static/brand-system.js",
+    "sha256": "31630da56b27d965f40c539026b04aa77d27c307a2940d5e7607b12407dedda9"
+  },
+  {
+    "path": "ui/web/static/brand-config.js",
+    "sha256": "4d312dae141c6a1c67d402b623b80cc3d2d6b20a18d6f36ea4d7ed945446b671"
+  },
+  {
+    "path": "ui/web/static/brand-package.js",
+    "sha256": "03991978a35595e85292090f6c49533daa20c6ddc18dd7c9d2fbfc67d163e9bd"
+  },
+  {
+    "path": "ui/web/static/brand-studio.css",
+    "sha256": "adca31839a44982f63f66680c0ddae11902f6ec9b127f64026e4088e79df7a53"
+  },
+  {
+    "path": "ui/web/static/ui-system.css",
+    "sha256": "0d547899169fc90221d438a5bde36ee1f4e8e09ba867b940e2a54add79ed4e41"
+  },
+  {
+    "path": "ui/web/templates/settings.html",
+    "sha256": "6c744c09a60fb51f5bd04bea421668e578a94830f54e38a9c6c5c93d70a2210b"
+  },
+  {
+    "path": "scripts/cube_ui_probe.js",
+    "sha256": "289dfc815578e21c6518e06a68cdacab376c603efbdb46b52755138317f3d4c0"
+  }
+]

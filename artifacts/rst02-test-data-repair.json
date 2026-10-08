@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "reason": "Repair writes by pre-existing unisolated bootstrap tests during this turn",
+  "source_bundle": "data/world-recovery/rst02-20260912",
+  "affected_state_backup": "data/world-recovery/rst02-20260912-after-unisolated-tests",
+  "working_memory_rows_before": 501,
+  "working_memory_rows_after": 48,
+  "other_table_contents_unchanged": true,
+  "snapshot_exact_pre_test_bytes_restored": true,
+  "snapshot_sha256": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac",
+  "scope_limit": "Restores only changes since this turn pre-test backup. Earlier turns cannot be fully reconstructed from this backup."
+}

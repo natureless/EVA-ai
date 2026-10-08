@@ -58,16 +58,7 @@ const Nav = {
 
   // ── Theme ──────────────────────────────────────────────
   _bindTheme() {
-    const btn = document.getElementById("themeBtn");
-    if (!btn) return;
-    const saved = localStorage.getItem("eva-theme") || "light";
-    document.documentElement.setAttribute("data-theme", saved);
-    btn.onclick = () => {
-      const cur = document.documentElement.getAttribute("data-theme");
-      const next = cur === "dark" ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", next);
-      localStorage.setItem("eva-theme", next);
-    };
+    globalThis.EvaTheme?.bind();
   },
 
   // ── Language ───────────────────────────────────────────

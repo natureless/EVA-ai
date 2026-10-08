@@ -1,0 +1,24 @@
+{
+  "dataset": "synthetic_unique_edges",
+  "schema_version": 1,
+  "python": "3.11.9",
+  "platform": "Windows",
+  "graph": {
+    "entities": 1000,
+    "edges": 100000
+  },
+  "iterations": 30,
+  "scope": "In-process context read only; graph creation, startup, DB IO and LLM costs excluded. No production latency claim.",
+  "full_snapshot_then_slice": {
+    "median_ms": 28.940000003785826,
+    "p95_ms": 32.621199992718175,
+    "peak_traced_bytes": 19771968,
+    "returned_json_bytes": 1524
+  },
+  "bounded_projection": {
+    "median_ms": 0.06825001037213951,
+    "p95_ms": 0.07320000440813601,
+    "peak_traced_bytes": 4012,
+    "returned_json_bytes": 1092
+  }
+}

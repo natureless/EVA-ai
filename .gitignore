@@ -29,6 +29,8 @@ ENV/
 # IDE
 .vscode/
 .idea/
+.obsidian/
+.claude/settings.local.json
 *.swp
 *.swo
 *~
@@ -38,23 +40,43 @@ ENV/
 .env
 .env.local
 .envrc
+.env.cloudflare
+.tools/
+.cloudflare/
 
 # Project specific
 data/*.db
 data/*.db-*
+data/**/*.db
+data/**/*.db-*
 data/eva.db
 data/snapshots/
+data/world-recovery/
 logs/
 *.log
 
 # Testing
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .coverage
 coverage.json
 coverage.xml
 htmlcov/
 
+# Temporary acceptance-run copies (keep published reports and brand assets)
+artifacts/**/run-*/data/
+artifacts/**/run-*/ui/
+artifacts/**/run-*/tmp/
+artifacts/**/run-*/logs/
+artifacts/**/pytest-cache/
+artifacts/**/pytest-data/
+artifacts/**/*.db
+artifacts/**/*.db-*
+artifacts/**/*.sqlite
+artifacts/**/*.sqlite-*
+
 # Storage
+EVA-Memory/
 storage/*.db
 storage/*.sqlite
-

@@ -1,0 +1,4344 @@
+{
+  "schemaVersion": 1,
+  "candidateId": "ui-v1-20261008-g0-01",
+  "pages": [
+    {
+      "pageId": "CHAT",
+      "template": "chat.html",
+      "routeScope": "/chat（完整服务）；预览 /chat 和 /",
+      "controllers": "chat.js,cube-avatar.js,ui-workspace.js,ui-reading.js",
+      "assetRefs": [
+        "/static/main.css?v=8",
+        "/static/eva-favicon.svg",
+        "/static/cube-geometry.css?v=2",
+        "/static/cube-chat.css?v=12",
+        "/static/ui-system.css?v=6",
+        "/static/ui-theme.js?v=1",
+        "/static/i18n.js?v=9",
+        "/static/nav.js?v=3",
+        "/static/ui-workspace.js?v=3",
+        "/static/logo-tokens.js?v=4",
+        "/static/cube-state.js?v=2",
+        "/static/cube-animator.js?v=5",
+        "/static/cube-logo.js?v=3",
+        "/static/brand-assets.js?v=3",
+        "/static/cube-avatar.js?v=9",
+        "/static/http.js?v=1",
+        "/static/ui-reading.js?v=1",
+        "/static/chat.js?v=18",
+        "/static/runtime_status.js?v=2"
+      ],
+      "controlCount": 35,
+      "defaultSurface": "CHAT-01",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "SET",
+      "template": "settings.html",
+      "routeScope": "/settings",
+      "controllers": "brand-system.js,brand-config.js,settings.js,ui-sections.js",
+      "assetRefs": [
+        "/static/main.css?v=8",
+        "/static/eva-favicon.svg",
+        "/static/cube-geometry.css?v=2",
+        "/static/brand-studio.css?v=12",
+        "/static/ui-system.css?v=6",
+        "/static/ui-theme.js?v=1",
+        "/static/i18n.js?v=9",
+        "/static/nav.js?v=3",
+        "/static/ui-workspace.js?v=3",
+        "/static/ui-sections.js?v=1",
+        "/static/logo-tokens.js?v=4",
+        "/static/cube-state.js?v=2",
+        "/static/cube-animator.js?v=5",
+        "/static/cube-logo.js?v=3",
+        "/static/brand-assets.js?v=3",
+        "/static/brand-identity.js?v=5",
+        "/static/brand-package.js?v=5",
+        "/static/brand-config.js?v=1",
+        "/static/brand-system.js?v=12",
+        "/static/settings.js?v=3"
+      ],
+      "controlCount": 58,
+      "defaultSurface": "SET-02",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "MAP",
+      "template": "memory_graph.html",
+      "routeScope": "完整服务 / 与 /memory，index.html include；只读服务同路径",
+      "controllers": "memory_graph.js,memory_galaxy*.js,memory_diagnostics.js,goal_create.js",
+      "assetRefs": [
+        "/static/memory_graph.css?v=24",
+        "/static/ui-system.css?v=6",
+        "/static/goal_create.css?v=1",
+        "/static/eva-favicon.svg",
+        "/static/ui-theme.js?v=1",
+        "/static/http.js?v=2",
+        "/static/memory_galaxy.js?v=4",
+        "/static/memory_galaxy_renderer.js?v=5",
+        "/static/memory_graph.js?v=45",
+        "/static/goal_create.js?v=1",
+        "/static/memory_diagnostics.js?v=2",
+        "/static/runtime_status.js?v=2"
+      ],
+      "controlCount": 85,
+      "defaultSurface": "MAP-02",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "LIST",
+      "template": "memory.html",
+      "routeScope": "/memory/list",
+      "controllers": "memory_explorer.js",
+      "assetRefs": [
+        "/static/main.css?v=8",
+        "/static/ui-system.css?v=6",
+        "/static/ui-theme.js?v=1",
+        "/static/i18n.js?v=9",
+        "/static/nav.js?v=3",
+        "/static/memory_explorer.js?v=3"
+      ],
+      "controlCount": 6,
+      "defaultSurface": "LIST-01",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "MON",
+      "template": "dashboard.html",
+      "routeScope": "固定预览 /dashboard；完整 routes_ui 未登记此模板路由",
+      "controllers": "app.js",
+      "assetRefs": [
+        "/static/styles.css?v=3",
+        "/static/ui-system.css?v=6",
+        "/static/ui-theme.js?v=1",
+        "/static/i18n.js?v=9",
+        "/static/app.js?v=2",
+        "/static/runtime_status.js?v=1"
+      ],
+      "controlCount": 16,
+      "defaultSurface": "MON-01",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "MVSC",
+      "template": "mvsc_dashboard.html",
+      "routeScope": "/mvsc",
+      "controllers": "模板内联脚本,runtime_status.js",
+      "assetRefs": [
+        "/static/mvsc-dashboard.css?v=1",
+        "/static/ui-system.css?v=6",
+        "/static/ui-theme.js?v=1",
+        "/static/runtime_status.js?v=1"
+      ],
+      "controlCount": 1,
+      "defaultSurface": "MVSC-01",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    },
+    {
+      "pageId": "PROMPT",
+      "template": "service_unavailable.html",
+      "routeScope": "只读服务 /chat、/settings、/memory/list；固定预览 /unavailable",
+      "controllers": "ui-theme.js",
+      "assetRefs": [
+        "/static/ui-system.css?v=6",
+        "/static/eva-favicon.svg",
+        "/static/ui-theme.js?v=1"
+      ],
+      "controlCount": 2,
+      "defaultSurface": "PROMPT-01",
+      "evidenceScope": "source inventory only; actual rendering/keyboard/locale not re-tested"
+    }
+  ],
+  "sourceControls": [
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 16,
+      "attrs": {
+        "class": "workspace-skip",
+        "href": "#chatInput",
+        "data-i18n": "ui.skipChat"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 26,
+      "attrs": {
+        "class": "brand-mark",
+        "href": "/chat",
+        "aria-label": "EVA 对话",
+        "data-i18n-aria-label": "ui.chatHome"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 28,
+      "attrs": {
+        "class": "rail-link active",
+        "href": "/chat",
+        "title": "对话",
+        "data-i18n-title": "chat.title"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 29,
+      "attrs": {
+        "class": "rail-link",
+        "href": "/memory",
+        "title": "记忆图谱",
+        "data-i18n-title": "ui.memory"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 30,
+      "attrs": {
+        "class": "rail-link",
+        "href": "/settings",
+        "title": "设置",
+        "data-i18n-title": "studio.settings"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-02",
+      "tag": "button",
+      "id": "langBtn",
+      "line": 37,
+      "attrs": {
+        "id": "langBtn",
+        "class": "quiet-button",
+        "title": "切换语言 / Switch language",
+        "data-i18n-aria-label": "ui.language"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "langBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 37,
+      "attrs": {
+        "id": "themeBtn",
+        "class": "quiet-button",
+        "title": "切换深浅主题",
+        "aria-label": "切换深浅主题"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": "cubeDisclosure",
+      "line": 42,
+      "attrs": {
+        "type": "button",
+        "class": "cube-disclosure",
+        "id": "cubeDisclosure",
+        "aria-controls": "cubeDetails cubeOrderControls"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDisclosure"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 44,
+      "attrs": {
+        "data-cube-order": "2"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeOrderControls"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 45,
+      "attrs": {
+        "data-cube-order": "3"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeOrderControls"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-05",
+      "tag": "button",
+      "id": "cubeRetry",
+      "line": 56,
+      "attrs": {
+        "type": "button",
+        "id": "cubeRetry"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeRecovery",
+        "cubeRetry"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": "resetCube",
+      "line": 58,
+      "attrs": {
+        "class": "reset-view",
+        "id": "resetCube",
+        "title": "复位视角",
+        "aria-label": "复位视角",
+        "data-i18n-title": "ui.resetView",
+        "data-i18n-aria-label": "ui.resetView"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails",
+        "resetCube"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "front",
+        "data-zh": "正面",
+        "data-en": "Front"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "side",
+        "data-zh": "侧面",
+        "data-en": "Side"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "top",
+        "data-zh": "顶部",
+        "data-en": "Top"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "iso",
+        "data-zh": "三视角",
+        "data-en": "Isometric"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "oblique",
+        "data-zh": "斜视图",
+        "data-en": "Oblique"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 60,
+      "attrs": {
+        "data-view": "bottom",
+        "data-zh": "底部",
+        "data-en": "Bottom"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": "playEvolution",
+      "line": 63,
+      "attrs": {
+        "id": "playEvolution"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails",
+        "playEvolution"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "0"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "1"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "2"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "3"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "4"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "data-phase": "5"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-04",
+      "tag": "summary",
+      "id": null,
+      "line": 68,
+      "attrs": {
+        "data-zh": "查看运动细节",
+        "data-en": "Motion details"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cubePanel",
+        "cubeDetails",
+        "cubeInspector"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-06",
+      "tag": "button",
+      "id": null,
+      "line": 82,
+      "attrs": {
+        "data-prompt-zh": "帮我梳理一个想法。请先问我想法的主题和希望达成的目标。",
+        "data-prompt-en": "Help me develop an idea. First ask about its topic and what I want to achieve."
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatEmpty"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-06",
+      "tag": "button",
+      "id": null,
+      "line": 83,
+      "attrs": {
+        "data-prompt-zh": "和我一起探索一个新问题。请先问我对什么领域感兴趣。",
+        "data-prompt-en": "Explore a new question with me. First ask what field interests me."
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatEmpty"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-03",
+      "tag": "button",
+      "id": "chatLatest",
+      "line": 90,
+      "attrs": {
+        "id": "chatLatest",
+        "type": "button",
+        "aria-controls": "chatMessages"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatLatest"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-02",
+      "tag": "button",
+      "id": null,
+      "line": 96,
+      "attrs": {
+        "type": "button",
+        "data-chat-mode": "normal",
+        "data-zh": "正常对话",
+        "data-en": "Conversation"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "mode-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-02",
+      "tag": "button",
+      "id": null,
+      "line": 97,
+      "attrs": {
+        "type": "button",
+        "data-chat-mode": "deep"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "mode-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-01",
+      "tag": "textarea",
+      "id": "chatInput",
+      "line": 104,
+      "attrs": {
+        "id": "chatInput",
+        "maxlength": "32000"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "chatInput"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-01",
+      "tag": "input",
+      "id": "rememberToggle",
+      "line": 105,
+      "attrs": {
+        "type": "checkbox",
+        "id": "rememberToggle"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "rememberToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-01",
+      "tag": "button",
+      "id": "sendBtn",
+      "line": 105,
+      "attrs": {
+        "type": "submit",
+        "class": "send-btn",
+        "id": "sendBtn",
+        "aria-label": "发送消息",
+        "title": "发送消息"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "sendBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "CHAT-01",
+      "tag": "input",
+      "id": "streamToggle",
+      "line": 107,
+      "attrs": {
+        "type": "checkbox",
+        "id": "streamToggle"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "streamToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "CHAT",
+      "template": "ui/web/templates/chat.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 15,
+      "attrs": {
+        "class": "workspace-skip",
+        "href": "#studioContent",
+        "data-i18n": "ui.skipSettings"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 26,
+      "attrs": {
+        "href": "/chat",
+        "class": "icon-btn",
+        "data-i18n-title": "nav.backToChat",
+        "title": "返回对话"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-02",
+      "tag": "button",
+      "id": "langBtn",
+      "line": 29,
+      "attrs": {
+        "id": "langBtn",
+        "class": "lang-btn",
+        "title": "Switch Language / 切换语言",
+        "data-i18n-aria-label": "ui.language"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "langBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 30,
+      "attrs": {
+        "id": "themeBtn",
+        "class": "icon-btn",
+        "title": "切换深色/浅色模式"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 39,
+      "attrs": {
+        "class": "studio-home",
+        "href": "/chat",
+        "data-i18n-aria-label": "ui.chatHome"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-01",
+      "tag": "button",
+      "id": "brandTab",
+      "line": 42,
+      "attrs": {
+        "id": "brandTab",
+        "type": "button",
+        "role": "tab",
+        "aria-controls": "brandWorkspace",
+        "data-settings-tab": "brand",
+        "data-i18n": "studio.brand"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "brandTab"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-01",
+      "tag": "button",
+      "id": "runtimeTab",
+      "line": 43,
+      "attrs": {
+        "id": "runtimeTab",
+        "type": "button",
+        "role": "tab",
+        "tabindex": "-1",
+        "aria-controls": "runtimeWorkspace",
+        "data-settings-tab": "runtime",
+        "data-i18n": "studio.runtime"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "runtimeTab"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": "brandReset",
+      "line": 48,
+      "attrs": {
+        "id": "brandReset",
+        "type": "button",
+        "class": "studio-reset",
+        "data-i18n": "studio.reset"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandReset"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 49,
+      "attrs": {
+        "href": "#appearanceSettings",
+        "data-i18n": "ui.appearance"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 49,
+      "attrs": {
+        "href": "#brandPreviewCard",
+        "data-i18n": "studio.preview"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 49,
+      "attrs": {
+        "href": "#brandConfigCard",
+        "data-i18n": "config.title"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 49,
+      "attrs": {
+        "href": "#brandAssetLibrary",
+        "data-i18n": "studio.library"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 49,
+      "attrs": {
+        "href": "#brandDelivery",
+        "data-i18n": "ui.delivery"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "select",
+      "id": "themePreference",
+      "line": 50,
+      "attrs": {
+        "id": "themePreference",
+        "data-theme-preference": null
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "appearanceSettings",
+        "themePreference"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 62,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "front",
+        "data-i18n": "studio.front"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 63,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "side",
+        "data-i18n": "studio.side"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 64,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "top",
+        "data-i18n": "studio.top"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 65,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "iso",
+        "data-i18n": "studio.iso"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 66,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "oblique",
+        "data-i18n": "studio.oblique"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 67,
+      "attrs": {
+        "type": "button",
+        "data-brand-view": "bottom",
+        "data-i18n": "studio.bottom"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 70,
+      "attrs": {
+        "type": "button",
+        "class": "brand-motion-btn",
+        "data-brand-motion": "cycle",
+        "data-i18n": "studio.cycle"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 71,
+      "attrs": {
+        "type": "button",
+        "class": "brand-motion-btn",
+        "data-brand-motion": "continuous",
+        "data-i18n": "studio.continuous"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 72,
+      "attrs": {
+        "type": "button",
+        "class": "brand-motion-btn",
+        "data-brand-motion": "scramble",
+        "data-i18n": "brand.scramble"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": null,
+      "line": 73,
+      "attrs": {
+        "type": "button",
+        "class": "brand-motion-btn",
+        "data-brand-motion": "solve",
+        "data-i18n": "brand.solve"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": "brandPause",
+      "line": 74,
+      "attrs": {
+        "type": "button",
+        "class": "brand-motion-btn",
+        "id": "brandPause",
+        "data-i18n": "studio.pause"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandPause"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "button",
+      "id": "brandRetry",
+      "line": 76,
+      "attrs": {
+        "type": "button",
+        "id": "brandRetry"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandRecovery",
+        "brandRetry"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "select",
+      "id": "brandVariant",
+      "line": 81,
+      "attrs": {
+        "id": "brandVariant",
+        "class": "brand-select"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandVariant"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "select",
+      "id": "brandOrder",
+      "line": 90,
+      "attrs": {
+        "id": "brandOrder",
+        "class": "brand-select"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandOrder"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "input",
+      "id": "brandStatic",
+      "line": 91,
+      "attrs": {
+        "id": "brandStatic",
+        "type": "checkbox"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandStatic"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "input",
+      "id": "brandReduced",
+      "line": 92,
+      "attrs": {
+        "id": "brandReduced",
+        "type": "checkbox"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandReduced"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "summary",
+      "id": null,
+      "line": 93,
+      "attrs": {
+        "data-i18n": "ui.geometryDetails"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-02",
+      "tag": "select",
+      "id": "brandPngSize",
+      "line": 96,
+      "attrs": {
+        "id": "brandPngSize"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandPngSize"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-05",
+      "tag": "button",
+      "id": "brandExportSvg",
+      "line": 96,
+      "attrs": {
+        "id": "brandExportSvg",
+        "type": "button"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandExportSvg"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-05",
+      "tag": "button",
+      "id": "brandExportPng",
+      "line": 96,
+      "attrs": {
+        "id": "brandExportPng",
+        "type": "button"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandExportPng"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-05",
+      "tag": "button",
+      "id": "brandExportTokens",
+      "line": 96,
+      "attrs": {
+        "id": "brandExportTokens",
+        "type": "button"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandPreviewCard",
+        "brandExportTokens"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "button",
+      "id": "brandConfigExport",
+      "line": 99,
+      "attrs": {
+        "id": "brandConfigExport",
+        "class": "quiet-button",
+        "type": "button",
+        "data-i18n": "config.export"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigExport"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "input",
+      "id": "brandConfigFile",
+      "line": 101,
+      "attrs": {
+        "id": "brandConfigFile",
+        "type": "file"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigFile"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "textarea",
+      "id": "brandConfigInput",
+      "line": 102,
+      "attrs": {
+        "id": "brandConfigInput",
+        "maxlength": "65536",
+        "aria-describedby": "brandConfigStatus"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigInput"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "button",
+      "id": "brandConfigPreview",
+      "line": 103,
+      "attrs": {
+        "id": "brandConfigPreview",
+        "class": "quiet-button",
+        "type": "button",
+        "data-i18n": "config.preview"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigPreview"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "button",
+      "id": "brandConfigUndo",
+      "line": 103,
+      "attrs": {
+        "id": "brandConfigUndo",
+        "class": "quiet-button",
+        "type": "button",
+        "data-i18n": "config.undo"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigUndo"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "button",
+      "id": "brandConfigApply",
+      "line": 104,
+      "attrs": {
+        "id": "brandConfigApply",
+        "class": "quiet-button",
+        "type": "button",
+        "data-i18n": "config.apply"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigReview",
+        "brandConfigApply"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-03",
+      "tag": "button",
+      "id": "brandConfigCancel",
+      "line": 104,
+      "attrs": {
+        "id": "brandConfigCancel",
+        "class": "quiet-button",
+        "type": "button",
+        "data-i18n": "config.cancel"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandConfigCard",
+        "brandConfigReview",
+        "brandConfigCancel"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-04",
+      "tag": "button",
+      "id": null,
+      "line": 108,
+      "attrs": {
+        "class": "asset-image",
+        "type": "button",
+        "data-brand-select": "primary",
+        "aria-label": "Primary",
+        "data-i18n-aria-label": "brand.primary"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandAssetLibrary"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-04",
+      "tag": "button",
+      "id": null,
+      "line": 109,
+      "attrs": {
+        "class": "asset-image",
+        "type": "button",
+        "data-brand-select": "monochrome",
+        "aria-label": "Monochrome",
+        "data-i18n-aria-label": "brand.monochrome"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandAssetLibrary"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-04",
+      "tag": "button",
+      "id": null,
+      "line": 110,
+      "attrs": {
+        "class": "asset-image dark-surface",
+        "type": "button",
+        "data-brand-select": "dark",
+        "aria-label": "Dark",
+        "data-i18n-aria-label": "brand.dark"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandAssetLibrary"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-04",
+      "tag": "button",
+      "id": null,
+      "line": 111,
+      "attrs": {
+        "class": "asset-image micro",
+        "type": "button",
+        "data-brand-select": "favicon",
+        "aria-label": "Micro mark",
+        "data-i18n-aria-label": "brand.favicon"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandAssetLibrary"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-05",
+      "tag": "button",
+      "id": "brandExportPackage",
+      "line": 115,
+      "attrs": {
+        "id": "brandExportPackage",
+        "type": "button",
+        "data-i18n": "studio.packageDownload"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandDelivery",
+        "brandExportPackage"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-05",
+      "tag": "a",
+      "id": "brandPackageSave",
+      "line": 115,
+      "attrs": {
+        "id": "brandPackageSave"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace",
+        "brandDelivery",
+        "brandPackageSave"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-04",
+      "tag": "summary",
+      "id": null,
+      "line": 117,
+      "attrs": {
+        "data-i18n": "studio.journal"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "brandWorkspace"
+      ],
+      "classification": "journal-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 122,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "policy"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 134,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "memory"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 145,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "world"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "input",
+      "id": "entityFilter",
+      "line": 150,
+      "attrs": {
+        "type": "text",
+        "class": "filter-input",
+        "id": "entityFilter",
+        "data-i18n-placeholder": "world.filter"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace",
+        "entityFilter"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 157,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "audit"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 167,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "state"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 177,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "health"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 189,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "ws"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "SET-06",
+      "tag": "div",
+      "id": null,
+      "line": 200,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "agents"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "studioContent",
+        "runtimeWorkspace"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "SET",
+      "template": "ui/web/templates/settings.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 15,
+      "attrs": {
+        "class": "brand",
+        "href": "/",
+        "title": "EVA"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "button",
+      "id": "explorerToggle",
+      "line": 16,
+      "attrs": {
+        "class": "rail-button active",
+        "id": "explorerToggle",
+        "title": "切换记忆目录",
+        "aria-label": "切换记忆目录"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "explorerToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 17,
+      "attrs": {
+        "class": "rail-button",
+        "href": "/chat",
+        "title": "与 EVA 对话",
+        "aria-label": "与 EVA 对话"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 18,
+      "attrs": {
+        "class": "rail-button",
+        "href": "/memory/list",
+        "title": "记忆列表",
+        "aria-label": "记忆列表"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 20,
+      "attrs": {
+        "id": "themeBtn",
+        "class": "rail-button",
+        "title": "切换深浅主题",
+        "aria-label": "切换深浅主题"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 21,
+      "attrs": {
+        "class": "rail-button",
+        "href": "/settings",
+        "title": "设置",
+        "aria-label": "设置"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "select",
+      "id": "graphSource",
+      "line": 26,
+      "attrs": {
+        "id": "graphSource"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "explorer",
+        "graphSource"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "input",
+      "id": "graphSearch",
+      "line": 27,
+      "attrs": {
+        "id": "graphSearch",
+        "type": "search",
+        "maxlength": "200",
+        "aria-label": "搜索全部记忆"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "explorer",
+        "graphSearch"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "button",
+      "id": "previousGoals",
+      "line": 30,
+      "attrs": {
+        "id": "previousGoals"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "explorer",
+        "goalPaging",
+        "previousGoals"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "button",
+      "id": "nextGoals",
+      "line": 30,
+      "attrs": {
+        "id": "nextGoals"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "explorer",
+        "goalPaging",
+        "nextGoals"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "tag": "button",
+      "id": "reloadGraph",
+      "line": 34,
+      "attrs": {
+        "id": "reloadGraph",
+        "title": "刷新记忆并保留当前视图",
+        "aria-label": "刷新记忆"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "explorer",
+        "reloadGraph"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "newGoal",
+      "line": 37,
+      "attrs": {
+        "id": "newGoal",
+        "aria-haspopup": "dialog"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "newGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-13",
+      "tag": "button",
+      "id": "immersiveToggle",
+      "line": 37,
+      "attrs": {
+        "id": "immersiveToggle",
+        "title": "进入沉浸式星图"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "immersiveToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-12",
+      "tag": "button",
+      "id": "exportNotes",
+      "line": 37,
+      "attrs": {
+        "id": "exportNotes",
+        "title": "下载默认投影的 Obsidian 笔记"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "exportNotes"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-12",
+      "tag": "a",
+      "id": "openVault",
+      "line": 37,
+      "attrs": {
+        "id": "openVault",
+        "class": "obsidian-button"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "openVault"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "globalView",
+      "line": 38,
+      "attrs": {
+        "id": "globalView",
+        "class": "chosen"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "globalView"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "localView",
+      "line": 38,
+      "attrs": {
+        "id": "localView"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "localView"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "button",
+      "id": "displayToggle",
+      "line": 38,
+      "attrs": {
+        "id": "displayToggle",
+        "class": "display-toggle"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "displayToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "select",
+      "id": "graphDimension",
+      "line": 40,
+      "attrs": {
+        "id": "graphDimension"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphDimension"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "orbitPlayback",
+      "line": 41,
+      "attrs": {
+        "id": "orbitPlayback",
+        "title": "保留所选记忆和局部范围，切换轨道运转"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "orbitPlayback"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "summary",
+      "id": null,
+      "line": 42,
+      "attrs": {},
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cameraOptions"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "select",
+      "id": "graphNavigation",
+      "line": 42,
+      "attrs": {
+        "id": "graphNavigation"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "cameraOptions",
+        "graphNavigation"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "select",
+      "id": "galaxySystem",
+      "line": 43,
+      "attrs": {
+        "id": "galaxySystem",
+        "aria-label": "定位星系",
+        "title": "只调整相机，保留已加载节点和关系"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "galaxySystemControl",
+        "galaxySystem"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "resetCamera",
+      "line": 44,
+      "attrs": {
+        "id": "resetCamera",
+        "title": "恢复初始方向并适应窗口（Home）"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "resetCamera"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "localBack",
+      "line": 48,
+      "attrs": {
+        "id": "localBack"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "localControls",
+        "localBack"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "expandLocal",
+      "line": 52,
+      "attrs": {
+        "id": "expandLocal"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "expandLocal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "recenterLocal",
+      "line": 52,
+      "attrs": {
+        "id": "recenterLocal"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "localControls",
+        "recenterLocal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "toggleLocalDetail",
+      "line": 52,
+      "attrs": {
+        "id": "toggleLocalDetail",
+        "aria-controls": "inspector"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "toggleLocalDetail"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "loadNeighbors",
+      "line": 53,
+      "attrs": {
+        "id": "loadNeighbors"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "loadNeighbors"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "summary",
+      "id": null,
+      "line": 56,
+      "attrs": {},
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "select",
+      "id": "localDepth",
+      "line": 58,
+      "attrs": {
+        "id": "localDepth"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel",
+        "localDepth"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "select",
+      "id": "localDirection",
+      "line": 59,
+      "attrs": {
+        "id": "localDirection"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel",
+        "localDirection"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "select",
+      "id": "localKind",
+      "line": 60,
+      "attrs": {
+        "id": "localKind"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel",
+        "localKind"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "select",
+      "id": "localRelation",
+      "line": 61,
+      "attrs": {
+        "id": "localRelation",
+        "aria-describedby": "relationFilterNotice"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel",
+        "localRelation"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "resetLocalFilters",
+      "line": 61,
+      "attrs": {
+        "id": "resetLocalFilters",
+        "title": "重置方向、类别和关系名称；保留层数与记忆层"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "localControls",
+        "localFilterPanel",
+        "resetLocalFilters"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-13",
+      "tag": "button",
+      "id": "immersiveDetails",
+      "line": 68,
+      "attrs": {
+        "id": "immersiveDetails",
+        "aria-controls": "inspector"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "graphStage",
+        "immersiveHud",
+        "immersiveDetails"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-13",
+      "tag": "button",
+      "id": "immersiveRelations",
+      "line": 68,
+      "attrs": {
+        "id": "immersiveRelations",
+        "aria-controls": "localControls"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "immersiveHud",
+        "immersiveRelations"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-13",
+      "tag": "button",
+      "id": "immersiveReset",
+      "line": 68,
+      "attrs": {
+        "id": "immersiveReset"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "immersiveHud",
+        "immersiveReset"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-13",
+      "tag": "button",
+      "id": "immersiveExit",
+      "line": 68,
+      "attrs": {
+        "id": "immersiveExit"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "immersiveHud",
+        "immersiveExit"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "canvas",
+      "id": "memoryCanvas",
+      "line": 69,
+      "attrs": {
+        "id": "memoryCanvas",
+        "tabindex": "0",
+        "aria-label": "三维记忆星系。拖动旋转，Shift 拖动平移，滚轮或双指缩放；点击星体或关系线查看详情。方向键旋转，Home 复位，也可用节点列表选择。"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "memoryCanvas"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "particleBodies",
+      "line": 74,
+      "attrs": {
+        "id": "particleBodies",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "particleBodies"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "orbitMotion",
+      "line": 75,
+      "attrs": {
+        "id": "orbitMotion",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "orbitMotion"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "orbitSpeed",
+      "line": 76,
+      "attrs": {
+        "id": "orbitSpeed",
+        "type": "range",
+        "aria-label": "运转速度"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "orbitSpeed"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "select",
+      "id": "cameraView",
+      "line": 78,
+      "attrs": {
+        "id": "cameraView",
+        "aria-label": "三维视角",
+        "title": "调整观察方向并适应当前范围"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "cameraView"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "animateGraph",
+      "line": 79,
+      "attrs": {
+        "id": "animateGraph",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "animateGraph"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "cameraMotion",
+      "line": 80,
+      "attrs": {
+        "id": "cameraMotion",
+        "type": "checkbox",
+        "title": "定位星系、聚焦节点和切换视角时平滑过渡；拖动或缩放会停止过渡"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "cameraMotion"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "showLabels",
+      "line": 81,
+      "attrs": {
+        "id": "showLabels",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "showLabels"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "showOrphans",
+      "line": 82,
+      "attrs": {
+        "id": "showOrphans",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "showOrphans"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "showOrigins",
+      "line": 83,
+      "attrs": {
+        "id": "showOrigins",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "showOrigins"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "showOrbits",
+      "line": 84,
+      "attrs": {
+        "id": "showOrbits",
+        "type": "checkbox"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "showOrbits"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-03",
+      "tag": "input",
+      "id": "edgeBrightness",
+      "line": 85,
+      "attrs": {
+        "id": "edgeBrightness",
+        "type": "range"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "displayPanel",
+        "edgeBrightness"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "zoomIn",
+      "line": 90,
+      "attrs": {
+        "id": "zoomIn",
+        "title": "放大",
+        "aria-label": "放大"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "zoomIn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "zoomOut",
+      "line": 90,
+      "attrs": {
+        "id": "zoomOut",
+        "title": "缩小",
+        "aria-label": "缩小"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "zoomOut"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-02",
+      "tag": "button",
+      "id": "fitGraph",
+      "line": 90,
+      "attrs": {
+        "id": "fitGraph",
+        "title": "适应窗口",
+        "aria-label": "适应窗口"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "graphStage",
+        "fitGraph"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "openDiagnostics",
+      "line": 92,
+      "attrs": {
+        "id": "openDiagnostics",
+        "aria-haspopup": "dialog"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "openDiagnostics"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-05",
+      "tag": "button",
+      "id": "closeImmersiveDetail",
+      "line": 95,
+      "attrs": {
+        "id": "closeImmersiveDetail",
+        "title": "收起详情，保留所选节点",
+        "aria-label": "收起节点详情"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "closeImmersiveDetail"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-05",
+      "tag": "button",
+      "id": "clearSelection",
+      "line": 95,
+      "attrs": {
+        "id": "clearSelection",
+        "title": "清除选择",
+        "aria-label": "清除选择"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "clearSelection"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-05",
+      "tag": "button",
+      "id": "focusNode",
+      "line": 99,
+      "attrs": {
+        "id": "focusNode",
+        "class": "relation-open",
+        "title": "居中并放大所选节点，保留当前范围、局部中心和方向"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "focusNode"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "tag": "button",
+      "id": "fitLocalPath",
+      "line": 100,
+      "attrs": {
+        "id": "fitLocalPath",
+        "class": "relation-open"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "localPath",
+        "fitLocalPath"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-06",
+      "tag": "button",
+      "id": "verifyGoal",
+      "line": 102,
+      "attrs": {
+        "id": "verifyGoal",
+        "class": "relation-open"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "goalDetail",
+        "verifyGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-06",
+      "tag": "button",
+      "id": "cancelGoal",
+      "line": 102,
+      "attrs": {
+        "id": "cancelGoal",
+        "class": "relation-open"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "goalDetail",
+        "cancelGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-06",
+      "tag": "button",
+      "id": "loadGoalHistory",
+      "line": 102,
+      "attrs": {
+        "id": "loadGoalHistory",
+        "class": "relation-open"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "goalDetail",
+        "loadGoalHistory"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-07",
+      "tag": "button",
+      "id": "loadActionInputs",
+      "line": 104,
+      "attrs": {
+        "id": "loadActionInputs",
+        "class": "relation-open"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "actionInputs",
+        "loadActionInputs"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-05",
+      "tag": "summary",
+      "id": null,
+      "line": 106,
+      "attrs": {},
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-12",
+      "tag": "a",
+      "id": "openNote",
+      "line": 107,
+      "attrs": {
+        "id": "openNote",
+        "class": "note-link"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "inspector",
+        "detailContent",
+        "openNote"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "closeDiagnostics",
+      "line": 114,
+      "attrs": {
+        "id": "closeDiagnostics",
+        "aria-label": "关闭关系诊断"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "closeDiagnostics"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "diagnosticPrevious",
+      "line": 118,
+      "attrs": {
+        "id": "diagnosticPrevious"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "diagnosticPagination",
+        "diagnosticPrevious"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "diagnosticRetry",
+      "line": 118,
+      "attrs": {
+        "id": "diagnosticRetry"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "diagnosticPagination",
+        "diagnosticRetry"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "diagnosticNext",
+      "line": 118,
+      "attrs": {
+        "id": "diagnosticNext"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": true,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "diagnosticPagination",
+        "diagnosticNext"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "diagnosticRecordBack",
+      "line": 120,
+      "attrs": {
+        "id": "diagnosticRecordBack"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "diagnosticRecord",
+        "diagnosticRecordBack"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "tag": "button",
+      "id": "diagnosticRecordRetry",
+      "line": 120,
+      "attrs": {
+        "id": "diagnosticRecordRetry"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationDiagnostics",
+        "diagnosticRecord",
+        "diagnosticRecordRetry"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "tag": "button",
+      "id": "closeRelationInspector",
+      "line": 128,
+      "attrs": {
+        "id": "closeRelationInspector",
+        "aria-label": "关闭关系详情"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationInspector",
+        "closeRelationInspector"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "tag": "button",
+      "id": "relationFrom",
+      "line": 134,
+      "attrs": {
+        "id": "relationFrom",
+        "title": "查看起点节点"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationInspector",
+        "relationFields",
+        "relationFrom"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "tag": "button",
+      "id": "relationTo",
+      "line": 134,
+      "attrs": {
+        "id": "relationTo",
+        "title": "查看终点节点"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationInspector",
+        "relationFields",
+        "relationTo"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "tag": "summary",
+      "id": null,
+      "line": 137,
+      "attrs": {},
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationInspector",
+        "relationFields"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "tag": "button",
+      "id": "readRelationSource",
+      "line": 138,
+      "attrs": {
+        "id": "readRelationSource",
+        "class": "note-link"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "relationInspector",
+        "relationFields",
+        "readRelationSource"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "closeGoalCreate",
+      "line": 145,
+      "attrs": {
+        "id": "closeGoalCreate",
+        "type": "button",
+        "aria-label": "关闭目标表单"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "closeGoalCreate"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "input",
+      "id": "goalTask",
+      "line": 148,
+      "attrs": {
+        "id": "goalTask",
+        "maxlength": "256"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "goalTask"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "textarea",
+      "id": "goalDescription",
+      "line": 149,
+      "attrs": {
+        "id": "goalDescription",
+        "maxlength": "1000"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "goalDescription"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "textarea",
+      "id": "goalFiles",
+      "line": 150,
+      "attrs": {
+        "id": "goalFiles",
+        "maxlength": "6000"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "goalFiles"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "input",
+      "id": "goalDeadline",
+      "line": 151,
+      "attrs": {
+        "id": "goalDeadline",
+        "type": "datetime-local"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "goalDeadline"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "submitGoal",
+      "line": 152,
+      "attrs": {
+        "id": "submitGoal",
+        "type": "submit"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "submitGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "lookupGoal",
+      "line": 152,
+      "attrs": {
+        "id": "lookupGoal",
+        "type": "button"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "lookupGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "viewCreatedGoal",
+      "line": 152,
+      "attrs": {
+        "id": "viewCreatedGoal",
+        "type": "button"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "viewCreatedGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "MAP-11",
+      "tag": "button",
+      "id": "anotherGoal",
+      "line": 152,
+      "attrs": {
+        "id": "anotherGoal",
+        "type": "button"
+      },
+      "hiddenInSource": true,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "goalCreateDialog",
+        "goalCreateForm",
+        "anotherGoal"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MAP",
+      "template": "ui/web/templates/memory_graph.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 18,
+      "attrs": {
+        "href": "/chat",
+        "class": "icon-btn",
+        "data-i18n-title": "nav.chat",
+        "title": "返回对话"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 21,
+      "attrs": {
+        "href": "/settings",
+        "class": "icon-btn",
+        "data-i18n-title": "nav.settings",
+        "title": "设置"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "COMMON-02",
+      "tag": "button",
+      "id": "langBtn",
+      "line": 24,
+      "attrs": {
+        "id": "langBtn",
+        "class": "lang-btn",
+        "title": "Switch Language / 切换语言"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "langBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 25,
+      "attrs": {
+        "id": "themeBtn",
+        "class": "icon-btn",
+        "title": "切换深色/浅色模式"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "LIST-02",
+      "tag": "input",
+      "id": "memSearch",
+      "line": 34,
+      "attrs": {
+        "type": "text",
+        "id": "memSearch"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "memSearch"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "LIST-02",
+      "tag": "button",
+      "id": "memSearchBtn",
+      "line": 35,
+      "attrs": {
+        "id": "memSearchBtn"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "memSearchBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "LIST",
+      "template": "ui/web/templates/memory.html"
+    },
+    {
+      "surfaceId": "COMMON-02",
+      "tag": "button",
+      "id": "langBtn",
+      "line": 21,
+      "attrs": {
+        "id": "langBtn",
+        "class": "lang-btn",
+        "title": "Switch Language / 切换语言"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "langBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 22,
+      "attrs": {
+        "id": "themeBtn",
+        "class": "icon-btn",
+        "title": "切换深色/浅色模式"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "button",
+      "id": "refreshBtn",
+      "line": 23,
+      "attrs": {
+        "id": "refreshBtn",
+        "type": "button",
+        "data-i18n": "btn.refresh"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "refreshBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 31,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "chat"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-02",
+      "tag": "textarea",
+      "id": "chatInput",
+      "line": 37,
+      "attrs": {
+        "id": "chatInput",
+        "data-i18n-placeholder": "chat.placeholder"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "chatInput"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-02",
+      "tag": "input",
+      "id": "streamToggle",
+      "line": 40,
+      "attrs": {
+        "type": "checkbox",
+        "id": "streamToggle"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "streamToggle"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-02",
+      "tag": "button",
+      "id": "sendBtn",
+      "line": 43,
+      "attrs": {
+        "type": "submit",
+        "id": "sendBtn",
+        "data-i18n": "chat.send"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "chatForm",
+        "sendBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 55,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "policy"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 67,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "memory"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 78,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "world"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "input",
+      "id": "entityFilter",
+      "line": 83,
+      "attrs": {
+        "type": "text",
+        "class": "filter-input",
+        "id": "entityFilter",
+        "data-i18n-placeholder": "world.filter"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "entityFilter"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 90,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "audit"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 100,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "state"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 110,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "health"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 122,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "ws"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "MON-01",
+      "tag": "div",
+      "id": null,
+      "line": 133,
+      "attrs": {
+        "class": "card-header",
+        "data-card": "agents"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "card-fold-attribute",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MON",
+      "template": "ui/web/templates/dashboard.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 12,
+      "attrs": {
+        "id": "themeBtn",
+        "type": "button",
+        "aria-label": "切换深浅主题"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "MVSC",
+      "template": "ui/web/templates/mvsc_dashboard.html"
+    },
+    {
+      "surfaceId": "COMMON-01",
+      "tag": "button",
+      "id": "themeBtn",
+      "line": 3,
+      "attrs": {
+        "id": "themeBtn",
+        "type": "button",
+        "aria-label": "切换深浅主题"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [
+        "themeBtn"
+      ],
+      "classification": "source-ancestry",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "PROMPT",
+      "template": "ui/web/templates/service_unavailable.html"
+    },
+    {
+      "surfaceId": "COMMON-03",
+      "tag": "a",
+      "id": null,
+      "line": 3,
+      "attrs": {
+        "href": "/"
+      },
+      "hiddenInSource": false,
+      "disabledInSource": false,
+      "ancestorIds": [],
+      "classification": "navigation-link",
+      "renderingStatus": "Jinja conditions not rendered or runtime-tested",
+      "page": "PROMPT",
+      "template": "ui/web/templates/service_unavailable.html"
+    }
+  ],
+  "dynamicControlFamilies": [
+    {
+      "surfaceId": "CHAT-03",
+      "source": "ui/web/static/chat.js",
+      "controls": "message-copy / retry / query / code-copy"
+    },
+    {
+      "surfaceId": "MAP-01",
+      "source": "ui/web/static/memory_graph.js",
+      "controls": "nodeList buttons[data-node-id] / tier buttons"
+    },
+    {
+      "surfaceId": "MAP-04",
+      "source": "ui/web/static/memory_graph.js",
+      "controls": "localBreadcrumbs / localPathSteps"
+    },
+    {
+      "surfaceId": "MAP-05",
+      "source": "ui/web/static/memory_graph.js",
+      "controls": "neighbor / relation-open buttons"
+    },
+    {
+      "surfaceId": "MAP-08",
+      "source": "ui/web/static/memory_graph.js",
+      "controls": "toolChecks sample / history"
+    },
+    {
+      "surfaceId": "MAP-09",
+      "source": "ui/web/static/memory_graph.js",
+      "controls": "relationChoices"
+    },
+    {
+      "surfaceId": "MAP-10",
+      "source": "ui/web/static/memory_diagnostics.js",
+      "controls": "diagnosticItems links"
+    },
+    {
+      "surfaceId": "LIST-01",
+      "source": "ui/web/static/memory_explorer.js",
+      "controls": "buttons[data-tier]"
+    }
+  ],
+  "note": "Includes native controls, canvas and data-card click entries. HTML source/Jinja is not rendered UI; generated controls are explicit families, not counted individual instances."
+}

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
+from memory.provenance import memory_context_line, world_context_line
 
 
 def build_context_text(context: dict[str, Any] | None) -> str:
@@ -20,13 +21,13 @@ def build_context_text(context: dict[str, Any] | None) -> str:
 
     if tasks:
         parts.append(
-            "Active tasks: "
-            + ", ".join(t.get("name", "") for t in tasks[:3] if t.get("name"))
+            "Active tasks (untrusted records; preserve field origins): "
+            + "; ".join(world_context_line(t) for t in tasks[:3] if t.get("name"))
         )
     if memories:
         parts.append(
-            "Recent context: "
-            + "; ".join(m.get("content", "")[:80] for m in memories[:2])
+            "Recent context (untrusted records; preserve epistemic labels): "
+            + "; ".join(memory_context_line(m, 80) for m in memories[:2])
         )
 
     return "\n".join(parts) + "\n" if parts else ""

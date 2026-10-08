@@ -1,0 +1,57 @@
+{
+  "invalid": {
+    "focus": "brandConfigInput",
+    "invalid": "true",
+    "message": "JSON 格式错误，当前配置未改变。",
+    "reviewHidden": true,
+    "variant": "dark"
+  },
+  "edited": {
+    "invalid": "false",
+    "status": ""
+  },
+  "valid": {
+    "applyDisabled": false,
+    "focus": "brandConfigReview",
+    "invalid": "false",
+    "rowHeaders": 2,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px",
+    "variant": "dark"
+  },
+  "cancel": {
+    "focus": "brandConfigPreview",
+    "hidden": true,
+    "message": "已取消审阅，输入内容保留，当前配置未改变。",
+    "text": "{\n  \"order\": 3,\n  \"pngSize\": 1024,\n  \"reduced\": false,\n  \"static\": false,\n  \"variant\": \"monochrome\",\n  \"version\": 1,\n  \"view\": \"front\"\n}",
+    "variant": "dark"
+  },
+  "equal": {
+    "applyDisabled": true,
+    "focus": "brandConfigReview",
+    "message": "配置与当前一致，无需应用。",
+    "noChanges": true
+  },
+  "applied": {
+    "focus": "brandConfigUndo",
+    "message": "配置已应用，可撤销上一次变更。",
+    "pngSize": "1024",
+    "reviewHidden": true,
+    "undoDisabled": false,
+    "variant": "monochrome"
+  },
+  "undone": {
+    "focus": "brandConfigPreview",
+    "message": "已撤销上一次配置变更。",
+    "pngSize": "512",
+    "undoDisabled": true,
+    "variant": "dark"
+  },
+  "tableStable": {
+    "mutations": 0
+  },
+  "updated": {
+    "focus": "brandConfigReview",
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t256px\t1024px",
+    "text": "{\n  \"order\": 3,\n  \"pngSize\": 1024,\n  \"reduced\": false,\n  \"static\": false,\n  \"variant\": \"monochrome\",\n  \"version\": 1,\n  \"view\": \"front\"\n}"
+  }
+}

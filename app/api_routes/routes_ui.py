@@ -15,8 +15,14 @@ def index(request: Request) -> Any:
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"app_name": settings.app_name, "page": "chat"},
+        context={"app_name": settings.app_name, "page": "graph"},
     )
+
+
+@router.get("/chat")
+def chat_page(request: Request) -> Any:
+    return templates.TemplateResponse(request=request, name="chat.html",
+                                      context={"app_name": settings.app_name, "page": "chat"})
 
 
 @router.get("/settings")
@@ -40,6 +46,11 @@ def mvsc_dashboard(request: Request) -> Any:
 
 @router.get("/memory")
 def memory_explorer_page(request: Request) -> Any:
+    return index(request)
+
+
+@router.get("/memory/list")
+def memory_list_page(request: Request) -> Any:
     return templates.TemplateResponse(
         request=request,
         name="memory.html",

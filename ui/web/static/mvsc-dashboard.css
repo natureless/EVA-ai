@@ -1,0 +1,19 @@
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--fg);padding:20px}
+h1{font-size:20px;margin-bottom:16px;color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px}
+.card h2{font-size:14px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.stat{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.stat:last-child{border-bottom:none}
+.stat .val{font-weight:600;font-family:monospace}
+.val.green{color:var(--green)}.val.red{color:var(--red)}.val.yellow{color:var(--yellow)}
+#pipeline{grid-column:1/-1}
+.phase-bar{display:flex;gap:2px;margin-top:8px}
+.phase{flex:1;height:6px;border-radius:3px;background:var(--border);transition:background 0.3s}
+.phase.active{background:var(--accent)}
+.phase.done{background:var(--green)}
+#log{grid-column:1/-1;max-height:200px;overflow-y:auto;font-family:monospace;font-size:12px}
+.log-entry{padding:2px 0;border-bottom:1px solid var(--border)}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.status-dot.ok{background:var(--green)}.status-dot.warn{background:var(--yellow)}.status-dot.err{background:var(--red)}

@@ -167,9 +167,7 @@ class TestEventBusAdapter:
     async def test_round_trip_preserves_data(self, adapter, legacy_bus):
         """Publish → consume should preserve core event data.
 
-        Note: confidence and priority are lost in LegacyEvent round-trip
-        because the old Event schema doesn't have these fields.
-        This is expected behavior — the full fields are preserved in EventStore.
+        Versioned metadata survives the stable facade and EventStore.
         """
         original = EventEnvelope(
             event_type="perception.user_message_received",
@@ -186,8 +184,9 @@ class TestEventBusAdapter:
         assert consumed.event_type == original.event_type
         assert consumed.source == original.source
         assert consumed.payload == original.payload
-        # confidence and priority reset to defaults in LegacyEvent round-trip
-        # (preserved only in EventStore)
+        assert consumed.confidence == original.confidence
+        assert consumed.priority == original.priority
+        assert consumed.correlation_id == original.correlation_id
 
     # ── stats ────────────────────────────────────────────
 
@@ -195,7 +194,7 @@ class TestEventBusAdapter:
     async def test_stats_tracks_counts(self, adapter, legacy_bus):
         """Stats should reflect publish/consume activity."""
         await adapter.publish(EventEnvelope(
-            event_type="test.one", source="test", payload={},
+            event_type="perception.scheduler_tick", source="test", payload={},
         ))
         legacy = LegacyEvent(type="user_message", source="test", payload={})
         legacy_bus.publish(legacy)
@@ -234,15 +233,14 @@ class TestLegacyConversion:
         legacy = to_legacy_event(env)
         assert legacy.type == "maintenance"
 
-    def test_unknown_type_falls_back(self):
+    def test_unknown_type_is_rejected(self):
         env = EventEnvelope(
             event_type="custom.unknown_event",
             source="test",
             payload={},
         )
-        legacy = to_legacy_event(env)
-        # Falls back to system_tick (safe default)
-        assert legacy.type == "system_tick"
+        with pytest.raises(ValueError, match="no stable consumer"):
+            to_legacy_event(env)
 
 
 # ═══════════════════════════════════════════════════════════

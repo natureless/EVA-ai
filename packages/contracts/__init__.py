@@ -4,6 +4,7 @@
 """
 
 from packages.contracts.events import EventEnvelope, EventFamily, from_legacy_event
+from packages.contracts.actions import ActionIntent, ActionReceipt
 from packages.contracts.state import (
     BodyState,
     BroadcastContent,
@@ -15,6 +16,8 @@ from packages.contracts.state import (
     Plan,
     PlanStep,
     RuntimeMode,
+    StateConflictError,
+    StateDelta,
     ViabilityBounds,
 )
 from packages.contracts.protocols import (
@@ -33,6 +36,7 @@ from packages.contracts.protocols import (
     RuntimeContext,
     SelfModelProtocol,
     StateRepository,
+    TransactionalStateRepository,
     ToolAdapterProtocol,
     ToolRequest,
     ToolResult,
@@ -43,6 +47,9 @@ from packages.contracts.protocols import (
 )
 
 __all__ = [
+    "ActionIntent",
+    "ActionReceipt",
+    "TransactionalStateRepository",
     # events
     "EventEnvelope",
     "EventFamily",
@@ -58,6 +65,8 @@ __all__ = [
     "Plan",
     "PlanStep",
     "RuntimeMode",
+    "StateConflictError",
+    "StateDelta",
     "ViabilityBounds",
     # protocols
     "AttentionProtocol",

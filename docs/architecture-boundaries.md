@@ -1,6 +1,6 @@
 # EVA Module Boundaries
 
-EVA has one stable runtime and one optional experimental extension. New
+EVA has one lifecycle owner, a shared event processing service and optional consumers. New
 features should extend the stable runtime instead of creating parallel event,
 memory, or cognition stacks.
 
@@ -8,7 +8,7 @@ memory, or cognition stacks.
 
 ```text
 app/main.py
-  -> app/bootstrap.py          lifecycle ordering
+  -> app/bootstrap.py          composition and ownership transfer
   -> app/composition.py        typed component factories
   -> app/api_routes/*          HTTP adapters
 
@@ -17,6 +17,9 @@ event -> core -> agent_os -> agents
           +-> world + memory <-+
           +-> persona
 
+runtime/controller.py              selected consumer and shutdown lifecycle
+core/event_processor.py             execution without queue consumption
+core/cognition_loop.py              compatible FIFO consumer
 runtime                            process services
 connectors                         external event sources
 ```
@@ -27,10 +30,12 @@ connectors                         external event sources
 2. Domain and runtime modules must not import `app`; configuration is injected.
 3. Agents return results and do not call API routes or mutate the container.
 4. File and network capabilities enter agents through guarded tools/executors.
-5. `packages/*` is experimental MVSC code and enters through
+5. `packages/*` contains optional MVSC and Minimal Brain code and enters through
    `app/experimental.py` only.
 6. API routes read the typed `AppContainer` and publish events rather than
    constructing subsystems.
+7. EventProcessor must not depend on its consumers or acknowledge their queues.
+8. HTTP observation uses public runtime contracts, not private worker threads.
 
 The rules are executable in `tests/test_architecture.py`.
 

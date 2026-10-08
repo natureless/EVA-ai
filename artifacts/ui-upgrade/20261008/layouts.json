@@ -1,0 +1,380 @@
+[
+  {
+    "route": "/chat",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/memory",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/settings",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/memory/list",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/dashboard",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/mvsc",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/unavailable",
+    "width": 320,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 289,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/chat",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 753,
+    "pageWidth": 753,
+    "viewport": 753
+  },
+  {
+    "route": "/memory",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/settings",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/memory/list",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/dashboard",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/mvsc",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/unavailable",
+    "width": 768,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 737,
+    "pageWidth": 753,
+    "viewport": 753
+  },
+  {
+    "route": "/chat",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/memory",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/settings",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/memory/list",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/dashboard",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/mvsc",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/unavailable",
+    "width": 1440,
+    "theme": "light",
+    "appliedTheme": "light",
+    "bodyWidth": 1409,
+    "pageWidth": 1425,
+    "viewport": 1425
+  },
+  {
+    "route": "/chat",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/memory",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/settings",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/memory/list",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/dashboard",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 305,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/mvsc",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 320,
+    "pageWidth": 320,
+    "viewport": 320
+  },
+  {
+    "route": "/unavailable",
+    "width": 320,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 289,
+    "pageWidth": 305,
+    "viewport": 305
+  },
+  {
+    "route": "/chat",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 753,
+    "pageWidth": 753,
+    "viewport": 753
+  },
+  {
+    "route": "/memory",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/settings",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/memory/list",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/dashboard",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/mvsc",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 768,
+    "pageWidth": 768,
+    "viewport": 768
+  },
+  {
+    "route": "/unavailable",
+    "width": 768,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 737,
+    "pageWidth": 753,
+    "viewport": 753
+  },
+  {
+    "route": "/chat",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/memory",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/settings",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/memory/list",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/dashboard",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/mvsc",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1440,
+    "pageWidth": 1440,
+    "viewport": 1440
+  },
+  {
+    "route": "/unavailable",
+    "width": 1440,
+    "theme": "dark",
+    "appliedTheme": "dark",
+    "bodyWidth": 1409,
+    "pageWidth": 1425,
+    "viewport": 1425
+  }
+]

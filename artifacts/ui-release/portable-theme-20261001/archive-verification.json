@@ -1,0 +1,39 @@
+{
+  "path": "D:\\EVA-ai\\artifacts\\ui-release\\portable-theme-20261001\\browser-order3-dark-2048.zip",
+  "sha256": "e910dc56de87d114655ac724421bfa1be2584b42aa4ea426c68dc7fe9df6b37d",
+  "files": 71,
+  "versions": {
+    "formatVersion": 2,
+    "brandVersion": "1.0.0",
+    "componentVersion": "1.1.0",
+    "tokenSchemaVersion": 1
+  },
+  "selected": {
+    "order": 3,
+    "variant": "dark",
+    "view": "iso",
+    "size": 2048
+  },
+  "pngDimensions": {
+    "selected/eva-selected.png": [
+      2048,
+      2048
+    ],
+    "icons/favicon-16.png": [
+      16,
+      16
+    ],
+    "icons/favicon-32.png": [
+      32,
+      32
+    ],
+    "icons/favicon-48.png": [
+      48,
+      48
+    ]
+  },
+  "previewResources": "local references verified; browser execution not certified",
+  "baselineReportSha256": "141c31041a36558a836d5255bb29cf1cec0351f0e695218ef49dd75ebe52b074",
+  "sourceMismatches": [],
+  "captureScope": "Generated DOM data URL bytes, not native save proof"
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "question": "你是谁",
+    "reply": "我是 **EVA**，一个持续性的认知助手。\n\n- 我的职责是协助你处理信息、分析问题、检索文件和记忆\n- 我保持稳定的身份，不会编造记忆或夸大确定性\n- 我会区分事实、推断和未知，并对不确定的地方如实说明\n\n有什么需要我帮忙的吗？",
+    "ok": true,
+    "tool_rounds": 0,
+    "tools_available": 4
+  },
+  {
+    "question": "现在美股行情",
+    "reply": "我无法获取实时美股行情：当前可用工具只有本地文件搜索、读取和记忆检索，没有联网行情接口。\n\n建议你：\n- 直接粘贴行情数据（指数点位、涨跌幅、个股报价），我可以帮你分析\n- 或提供已保存的行情文件路径，我读取后解读\n\n需要的话，把数据发我。",
+    "ok": true,
+    "tool_rounds": 0,
+    "tools_available": 4
+  },
+  {
+    "question": "请用英语回答：你是谁",
+    "reply": "I'm **EVA**, a persistent cognitive assistant.\n\n- **Role**: I help with analysis, file and memory search, and structured answers.\n- **Capabilities**: I can search files, read documents, list directories, and recall past context from memory.\n- **Limits**: I don't fabricate memories, and I don't overclaim certainty. I also can't browse the web unless a network tool is available.\n\nMy tone is **precise, calm, and concise**. What would you like to work on?",
+    "ok": true,
+    "tool_rounds": 0,
+    "tools_available": 4
+  }
+]

@@ -1,0 +1,133 @@
+{
+  "method": "At normal text size measure initial placement, then focus send with ArrowLeft without submission. Short windows may scroll.",
+  "cases": [
+    {
+      "theme": "light",
+      "lang": "zh",
+      "width": 320,
+      "height": 640,
+      "initial": {
+        "navTop": 576,
+        "overflow": false,
+        "sendBottom": 623.1875
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 576,
+        "sendBottom": 476.5208435058594
+      }
+    },
+    {
+      "theme": "light",
+      "lang": "zh",
+      "width": 390,
+      "height": 844,
+      "initial": {
+        "navTop": 780,
+        "overflow": false,
+        "sendBottom": 680.6666870117188
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 780,
+        "sendBottom": 680.6666870117188
+      }
+    },
+    {
+      "theme": "light",
+      "lang": "en",
+      "width": 320,
+      "height": 640,
+      "initial": {
+        "navTop": 576,
+        "overflow": false,
+        "sendBottom": 623.1875
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 576,
+        "sendBottom": 476.5208435058594
+      }
+    },
+    {
+      "theme": "light",
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "initial": {
+        "navTop": 780,
+        "overflow": false,
+        "sendBottom": 680.6666870117188
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 780,
+        "sendBottom": 680.6666870117188
+      }
+    },
+    {
+      "theme": "dark",
+      "lang": "zh",
+      "width": 320,
+      "height": 640,
+      "initial": {
+        "navTop": 576,
+        "overflow": false,
+        "sendBottom": 623.1875
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 576,
+        "sendBottom": 476.5208435058594
+      }
+    },
+    {
+      "theme": "dark",
+      "lang": "zh",
+      "width": 390,
+      "height": 844,
+      "initial": {
+        "navTop": 780,
+        "overflow": false,
+        "sendBottom": 680.6666870117188
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 780,
+        "sendBottom": 680.6666870117188
+      }
+    },
+    {
+      "theme": "dark",
+      "lang": "en",
+      "width": 320,
+      "height": 640,
+      "initial": {
+        "navTop": 576,
+        "overflow": false,
+        "sendBottom": 623.1875
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 576,
+        "sendBottom": 476.5208435058594
+      }
+    },
+    {
+      "theme": "dark",
+      "lang": "en",
+      "width": 390,
+      "height": 844,
+      "initial": {
+        "navTop": 780,
+        "overflow": false,
+        "sendBottom": 680.6666870117188
+      },
+      "focused": {
+        "focus": "sendBtn",
+        "navTop": 780,
+        "sendBottom": 680.6666870117188
+      }
+    }
+  ]
+}

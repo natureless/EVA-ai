@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-08",
+  "feature": "3D particles and hierarchical memory orbits",
+  "rendering": "Canvas 2D projection of actual XYZ particle clouds with perspective and depth ordering",
+  "data_scope": "Display only. Stored memory and relation records are unchanged.",
+  "hierarchy": {
+    "core": "First available tier (S4 when present)",
+    "primary_radii": {
+      "S3": 420,
+      "S2": 650,
+      "S1": 880,
+      "S5": 1120
+    },
+    "planet_angular_speed_rad_s": {
+      "S1": 0.11,
+      "S2": 0.075,
+      "S3": 0.04,
+      "S4": 0.022,
+      "S5": 0.016
+    },
+    "primary_speed_multiplier": 0.35,
+    "nested_satellites": "BFS parent geometry through three levels; children follow moving parents"
+  },
+  "controls": [
+    "particleBodies",
+    "orbitMotion",
+    "orbitSpeed"
+  ],
+  "pauses": [
+    "selection",
+    "hover",
+    "pointer gestures including pinch",
+    "camera flight",
+    "dialogs",
+    "hidden page",
+    "2D mode",
+    "reduced motion"
+  ],
+  "cost_bound": {
+    "nodes": 600,
+    "projected_body_particles": 1600,
+    "projected_dust_particles": 640
+  },
+  "verification": {
+    "javascript_passed": 444,
+    "javascript_new_regressions": 6,
+    "interaction_passed": 100,
+    "python_passed": 34,
+    "origin_checks_passed": 19,
+    "browser": {
+      "fixture": "75 synthetic nodes / 100 edges; no real memory writes",
+      "desktop": "1280x720; particle click reads World relation 14; reading pauses clock",
+      "continuous_clock_samples": {
+        "count": 18,
+        "first": "12.634",
+        "last": "12.833",
+        "distinct": 7
+      },
+      "paused_clock_samples": {
+        "count": 12,
+        "unchanged": true
+      },
+      "local": "Two-hop neighborhood: 9 nodes / 8 stored connections",
+      "responsive": [
+        "390x844",
+        "320x568"
+      ],
+      "small_display_panel": {
+        "bounds": [
+          87,
+          172,
+          225,
+          226
+        ],
+        "scrollable": true,
+        "top_hit_inside_panel": true,
+        "horizontal_overflow": false
+      },
+      "reduced_motion": "Orbit and speed disabled; preference restored without re-enabling animation automatically",
+      "console_warnings_errors": 0,
+      "last_global_frame": {
+        "orbit_seconds": 2.167,
+        "projected_particles": 2109
+      }
+    }
+  },
+  "versions": {
+    "css": 22,
+    "geometry": 3,
+    "renderer": 4,
+    "main": 28
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/memory-galaxy-particles-desktop-2026-10-08.jpg",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-particles-mobile-local-2026-10-08.jpg",
+      "size": [
+        390,
+        844
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-particles-mobile-settings-2026-10-08.jpg",
+      "size": [
+        390,
+        844
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-particles-small-settings-2026-10-08.jpg",
+      "size": [
+        320,
+        568
+      ]
+    }
+  ],
+  "cleanup": {
+    "temporary_preview_stopped": true,
+    "temporary_browser_tab_closed": true,
+    "viewport_reset": true,
+    "media_emulation_restored": true,
+    "production_process": 17984,
+    "production_restarted": false
+  },
+  "limitations": [
+    "Public authenticated domain and physical phone were not verified.",
+    "Orbits describe visual layout, not physical forces, credibility or inferred memory links."
+  ]
+}

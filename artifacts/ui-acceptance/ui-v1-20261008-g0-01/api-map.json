@@ -1,0 +1,914 @@
+{
+  "candidateId": "ui-v1-20261008-g0-01",
+  "apis": [
+    {
+      "apiId": "A01",
+      "method": "GET",
+      "path": "/api/chat/modes",
+      "surfaceIds": [
+        "CHAT-02"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/chat.js",
+        "line": 30
+      },
+      "effect": "读取能力（可初始化 LLM adapter；不是提交任务）",
+      "identity": "mode",
+      "outcomes": "normal/deep 能力；失败有回退，真实能力待验",
+      "gate": "完整服务",
+      "testFiles": [
+        "tests/js/test_cube_chat.cjs",
+        "tests/test_chat_modes.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/chat/modes",
+        "handler": "chat_modes",
+        "source": "app/api_routes/routes_chat.py",
+        "line": 68,
+        "endLine": 75
+      }
+    },
+    {
+      "apiId": "A02",
+      "method": "POST",
+      "path": "/api/chat",
+      "surfaceIds": [
+        "CHAT-01",
+        "CHAT-03",
+        "MON-02"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/chat.js",
+        "line": 632
+      },
+      "effect": "写入：接纳事件、执行任务；remember=true 可保留用户陈述",
+      "identity": "新 task_id/event_id；提交时 mode 固定",
+      "outcomes": "accepted true/false；不确认则 unknown，查询而非自动重发",
+      "gate": "runtime admission",
+      "testFiles": [
+        "tests/js/test_chat_receipts.cjs",
+        "tests/test_request_receipts.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/chat",
+        "handler": "chat",
+        "source": "app/api_routes/routes_chat.py",
+        "line": 78,
+        "endLine": 114
+      }
+    },
+    {
+      "apiId": "A03",
+      "method": "POST",
+      "path": "/api/chat/stream",
+      "surfaceIds": [
+        "CHAT-01",
+        "MON-02"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/chat.js",
+        "line": 709
+      },
+      "effect": "写入：接纳任务并流式等待；断流不取消任务",
+      "identity": "X-EVA-Task-ID 与终态身份",
+      "outcomes": "SSE 终态／断流／unknown；迟到查询不能覆盖新任务",
+      "gate": "runtime admission",
+      "testFiles": [
+        "tests/js/test_chat_receipts.cjs",
+        "tests/test_chat_modes.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/chat/stream",
+        "handler": "chat_stream",
+        "source": "app/api_routes/routes_chat.py",
+        "line": 120,
+        "endLine": 185
+      }
+    },
+    {
+      "apiId": "A04",
+      "method": "GET",
+      "path": "/api/chat/result/{task_id}",
+      "surfaceIds": [
+        "CHAT-03"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/chat.js",
+        "line": 330
+      },
+      "effect": "查询结果；不重复派发任务，registry.lookup 内部持久化行为需联调",
+      "identity": "原 task_id",
+      "outcomes": "202 执行中／200 终态／404 未知或过期／503 存储不可用",
+      "gate": "result retention",
+      "testFiles": [
+        "tests/js/test_chat_receipts.cjs",
+        "tests/test_request_receipts.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/chat/result/{task_id}",
+        "handler": "get_chat_result",
+        "source": "app/api_routes/routes_chat.py",
+        "line": 261,
+        "endLine": 319
+      }
+    },
+    {
+      "apiId": "A05",
+      "method": "WEBSOCKET",
+      "path": "/ws",
+      "surfaceIds": [
+        "CHAT-07",
+        "SET-06",
+        "MVSC-01",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/chat.js",
+        "line": 43
+      },
+      "effect": "接收状态／chat_reply；通道连接与认证，非新任务提交",
+      "identity": "task_id；channel；4401/4403",
+      "outcomes": "连接／重连／迟到回执／登录更新",
+      "gate": "服务认证；不采集实际令牌",
+      "testFiles": [
+        "tests/js/test_chat_receipts.cjs",
+        "tests/test_cloudflare_access.py"
+      ],
+      "serverRef": {
+        "method": "WEBSOCKET",
+        "path": "/ws",
+        "handler": "websocket_endpoint",
+        "source": "app/main.py",
+        "line": 72,
+        "endLine": 95
+      }
+    },
+    {
+      "apiId": "A06",
+      "method": "GET",
+      "path": "/api/memory/graph",
+      "surfaceIds": [
+        "MAP-01",
+        "MAP-02"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 618
+      },
+      "effect": "读取受限投影，不修改 DB/vault",
+      "identity": "q,tiers,limit<=600,edge_limit<=3000",
+      "outcomes": "200 范围／422 tiers 无效／503 来源不可用",
+      "gate": "memory source",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/graph",
+        "handler": "memory_graph",
+        "source": "app/api_routes/routes_memory_graph.py",
+        "line": 36,
+        "endLine": 48
+      }
+    },
+    {
+      "apiId": "A07",
+      "method": "GET",
+      "path": "/api/memory/graph/neighbors",
+      "surfaceIds": [
+        "MAP-04"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 588
+      },
+      "effect": "读取邻居分页；客户端合并记录",
+      "identity": "tier,record_id,limit,offset；neighborVersion",
+      "outcomes": "200/404 过期/422/503；旧读取不覆盖新中心",
+      "gate": "memory source",
+      "testFiles": [
+        "tests/js/test_memory_graph_interactions.cjs",
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/graph/neighbors",
+        "handler": "graph_neighbors",
+        "source": "app/api_routes/routes_memory_graph.py",
+        "line": 76,
+        "endLine": 88
+      }
+    },
+    {
+      "apiId": "A08",
+      "method": "GET",
+      "path": "/api/memory/graph/node",
+      "surfaceIds": [
+        "MAP-05",
+        "MAP-09",
+        "MAP-10"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 803
+      },
+      "effect": "读取单条记录；不补造缺失记录",
+      "identity": "tier,record_id；detailVersion",
+      "outcomes": "200/404 缺失/422/503；保留已显示范围",
+      "gate": "memory source",
+      "testFiles": [
+        "tests/js/test_memory_diagnostics.cjs",
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/graph/node",
+        "handler": "graph_node",
+        "source": "app/api_routes/routes_memory_graph.py",
+        "line": 61,
+        "endLine": 73
+      }
+    },
+    {
+      "apiId": "A09",
+      "method": "GET",
+      "path": "/api/memory/graph/dangling",
+      "surfaceIds": [
+        "MAP-10"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_diagnostics.js",
+        "line": 139
+      },
+      "effect": "读取悬空关系诊断，不修复关系",
+      "identity": "limit,offset；列表读取代数",
+      "outcomes": "页／空／503／详情404",
+      "gate": "memory source",
+      "testFiles": [
+        "tests/js/test_memory_diagnostics.cjs",
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/graph/dangling",
+        "handler": "graph_dangling",
+        "source": "app/api_routes/routes_memory_graph.py",
+        "line": 51,
+        "endLine": 58
+      }
+    },
+    {
+      "apiId": "A10",
+      "method": "GET",
+      "path": "/api/obsidian/export",
+      "surfaceIds": [
+        "MAP-12"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 1052
+      },
+      "effect": "生成 ZIP 供下载，不写 vault",
+      "identity": "limit<=600；button 防重复",
+      "outcomes": "ZIP／503；原生保存待验",
+      "gate": "memory source",
+      "testFiles": [
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/obsidian/export",
+        "handler": "obsidian_export",
+        "source": "app/api_routes/routes_memory_graph.py",
+        "line": 91,
+        "endLine": 100
+      }
+    },
+    {
+      "apiId": "A11",
+      "method": "GET",
+      "path": "/api/goals/graph",
+      "surfaceIds": [
+        "MAP-01",
+        "MAP-06"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 618
+      },
+      "effect": "读取已存目标投影，不检查文件",
+      "identity": "limit<=40,offset,q",
+      "outcomes": "200/503 功能未启用或存储失败",
+      "gate": "enable_business_goals",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/goals/graph",
+        "handler": "goal_graph",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 115,
+        "endLine": 126
+      }
+    },
+    {
+      "apiId": "A12",
+      "method": "POST",
+      "path": "/api/goals",
+      "surfaceIds": [
+        "MAP-11"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/goal_create.js",
+        "line": 70
+      },
+      "effect": "写入：登记目标并可能同步已收到回执；不执行任务或自动检查文件",
+      "identity": "已有 task_id,event_id；一任务绑定一个目标",
+      "outcomes": "201／404 回执缺失／409 绑定冲突／422／503；不自动重发",
+      "gate": "business_goals 与 accepting",
+      "testFiles": [
+        "tests/js/test_goal_create.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/goals",
+        "handler": "create_goal",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 86,
+        "endLine": 105
+      }
+    },
+    {
+      "apiId": "A13",
+      "method": "GET",
+      "path": "/api/goals/by-task/{task_id}",
+      "surfaceIds": [
+        "MAP-11"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/goal_create.js",
+        "line": 70
+      },
+      "effect": "状态同步：_reconcile 可 store.record_receipt 落库；不能标完全只读",
+      "identity": "boundTask；_reconcile 读取 task 回执",
+      "outcomes": "200／404 未登记／409／503；查询不会再次 create 或 verify",
+      "gate": "business_goals",
+      "testFiles": [
+        "tests/js/test_goal_create.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/goals/by-task/{task_id}",
+        "handler": "goal_for_task",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 108,
+        "endLine": 112
+      }
+    },
+    {
+      "apiId": "A14",
+      "method": "GET",
+      "path": "/api/goals/{goal_id}/history",
+      "surfaceIds": [
+        "MAP-06"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 505
+      },
+      "effect": "读取历史检查记录，不运行新检查",
+      "identity": "goal_id,limit<=50,offset；goalHistoryVersion",
+      "outcomes": "200／404／409／503；错误保留旧记录",
+      "gate": "business_goals",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/goals/{goal_id}/history",
+        "handler": "goal_history",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 129,
+        "endLine": 140
+      }
+    },
+    {
+      "apiId": "A15",
+      "method": "POST",
+      "path": "/api/goals/{goal_id}/verify",
+      "surfaceIds": [
+        "MAP-06"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 571
+      },
+      "effect": "写入：指定文件核验与检查记录；先同步回执",
+      "identity": "goal_id,expected_version 严格整数",
+      "outcomes": "200／404／409 版本冲突／422／503；前端不推断超时结果",
+      "gate": "business_goals 与 accepting",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/goals/{goal_id}/verify",
+        "handler": "verify_goal",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 165,
+        "endLine": 172
+      }
+    },
+    {
+      "apiId": "A16",
+      "method": "POST",
+      "path": "/api/goals/{goal_id}/cancel",
+      "surfaceIds": [
+        "MAP-06"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 571
+      },
+      "effect": "写入：取消目标跟踪；不取消已接纳聊天任务",
+      "identity": "goal_id,expected_version",
+      "outcomes": "200／404／409／422／503",
+      "gate": "business_goals",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_business_goal_api.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/goals/{goal_id}/cancel",
+        "handler": "cancel_goal",
+        "source": "app/api_routes/routes_goals.py",
+        "line": 158,
+        "endLine": 162
+      }
+    },
+    {
+      "apiId": "A17",
+      "method": "GET",
+      "path": "/api/action-context/{task_id}/graph",
+      "surfaceIds": [
+        "MAP-07"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 472
+      },
+      "effect": "读取已有输入／意图引用，不核验现内容",
+      "identity": "task_id,event_id；actionInputVersion",
+      "outcomes": "200／404／409 来源不一致／422／503",
+      "gate": "enable_action_context 依赖 enable_durable_requests",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_action_context_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/action-context/{task_id}/graph",
+        "handler": "get_action_context_graph",
+        "source": "app/api_routes/routes_action_context.py",
+        "line": 28,
+        "endLine": 43
+      }
+    },
+    {
+      "apiId": "A18",
+      "method": "GET",
+      "path": "/api/tool-observations/{action_id}",
+      "surfaceIds": [
+        "MAP-08"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 549
+      },
+      "effect": "读取已存独立观测，不采样文件",
+      "identity": "action_id,event_id",
+      "outcomes": "200／409 binding conflict／422／503",
+      "gate": "enable_processing_episodes",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_tool_observation_api.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/tool-observations/{action_id}",
+        "handler": "observation_history",
+        "source": "app/api_routes/routes_tool_observations.py",
+        "line": 36,
+        "endLine": 46
+      }
+    },
+    {
+      "apiId": "A19",
+      "method": "POST",
+      "path": "/api/tool-observations/{action_id}",
+      "surfaceIds": [
+        "MAP-08"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_graph.js",
+        "line": 549
+      },
+      "effect": "写入：服务端采样固定文件并追加观测；不重做原动作",
+      "identity": "action_id,event_id,expected_count<32",
+      "outcomes": "201／409 并发冲突／422／503；超时先读已有记录",
+      "gate": "processing_episodes 与 accepting",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs",
+        "tests/test_tool_observation_api.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/tool-observations/{action_id}",
+        "handler": "reconcile_tool",
+        "source": "app/api_routes/routes_tool_observations.py",
+        "line": 49,
+        "endLine": 60
+      }
+    },
+    {
+      "apiId": "A20",
+      "method": "GET",
+      "path": "/api/runtime",
+      "surfaceIds": [
+        "CHAT-07",
+        "SET-06",
+        "MAP-02",
+        "MON-01",
+        "MVSC-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/runtime_status.js",
+        "line": 25
+      },
+      "effect": "读取运行观察，非任务控制",
+      "identity": "AbortController；cache no-store",
+      "outcomes": "200／503 controller 缺失／登录更新",
+      "gate": "完整 runtime；预览未连接",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs",
+        "tests/test_runtime_activity.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/runtime",
+        "handler": "runtime_state",
+        "source": "app/api_routes/routes_runtime.py",
+        "line": 11,
+        "endLine": 16
+      }
+    },
+    {
+      "apiId": "A21",
+      "method": "GET",
+      "path": "/api/memory/tiers",
+      "surfaceIds": [
+        "LIST-01",
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_explorer.js",
+        "line": 28
+      },
+      "effect": "读取层统计；format=explorer 用于列表",
+      "identity": "format；各层可用性",
+      "outcomes": "200／来源缺失分层说明；旧客户端失败待联调",
+      "gate": "memory",
+      "testFiles": [
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/tiers",
+        "handler": "memory_tiers",
+        "source": "app/api_routes/routes_memory.py",
+        "line": 55,
+        "endLine": 123
+      }
+    },
+    {
+      "apiId": "A22",
+      "method": "GET",
+      "path": "/api/memory/entries/{tier}",
+      "surfaceIds": [
+        "LIST-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_explorer.js",
+        "line": 83
+      },
+      "effect": "读取按层条目",
+      "identity": "tier,limit,offset",
+      "outcomes": "200 页／空／错误；显示来源字段",
+      "gate": "memory",
+      "testFiles": [
+        "tests/js/test_memory_graph.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/entries/{tier}",
+        "handler": "get_memory_entries",
+        "source": "app/api_routes/routes_memory_explorer.py",
+        "line": 37,
+        "endLine": 151
+      }
+    },
+    {
+      "apiId": "A23",
+      "method": "POST",
+      "path": "/api/memory/search",
+      "surfaceIds": [
+        "LIST-02"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/memory_explorer.js",
+        "line": 145
+      },
+      "effect": "读取：POST 搜索，不按 verb 判写入",
+      "identity": "query,tiers,limit",
+      "outcomes": "200 结果／空／验证错误；旧 fetch 认证待验",
+      "gate": "memory",
+      "testFiles": [
+        "tests/test_memory_graph.py"
+      ],
+      "serverRef": {
+        "method": "POST",
+        "path": "/api/memory/search",
+        "handler": "search_memory",
+        "source": "app/api_routes/routes_memory_explorer.py",
+        "line": 156,
+        "endLine": 242
+      }
+    },
+    {
+      "apiId": "A24",
+      "method": "GET",
+      "path": "/api/memory/world",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 110
+      },
+      "effect": "读取世界投影",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/memory/world",
+        "handler": "world_model",
+        "source": "app/api_routes/routes_memory.py",
+        "line": 185,
+        "endLine": 194
+      }
+    },
+    {
+      "apiId": "A25",
+      "method": "GET",
+      "path": "/api/policy/state",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 117
+      },
+      "effect": "读取策略观察",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/policy/state",
+        "handler": "get_policy_state",
+        "source": "app/api_routes/routes_policy.py",
+        "line": 16,
+        "endLine": 34
+      }
+    },
+    {
+      "apiId": "A26",
+      "method": "GET",
+      "path": "/health/diagnostic",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 146
+      },
+      "effect": "读取健康诊断",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/health/diagnostic",
+        "handler": "health_diagnostic",
+        "source": "app/api_routes/routes_health.py",
+        "line": 27,
+        "endLine": 38
+      }
+    },
+    {
+      "apiId": "A27",
+      "method": "GET",
+      "path": "/health/ready",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 153
+      },
+      "effect": "读取就绪状态",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/health/ready",
+        "handler": "health_ready",
+        "source": "app/api_routes/routes_health.py",
+        "line": 22,
+        "endLine": 24
+      }
+    },
+    {
+      "apiId": "A28",
+      "method": "GET",
+      "path": "/api/state",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 160
+      },
+      "effect": "状态同步：更新 system_state 计数，非只读不可变快照",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/state",
+        "handler": "get_state",
+        "source": "app/api_routes/routes_chat.py",
+        "line": 325,
+        "endLine": 375
+      }
+    },
+    {
+      "apiId": "A29",
+      "method": "GET",
+      "path": "/api/executors/audit/replay",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 173
+      },
+      "effect": "读取审计时间线，不执行动作重放",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/executors/audit/replay",
+        "handler": "audit_replay",
+        "source": "app/api_routes/routes_executors.py",
+        "line": 124,
+        "endLine": 156
+      }
+    },
+    {
+      "apiId": "A30",
+      "method": "GET",
+      "path": "/api/agents",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 183
+      },
+      "effect": "读取 Agent 清单",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/agents",
+        "handler": "list_agents",
+        "source": "app/api_routes/routes_agents.py",
+        "line": 21,
+        "endLine": 33
+      }
+    },
+    {
+      "apiId": "A31",
+      "method": "GET",
+      "path": "/api/scheduler/jobs",
+      "surfaceIds": [
+        "SET-06",
+        "MON-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/static/settings.js",
+        "line": 184
+      },
+      "effect": "读取已有调度项",
+      "identity": "查询参数或周期轮询",
+      "outcomes": "200／无数据／失败分支待实际服务核验",
+      "gate": "完整 container",
+      "testFiles": [
+        "tests/js/test_runtime_status.cjs"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/scheduler/jobs",
+        "handler": "scheduler_jobs",
+        "source": "app/api_routes/routes_scheduler.py",
+        "line": 11,
+        "endLine": 14
+      }
+    },
+    {
+      "apiId": "A32",
+      "method": "GET",
+      "path": "/api/mvsc/ablation",
+      "surfaceIds": [
+        "MVSC-01"
+      ],
+      "clientRef": {
+        "path": "ui/web/templates/mvsc_dashboard.html",
+        "line": 120
+      },
+      "effect": "读取功能开关，不调用 toggle POST",
+      "identity": "实验运行可用性",
+      "outcomes": "200／功能关闭或未装配返回分支待验",
+      "gate": "MVSC runtime attachment",
+      "testFiles": [
+        "tests/mvsc/test_e2e.py"
+      ],
+      "serverRef": {
+        "method": "GET",
+        "path": "/api/mvsc/ablation",
+        "handler": "get_ablation_config",
+        "source": "app/api_routes/routes_mvsc.py",
+        "line": 68,
+        "endLine": 87
+      }
+    }
+  ],
+  "relatedSourceHashKey": "source-baseline.json.apiAndDependencyHashes",
+  "note": "32 client-bound contracts plus related route catalog. GET can synchronize state; POST search can be read-only. Tests named are relevant existing files, not newly run evidence."
+}

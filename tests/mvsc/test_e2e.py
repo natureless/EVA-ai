@@ -1,7 +1,8 @@
 """Phase 7: End-to-end integration tests — full EVA-MVSC pipeline.
 
-Validates the complete chain:
-HTTP request → EventBusAdapter → AdaptedCognitionLoop → AgentOS → Memory → Response
+Exercises the explicitly invoked experimental adapter/loop with fake services.
+These are component integration tests, not proof of application HTTP wiring.
+Actual HTTP consumer selection is covered by tests/test_runtime_wiring.py.
 
 Also tests:
 - Bootstrap integration (integrate_mvsc + shutdown_mvsc)
@@ -382,14 +383,18 @@ class TestBootstrapIntegration:
 
     @pytest.fixture
     def container(self):
-        return FakeContainer()
+        container = FakeContainer()
+        yield container
+        if hasattr(container, "mvsc_event_store"):
+            container.mvsc_event_store.close()
 
-    class FakeSettings:
-        pass
+    @pytest.fixture
+    def settings(self, tmp_path):
+        from types import SimpleNamespace
+        return SimpleNamespace(data_dir=tmp_path / "data")
 
-    def test_integrate_mvsc_creates_all_components(self, container):
+    def test_integrate_mvsc_creates_all_components(self, container, settings):
         """integrate_mvsc should create event store, adapter, and loop."""
-        settings = self.FakeSettings()
 
         result = integrate_mvsc(container, settings)
 
@@ -407,9 +412,8 @@ class TestBootstrapIntegration:
         assert container.ablation_config is not None
         assert container.ablation_collector is not None
 
-    def test_integrate_then_shutdown(self, container):
+    def test_integrate_then_shutdown(self, container, settings):
         """Full integrate → shutdown cycle should not error."""
-        settings = self.FakeSettings()
         result = integrate_mvsc(container, settings)
 
         # Run a quick tick
@@ -429,9 +433,8 @@ class TestBootstrapIntegration:
         shutdown_mvsc(result)
         # Should not raise
 
-    def test_system_state_preserved_after_integration(self, container):
+    def test_system_state_preserved_after_integration(self, container, settings):
         """After integration, system_state should still work for existing APIs."""
-        settings = self.FakeSettings()
         integrate_mvsc(container, settings)
 
         # system_state should have MVSC flags
@@ -441,9 +444,8 @@ class TestBootstrapIntegration:
         assert container.system_state["ready"] is True
         assert container.system_state["focus"] == "idle"
 
-    def test_ablation_preset_applied(self, container):
+    def test_ablation_preset_applied(self, container, settings):
         """Ablation preset should be applied during integration."""
-        settings = self.FakeSettings()
         result = integrate_mvsc(container, settings, ablation_preset="no_broadcast")
 
         cfg = result["ablation_config"]

@@ -235,10 +235,18 @@ window.addEventListener("ws-message", (evt) => {
 });
 
 // ── Language change handler ─────────────────────────────
-window.addEventListener("lang-changed", () => { refreshAll(); });
+function renderRuntimePreview() {
+  document.querySelectorAll("#runtimeWorkspace .card-body").forEach(panel => {
+    panel.textContent = I18N.t("ui.runtimePreview");
+  });
+}
+window.addEventListener("lang-changed", () => {
+  if (document.body.dataset.preview === "true") renderRuntimePreview();
+  else refreshAll();
+});
 
 // ── Card collapse ──────────────────────────────────────
-document.querySelectorAll(".card-header").forEach(h => {
+document.querySelectorAll(".card-header[data-card]").forEach(h => {
   h.addEventListener("click", (e) => {
     if (e.target.closest("button") || e.target.closest("input") || e.target.closest("label")) return;
     h.parentElement.classList.toggle("collapsed");
@@ -257,6 +265,12 @@ if (entityFilter) {
 }
 
 // ── Init ────────────────────────────────────────────────
-Nav.init();
-refreshAll();
-setInterval(refreshAll, 8000);
+if (document.body.dataset.preview === "true") {
+  Nav._bindTheme();
+  Nav._bindLang();
+  renderRuntimePreview();
+} else {
+  Nav.init();
+  refreshAll();
+  setInterval(refreshAll, 8000);
+}

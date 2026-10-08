@@ -1,0 +1,14 @@
+{
+  "format": "eva-brand-display",
+  "formatVersion": 1,
+  "brandVersion": "1.0.0",
+  "tokenSchemaVersion": 1,
+  "display": {
+    "variant": "dark",
+    "order": 3,
+    "view": "bottom",
+    "static": false,
+    "reduced": false,
+    "pngSize": 256
+  }
+}

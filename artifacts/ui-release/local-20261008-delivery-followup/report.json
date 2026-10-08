@@ -1,0 +1,290 @@
+{
+  "date": "2026-10-08T09:02:23.732978+00:00",
+  "status": "local-checks-passed; manual-gates-unverified",
+  "checks": [
+    {
+      "name": "javascript",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "--test",
+        "D:\\EVA-ai\\tests\\js\\test_brand_config.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_identity.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_package.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_brand_system.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_chat_receipts.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_animator.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_chat.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_logo.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_state.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_cube_ui_probe.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_goal_create.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_http.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_diagnostics.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_galaxy.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_galaxy_renderer.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_graph.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_memory_graph_interactions.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_runtime_status.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_ui_reading.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_ui_theme.cjs",
+        "D:\\EVA-ai\\tests\\js\\test_ui_workspace.cjs"
+      ]
+    },
+    {
+      "name": "generated-assets",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/build_brand_assets.cjs",
+        "--check"
+      ]
+    },
+    {
+      "name": "python-ui",
+      "exitCode": 0,
+      "command": [
+        "C:\\Users\\origi\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "-m",
+        "pytest",
+        "tests/test_ui_release.py",
+        "tests/test_memory_graph.py",
+        "-q"
+      ]
+    },
+    {
+      "name": "export-2",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/export_brand_kit.cjs",
+        "--out",
+        "D:\\EVA-ai\\artifacts\\ui-release\\local-20261008-delivery-followup\\eva-2x2-source.zip",
+        "--order",
+        "2",
+        "--variant",
+        "primary",
+        "--view",
+        "iso",
+        "--size",
+        "2048"
+      ]
+    },
+    {
+      "name": "export-3",
+      "exitCode": 0,
+      "command": [
+        "node",
+        "scripts/export_brand_kit.cjs",
+        "--out",
+        "D:\\EVA-ai\\artifacts\\ui-release\\local-20261008-delivery-followup\\eva-3x3-source.zip",
+        "--order",
+        "3",
+        "--variant",
+        "dark",
+        "--view",
+        "iso",
+        "--size",
+        "2048"
+      ]
+    }
+  ],
+  "archives": [
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-release\\local-20261008-delivery-followup\\eva-2x2-source.zip",
+      "sha256": "5fc2e52e25853a02ce3fb44caf01e5929617ddcf94be790384d02b54b3e5806f",
+      "files": 67,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.3",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 2,
+        "variant": "primary",
+        "view": "iso",
+        "size": 2048
+      },
+      "pngDimensions": {},
+      "previewResources": "local references verified; browser execution not certified"
+    },
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-release\\local-20261008-delivery-followup\\eva-3x3-source.zip",
+      "sha256": "b7e3dc94e25714670159662f06e5adf9ffe1b84509a1b869b83a5f3137cd3f39",
+      "files": 67,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.3",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 3,
+        "variant": "dark",
+        "view": "iso",
+        "size": 2048
+      },
+      "pngDimensions": {},
+      "previewResources": "local references verified; browser execution not certified"
+    },
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-delivery-followup\\20261008\\browser-race-order3-dark-2048.zip",
+      "sha256": "9cf06aeb291a52a001a8cfef9fa234a0fcecc7fb807092eb1b6d9b612f9b18ef",
+      "files": 71,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.3",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 3,
+        "variant": "dark",
+        "view": "iso",
+        "size": 2048
+      },
+      "pngDimensions": {
+        "selected/eva-selected.png": [
+          2048,
+          2048
+        ],
+        "icons/favicon-16.png": [
+          16,
+          16
+        ],
+        "icons/favicon-32.png": [
+          32,
+          32
+        ],
+        "icons/favicon-48.png": [
+          48,
+          48
+        ]
+      },
+      "previewResources": "local references verified; browser execution not certified"
+    },
+    {
+      "path": "D:\\EVA-ai\\artifacts\\ui-delivery-followup\\20261008\\browser-order3-dark-front-512.zip",
+      "sha256": "05c52adc2aa2462ab282beba5922404d56bf3cece59c6023166bcbf8a922a7d5",
+      "files": 71,
+      "versions": {
+        "formatVersion": 2,
+        "brandVersion": "1.0.0",
+        "componentVersion": "1.1.3",
+        "tokenSchemaVersion": 1
+      },
+      "selected": {
+        "order": 3,
+        "variant": "dark",
+        "view": "front",
+        "size": 512
+      },
+      "pngDimensions": {
+        "selected/eva-selected.png": [
+          512,
+          512
+        ],
+        "icons/favicon-16.png": [
+          16,
+          16
+        ],
+        "icons/favicon-32.png": [
+          32,
+          32
+        ],
+        "icons/favicon-48.png": [
+          48,
+          48
+        ]
+      },
+      "previewResources": "local references verified; browser execution not certified"
+    }
+  ],
+  "unverifiedGates": [
+    "Native Chrome/Edge save and direct offline execution",
+    "Reliable foreground ten-minute 2x2/3x3 performance",
+    "Native 200% zoom",
+    "Real screen-reader acceptance"
+  ],
+  "scope": "Local automated checks only; not approval to publish or full release certification",
+  "sourceHashes": {
+    "app/memory_preview.py": "a0fd11f084526ff7dbc5b9e0a24e0ffb61e0cab6121e0d885ff4aef6262238ea",
+    "scripts/build_brand_assets.cjs": "5262f2509ed126a5d87a4c9e1f8635f96a05599e5c3208523de755848f1f2a44",
+    "scripts/check_ui_release.py": "9458087fe55ee76d8718e3ddcb86426525cb2b00223abe2204ad3cc30b087b68",
+    "scripts/cube_ui_probe.js": "50b4323ad6c50dfaa3f7c50778ba77bced002ead2699a58206659dcdec159c94",
+    "scripts/export_brand_kit.cjs": "c64ba677496de20eaec09f6ddbe9b1af579472f5bcfbdfc5963e3bae9af4bd68",
+    "tests/js/test_brand_config.cjs": "f478b1ddf40251cb21f2eeef620eb1e864b4d521a026ce7ad497096eb4f371d9",
+    "tests/js/test_brand_identity.cjs": "ceef7c7dd16f72739e5d55b56446c849b951f5a9e83b7780be028b961abd5810",
+    "tests/js/test_brand_package.cjs": "0f7537653dc2b6d0a1116a334d9a142bb2fddebaf136940c8b543be4d021122d",
+    "tests/js/test_brand_system.cjs": "211913656e0c702d4db8c90d52898413f4cb8d2e6f68922559de708cf416c84e",
+    "tests/js/test_chat_receipts.cjs": "1978f6378c6d1046462796c21065ee71305205ad46dc76c1c04c742bea108977",
+    "tests/js/test_cube_animator.cjs": "06d329396560fd3365e17073416be66475037b6b2e1b4c142be6c3e0f2d1d6eb",
+    "tests/js/test_cube_chat.cjs": "95cb0a7fcf54a9750b43c0957abff3fae270fe1f9f614e29da9336e69b31feb9",
+    "tests/js/test_cube_logo.cjs": "371b1dff76f2fc59fe32a3c08f9bf644032540f969ea2cc1695bd7f55dd99cf4",
+    "tests/js/test_cube_state.cjs": "077f2a59b57ca13ce7c0a1e3cd29bceef7ecbfb2312a207a24593500037b37f8",
+    "tests/js/test_cube_ui_probe.cjs": "20cd7d5e694af5ea0ac1320d455959cd3f39f44588de82a3d66f3d9c51ccbd08",
+    "tests/js/test_goal_create.cjs": "90f7ad6f25e08691a13e64a11b13571db3e3e0e14709b841942aee29f8a59a09",
+    "tests/js/test_http.cjs": "81927963c963b00e8c16cda9fe6a65aa9b90dc88820c2e58f2a82c60b74b6061",
+    "tests/js/test_memory_diagnostics.cjs": "932ee422f07232b3b30261b10a25b580fc6bad414b7569157a30a08e7c70e5f1",
+    "tests/js/test_memory_galaxy.cjs": "971aaf8fcf6f939d871487d4aaf162df7c5a5e8ff9dd5d459b34f590ec85bbfa",
+    "tests/js/test_memory_galaxy_renderer.cjs": "b5146e506e35c8c2fc2f7016b7a18e059f7d359e97b70ecabb9e2da7282531f8",
+    "tests/js/test_memory_graph.cjs": "f84829f377c8faae2bd1fc67ba8028c0d4452fa8dbf51fb61c989d3774cf27c7",
+    "tests/js/test_memory_graph_interactions.cjs": "c835f2fa9b2c192b3e0d70b66d67e62edd5736d73d381de6311300cf03d3afa7",
+    "tests/js/test_runtime_status.cjs": "2fd1bf61bbcb55355adb0e1581cfd34f2531e87e8edbc7e5c42562c216a0be4c",
+    "tests/js/test_ui_reading.cjs": "4c50c6bb0001579fd1e43ce6c775564421f9b8f7cbbc0682a3263f1d71a76c97",
+    "tests/js/test_ui_theme.cjs": "cf0ba0218d2197b41c14633958728a59888303570378eeaf71867bc2210df104",
+    "tests/js/test_ui_workspace.cjs": "c63bd9ab8d8f121090319677ca3671914e05f725e71a86a485fd822f68b7c56d",
+    "tests/test_memory_graph.py": "c7273f798c2da9cbf9c43ab7d75117f821a9565b2c51a2518e0ac325c11d4643",
+    "tests/test_ui_release.py": "eacd16b1b751147474513f10f05c424fc146cd861848a00bc623dd13c8636b47",
+    "ui/web/static/_ref.png": "2a95e1420747f096698401b5386f9cc09e70c6d070c5c9e3d42189707bc5dfda",
+    "ui/web/static/app.js": "4ee39a59b8a34ae353a5db43cf1741d3673e566e5311731c06a49c6b4782b8e1",
+    "ui/web/static/avatar.js": "35f122602551806d6ac0c44c12dd3a93ebb3ebce580e093b204cf86742ccf490",
+    "ui/web/static/brand-assets.js": "e24695fc216996290be3f89406d2a6b78c34a85dbcdf1a43be495f211365547b",
+    "ui/web/static/brand-config.js": "4d312dae141c6a1c67d402b623b80cc3d2d6b20a18d6f36ea4d7ed945446b671",
+    "ui/web/static/brand-identity.js": "ab3782edd871a509e1b9329c7423fb0d1b4c25ebf1dcde1fa68f206d384517d9",
+    "ui/web/static/brand-package.js": "a8f79b5e877c8b6a2b974cb64d5aeb4a2f391f96c94c4c6c83236a501f0e4299",
+    "ui/web/static/brand-source.json": "f8e222d314c25c073dad552a2ee04f5e01fcb72cb2d2ffa18f2bac0133ea8d63",
+    "ui/web/static/brand-studio.css": "344943058c6bdc7f08ea652623311a7ba9b23325011c50450c8cc78eddc4af9d",
+    "ui/web/static/brand-system.js": "5c1bffbb2c32efb70f2a68beb16b8f11d4c544f1a7758d5e776806b13f3ec880",
+    "ui/web/static/chat.js": "97cb77f0ae191cfcceb9860ffc3f977452ae402227d260060bf520f69e6c6a94",
+    "ui/web/static/cube-animator.js": "49f6856494ea46c520f5fe9db244bfac3b639fcb03f0b473bfbecd6d36aa3ee8",
+    "ui/web/static/cube-avatar.js": "22ed341f56ac7aa92f42bfd17a01cf5cfec1ebd7d155d69153707b4b50a5065d",
+    "ui/web/static/cube-chat.css": "c121c4a26fd9864856dc9935abe6b11560678080895b4bd244a3fa808ced9ba2",
+    "ui/web/static/cube-geometry.css": "87228a956b498bbaa556828f71b4df303d29b7a9882a90e9479901214fd6bd5b",
+    "ui/web/static/cube-logo.js": "115c579d607ba8147edc2c9a05245c5b9855b42dc729f3b0d561f86f20df9e7b",
+    "ui/web/static/cube-state.js": "a5982757ed930a75f3083c7652255025f5df14020104b4f317308271124dcde6",
+    "ui/web/static/eva-favicon.svg": "f43434db848ccc69d6a74c0552e33e6798537e2facf7d18b6b793d564000e9ac",
+    "ui/web/static/eva-mark.svg": "29b3f4c4ac7e198dffedb450cf3a152655509aa62ff1cd85b9807a73728722c4",
+    "ui/web/static/goal_create.css": "66fddfd31c76bec8b66d476593b87337d33811f54b59b7c4ad1e3e4b704fbac7",
+    "ui/web/static/goal_create.js": "04f45636cc466b066a5cd18159e0fc91541bb98b5b83a45bff43287454e94da3",
+    "ui/web/static/http.js": "16219d877ed8aa0f6815c791680461d44b1ab7b664e2e859bfb76d494b84a5a5",
+    "ui/web/static/i18n.js": "87c581c08fb3709dfcf3f7871e5493b5dea5033e78d86dfa3a02a8bc686c0713",
+    "ui/web/static/logo-tokens.js": "30203d1b0e2fd1e88dc2093dce2ef7f4ecbc8b5c33228cf8b338f1b191ad86dd",
+    "ui/web/static/main.css": "8d9dcf4936b71e5ef03493a74fe8e14b3268bb7d4398f25fb8e397afc5fa2a9d",
+    "ui/web/static/memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07",
+    "ui/web/static/memory_explorer.js": "95bce1e606c19996a2091547e4c731fdfd9b0eedd8e216b4c7b78d0f2df167d0",
+    "ui/web/static/memory_galaxy.js": "4882a95fcfb1c5501de490a4eb40aa1f60727302de56dd6d272bc5976a7ec263",
+    "ui/web/static/memory_galaxy_renderer.js": "882420a105d85750acf20020743a9ec41e272d3dafe14fa0e63121811276f69c",
+    "ui/web/static/memory_graph.css": "2a6263d6b672560ead7614a12626c668c9ccf0c8ae5d3dd13f9c75dc3bc6f0c6",
+    "ui/web/static/memory_graph.js": "75efda335f05910e1ae886de5dce7ab8768527abe5200228d5ed280d652e0164",
+    "ui/web/static/mvsc-dashboard.css": "97c16c50400acf20b1fd4c81354eba38f49e52afd707f1f1aaf8188ce11d5b10",
+    "ui/web/static/nav.js": "7560d73f179329ac29dd4792d5c4264fac100de523f1829448b79730ca518afb",
+    "ui/web/static/runtime_status.js": "7041d6baf8de463e1df1724dfe6e77e80272eb0da7932b171de34ec7a96da344",
+    "ui/web/static/settings.js": "99c1c88dce0e1edcf1a55382e9f147f6ecd059284541327f338c009153a9791b",
+    "ui/web/static/styles.css": "1c79176438536b823324dfc28ee5cc2396bbadf4c9fee57a21bec144551b9006",
+    "ui/web/static/ui-reading.js": "e47f970bb05a7cc11cf9ed18d82f9840a2e5b280a4b52a3135725aa12f3bc3a4",
+    "ui/web/static/ui-system.css": "8e967e36dd41a72429a21310c5fa7797993fbafcd224b9370da8c29ab6d70980",
+    "ui/web/static/ui-theme.js": "a4b98896f97a20a96681182d55f940b6f5e95fefe09d29dca01bdf51be4c6ee7",
+    "ui/web/static/ui-workspace.js": "d8a66a06879e811a78dd6ef28646b76c50c045cdc3b3e31162a12f33e3d8d51b",
+    "ui/web/templates/chat.html": "e369686e17c3a45410832d44a7785e4920ab6149047945387baad159f735d91b",
+    "ui/web/templates/dashboard.html": "404f3c35fd1c5751c517a699f1ad526236934e3902796bd86b410f1559427621",
+    "ui/web/templates/index.html": "a90f3200d048e1c5569547521c42b8af7c98e97d259276858fb75de8a6dbcd03",
+    "ui/web/templates/memory.html": "b1b2df21f5d9f8868b600b92aa9beb8be9de2f3bcf152a6a83f5dd2fcd6fa5e5",
+    "ui/web/templates/memory_graph.html": "502a48429da8d69a92a48a89654229d3a597519c61f64739e72f82007f6aef19",
+    "ui/web/templates/mvsc_dashboard.html": "4492c52846fd18a512b8b536a66f86fb623eb2fe5f296bc5de80cee767795aa5",
+    "ui/web/templates/service_unavailable.html": "40391cdaac82245c5c7837192a8657773adfd62d8ddd19cd82e3c5bdb702075a",
+    "ui/web/templates/settings.html": "fa41ccf9a640ebcb6ab9c60d991debc41b3f84b187bb17723228de3804ebf70e"
+  },
+  "sourcesStable": true
+}

@@ -1,0 +1,24 @@
+{
+  "feature": "EPI-01",
+  "status": "episode_contract_complete",
+  "tests": {
+    "targeted": "22 passed",
+    "full_python": "1352 passed",
+    "javascript": "23 passed",
+    "ruff": "passed"
+  },
+  "verified": [
+    "event to state revision trace",
+    "policy and strategy version capture",
+    "action receipt and result vector capture",
+    "cross-restart SQLite readback",
+    "idempotent append by event_id and episode_id",
+    "side-effect-free replay projection"
+  ],
+  "production": {
+    "worker_transaction_wiring": false,
+    "cloudflare_process_restarted": false,
+    "note": "Production integration still requires crash-window rehearsal across inbox, state commit, outbox and receipt."
+  },
+  "exactly_once": "not claimed"
+}

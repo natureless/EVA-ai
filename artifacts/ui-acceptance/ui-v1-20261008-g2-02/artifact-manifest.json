@@ -1,0 +1,31 @@
+{
+  "candidateId": "ui-v1-20261008-g2-02",
+  "sealedAt": "2026-10-08T16:00:11.913554+00:00",
+  "artifactHashes": {
+    "backend-preparation-error.log": "9835753fb46ff4b90b434f426b8454ab83bd5e95b2dbc789a84506e8038645e6",
+    "backend-tests.log": "bbfdcff3aae1f9b55add711ae25e7b122ac2be6fa3bb00b5c0ff16bc24b08f28",
+    "chat-client.log": "10c991f1807eb3e8a155c921a6a201f290b6abe83d4ee4baddb7031c83dc90b4",
+    "check_api.py": "c7aeb3346b49c451f067ba87b9f8c778bee78bbc65ebe467b64abde097d63108",
+    "check_backend_tests.py": "3c74569500a868b04b951583f2e83e50819e8db0c2b2f7b214e375f6c1aca0b9",
+    "client-replay-error.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "client-replay.json": "2ba6736b384f61a2590dcc2cc31833e544dd43e287c99eb92d79ca67b41524b6",
+    "finalize.py": "f14fb9e84b5fa9c926754f0e53ba302a51ac61743460f7687b61823097814ef4",
+    "findings-update.json": "6fd2e5418e8aba5ce9b53bf07cdea4193ad5bc00ec95907fe893488089222161",
+    "implementation.patch": "05b51f76cca505d08f817ad06f4229a8837cf5179feb7001b4d856a8ffdff584",
+    "input-before.log": "a0e0e2e3634bfa4eb001648134aa2183711d493c8ee6713f23b5b65364624ad7",
+    "progress.json": "9a50bc942f82eaad7547891f562ba3ee96dcecf190b6eb8dc37eb4df2500b341",
+    "readiness-recheck.log": "724566b4af579890d238b51e1b968783beed1096c59f4eb57a91a249b656c048",
+    "README.md": "617f84cc5e3887c696d4318f49fccdda1267efbb61593d45f2a8e3ecac12df0c",
+    "replay_client.cjs": "887eec499b844d8c0281c9151a7506ad3527e8e639890d7c8595d51d8fd44f4c",
+    "seal.py": "7c74ca25aa2fc87ece44da67edce7d41cc2866300830d361c22f7282897af3a8",
+    "source-baseline.json": "9ecf6f4312614be9e43e7f751d8cd4362db00a016a70a3e1b61b57ff6aee7d2c",
+    "verification.json": "22a7c00772c74cf45630eae348968d71a0eae9f7097567c243446900ebf3ee3e",
+    "G2-01/run-iyng10qb/environment.json": "7d1488179fc63eff0a4aa95e42f026cc75b4d6a5868d7afd0885a09041f769cd",
+    "G2-01/run-iyng10qb/readiness.json": "b2c0c7117fe0ff8ada268e9e2f0b95a48a21c01a841dc8f0d0dabdc71608e92b",
+    "run-313w0url/api-contracts.json": "1ea4b7fe895fd728b89aa735b140d4ce260370afbac74668b7ceec2a3356b161",
+    "run-ioi3c_to/backend-tests.json": "31c54a1c83cac8c943cab7f844de28c30583cf373d3b66d082e31a9b482056f8",
+    "run-_8bsm0mu/backend-tests.json": "8903ac4883c19d12a51c92f1c9aebdceb31aae65136d2bb2c52a86aae6bd1eba"
+  },
+  "sourceSetSha256": "543dae7715de414970dc4529ff36a40c8b1f930237eef05636e7f0705437183e",
+  "scope": "Batch evidence, including preparation failures; source/API fingerprints separately recorded. Not release approval."
+}

@@ -1,0 +1,368 @@
+{
+  "date": "2026-10-01",
+  "scope": "Codex in-app browser / local UI fixture",
+  "review": {
+    "applyEnabled": true,
+    "order": "2",
+    "rows": "变体\tprimary\tdark\n结构\t2 × 2\t3 × 3\n视角\t三视角\t底部\nPNG 尺寸\t1024px\t256px",
+    "variant": "primary"
+  },
+  "applied": {
+    "busy": "false",
+    "order": "3",
+    "size": "256",
+    "solved": "true",
+    "variant": "dark"
+  },
+  "restorations": [
+    {
+      "actualMoves": [
+        {
+          "angle": 180,
+          "axis": "y",
+          "face": "U",
+          "layer": -1,
+          "turns": 2
+        },
+        {
+          "angle": 180,
+          "axis": "x",
+          "face": "L",
+          "layer": -1,
+          "turns": 2
+        },
+        {
+          "angle": 90,
+          "axis": "y",
+          "face": "D",
+          "layer": 1,
+          "turns": 1
+        },
+        {
+          "angle": -90,
+          "axis": "z",
+          "face": "F",
+          "layer": 1,
+          "turns": -1
+        },
+        {
+          "angle": 180,
+          "axis": "y",
+          "face": "D",
+          "layer": 1,
+          "turns": 2
+        },
+        {
+          "angle": 180,
+          "axis": "x",
+          "face": "L",
+          "layer": -1,
+          "turns": 2
+        },
+        {
+          "angle": 90,
+          "axis": "z",
+          "face": "B",
+          "layer": -1,
+          "turns": 1
+        },
+        {
+          "angle": 180,
+          "axis": "y",
+          "face": "U",
+          "layer": -1,
+          "turns": 2
+        },
+        {
+          "angle": -90,
+          "axis": "z",
+          "face": "F",
+          "layer": 1,
+          "turns": -1
+        },
+        {
+          "angle": -90,
+          "axis": "x",
+          "face": "R",
+          "layer": 1,
+          "turns": -1
+        }
+      ],
+      "beforeHistory": [
+        "R",
+        "F",
+        "U2",
+        "B",
+        "L2",
+        "D2",
+        "F",
+        "D'",
+        "L2",
+        "U2"
+      ],
+      "from": 2,
+      "inverseMatches": true,
+      "oldSolved": true,
+      "remainingHistory": 0,
+      "result": true,
+      "to": 3
+    }
+  ],
+  "undo": {
+    "from": 3,
+    "to": 2,
+    "result": true,
+    "beforeHistory": [
+      "D",
+      "R2",
+      "F",
+      "U",
+      "B'",
+      "L",
+      "F2",
+      "R",
+      "U",
+      "R'",
+      "U2",
+      "F",
+      "R",
+      "F2"
+    ],
+    "oldSolved": true,
+    "remainingHistory": 0,
+    "actualMoves": [
+      {
+        "face": "F",
+        "axis": "z",
+        "layer": 1,
+        "turns": 2,
+        "angle": 180
+      },
+      {
+        "face": "R",
+        "axis": "x",
+        "layer": 1,
+        "turns": -1,
+        "angle": -90
+      },
+      {
+        "face": "F",
+        "axis": "z",
+        "layer": 1,
+        "turns": -1,
+        "angle": -90
+      },
+      {
+        "face": "U",
+        "axis": "y",
+        "layer": -1,
+        "turns": 2,
+        "angle": 180
+      },
+      {
+        "face": "R",
+        "axis": "x",
+        "layer": 1,
+        "turns": 1,
+        "angle": 90
+      },
+      {
+        "face": "U",
+        "axis": "y",
+        "layer": -1,
+        "turns": 1,
+        "angle": 90
+      },
+      {
+        "face": "R",
+        "axis": "x",
+        "layer": 1,
+        "turns": -1,
+        "angle": -90
+      },
+      {
+        "face": "F",
+        "axis": "z",
+        "layer": 1,
+        "turns": 2,
+        "angle": 180
+      },
+      {
+        "face": "L",
+        "axis": "x",
+        "layer": -1,
+        "turns": 1,
+        "angle": 90
+      },
+      {
+        "face": "B",
+        "axis": "z",
+        "layer": -1,
+        "turns": -1,
+        "angle": -90
+      },
+      {
+        "face": "U",
+        "axis": "y",
+        "layer": -1,
+        "turns": 1,
+        "angle": 90
+      },
+      {
+        "face": "F",
+        "axis": "z",
+        "layer": 1,
+        "turns": -1,
+        "angle": -90
+      },
+      {
+        "face": "R",
+        "axis": "x",
+        "layer": 1,
+        "turns": 2,
+        "angle": 180
+      },
+      {
+        "face": "D",
+        "axis": "y",
+        "layer": 1,
+        "turns": -1,
+        "angle": -90
+      }
+    ],
+    "inverseMatches": true
+  },
+  "keyboardApply": {
+    "focus": "brandConfigUndo",
+    "order": "3",
+    "review": false,
+    "status": "配置已应用，可撤销上一次变更。"
+  },
+  "keyboardUndo": {
+    "focus": "brandConfigPreview",
+    "order": "2",
+    "status": "已撤销上一次配置变更。"
+  },
+  "invalidVersion": {
+    "applyDisabled": true,
+    "order": "2",
+    "reviewHidden": true,
+    "status": "配置版本不受支持，当前配置未改变。"
+  },
+  "invalidField": {
+    "applyDisabled": true,
+    "order": "2",
+    "status": "包含不允许的字段，当前配置未改变。"
+  },
+  "fileRace": {
+    "input": "{\"version\":1,\"variant\":\"light\",\"order\":2,\"view\":\"front\",\"static\":false,\"reduced\":false,\"pngSize\":512}",
+    "order": "2",
+    "review": true,
+    "status": "旧版 v1 配置已验证，请检查差异后应用。"
+  },
+  "draftInvalidation": {
+    "applyDisabled": true,
+    "reviewHidden": true
+  },
+  "storageFailure": {
+    "order": "3",
+    "status": "配置已应用，但浏览器无法保存；仍可撤销。",
+    "undoEnabled": true
+  },
+  "storageUndo": {
+    "order": "2",
+    "status": "已撤销变更，但浏览器无法保存。",
+    "undoDisabled": true
+  },
+  "systemReview": {
+    "checked": true,
+    "disabled": true,
+    "note": "系统已启用减少动态效果，导入的个人偏好不会覆盖系统设置。",
+    "visible": true
+  },
+  "systemApplied": {
+    "checked": true,
+    "disabled": true,
+    "motionDisabled": true,
+    "order": "3",
+    "status": "配置已应用，可撤销上一次变更。"
+  },
+  "exported": {
+    "format": "eva-brand-display",
+    "formatVersion": 1,
+    "brandVersion": "1.0.0",
+    "tokenSchemaVersion": 1,
+    "display": {
+      "variant": "dark",
+      "order": 3,
+      "view": "bottom",
+      "static": false,
+      "reduced": false,
+      "pngSize": 256
+    }
+  },
+  "layouts": [
+    {
+      "cardScroll": 271,
+      "cardWidth": 271,
+      "documentWidth": 305,
+      "language": "zh-CN",
+      "panelScroll": 305,
+      "panelWidth": 305,
+      "tableWidth": 239.33334350585935,
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "cardScroll": 271,
+      "cardWidth": 271,
+      "documentWidth": 305,
+      "language": "en",
+      "panelScroll": 305,
+      "panelWidth": 305,
+      "theme": "light",
+      "width": 320
+    },
+    {
+      "cardScroll": 271,
+      "cardWidth": 271,
+      "documentWidth": 305,
+      "language": "en",
+      "panelScroll": 305,
+      "panelWidth": 305,
+      "theme": "dark",
+      "width": 320
+    },
+    {
+      "cardScroll": 271,
+      "cardWidth": 271,
+      "documentWidth": 305,
+      "language": "zh-CN",
+      "panelScroll": 305,
+      "panelWidth": 305,
+      "theme": "dark",
+      "width": 320
+    }
+  ],
+  "logs": [],
+  "finalState": {
+    "language": "zh-CN",
+    "order": "2",
+    "pngSize": "1024",
+    "reduced": false,
+    "reviewHidden": true,
+    "stage": {
+      "motion": "idle",
+      "phase": "5",
+      "solved": "true",
+      "static": "false",
+      "variant": "primary",
+      "view": "iso"
+    },
+    "static": false,
+    "theme": "light",
+    "undoDisabled": true,
+    "variant": "primary",
+    "width": 1015
+  }
+}

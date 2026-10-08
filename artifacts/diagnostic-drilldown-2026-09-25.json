@@ -1,0 +1,91 @@
+{
+  "published_at": "2026-09-25T02:53:33.580980+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\diagnostic-drilldown-20260925T025333Z",
+  "files": [
+    {
+      "path": "ui/web/static/memory_diagnostics.js",
+      "before_sha256": "13d353531a67c1f1d250811713bbf97e11cabb2e1dfed0ec007d8f724cb81aa0",
+      "after_sha256": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07"
+    },
+    {
+      "path": "ui/web/static/memory_graph.css",
+      "before_sha256": "8e3975b7fec01ad7ce830fa7352e790ee8a9120ff92bf9da96e484f164a1a2a4",
+      "after_sha256": "1de802207132f8094b539dfbe6e657f4beba7a55608df9b63a1d9c1b2f5b1999"
+    },
+    {
+      "path": "ui/web/templates/memory_graph.html",
+      "before_sha256": "836adc28a2f2d4ee4c2a2c184fae2e6017023d6af971a006e691302578c7c948",
+      "after_sha256": "5848f11440932b4b11bc23edc8a0f2b98bad46b35446bd54180a1dba8223b01c"
+    }
+  ],
+  "tests": {
+    "python_passed": 1362,
+    "python_seconds": 126.3,
+    "javascript_passed": 29,
+    "ruff": "passed",
+    "preflight": "passed using isolated fixture DB and port 8776"
+  },
+  "isolated_browser": {
+    "entity_detail": true,
+    "source_event_detail": true,
+    "missing_source_event": true,
+    "literal_markup": true,
+    "return_preserves_page_and_focus": true,
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "page_scroll_width": 390,
+      "dialog_width": 358,
+      "record_client_width": 325,
+      "record_scroll_width": 325
+    }
+  },
+  "production_sample": {
+    "diagnostic_rows": 206,
+    "with_source_event_reference": 14,
+    "with_existing_endpoint": 180
+  },
+  "backend_restarted": false,
+  "database_migration": false,
+  "not_verified": [
+    "Physical phone access",
+    "Windows logon/crash recovery"
+  ],
+  "post_publication": {
+    "health": 200,
+    "S4": {
+      "status": 200,
+      "record_matches": true,
+      "cache_control": "private, no-store"
+    },
+    "S5": {
+      "status": 200,
+      "record_matches": true,
+      "cache_control": "private, no-store"
+    },
+    "template_current": true,
+    "memory_diagnostics.js": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "memory_graph.css": {
+      "status": 200,
+      "matches_disk": true
+    },
+    "origin_anonymous": 401,
+    "public_anonymous": {
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    },
+    "production_pid_still_running": true
+  },
+  "public_browser": {
+    "graph_loaded": true,
+    "graph_nodes": 420,
+    "graph_edges": 662,
+    "diagnostics_loaded": true,
+    "new_buttons_visible": true,
+    "detail_after_click": "unverified: browser control timed out"
+  },
+  "completed_at": "2026-09-25T03:00:14.632361+00:00"
+}

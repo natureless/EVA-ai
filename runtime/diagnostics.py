@@ -12,9 +12,9 @@ import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
-from memory.sqlite_store import SQLiteStore
+from memory.storage_adapter import BaseStorageAdapter
 from memory.tiered_store import TieredMemoryManager
 from runtime.file_utils import atomic_json_save
 
@@ -288,7 +288,7 @@ class SystemDiagnostic:
 
     def run_full(
         self,
-        store: SQLiteStore,
+        store: BaseStorageAdapter,
         tiered_memory: TieredMemoryManager | None,
         system_state: dict[str, Any],
         *,
@@ -350,15 +350,31 @@ class RecoveryActions:
 
     @staticmethod
     def recover_snapshot(
-        snapshot_path: Path, world_model: Any = None
+        snapshot_path: Path, world_model: Any = None,
+        *, save_snapshot: Callable[[], None] | None = None,
     ) -> DiagnosticCheck:
-        """Regenerate a valid snapshot from current state."""
+        """Regenerate through the runtime's complete snapshot serializer.
+
+        The optional callback preserves all current subsystem fields. Legacy
+        callers may still supply a world model; readable existing fields are
+        retained in that case instead of being discarded.
+        """
         try:
-            data = {"version": "0.1", "world_model": {}, "proactive_state": {}}
-            if world_model:
-                data["world_model"] = world_model.to_dict()
-            snapshot_path.parent.mkdir(parents=True, exist_ok=True)
-            atomic_json_save(snapshot_path, data)
+            if save_snapshot is not None:
+                save_snapshot()
+            else:
+                data = {"version": "0.1", "world_model": {}, "proactive_state": {}}
+                if snapshot_path.exists():
+                    try:
+                        existing = json.loads(snapshot_path.read_text(encoding="utf-8"))
+                        if isinstance(existing, dict):
+                            data.update(existing)
+                    except (OSError, json.JSONDecodeError):
+                        pass  # Legacy repair can replace an unreadable snapshot.
+                if world_model:
+                    data["world_model"] = world_model.to_dict()
+                snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+                atomic_json_save(snapshot_path, data)
             return DiagnosticCheck(
                 name="recover_snapshot", passed=True,
                 detail=f"snapshot rebuilt at {snapshot_path}",

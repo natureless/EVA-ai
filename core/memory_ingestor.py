@@ -8,6 +8,7 @@ from uuid import uuid4
 from memory.importance_scorer import ImportanceFeatures
 from memory.memory_governor import MemoryGovernor
 from memory.memory_schema import MemoryRecord, MemoryType
+from memory.provenance import EpistemicStatus, provenance
 
 
 class MemoryIngestor:
@@ -30,7 +31,8 @@ class MemoryIngestor:
         *,
         self_model_delta: float = 0.0,
         prediction_error: float = 0.0,
-    ) -> None:
+        remember: bool = False,
+    ) -> MemoryRecord | None:
         """Create and ingest an episodic memory record for a user message."""
         if not self._governor:
             return
@@ -43,6 +45,14 @@ class MemoryIngestor:
             confidence=0.7,
             ttl_seconds=None,
             conflict_keys=[],
+            metadata={
+                "provenance": provenance(
+                    EpistemicStatus.USER_STATEMENT if source == "user" else EpistemicStatus.UNKNOWN,
+                    source=source, source_event_id=event_id,
+                ),
+                # Only trusted request data supplies consent, never model output.
+                "long_term_allowed": remember is True and source == "user",
+            },
         )
 
         features = ImportanceFeatures(
@@ -58,7 +68,7 @@ class MemoryIngestor:
             prediction_error=prediction_error,
         )
 
-        self._governor.ingest(record, features)
+        return self._governor.ingest(record, features)
 
     # ── helpers ────────────────────────────────────────────────────
 

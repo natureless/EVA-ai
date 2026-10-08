@@ -1,0 +1,8 @@
+{
+  "exitCode": 3,
+  "blockedAuditEvents": [
+    "open"
+  ],
+  "scope": "existing chat mode and receipt tests; MockLLM, isolated paths, no dotenv",
+  "sandbox": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g2-02\\run-ioi3c_to"
+}

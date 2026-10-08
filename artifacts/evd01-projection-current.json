@@ -1,0 +1,26 @@
+{
+  "dataset": "snapshot_decoded_by_current_restore_rules",
+  "work_item": "EVD-01",
+  "measurement_condition": "Full pytest run completed before measurement.",
+  "schema_version": 1,
+  "python": "3.11.9",
+  "platform": "Windows",
+  "graph": {
+    "entities": 183,
+    "edges": 834
+  },
+  "iterations": 30,
+  "scope": "In-process context read only; graph creation, startup, DB IO and LLM costs excluded. No production latency claim.",
+  "full_snapshot_then_slice": {
+    "median_ms": 13.56110000051558,
+    "p95_ms": 15.954900009091944,
+    "peak_traced_bytes": 1078168,
+    "returned_json_bytes": 10560
+  },
+  "bounded_projection": {
+    "median_ms": 0.19965000683441758,
+    "p95_ms": 0.21249998826533556,
+    "peak_traced_bytes": 25100,
+    "returned_json_bytes": 10580
+  }
+}

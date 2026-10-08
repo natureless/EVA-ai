@@ -1,0 +1,69 @@
+{
+  "published_at": "2026-09-25T03:14:25.788984+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\graph-refresh-20260925T031425Z",
+  "files": [
+    {
+      "path": "ui/web/static/memory_graph.js",
+      "before_sha256": "74f9ac221621602aac330e39ef0860e7bab0fa583553c5d6912533e4d43a2d9f",
+      "after_sha256": "addb7e6d68f7f3c9a0367a4017bcaf61d4e4e7ab4c6909821e0087b5c8f5f072"
+    },
+    {
+      "path": "ui/web/templates/memory_graph.html",
+      "before_sha256": "5848f11440932b4b11bc23edc8a0f2b98bad46b35446bd54180a1dba8223b01c",
+      "after_sha256": "80ae25279438d8b774a3c18bfe3c25751a58e2260d959de89488bdacfc2c8078"
+    }
+  ],
+  "tests": {
+    "python_passed": 1362,
+    "python_seconds": 124.54,
+    "javascript_passed": 35,
+    "ruff": "passed",
+    "preflight": "passed using isolated fixture DB and port 8776"
+  },
+  "browser_fixture": {
+    "refresh_zoom_before": "188%",
+    "refresh_zoom_after": "188%",
+    "canvas_fingerprint_before": 220539596,
+    "canvas_fingerprint_after": 220539596,
+    "selection_preserved": true,
+    "local_view_preserved": true,
+    "draws_per_one_second_sample": {
+      "before_dialog": 30,
+      "during_dialog": 0,
+      "after_dialog": 30
+    },
+    "temporary_draw_probe_removed": true,
+    "responsive": {
+      "width": 390,
+      "height": 844,
+      "scroll_width": 390,
+      "refresh_notice_visible": true,
+      "viewport_reset": true
+    }
+  },
+  "backend_restarted": false,
+  "database_migration": false,
+  "not_verified": [
+    "Physical phone access",
+    "Cause of earlier public browser automation timeout"
+  ],
+  "production_checks": {
+    "health_status": 200,
+    "template_status": 200,
+    "template_current": true,
+    "javascript_status": 200,
+    "javascript_matches_tested_file": true,
+    "graph_status": 200,
+    "graph_nodes": 420,
+    "cache_control": "private, no-store",
+    "runtime_phase": "running",
+    "origin_anonymous": 401,
+    "public_anonymous": {
+      "status": 302,
+      "redirect_host": "round-math-6deb.cloudflareaccess.com"
+    },
+    "production_process_unchanged": true
+  },
+  "public_browser": "not verified: new public tab timed out in browser control",
+  "completed_at": "2026-09-25T03:16:20.393724+00:00"
+}

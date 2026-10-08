@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "work_item": "EVT-01",
+  "scanned": 12973,
+  "backfilled": 12973,
+  "existing_valid": 0,
+  "unsupported_or_invalid": 0,
+  "status": "complete",
+  "source_sha256_before": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+  "source_sha256_after": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+  "source_file_unchanged": true,
+  "scope": "new SQLite copy; only envelope column backfill, no event execution or source writes",
+  "original_columns_sha256": "acd544b66b7f88af12bc010d01452d44e47a3e3bce05d82c844ee62cadbf87e2",
+  "original_columns_preserved": true,
+  "decoded_after_backfill": 12973
+}

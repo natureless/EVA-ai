@@ -1,0 +1,30 @@
+{
+  "method": "Temporary root font-size 16px → 32px in IAB. Not native browser zoom or assistive technology acceptance.",
+  "cases": [
+    {
+      "route": "/chat",
+      "overflow": false,
+      "bodySize": "30px",
+      "sendBounds": {
+        "x": 686,
+        "y": 1049.354248046875,
+        "width": 34,
+        "height": 44,
+        "top": 1049.354248046875,
+        "right": 720,
+        "bottom": 1093.354248046875,
+        "left": 686
+      }
+    },
+    {
+      "route": "/settings",
+      "overflow": false,
+      "bodySize": "30px"
+    },
+    {
+      "route": "/memory",
+      "overflow": false,
+      "bodySize": "30px"
+    }
+  ]
+}

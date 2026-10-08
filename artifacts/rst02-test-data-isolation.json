@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "scope": "Four configured default data files before/after the full suite after isolating bootstrap tests.",
+  "before": {
+    "data/eva.db": "14395d371f90c0ba848a41fa3ea8c7f0ac796bbb1577216e2bf28127ed66bdde",
+    "data/snapshots/latest.json": "78e80103bc8afe4ce23d187e2b7b79c2542de6aa0ff12e3b56329d311e4318f3",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+  },
+  "after": {
+    "data/eva.db": "14395d371f90c0ba848a41fa3ea8c7f0ac796bbb1577216e2bf28127ed66bdde",
+    "data/snapshots/latest.json": "78e80103bc8afe4ce23d187e2b7b79c2542de6aa0ff12e3b56329d311e4318f3",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+  },
+  "unchanged": true,
+  "pytest_exit_code": 0
+}

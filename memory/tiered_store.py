@@ -7,7 +7,7 @@ S4 - World Model       (SQLite, entities + edges)
 S5 - Event/Trace Store (SQLite, existing events/traces/snapshots)
 
 The TieredMemoryManager routes memories by importance:
-  importance >= 0.8 → S1 + S2 + S3
+  importance >= 0.8 and explicit retention → S1 + S2 + S3
   importance >= 0.6 → S1 + S2
   importance <  0.6 → S1 only
 """
@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING, Any
 from uuid import uuid4
 
 from memory.storage_adapter import BaseStorageAdapter
+from memory.provenance import aggregate_provenance, field_provenance, read_provenance
 
 logger = logging.getLogger("eva.tiered")
 
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
     from memory.memory_governor import MemoryGovernor
 
 # ── FTS helpers ──────────────────────────────────────────────
+
 
 def _fts_sanitize(query: str) -> str:
     """Sanitize a user query for FTS5 MATCH syntax.
@@ -44,6 +46,7 @@ def _fts_sanitize(query: str) -> str:
 
 
 # ── S1: Session Memory ─────────────────────────────────────
+
 
 @dataclass
 class SessionEntry:
@@ -95,8 +98,7 @@ class SessionMemory:
     def evict_expired(self) -> int:
         now = time.time()
         expired = [
-            k for k, e in self._store.items()
-            if (now - e.created_at) > self.ttl_seconds
+            k for k, e in self._store.items() if (now - e.created_at) > self.ttl_seconds
         ]
         for k in expired:
             del self._store[k]
@@ -124,6 +126,7 @@ class SessionMemory:
                         summary=str(entry.value.get("content", ""))[:200],
                         source=str(entry.value.get("source", "session")),
                         tags=["s1_dump"],
+                        origin=read_provenance(entry.value),
                     )
                     count += 1
                 except Exception as e:
@@ -138,12 +141,16 @@ class SessionMemory:
                 content = row.get("content", "")
                 if content:
                     mid = f"s1_{uuid4().hex[:8]}"
-                    self.put(mid, {
-                        "content": content,
-                        "importance": 0.6,
-                        "source": row.get("source", ""),
-                        "ts": time.time(),
-                    })
+                    self.put(
+                        mid,
+                        {
+                            "content": content,
+                            "importance": 0.6,
+                            "source": row.get("source", ""),
+                            "provenance": read_provenance(row),
+                            "ts": time.time(),
+                        },
+                    )
                     count += 1
         except Exception as e:
             logger.warning("S2 restore_from_s2 failed: %s", e)
@@ -152,10 +159,13 @@ class SessionMemory:
 
 # ── S2: Working Memory ─────────────────────────────────────
 
+
 class WorkingMemoryStore:
     """SQLite-backed working memory with configurable TTL."""
 
-    def __init__(self, store: BaseStorageAdapter, max_entries: int = 500, ttl_hours: int = 72) -> None:
+    def __init__(
+        self, store: BaseStorageAdapter, max_entries: int = 500, ttl_hours: int = 72
+    ) -> None:
         self.store = store
         self.max_entries = max_entries
         self.ttl_hours = ttl_hours
@@ -169,6 +179,7 @@ class WorkingMemoryStore:
         priority: int = 2,
         tags: list[str] | None = None,
         memory_id: str | None = None,
+        origin: dict[str, Any] | None = None,
     ) -> str:
         self.cleanup_expired()
         self._enforce_capacity()
@@ -179,10 +190,22 @@ class WorkingMemoryStore:
         ).isoformat()
         self.store.execute(
             """INSERT OR REPLACE INTO working_memory
-               (id, content, summary, source, priority, tags_json, created_at, expires_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-            (mid, content, summary or content[:200], source, priority,
-             json.dumps(tags or [], ensure_ascii=False), now, expires),
+               (id, content, summary, source, priority, tags_json, created_at, expires_at, provenance_json)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                mid,
+                content,
+                summary or content[:200],
+                source,
+                priority,
+                json.dumps(tags or [], ensure_ascii=False),
+                now,
+                expires,
+                json.dumps(
+                    read_provenance({"provenance": origin, "source": source}),
+                    ensure_ascii=False,
+                ),
+            ),
         )
         return mid
 
@@ -213,7 +236,13 @@ class WorkingMemoryStore:
                WHERE (content LIKE ? OR summary LIKE ? OR source LIKE ?)
                  AND expires_at > ?
                ORDER BY created_at DESC LIMIT ?""",
-            (f"%{query}%", f"%{query}%", f"%{query}%", datetime.now(timezone.utc).isoformat(), limit),
+            (
+                f"%{query}%",
+                f"%{query}%",
+                f"%{query}%",
+                datetime.now(timezone.utc).isoformat(),
+                limit,
+            ),
         )
         for r in rows:
             r["tags"] = json.loads(r.get("tags_json", "[]"))
@@ -225,9 +254,7 @@ class WorkingMemoryStore:
         return 0  # sqlite doesn't return rowcount easily with our wrapper
 
     def _enforce_capacity(self) -> None:
-        rows = self.store.fetchall(
-            "SELECT COUNT(*) as cnt FROM working_memory", ()
-        )
+        rows = self.store.fetchall("SELECT COUNT(*) as cnt FROM working_memory", ())
         count = rows[0]["cnt"] if rows else 0
         if count > self.max_entries:
             self.store.execute(
@@ -249,6 +276,7 @@ class WorkingMemoryStore:
 
 # ── S3: Long-term Memory ───────────────────────────────────
 
+
 class LongTermMemoryStore:
     """SQLite-backed permanent memory with soft-delete."""
 
@@ -265,15 +293,30 @@ class LongTermMemoryStore:
         source_event_id: str = "",
         embedding_ref: str = "",
         memory_id: str | None = None,
+        origin: dict[str, Any] | None = None,
     ) -> str:
         self._enforce_capacity()
         mid = memory_id or f"ltm_{uuid4().hex[:12]}"
         now = datetime.now(timezone.utc).isoformat()
         self.store.execute(
             """INSERT OR REPLACE INTO long_term_memory
-               (id, content, category, embedding_ref, importance, source_event_id, status, created_at)
-               VALUES (?, ?, ?, ?, ?, ?, 'active', ?)""",
-            (mid, content, category, embedding_ref, importance, source_event_id, now),
+               (id, content, category, embedding_ref, importance, source_event_id, status, created_at, provenance_json)
+               VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?)""",
+            (
+                mid,
+                content,
+                category,
+                embedding_ref,
+                importance,
+                source_event_id,
+                now,
+                json.dumps(
+                    read_provenance(
+                        {"provenance": origin, "source_event_id": source_event_id}
+                    ),
+                    ensure_ascii=False,
+                ),
+            ),
         )
         return mid
 
@@ -314,7 +357,7 @@ class LongTermMemoryStore:
             rows = self.store.fetchall(
                 """SELECT ltm.* FROM long_term_memory ltm
                    JOIN long_term_memory_fts fts ON ltm.rowid = fts.rowid
-                   WHERE long_term_memory_fts MATCH ?
+                   WHERE long_term_memory_fts MATCH ? AND ltm.status = 'active'
                    ORDER BY ltm.importance DESC, ltm.created_at DESC
                    LIMIT ?""",
                 (_fts_sanitize(query), limit),
@@ -372,6 +415,7 @@ class LongTermMemoryStore:
 
 # ── S4: World Model ────────────────────────────────────────
 
+
 class WorldModelStore:
     """Structured world representation: entities + typed edges."""
 
@@ -381,26 +425,60 @@ class WorldModelStore:
     # -- entities -------------------------------------------------------------
 
     def upsert_entity(
-        self, entity_id: str, entity_type: str, name: str, properties: dict[str, Any] | None = None
+        self,
+        entity_id: str,
+        entity_type: str,
+        name: str,
+        properties: dict[str, Any] | None = None,
+        *,
+        origin: dict[str, Any] | None = None,
+        field_origins: dict[str, dict] | None = None,
     ) -> None:
         now = datetime.now(timezone.utc).isoformat()
+        fields = field_provenance(
+            {"provenance": origin, "field_provenance": field_origins or {}},
+            ["name", *[f"properties.{key}" for key in (properties or {})]],
+        )
+        metadata = {**aggregate_provenance(fields), "field_provenance": fields}
         self.store.execute(
             """INSERT OR REPLACE INTO world_entities
-               (id, type, name, properties_json, updated_at)
-               VALUES (?, ?, ?, ?, ?)""",
-            (entity_id, entity_type, name,
-             json.dumps(properties or {}, ensure_ascii=False), now),
+               (id, type, name, properties_json, updated_at, provenance_json)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                entity_id,
+                entity_type,
+                name,
+                json.dumps(properties or {}, ensure_ascii=False),
+                now,
+                json.dumps(metadata, ensure_ascii=False),
+            ),
         )
+
+    @staticmethod
+    def _decode_entity(row: dict[str, Any]) -> dict[str, Any]:
+        result = dict(row)
+        result["properties"] = json.loads(row.get("properties_json", "{}"))
+        fields = field_provenance(
+            result, ["name", *[f"properties.{key}" for key in result["properties"]]]
+        )
+        result["provenance"] = aggregate_provenance(fields)
+        result["field_provenance"] = fields
+        return result
+
+    @staticmethod
+    def _decode_edge(row: dict[str, Any]) -> dict[str, Any]:
+        # Edge.source is a graph endpoint, not the origin of the assertion.
+        return {**row, "provenance": read_provenance(row, source_fallback=False)}
 
     def get_entity(self, entity_id: str) -> dict[str, Any] | None:
         row = self.store.fetchone(
             "SELECT * FROM world_entities WHERE id = ?", (entity_id,)
         )
-        if row:
-            row["properties"] = json.loads(row.get("properties_json", "{}"))
-        return dict(row) if row else None
+        return self._decode_entity(row) if row else None
 
-    def list_entities(self, entity_type: str = "", limit: int = 100) -> list[dict[str, Any]]:
+    def list_entities(
+        self, entity_type: str = "", limit: int = 100
+    ) -> list[dict[str, Any]]:
         if entity_type:
             rows = self.store.fetchall(
                 "SELECT * FROM world_entities WHERE type = ? ORDER BY updated_at DESC LIMIT ?",
@@ -411,21 +489,32 @@ class WorldModelStore:
                 "SELECT * FROM world_entities ORDER BY updated_at DESC LIMIT ?",
                 (limit,),
             )
-        for r in rows:
-            r["properties"] = json.loads(r.get("properties_json", "{}"))
-        return [dict(r) for r in rows]
+        return [self._decode_entity(row) for row in rows]
 
     # -- edges ----------------------------------------------------------------
 
     def upsert_edge(
-        self, source: str, target: str, relation: str, weight: float = 1.0
+        self,
+        source: str,
+        target: str,
+        relation: str,
+        weight: float = 1.0,
+        *,
+        origin: dict[str, Any] | None = None,
     ) -> None:
         now = datetime.now(timezone.utc).isoformat()
         self.store.execute(
             """INSERT OR REPLACE INTO world_edges
-               (source, target, relation, weight, updated_at)
-               VALUES (?, ?, ?, ?, ?)""",
-            (source, target, relation, weight, now),
+               (source, target, relation, weight, updated_at, provenance_json)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (
+                source,
+                target,
+                relation,
+                weight,
+                now,
+                json.dumps(read_provenance({"provenance": origin}), ensure_ascii=False),
+            ),
         )
 
     def list_edges(self, entity_id: str = "", limit: int = 200) -> list[dict[str, Any]]:
@@ -439,7 +528,61 @@ class WorldModelStore:
                 "SELECT * FROM world_edges ORDER BY updated_at DESC LIMIT ?",
                 (limit,),
             )
-        return [dict(r) for r in rows]
+        return [self._decode_edge(row) for row in rows]
+
+    def iter_entities(self, *, page_size: int = 1000):
+        """Read every entity by stable primary key during quiescent recovery."""
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or page_size < 1
+        ):
+            raise ValueError("page_size must be a positive integer")
+        after = None
+        while True:
+            if after is None:
+                rows = self.store.fetchall(
+                    "SELECT * FROM world_entities ORDER BY id LIMIT ?",
+                    (page_size,),
+                )
+            else:
+                rows = self.store.fetchall(
+                    "SELECT * FROM world_entities WHERE id > ? ORDER BY id LIMIT ?",
+                    (after, page_size),
+                )
+            for row in rows:
+                yield self._decode_entity(row)
+            if len(rows) < page_size:
+                return
+            after = rows[-1]["id"]
+
+    def iter_edges(self, *, page_size: int = 1000):
+        """Read every relation by its composite key; no 5,000-row truncation."""
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or page_size < 1
+        ):
+            raise ValueError("page_size must be a positive integer")
+        after = None
+        while True:
+            if after is None:
+                rows = self.store.fetchall(
+                    "SELECT * FROM world_edges ORDER BY source, target, relation LIMIT ?",
+                    (page_size,),
+                )
+            else:
+                rows = self.store.fetchall(
+                    """SELECT * FROM world_edges
+                       WHERE (source, target, relation) > (?, ?, ?)
+                       ORDER BY source, target, relation LIMIT ?""",
+                    (*after, page_size),
+                )
+            yield from (self._decode_edge(row) for row in rows)
+            if len(rows) < page_size:
+                return
+            last = rows[-1]
+            after = (last["source"], last["target"], last["relation"])
 
     def stats(self) -> dict[str, Any]:
         entities = self.store.fetchall("SELECT COUNT(*) as cnt FROM world_entities", ())
@@ -452,6 +595,7 @@ class WorldModelStore:
 
 
 # ── S5: Event / Trace / Snapshot ───────────────────────────
+
 
 class EventTraceStore:
     """Read-only view over existing events, traces, and snapshots tables."""
@@ -476,6 +620,7 @@ class EventTraceStore:
 
 
 # ── Tiered Memory Manager ──────────────────────────────────
+
 
 class TieredMemoryManager:
     """Unified interface to all five memory tiers.
@@ -522,7 +667,7 @@ class TieredMemoryManager:
         self._governor = governor
         self._embedding_service = embedding_service
         self._vector_store = vector_store
-        self._push_depth = 0
+        self.versioned_context_reads = False
 
     # ── ingest ──────────────────────────────────────────────
 
@@ -537,6 +682,9 @@ class TieredMemoryManager:
         source_event_id: str = "",
         self_model_delta: float = 0.0,
         prediction_error: float = 0.0,
+        origin: dict[str, Any] | None = None,
+        allow_long_term: bool = False,
+        sync_governor: bool = True,
     ) -> dict[str, str]:
         """Route content to tiers based on importance.
 
@@ -544,10 +692,19 @@ class TieredMemoryManager:
         via the governor bridge, wiring the consciousness-model experience
         intensity formula into the actual memory weighting pipeline.
         """
-        return self._ingest_one(content, importance=importance, source=source,
-                                category=category, tags=tags, source_event_id=source_event_id,
-                                self_model_delta=self_model_delta,
-                                prediction_error=prediction_error)
+        return self._ingest_one(
+            content,
+            importance=importance,
+            source=source,
+            category=category,
+            tags=tags,
+            source_event_id=source_event_id,
+            self_model_delta=self_model_delta,
+            prediction_error=prediction_error,
+            origin=origin,
+            allow_long_term=allow_long_term,
+            sync_governor=sync_governor,
+        )
 
     def _ingest_one(
         self,
@@ -560,16 +717,28 @@ class TieredMemoryManager:
         source_event_id: str = "",
         self_model_delta: float = 0.0,
         prediction_error: float = 0.0,
+        origin: dict[str, Any] | None = None,
+        allow_long_term: bool = False,
+        sync_governor: bool = True,
     ) -> dict[str, str]:
         """Single-item ingest (for cognition loop)."""
         result: dict[str, str] = {}
+        origin = read_provenance(
+            {"provenance": origin, "source": source, "source_event_id": source_event_id}
+        )
 
         # S1: always
         mid_s1 = f"s1_{uuid4().hex[:8]}"
-        self.s1.put(mid_s1, {
-            "content": content, "importance": importance,
-            "source": source, "ts": time.time(),
-        })
+        self.s1.put(
+            mid_s1,
+            {
+                "content": content,
+                "importance": importance,
+                "source": source,
+                "ts": time.time(),
+                "provenance": origin,
+            },
+        )
         result["s1"] = mid_s1
 
         # S2: importance >= 0.6
@@ -579,16 +748,18 @@ class TieredMemoryManager:
                 summary=content[:200],
                 source=source,
                 tags=tags or [],
+                origin=origin,
             )
             result["s2"] = mid_s2
 
-        # S3: importance >= 0.8
-        if importance >= 0.8:
+        # S3: importance selects candidates, but never substitutes for consent.
+        if importance >= 0.8 and allow_long_term is True:
             mid_s3 = self.s3.put(
                 content,
                 category=category,
                 importance=importance,
                 source_event_id=source_event_id,
+                origin=origin,
             )
             result["s3"] = mid_s3
             # index embedding for vector search
@@ -596,6 +767,7 @@ class TieredMemoryManager:
                 try:
                     vec = self._embedding_service.encode_single(content)
                     import numpy as np
+
                     norm = np.linalg.norm(vec)
                     if norm > 1e-12:
                         vec = vec / norm
@@ -604,10 +776,18 @@ class TieredMemoryManager:
                     logger.debug("S3 vector update skipped for %s: %s", mid_s3, e)
 
         # reverse-bridge: feed into MemoryGovernor for lifecycle management
-        if self._governor and importance >= 0.6:
-            self._push_to_governor(content, importance, source, category, source_event_id,
-                                   self_model_delta=self_model_delta,
-                                   prediction_error=prediction_error)
+        if sync_governor and self._governor and importance >= 0.6:
+            self._push_to_governor(
+                content,
+                importance,
+                source,
+                category,
+                source_event_id,
+                self_model_delta=self_model_delta,
+                prediction_error=prediction_error,
+                origin=origin,
+                allow_long_term=allow_long_term,
+            )
 
         return result
 
@@ -620,18 +800,11 @@ class TieredMemoryManager:
         source_event_id: str,
         self_model_delta: float = 0.0,
         prediction_error: float = 0.0,
+        origin: dict[str, Any] | None = None,
+        allow_long_term: bool = False,
     ) -> None:
         """Create a MemoryRecord from tiered-ingested content and feed it into the governor."""
-        self._push_depth += 1
-        if self._push_depth > 3:
-            logger.warning(
-                "_push_to_governor recursion guard tripped at depth=%d — "
-                "skipping governor bridge for source=%r",
-                self._push_depth, source,
-            )
-            self._push_depth -= 1
-            return
-        try:
+        if self._governor is not None:
             from uuid import uuid4 as _uuid4
             from memory.memory_schema import MemoryRecord, MemoryType
             from memory.importance_scorer import ImportanceFeatures
@@ -644,6 +817,10 @@ class TieredMemoryManager:
                 confidence=0.7,
                 ttl_seconds=None,
                 conflict_keys=[],
+                metadata={
+                    "provenance": origin,
+                    "long_term_allowed": allow_long_term is True,
+                },
             )
 
             features = ImportanceFeatures(
@@ -659,14 +836,14 @@ class TieredMemoryManager:
                 prediction_error=prediction_error,
             )
 
-            if self._governor is not None:
-                self._governor.ingest(record, features)
-        finally:
-            self._push_depth -= 1
+            # One directional bridge per write; never feed the same record back.
+            self._governor.ingest(record, features, sync_tiers=False)
 
     # ── recall ──────────────────────────────────────────────
 
-    def recall(self, query: str, tiers: list[int] | None = None) -> list[dict[str, Any]]:
+    def recall(
+        self, query: str, tiers: list[int] | None = None
+    ) -> list[dict[str, Any]]:
         """Search across specified tiers (default: all).
 
         S1: in-memory substring scan (small, fast)
@@ -678,9 +855,9 @@ class TieredMemoryManager:
         q = query.lower()
 
         if 1 in tiers:
-            for key, entry in self.s1._store.items():
-                if q in str(entry.value.get("content", "")).lower():
-                    results.append({"tier": "S1", "key": key, **entry.value})
+            for key, value in self.s1.list_all():
+                if q in str(value.get("content", "")).lower():
+                    results.append({"tier": "S1", "key": key, **value})
 
         if 2 in tiers:
             for row in self.s2.list_recent(limit=100):
@@ -693,9 +870,41 @@ class TieredMemoryManager:
             for row in rows:
                 results.append({"tier": "S3", **row})
 
+        for item in results:
+            item["provenance"] = read_provenance(item)
         return results
 
     # ── hybrid search ────────────────────────────────────────
+
+    def recall_snapshot(self, query: str, *, limit: int = 10) -> dict[str, Any]:
+        """Actual S2/S3 rows and revision from one read transaction.
+
+        Vector ranking remains a separate best-effort index, not this revision's
+        authority. Row content/status is read from the pinned SQLite snapshot.
+        """
+        from memory.context_evidence import ViewReference, context_hash
+        from memory.sqlite_store import SQLiteStore
+        from memory.versioned_reads import revision_row
+
+        if type(limit) is not int or not 0 <= limit <= 10:
+            raise ValueError("invalid versioned recall bound")
+        store = self.s2.store
+        if not isinstance(store, SQLiteStore) or self.s3.store is not store:
+            raise ValueError("versioned recall requires one SQLite store")
+        with store.read_snapshot():
+            revision = revision_row(store)  # First SELECT pins the snapshot.
+            rows = self.recall(query, tiers=[2, 3])[:limit] if query.strip() else []
+            rows = [
+                row
+                for row in rows
+                if row.get("tier") != "S3" or row.get("status") == "active"
+            ]
+            reference = ViewReference(
+                **revision,
+                kind="sqlite_s2_s3_recall",
+                integrity_hash=context_hash(rows),
+            )
+        return {"memories": rows, "reference": reference.model_dump(mode="json")}
 
     def hybrid_search(
         self,
@@ -715,6 +924,7 @@ class TieredMemoryManager:
             return self.s3.search(query, limit=top_k)
 
         from memory.hybrid_retrieval import hybrid_search as _hybrid
+
         alpha_val = alpha if alpha is not None else 0.3
         return _hybrid(
             query=query,

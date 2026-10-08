@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-01",
+  "scope": "Current working tree architecture and development review; not a production deployment audit",
+  "branch": "master",
+  "head": "bf91c810f989419935e971f85b43fc3381f40148",
+  "initial_worktree": {
+    "tracked_changed_files": 90,
+    "tracked_insertions": 4974,
+    "tracked_deletions": 2570,
+    "untracked_status_entries": 170,
+    "untracked_files": 466
+  },
+  "runtime_versions": {
+    "python": "3.11.9",
+    "pytest": "9.1.1",
+    "node": "24.19.0",
+    "ruff": "0.7.4"
+  },
+  "checks": {
+    "python": {
+      "command": "Isolated runner -> pytest -q --junitxml=<evidence>/pytest.xml",
+      "passed": 1897,
+      "skipped": 1,
+      "failed": 0,
+      "elapsed_sec_reported": 196.98,
+      "junit_counts": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "1",
+        "tests": "1898",
+        "time": "196.524",
+        "timestamp": "2026-10-01T18:27:21.406354+08:00",
+        "hostname": "original"
+      }
+    },
+    "javascript": {
+      "command": "node --test tests/js/*.cjs",
+      "passed": 386,
+      "failed": 0,
+      "exit_code": 0,
+      "evidence_origin": "Command output captured in this review chat"
+    },
+    "ruff": {
+      "command": "python -m ruff check . --output-format concise",
+      "exit_code": 0,
+      "result": "All checks passed!",
+      "evidence_origin": "Command output captured in this review chat"
+    },
+    "generated_assets": {
+      "command": "node scripts/build_brand_assets.cjs --check",
+      "exit_code": 0,
+      "evidence_origin": "Command output captured in this review chat"
+    }
+  },
+  "skipped": [
+    {
+      "test": "tests.minimal_brain.test_file_verifier.test_symlink_is_not_read",
+      "reason": "host does not permit creating symlinks"
+    }
+  ],
+  "storage_isolation_and_observation": {
+    "date": "2026-10-01",
+    "python": "3.11.9",
+    "exit_code": 0,
+    "elapsed_sec": 200.97,
+    "isolation": "temporary configured storage; MockLLM; dotenv disabled; optional features disabled unless test enables them",
+    "protected_default_files_unchanged": false,
+    "changed_protected_paths": [
+      "data/eva.db"
+    ],
+    "output": "artifacts/architecture-review-2026-10-01/pytest.txt",
+    "junit": "artifacts/architecture-review-2026-10-01/pytest.xml"
+  },
+  "observation_limits": [
+    "The existing localhost:8000 Python process was observed active; no application request was sent by the reviewer.",
+    "The default eva.db changed during the observation window and continued changing after tests. No independent attribution was made.",
+    "Static test-source searches found no direct default eva.db write form, but cannot prove absence of indirect effects.",
+    "No real LLM quality evaluation, preflight, production acceptance, native browser/mobile acceptance, new performance baseline or service restart was performed."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "keyboardResult": {
+    "active": "#brandConfigCard",
+    "draft": "{\"draft\":\"尚未应用\"}",
+    "focus": "brandConfigCard",
+    "gap": 16.218753814697266
+  },
+  "manualResult": {
+    "active": "#brandConfigCard",
+    "assetTop": 146.70834350585938,
+    "deliveryTop": 398.3333435058594,
+    "draft": "{\"draft\":\"尚未应用\"}",
+    "focus": "brandConfigInput",
+    "max": 1548,
+    "scroll": 1547.3333740234375
+  },
+  "returned": {
+    "draft": "{\"draft\":\"尚未应用\"}",
+    "focus": "brandTab",
+    "hidden": false
+  }
+}

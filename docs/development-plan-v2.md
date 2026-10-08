@@ -1,6 +1,11 @@
 # EVA Development Execution Plan v2
 
-Status: canonical implementation plan after the architecture consolidation.
+Status: retained implementation work-item reference. The phase order, week
+estimates and Immediate Backlog below are superseded by
+[Source Review and Roadmap v3](source-review-and-roadmap-v3.md), reviewed on
+2026-09-11–12. Use v3 for current priorities and source-to-code gaps. Outstanding
+worker isolation and tool-boundary requirements remain prerequisites for the
+corresponding deployment capabilities; they have not been marked complete.
 
 The objective is to turn the current single-node prototype into a dependable,
 demonstrable personal cognitive runtime without replacing stable components all
@@ -17,6 +22,12 @@ The repository already provides:
 - GitHub polling/webhook integration, health, diagnostics, metrics, audit APIs
 - a stable composition root and an opt-in experimental MVSC bridge
 - a replaceable agent worker protocol with a bounded thread backend
+- shared EventProcessor, RuntimeController, closed-ingress admission, real worker/scheduler activity tracking, and retryable ordered shutdown
+- replaceable Minimal Brain node scheduling, value/attention policies, bounded workspace, and versioned goal lifecycle
+
+[Runtime Refactor v0.2](runtime-refactor-v02.md) describes these implemented
+contracts. Deterministic distributed replay, broader world-model semantics and
+the research cognition modules remain separate acceptance criteria.
 
 The baseline is single-process. Thread timeouts are cooperative, external
 connectors are incomplete, and the world/attention model is not yet the full
@@ -63,6 +74,13 @@ Follow-up cleanup ticket `BASE-01`:
   show no callers.
 
 ## Phase 1: Isolated Agent Workers
+
+Current implementation: WRK-01 and the text-agent lifecycle portion of WRK-02
+are implemented and tested on Windows. The opt-in pool includes bounded JSON
+IPC, heartbeat, cancellation, drain/forced stop, and replacement after faults.
+SSE emits only reviewed final text. WRK-03 resource limits and WRK-04 privileged
+tools are **not complete**; the memory-limit acceptance criterion below remains
+unmet. See [Process Workers](process-workers.md) for actual supported behavior.
 
 Goal: ensure agent crashes, memory growth, and timeouts cannot destabilize EVA Core.
 
@@ -336,13 +354,28 @@ A work item is complete only when:
 6. Canonical architecture/API/runbook documents reflect the behavior.
 7. The full quality gate passes on Windows and the container target.
 
+## Cognitive Dynamics Research Input
+
+[Minimal Brain v0.1](minimal-brain-v01.md) now supplies an opt-in implementation
+of independently timed state nodes and a bounded slow-processing seam. This
+implements a limited part of the cognition contract work; it does not complete
+EVT-01 durability, the full COG-01 stage extraction, learned beliefs, simulation,
+or self-modification. The immediate backlog remains applicable.
+
+[Cognitive Dynamics v1](cognitive-dynamics-v1.md) records the proposed move toward
+independently scheduled cognitive nodes, bounded recurrent signals, and effective
+modulation. Its migration path builds on COG-01 and EVT-01 and preserves the
+existing runtime and experimental bridge. This is a research proposal with
+acceptance experiments, not implemented behavior or an additional delivery
+commitment; the immediate backlog below remains the execution order.
+
 ## Immediate Backlog
 
 Execute in this order:
 
-1. `WRK-01`: worker IPC models and serialization tests.
-2. `WRK-02`: spawn-safe process backend with heartbeat and replacement.
-3. `WRK-03`: Windows Job Object resource policy integration.
+1. `WRK-03`: Windows Job Object resource policy integration.
+2. `WRK-04`: explicitly authorized tool broker and file Agent support.
+3. `WRK-02`: Linux/container validation of the implemented text-agent pool.
 4. `COG-01`: extract result integration and memory writeback stages first.
 5. `EVT-01`: version event/result schemas before adding connectors.
 6. `WLD-01`: introduce WorldStateV2 behind a snapshot migration adapter.

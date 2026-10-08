@@ -1,0 +1,6 @@
+@import url('./cube-geometry.css');
+.eva-logo{--hero-x:-24deg;--hero-y:-36deg;--cube-perspective:var(--brand-perspective);--scene-scale:1;
+--cube-white:var(--brand-cube-white);--cube-white-shade:var(--brand-cube-white-shade);
+--cube-graphite:var(--brand-cube-graphite);--cube-graphite-shade:var(--brand-cube-graphite-shade);
+--cube-edge:var(--brand-cube-edge);--cube-top:var(--brand-cube-white);--cube-top-shade:var(--brand-cube-white-shade);}
+@media(prefers-reduced-motion:reduce){.eva-logo *{transition:none!important;}}

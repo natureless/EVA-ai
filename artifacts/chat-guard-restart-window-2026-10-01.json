@@ -1,0 +1,99 @@
+{
+  "started_at": "2026-10-01T03:32:50.407765+00:00",
+  "checks": {
+    "origin_readiness": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "origin_assets": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "origin_graph_and_neighbors": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "origin_export": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "anonymous_public:/": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "anonymous_public:/api/memory/graph": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/memory/graph": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "anonymous_public:/api/obsidian/export": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/api/obsidian/export": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "anonymous_public:/ws": {
+      "status": "passed",
+      "details": {
+        "http_status": 302,
+        "access_redirect": true
+      }
+    },
+    "anonymous_origin:/ws": {
+      "status": "failed",
+      "error_type": "ConnectError",
+      "detail": "See service diagnostics; response omitted"
+    },
+    "origin_websocket_reconnect": {
+      "status": "failed",
+      "error_type": "ConnectionRefusedError",
+      "detail": "See service diagnostics; response omitted"
+    }
+  },
+  "chat_requests": [],
+  "pending": [
+    "Public authenticated browser interaction",
+    "Actual login expiration in browser",
+    "Physical phone",
+    "Windows login/crash recovery",
+    "Live chat disabled; use --chat for two marked test messages"
+  ],
+  "finished_at": "2026-10-01T03:33:13.007434+00:00",
+  "failed_checks": [
+    "origin_readiness",
+    "origin_assets",
+    "origin_graph_and_neighbors",
+    "origin_export",
+    "anonymous_origin:/",
+    "anonymous_origin:/api/memory/graph",
+    "anonymous_origin:/api/obsidian/export",
+    "anonymous_origin:/ws",
+    "origin_websocket_reconnect"
+  ],
+  "status": "failed_checks"
+}

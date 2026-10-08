@@ -1,0 +1,1261 @@
+{
+  "schema_version": 1,
+  "manifest_sha256": "e391b01373737be40f1f6d8d458c2f823e9f2fbaf34059c23d22de356b37deb3",
+  "source_sha256": "f93569a3b30a248e9065cc17700b882a217832207fce968d18b2c31d84768eb4",
+  "python": "3.11.9",
+  "platform": "Windows",
+  "machine": "AMD64",
+  "dependencies": {
+    "fastapi": "0.115.12",
+    "httpx": "0.28.1",
+    "pydantic": "2.11.3",
+    "starlette": "0.46.2"
+  },
+  "definitions": {
+    "admission_to_execution_ms": "monotonic receipt reservation to first processor claim; includes EventBus and Minimal scheduling waits",
+    "http_terminal_ms": "ASGI TestClient POST start to terminal GET response; includes polling and middleware, excludes TCP",
+    "python_peak_bytes": "separate tracemalloc pass; bootstrap plus warmup and workload; excludes imports and native/RSS allocations",
+    "percentiles": "nearest rank; small fixed fixture, not a capacity or quality claim"
+  },
+  "manifest": {
+    "schema_version": 1,
+    "name": "offline-http-runtime-v1",
+    "seed": 1729,
+    "concurrency": 4,
+    "poll_initial_sec": 0.1,
+    "poll_max_sec": 0.5,
+    "warmup": [
+      "Hello EVA",
+      "Good morning"
+    ],
+    "messages": [
+      "Hello EVA",
+      "Good morning",
+      "Thank you",
+      "Hi there",
+      "Good evening",
+      "How are you",
+      "Hello again",
+      "Have a nice day",
+      "Nice to meet you",
+      "Good afternoon",
+      "Thanks EVA",
+      "Goodbye"
+    ],
+    "settings": {
+      "env": "dev",
+      "log_level": "ERROR",
+      "storage_backend": "sqlite",
+      "embedding_provider": "none",
+      "enable_code_tool": false,
+      "enable_network_tools": false,
+      "github_api_token": "",
+      "github_poll_repos": "",
+      "cognition_worker_count": 1,
+      "agent_worker_backend": "thread",
+      "agent_worker_count": 1,
+      "agent_worker_queue_capacity": 16,
+      "agent_worker_queue_timeout_sec": 5.0,
+      "agent_worker_max_tasks": 100,
+      "agent_execution_timeout_sec": 30.0,
+      "tick_interval_sec": 0.5,
+      "queue_poll_timeout_sec": 0.02,
+      "scheduler_tick_interval_sec": 86400,
+      "scheduler_maintenance_interval_sec": 86400,
+      "scheduler_snapshot_interval_sec": 86400,
+      "stagnation_threshold_sec": 86400,
+      "reminder_cooldown_sec": 86400,
+      "request_timeout_sec": 10.0,
+      "result_pending_timeout_sec": 30.0,
+      "result_ttl_sec": 60.0,
+      "result_registry_capacity": 20000,
+      "minimal_brain_queue_capacity": 64,
+      "minimal_brain_poll_sec": 0.02,
+      "mvsc_subject_id": "eva-baseline"
+    }
+  },
+  "passes": [
+    {
+      "scenario": "legacy",
+      "pass": "latency",
+      "actual_mode": "legacy",
+      "consumer_type": "core.cognition_loop.CognitionLoop",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": false,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": false,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "23cde40781f3f8cb14825fcdc5c8c5dc17ec4f2f25ecc4c70b5f12e1f573c7f1",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 54.1259000019636,
+      "workload_ms": 259.8326000152156,
+      "python_peak_bytes": null,
+      "samples": [
+        {
+          "ack_ms": 13.608000008389354,
+          "http_terminal_ms": 120.83749999874271,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 6.810199993196875,
+          "http_terminal_ms": 111.14210000960156,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 30.52269999170676,
+          "http_terminal_ms": 32.93339998344891,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 15.1968999998644,
+          "http_terminal_ms": 121.41380002140068,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 2.4688999983482063,
+          "http_terminal_ms": 105.17689998960122,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.1556000176351517,
+          "http_terminal_ms": 107.97500002081506,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.000000013969839,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 11.028500011889264,
+          "http_terminal_ms": 13.246700022136793,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 25.443300022743642,
+          "http_terminal_ms": 29.083500005071983,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 16.411299991887063,
+          "http_terminal_ms": 124.24899998586625,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 12.77580001624301,
+          "http_terminal_ms": 119.54640000476502,
+          "admission_to_execution_ms": 15.000000013969839,
+          "admission_to_terminal_ms": 15.000000013969839,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.3429999893996865,
+          "http_terminal_ms": 107.18170000473037,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 11.957099981373176,
+          "http_terminal_ms": 14.019700000062585,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 12.726775001889715,
+          "p50": 11.957099981373176,
+          "p95": 30.52269999170676,
+          "max": 30.52269999170676
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 83.9004750038536,
+          "p50": 107.18170000473037,
+          "p95": 124.24899998586625,
+          "max": 124.24899998586625
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 6.583333325882752,
+          "p50": 0.0,
+          "p95": 15.999999974155799,
+          "max": 15.999999974155799
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 11.749999992995678,
+          "p50": 15.000000013969839,
+          "p95": 30.999999988125637,
+          "max": 30.999999988125637
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    },
+    {
+      "scenario": "legacy",
+      "pass": "memory",
+      "actual_mode": "legacy",
+      "consumer_type": "core.cognition_loop.CognitionLoop",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": false,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": false,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "23cde40781f3f8cb14825fcdc5c8c5dc17ec4f2f25ecc4c70b5f12e1f573c7f1",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 81.07129999552853,
+      "workload_ms": 456.6820000181906,
+      "python_peak_bytes": 1363481,
+      "samples": [
+        {
+          "ack_ms": 21.927199995843694,
+          "http_terminal_ms": 133.3755999803543,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 28.518899984192103,
+          "http_terminal_ms": 156.70289998524822,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 32.686199992895126,
+          "http_terminal_ms": 157.77219997835346,
+          "admission_to_execution_ms": 46.999999991385266,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 40.78660000232048,
+          "http_terminal_ms": 165.36959999939427,
+          "admission_to_execution_ms": 46.999999991385266,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 8.176000003004447,
+          "http_terminal_ms": 126.32270000176504,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 29.62050001951866,
+          "http_terminal_ms": 37.99700000672601,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 33.72090001357719,
+          "http_terminal_ms": 156.2096000125166,
+          "admission_to_execution_ms": 14.999999984866008,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 26.65969997178763,
+          "http_terminal_ms": 145.32109998981468,
+          "admission_to_execution_ms": 30.999999988125637,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 14.297699992312118,
+          "http_terminal_ms": 132.7426999923773,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 11.457100015832111,
+          "http_terminal_ms": 122.52090001129545,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 26.659099996322766,
+          "http_terminal_ms": 139.76479999837466,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 31.000000017229468,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 22.19439999316819,
+          "http_terminal_ms": 31.654200021876022,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 24.72535833173121,
+          "p50": 26.659099996322766,
+          "p95": 40.78660000232048,
+          "max": 40.78660000232048
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 125.47944166484133,
+          "p50": 133.3755999803543,
+          "p95": 165.36959999939427,
+          "max": 165.36959999939427
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 16.999999997400057,
+          "p50": 14.999999984866008,
+          "p95": 46.999999991385266,
+          "max": 46.999999991385266
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 30.1666666661428,
+          "p50": 31.000000017229468,
+          "p95": 46.999999991385266,
+          "max": 46.999999991385266
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    },
+    {
+      "scenario": "minimal",
+      "pass": "latency",
+      "actual_mode": "minimal",
+      "consumer_type": "packages.minimal_brain.kernel.MinimalBrainKernel",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": false,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": true,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "e536eff4cae677197ad46b57a5f8a22c3e660caecc277d766c194b381b3acceb",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 55.446999991545454,
+      "workload_ms": 442.5207000167575,
+      "python_peak_bytes": null,
+      "samples": [
+        {
+          "ack_ms": 7.564700004877523,
+          "http_terminal_ms": 114.56810001982376,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 15.297699981601909,
+          "http_terminal_ms": 120.94349999097176,
+          "admission_to_execution_ms": 62.999999994644895,
+          "admission_to_terminal_ms": 62.999999994644895,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 16.252600005827844,
+          "http_terminal_ms": 122.31209999299608,
+          "admission_to_execution_ms": 78.00000000861473,
+          "admission_to_terminal_ms": 78.00000000861473,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 21.6165000165347,
+          "http_terminal_ms": 330.2133000106551,
+          "admission_to_execution_ms": 110.00000001513399,
+          "admission_to_terminal_ms": 125.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.3753000025171787,
+          "http_terminal_ms": 108.25770001974888,
+          "admission_to_execution_ms": 14.999999984866008,
+          "admission_to_terminal_ms": 14.999999984866008,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.493800002615899,
+          "http_terminal_ms": 108.36400001426227,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 4.625300003681332,
+          "http_terminal_ms": 109.95389998424798,
+          "admission_to_execution_ms": 62.999999994644895,
+          "admission_to_terminal_ms": 62.999999994644895,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 2.2348999918904155,
+          "http_terminal_ms": 106.13129998091608,
+          "admission_to_execution_ms": 30.999999988125637,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 5.272399983368814,
+          "http_terminal_ms": 110.38830000325106,
+          "admission_to_execution_ms": 46.999999991385266,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.7540000048466027,
+          "http_terminal_ms": 107.73489999701269,
+          "admission_to_execution_ms": 77.9999999795109,
+          "admission_to_terminal_ms": 77.9999999795109,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 5.6674999941606075,
+          "http_terminal_ms": 111.08319999766536,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 3.89069999800995,
+          "http_terminal_ms": 109.13329999311827,
+          "admission_to_execution_ms": 46.999999991385266,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 7.753783332494398,
+          "p50": 4.625300003681332,
+          "p95": 21.6165000165347,
+          "max": 21.6165000165347
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 129.92363333372245,
+          "p50": 109.95389998424798,
+          "p95": 330.2133000106551,
+          "max": 330.2133000106551
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 50.999999997050814,
+          "p50": 46.999999991385266,
+          "p95": 110.00000001513399,
+          "max": 110.00000001513399
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 52.24999999578964,
+          "p50": 46.999999991385266,
+          "p95": 125.0,
+          "max": 125.0
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    },
+    {
+      "scenario": "minimal",
+      "pass": "memory",
+      "actual_mode": "minimal",
+      "consumer_type": "packages.minimal_brain.kernel.MinimalBrainKernel",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": false,
+        "status": "disabled",
+        "attached": false,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": false,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": true,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "e536eff4cae677197ad46b57a5f8a22c3e660caecc277d766c194b381b3acceb",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 158.4261999814771,
+      "workload_ms": 522.8746999928262,
+      "python_peak_bytes": 1824459,
+      "samples": [
+        {
+          "ack_ms": 23.863699985668063,
+          "http_terminal_ms": 134.6377999871038,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 36.086799984332174,
+          "http_terminal_ms": 163.7036000029184,
+          "admission_to_execution_ms": 62.999999994644895,
+          "admission_to_terminal_ms": 62.999999994644895,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 39.47489999700338,
+          "http_terminal_ms": 163.2429999881424,
+          "admission_to_execution_ms": 110.00000001513399,
+          "admission_to_terminal_ms": 110.00000001513399,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 50.593200023286045,
+          "http_terminal_ms": 387.3361000150908,
+          "admission_to_execution_ms": 141.00000000325963,
+          "admission_to_terminal_ms": 157.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 6.154400005470961,
+          "http_terminal_ms": 116.61920000915416,
+          "admission_to_execution_ms": 47.0000000204891,
+          "admission_to_terminal_ms": 62.999999994644895,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 25.42130000074394,
+          "http_terminal_ms": 141.30049999221228,
+          "admission_to_execution_ms": 46.000000002095476,
+          "admission_to_terminal_ms": 46.000000002095476,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 28.003299987176433,
+          "http_terminal_ms": 144.119899981888,
+          "admission_to_execution_ms": 78.00000000861473,
+          "admission_to_terminal_ms": 92.99999999348074,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 15.1909000123851,
+          "http_terminal_ms": 124.87030000193045,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 9.246500005247071,
+          "http_terminal_ms": 129.33120000525378,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 17.960299999685958,
+          "http_terminal_ms": 128.54219999280758,
+          "admission_to_execution_ms": 46.999999991385266,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 17.396300012478605,
+          "http_terminal_ms": 131.5638000087347,
+          "admission_to_execution_ms": 14.999999984866008,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 14.44420000188984,
+          "http_terminal_ms": 123.87159999343567,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 23.652983334613964,
+          "p50": 17.960299999685958,
+          "p95": 50.593200023286045,
+          "max": 50.593200023286045
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 157.42826666488932,
+          "p50": 131.5638000087347,
+          "p95": 387.3361000150908,
+          "max": 387.3361000150908
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 48.250000002250694,
+          "p50": 46.000000002095476,
+          "p95": 141.00000000325963,
+          "max": 141.00000000325963
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 58.83333333137367,
+          "p50": 46.000000002095476,
+          "p95": 157.00000000651926,
+          "max": 157.00000000651926
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    },
+    {
+      "scenario": "mvsc_attached_legacy",
+      "pass": "latency",
+      "actual_mode": "legacy",
+      "consumer_type": "core.cognition_loop.CognitionLoop",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": true,
+        "status": "attached",
+        "attached": true,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": true,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": false,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "a65381c004837eb7d476be99d402b8db13d8a7231288f4d5d3cbdc699d5e9707",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 92.39560001878999,
+      "workload_ms": 273.65389998885803,
+      "python_peak_bytes": null,
+      "samples": [
+        {
+          "ack_ms": 7.355799985816702,
+          "http_terminal_ms": 111.88789998413995,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 13.739200017880648,
+          "http_terminal_ms": 119.47179998969659,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 30.25600002729334,
+          "http_terminal_ms": 32.33420001924969,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 36.40159999486059,
+          "http_terminal_ms": 39.10120000364259,
+          "admission_to_execution_ms": 15.000000013969839,
+          "admission_to_terminal_ms": 15.000000013969839,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 6.406200001947582,
+          "http_terminal_ms": 120.52690002019517,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 2.0086000149603933,
+          "http_terminal_ms": 111.93199999979697,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 6.8928999826312065,
+          "http_terminal_ms": 9.809999988647178,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 10.76390000525862,
+          "http_terminal_ms": 28.580999991390854,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 11.151199985761195,
+          "http_terminal_ms": 32.08989999257028,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 16.00000000325963,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 15.956000017467886,
+          "http_terminal_ms": 19.959500001277775,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 0.0,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 12.65439999406226,
+          "http_terminal_ms": 119.52519998885691,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 14.18929998180829,
+          "http_terminal_ms": 119.08159998711199,
+          "admission_to_execution_ms": 15.999999974155799,
+          "admission_to_terminal_ms": 15.999999974155799,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 13.981258334145727,
+          "p50": 11.151199985761195,
+          "p95": 36.40159999486059,
+          "max": 36.40159999486059
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 72.02509999721467,
+          "p50": 39.10120000364259,
+          "p95": 120.52690002019517,
+          "max": 120.52690002019517
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 6.583333328308072,
+          "p50": 0.0,
+          "p95": 16.00000000325963,
+          "max": 16.00000000325963
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 7.9166666594877215,
+          "p50": 0.0,
+          "p95": 16.00000000325963,
+          "max": 16.00000000325963
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    },
+    {
+      "scenario": "mvsc_attached_legacy",
+      "pass": "memory",
+      "actual_mode": "legacy",
+      "consumer_type": "core.cognition_loop.CognitionLoop",
+      "processor_type": "core.event_processor.EventProcessor",
+      "mvsc": {
+        "requested": true,
+        "status": "attached",
+        "attached": true,
+        "is_http_consumer": false
+      },
+      "effective_config": {
+        "app_name": "EVA",
+        "env": "dev",
+        "host": "0.0.0.0",
+        "port": 8000,
+        "base_dir": "<temporary>/base_dir",
+        "data_dir": "<temporary>/data_dir",
+        "log_dir": "<temporary>/log_dir",
+        "log_file": "eva.log",
+        "log_level": "ERROR",
+        "db_path": "<temporary>/db_path",
+        "ui_dir": "<shipped-ui>",
+        "template_dir": "<shipped-ui>",
+        "static_dir": "<shipped-ui>",
+        "snapshot_dir": "<temporary>/snapshot_dir",
+        "latest_snapshot_path": "<temporary>/latest_snapshot_path",
+        "profile_path": "<temporary>/profile_path",
+        "self_model_path": "<temporary>/self_model_path",
+        "tick_interval_sec": 0.5,
+        "queue_poll_timeout_sec": 0.02,
+        "max_recent_items": 20,
+        "request_timeout_sec": 10.0,
+        "result_ttl_sec": 60.0,
+        "result_pending_timeout_sec": 30.0,
+        "result_registry_capacity": 20000,
+        "scheduler_tick_interval_sec": 86400,
+        "scheduler_maintenance_interval_sec": 86400,
+        "scheduler_snapshot_interval_sec": 86400,
+        "stagnation_threshold_sec": 86400,
+        "reminder_cooldown_sec": 86400,
+        "storage_backend": "sqlite",
+        "database_url": "",
+        "llm_timeout_sec": 60.0,
+        "llm_max_retries": 2,
+        "enable_code_tool": false,
+        "enable_network_tools": false,
+        "trust_proxy_headers": false,
+        "github_webhook_secret": "",
+        "github_api_token": "",
+        "github_poll_interval_sec": 300,
+        "github_poll_repos": "",
+        "cognition_worker_count": 1,
+        "agent_worker_backend": "thread",
+        "agent_worker_count": 1,
+        "agent_execution_timeout_sec": 30.0,
+        "agent_worker_queue_capacity": 16,
+        "agent_worker_queue_timeout_sec": 5.0,
+        "agent_worker_max_tasks": 100,
+        "enable_mvsc_pipeline": true,
+        "mvsc_subject_id": "eva-baseline",
+        "enable_minimal_brain": false,
+        "minimal_brain_queue_capacity": 64,
+        "minimal_brain_poll_sec": 0.02,
+        "embedding_provider": "none",
+        "embedding_model_name": "all-MiniLM-L6-v2",
+        "embedding_alpha": 0.3,
+        "embedding_rerank_k": 0,
+        "vector_index_path": "<temporary>/vector_index_path",
+        "llm_provider": "mock"
+      },
+      "effective_config_sha256": "a65381c004837eb7d476be99d402b8db13d8a7231288f4d5d3cbdc699d5e9707",
+      "requests": 12,
+      "warmup_requests": 2,
+      "bootstrap_ms": 232.83519997494295,
+      "workload_ms": 447.90980001562275,
+      "python_peak_bytes": 2201561,
+      "samples": [
+        {
+          "ack_ms": 28.048799984389916,
+          "http_terminal_ms": 143.0009999894537,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 38.667499989969656,
+          "http_terminal_ms": 166.6014999791514,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 16.250800021225587,
+          "http_terminal_ms": 127.83790001412854,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 31.000000017229468,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 35.96790001029149,
+          "http_terminal_ms": 154.68370000598952,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 27.99770000274293,
+          "http_terminal_ms": 46.03150000912137,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 31.000000017229468,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 34.74370000185445,
+          "http_terminal_ms": 150.87169999605976,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 28.22609999566339,
+          "http_terminal_ms": 148.85839997441508,
+          "admission_to_execution_ms": 30.999999988125637,
+          "admission_to_terminal_ms": 46.999999991385266,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 27.866299991728738,
+          "http_terminal_ms": 153.04379997542128,
+          "admission_to_execution_ms": 30.999999988125637,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 27.75360000669025,
+          "http_terminal_ms": 153.24740001233295,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 22.618599992711097,
+          "http_terminal_ms": 142.07970001734793,
+          "admission_to_execution_ms": 0.0,
+          "admission_to_terminal_ms": 30.999999988125637,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 21.627900016028434,
+          "http_terminal_ms": 134.0308999933768,
+          "admission_to_execution_ms": 16.00000000325963,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        },
+        {
+          "ack_ms": 14.578500005882233,
+          "http_terminal_ms": 126.27740000607446,
+          "admission_to_execution_ms": 32.00000000651926,
+          "admission_to_terminal_ms": 32.00000000651926,
+          "waiting_age_ms": null
+        }
+      ],
+      "metrics": {
+        "ack_ms": {
+          "count": 12,
+          "mean": 27.02895000159818,
+          "p50": 27.866299991728738,
+          "p95": 38.667499989969656,
+          "max": 38.667499989969656
+        },
+        "http_terminal_ms": {
+          "count": 12,
+          "mean": 137.21374166440606,
+          "p50": 143.0009999894537,
+          "p95": 166.6014999791514,
+          "max": 166.6014999791514
+        },
+        "admission_to_execution_ms": {
+          "count": 12,
+          "mean": 18.500000000737298,
+          "p50": 16.00000000325963,
+          "p95": 32.00000000651926,
+          "max": 32.00000000651926
+        },
+        "admission_to_terminal_ms": {
+          "count": 12,
+          "mean": 35.416666668121856,
+          "p50": 32.00000000651926,
+          "p95": 46.999999991385266,
+          "max": 46.999999991385266
+        }
+      },
+      "rejected_full": 0,
+      "receipt_deadline_expirations": 0
+    }
+  ]
+}

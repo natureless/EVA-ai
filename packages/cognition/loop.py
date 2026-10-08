@@ -23,16 +23,20 @@
 from __future__ import annotations
 
 import logging
+import asyncio
 import time
 from typing import Any
 
 from packages.contracts.events import EventEnvelope, EventFamily
+from packages.contracts.actions import ActionIntent
 from packages.contracts.state import (
     BroadcastContent,
     CognitionPhase,
     ConsciousState,
     ContentCandidate,
     RuntimeMode,
+    Plan,
+    StateDelta,
 )
 
 logger = logging.getLogger("eva.cognition.pipeline")
@@ -41,6 +45,7 @@ logger = logging.getLogger("eva.cognition.pipeline")
 # ═══════════════════════════════════════════════════════════════
 # ContentEngine — 候选内容生成
 # ═══════════════════════════════════════════════════════════════
+
 
 class ContentEngine:
     """从世界/身体/事件变化生成候选意识内容。
@@ -83,53 +88,62 @@ class ContentEngine:
                 except Exception:
                     pass  # LLM 失败时使用默认摘要
 
-            candidates.append(ContentCandidate(
-                content_type="response",
-                summary=summary,
-                source_module="content_engine",
-                salience=0.8,
-                goal_relevance=0.7,
-                novelty=0.5,
-            ))
+            candidates.append(
+                ContentCandidate(
+                    content_type="response",
+                    summary=summary,
+                    source_module="content_engine",
+                    salience=0.8,
+                    goal_relevance=0.7,
+                    novelty=0.5,
+                )
+            )
 
         # 2. 身体风险 → 警报候选
         if body_delta:
             try:
                 merged = state.body.model_copy(update=body_delta)
                 from packages.contracts.state import ViabilityBounds
+
                 bounds = ViabilityBounds()
                 issues = bounds.check(merged)
                 if issues:
                     for issue in issues:
-                        candidates.append(ContentCandidate(
-                            content_type="risk_alert",
-                            summary=f"Viability risk: {issue}",
-                            source_module="content_engine",
-                            viability_risk=0.9,
-                            salience=0.7,
-                            novelty=0.6,
-                        ))
+                        candidates.append(
+                            ContentCandidate(
+                                content_type="risk_alert",
+                                summary=f"Viability risk: {issue}",
+                                source_module="content_engine",
+                                viability_risk=0.9,
+                                salience=0.7,
+                                novelty=0.6,
+                            )
+                        )
             except Exception:
                 pass  # body delta merge failure is non-critical
 
         # 3. 世界模型变化 → 反思候选
         if world_delta and world_delta.get("focus_changed"):
-            candidates.append(ContentCandidate(
-                content_type="reflection",
-                summary=f"World focus changed: {world_delta.get('focus', '')}",
-                source_module="content_engine",
-                novelty=0.7,
-                goal_relevance=0.5,
-            ))
+            candidates.append(
+                ContentCandidate(
+                    content_type="reflection",
+                    summary=f"World focus changed: {world_delta.get('focus', '')}",
+                    source_module="content_engine",
+                    novelty=0.7,
+                    goal_relevance=0.5,
+                )
+            )
 
         # 4. 如果无事可做，生成默认内容
         if not candidates:
-            candidates.append(ContentCandidate(
-                content_type="idle",
-                summary="System idle — no action required",
-                source_module="content_engine",
-                salience=0.1,
-            ))
+            candidates.append(
+                ContentCandidate(
+                    content_type="idle",
+                    summary="System idle — no action required",
+                    source_module="content_engine",
+                    salience=0.1,
+                )
+            )
 
         return candidates
 
@@ -145,6 +159,7 @@ class ContentEngine:
 # ═══════════════════════════════════════════════════════════════
 # Attention — 可解释的注意力竞争
 # ═══════════════════════════════════════════════════════════════
+
 
 class Attention:
     """可解释的注意力选择机制。
@@ -199,6 +214,7 @@ class Attention:
 # ═══════════════════════════════════════════════════════════════
 # Workspace — 全局工作空间
 # ═══════════════════════════════════════════════════════════════
+
 
 class Workspace:
     """全局工作空间 — 广播门控。
@@ -258,6 +274,7 @@ class Workspace:
 # Metacognition — 元认知评估
 # ═══════════════════════════════════════════════════════════════
 
+
 class Metacognition:
     """元认知 — 评估自身认知过程的置信度、不确定性和反思。
 
@@ -305,8 +322,7 @@ class Metacognition:
 
         # 是否需要反思
         should_reflect = (
-            len(broadcast) == 0
-            and state.tick % 100 == 0  # 每100个tick反思一次
+            len(broadcast) == 0 and state.tick % 100 == 0  # 每100个tick反思一次
         )
 
         return {
@@ -321,6 +337,7 @@ class Metacognition:
 # ═══════════════════════════════════════════════════════════════
 # DecisionEngine — 决策引擎
 # ═══════════════════════════════════════════════════════════════
+
 
 class DecisionEngine:
     """决策引擎 — 从元认知评估和广播内容中做出决策。"""
@@ -376,7 +393,9 @@ class DecisionEngine:
         return {
             "requires_action": requires_action,
             "intent": intent,
-            "reasoning": "; ".join(reasoning_parts) if reasoning_parts else "no action needed",
+            "reasoning": "; ".join(reasoning_parts)
+            if reasoning_parts
+            else "no action needed",
             "suggested_mode": suggested_mode,
         }
 
@@ -384,6 +403,7 @@ class DecisionEngine:
 # ═══════════════════════════════════════════════════════════════
 # PipelineCognitionLoop — 分阶段认知循环
 # ═══════════════════════════════════════════════════════════════
+
 
 class PipelineCognitionLoop:
     """MVSC 统一认知循环实现。
@@ -426,8 +446,16 @@ class PipelineCognitionLoop:
         verifier: Any = None,
         memory: Any = None,
         feature_flags: dict[str, bool] | None = None,
+        action_dispatcher: Any = None,
     ) -> None:
         self.state_repo = state_repo
+        self.action_dispatcher = action_dispatcher
+        if action_dispatcher is not None and (
+            state_repo is None
+            or action_dispatcher.repository is not state_repo
+            or not callable(getattr(state_repo, "commit_with_actions", None))
+        ):
+            raise ValueError("durable dispatcher requires its atomic state repository")
         self.event_bus = event_bus
         self.world_model = world_model
         self.body_model = body_model
@@ -467,6 +495,25 @@ class PipelineCognitionLoop:
 
         # 加载当前状态（复用已有状态以保持 tick/version 连续性）
         state = await self._load_state(event.subject_id)
+        durable_prepared = False
+        if self.action_dispatcher is not None:
+            existing = await asyncio.to_thread(
+                self.state_repo.action_for_source,
+                event.subject_id,
+                event.event_id,
+                "cognition_act",
+            )
+            if existing is not None:
+                recorded_event = await asyncio.to_thread(
+                    self.state_repo.source_event_for_action, existing[0].action_id
+                )
+                if recorded_event.model_dump() != event.model_dump():
+                    raise ValueError(
+                        "source event identity reused with different content"
+                    )
+                # Do not recompute or silently resume an already committed intent.
+                # Pending recovery is explicit; claimed outcomes never replay.
+                return state
         state.cognition_phase = CognitionPhase.PERCEIVE
         emitted_events: list[EventEnvelope] = []
 
@@ -496,7 +543,10 @@ class PipelineCognitionLoop:
         candidates: list[ContentCandidate] = []
         if self.feature_flags.get("recurrent_content", True):
             candidates = await self.content_engine.generate(
-                state, event, world_delta, body_delta,
+                state,
+                event,
+                world_delta,
+                body_delta,
             )
         state.cognition_phase = CognitionPhase.GENERATE_CONTENT
         state.active_contents = candidates
@@ -530,7 +580,9 @@ class PipelineCognitionLoop:
         evaluation = {}
         if self.feature_flags.get("metacognition", True):
             evaluation = await self.metacognition.evaluate(
-                state, broadcast, self_delta,
+                state,
+                broadcast,
+                self_delta,
             )
         state.cognition_phase = CognitionPhase.EVALUATE
         self._record_phase("evaluate", t0)
@@ -553,7 +605,43 @@ class PipelineCognitionLoop:
         # ── Phase 11: ACT ──
         t0 = time.perf_counter()
         if decision["requires_action"] and self.agent_os:
-            action_events = await self._execute_action(state, decision, plan)
+            if self.action_dispatcher is not None:
+                prepared = state.apply(
+                    world_delta=world_delta,
+                    body_delta=body_delta,
+                    self_delta=self_delta,
+                    broadcast=broadcast,
+                    evaluation=evaluation,
+                )
+                intent = ActionIntent(
+                    source_event_id=event.event_id,
+                    slot="cognition_act",
+                    tool_id="cognition:act",
+                    parameters={
+                        "decision": decision,
+                        "plan": plan.model_dump(mode="json")
+                        if plan is not None
+                        else None,
+                    },
+                )
+                await self.state_repo.commit_with_actions(
+                    state.version, prepared, [event], [intent]
+                )
+                durable_prepared = True
+                state = prepared
+                self._current_state = prepared.model_copy(deep=True)
+                action_result = await self.dispatch_pending_action(intent.action_id)
+                action_events = action_result.get("events", [])
+                state.health["last_action_dispatch"] = {
+                    "action_id": intent.action_id,
+                    "handler_ok": action_result.get("ok"),
+                    "execution_state": action_result.get(
+                        "execution_state", "handler_observed"
+                    ),
+                    "error": action_result.get("error"),
+                }
+            else:
+                action_events = await self._execute_action(state, decision, plan)
             emitted_events.extend(action_events)
         state.cognition_phase = CognitionPhase.ACT
         self._record_phase("act", t0)
@@ -561,7 +649,9 @@ class PipelineCognitionLoop:
         # ── Phase 12: VERIFY ──
         t0 = time.perf_counter()
         if self.verifier and emitted_events:
-            verification_events = await self._verify_actions(state, decision, emitted_events)
+            verification_events = await self._verify_actions(
+                state, decision, emitted_events
+            )
             emitted_events.extend(verification_events)
         state.cognition_phase = CognitionPhase.VERIFY
         self._record_phase("verify", t0)
@@ -571,21 +661,36 @@ class PipelineCognitionLoop:
         memory_events: list[EventEnvelope] = []
         if self.memory and self.feature_flags.get("episodic_memory", True):
             memory_events = await self._consolidate_memory(
-                state, event, broadcast, evaluation, emitted_events,
+                state,
+                event,
+                broadcast,
+                evaluation,
+                emitted_events,
             )
         state.cognition_phase = CognitionPhase.CONSOLIDATE
         self._record_phase("consolidate", t0)
 
         # ── 应用增量更新 ──
-        new_state = state.apply(
-            world_delta=world_delta,
-            body_delta=body_delta,
-            self_delta=self_delta,
-            broadcast=broadcast,
-            evaluation=evaluation,
-            action_events=emitted_events,
-            memory_events=memory_events,
-        )
+        if durable_prepared:
+            # Intent revision advanced this cognitive tick already. Feedback is
+            # another revision, without double-counting tick or applying deltas twice.
+            new_state = StateDelta(
+                base_version=state.version,
+                source="pipeline.feedback",
+                changes=state.model_dump(
+                    exclude={"subject_id", "version", "tick", "integrity_hash"}
+                ),
+            ).apply(state)
+        else:
+            new_state = state.apply(
+                world_delta=world_delta,
+                body_delta=body_delta,
+                self_delta=self_delta,
+                broadcast=broadcast,
+                evaluation=evaluation,
+                action_events=emitted_events,
+                memory_events=memory_events,
+            )
 
         # ── 持久化 ──
         if self.state_repo:
@@ -608,16 +713,81 @@ class PipelineCognitionLoop:
 
         return new_state
 
+    async def dispatch_pending_action(self, action_id: str):
+        """Explicitly resume a committed, never-claimed pipeline action.
+
+        This invokes the existing execution hook and its current policy checks.
+        It does not resume the rest of a crashed tick or certify business success.
+        """
+        if self.action_dispatcher is None:
+            raise RuntimeError("durable action dispatcher is not configured")
+
+        async def handler(intent, state):
+            if intent.tool_id != "cognition:act" or set(intent.parameters) != {
+                "decision",
+                "plan",
+            }:
+                raise ValueError("unsupported pipeline action intent")
+            decision = intent.parameters["decision"]
+            if (
+                not isinstance(decision, dict)
+                or decision.get("requires_action") is not True
+            ):
+                raise ValueError("invalid committed pipeline decision")
+            plan = (
+                Plan.model_validate(intent.parameters["plan"])
+                if intent.parameters["plan"] is not None
+                else None
+            )
+            events = await self._execute_action(state, decision, plan)
+            if not isinstance(events, list) or len(events) > 64:
+                raise ValueError("invalid action handler events")
+            # These events are produced by the local hook; bind their subjects to
+            # the committed execution scope before persistence, preserving IDs.
+            events = [
+                EventEnvelope.model_validate(
+                    {
+                        **e.model_dump(),
+                        "subject_id": state.subject_id,
+                        "causation_id": intent.source_event_id,
+                    }
+                )
+                for e in events
+            ]
+            completions = [
+                e.payload.get("ok")
+                for e in events
+                if e.event_type
+                in {
+                    EventFamily.ACTION.AGENT_COMPLETED,
+                    EventFamily.ACTION.TOOL_COMPLETED,
+                }
+            ]
+            failed = any(e.event_type == EventFamily.ACTION.TOOL_FAILED for e in events)
+            observed_ok = (
+                False
+                if failed or any(v is False for v in completions)
+                else True
+                if completions and all(v is True for v in completions)
+                else None
+            )
+            return {"ok": observed_ok, "events": events}
+
+        return await self.action_dispatcher.dispatch(action_id, handler)
+
     # ── 阶段实现（可被子类重写以适配现有组件）──
 
     async def _load_state(self, subject_id: str) -> ConsciousState:
         """加载或复用 ConsciousState，保持 tick/version 连续性。"""
-        if self._current_state is not None:
-            return self._current_state
         if self.state_repo:
             state = await self.state_repo.load(subject_id)
             self._current_state = state
             return state
+        if (
+            self._current_state is not None
+            and self._current_state.subject_id == subject_id
+        ):
+            return self._current_state.model_copy(deep=True)
         state = ConsciousState(subject_id=subject_id)
         self._current_state = state
         return state
@@ -631,7 +801,9 @@ class PipelineCognitionLoop:
         return {}
 
     async def _attribute_self(
-        self, state: ConsciousState, event: EventEnvelope,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
         broadcast: list[BroadcastContent],
     ) -> dict:
         """自我归属。子类可重写以使用现有 SelfModelStore。"""
@@ -642,21 +814,29 @@ class PipelineCognitionLoop:
         return None
 
     async def _execute_action(
-        self, state: ConsciousState, decision: dict, plan: Any,
+        self,
+        state: ConsciousState,
+        decision: dict,
+        plan: Any,
     ) -> list[EventEnvelope]:
         """执行行动。子类可重写以使用现有 AgentOS。"""
         return []
 
     async def _verify_actions(
-        self, state: ConsciousState, decision: dict,
+        self,
+        state: ConsciousState,
+        decision: dict,
         action_events: list[EventEnvelope],
     ) -> list[EventEnvelope]:
         """验证行动结果。子类可重写。"""
         return []
 
     async def _consolidate_memory(
-        self, state: ConsciousState, event: EventEnvelope,
-        broadcast: list[BroadcastContent], evaluation: dict,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
+        broadcast: list[BroadcastContent],
+        evaluation: dict,
         action_events: list[EventEnvelope],
     ) -> list[EventEnvelope]:
         """记忆整合。子类可重写以使用现有 TieredMemoryManager。"""
@@ -665,17 +845,22 @@ class PipelineCognitionLoop:
     def _record_phase(self, phase: str, t0: float) -> None:
         self._phase_timings[phase] = (time.perf_counter() - t0) * 1000
 
-    async def _notify_phase(self, state: ConsciousState, phase: str, detail: dict) -> None:
+    async def _notify_phase(
+        self, state: ConsciousState, phase: str, detail: dict
+    ) -> None:
         """Broadcast pipeline phase transition via WebSocket."""
         if self._ws_manager:
             try:
-                self._ws_manager.broadcast_sync("mvsc_phase", {
-                    "tick": state.tick,
-                    "phase": phase,
-                    "mode": state.runtime_mode.value,
-                    "detail": detail,
-                    "timing_ms": self._phase_timings.get(phase, 0),
-                })
+                self._ws_manager.broadcast_sync(
+                    "mvsc_phase",
+                    {
+                        "tick": state.tick,
+                        "phase": phase,
+                        "mode": state.runtime_mode.value,
+                        "detail": detail,
+                        "timing_ms": self._phase_timings.get(phase, 0),
+                    },
+                )
             except Exception:
                 pass
 

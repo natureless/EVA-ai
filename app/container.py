@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from agent_os.router import AgentRouter
     from app.config import Settings
     from core.cognition_loop import CognitionLoop
+    from core.event_processor import EventProcessor
     from core.context_builder import ContextBuilder
     from core.executor import ExecutorAuditLog
     from core.planner import Planner
@@ -30,6 +31,7 @@ if TYPE_CHECKING:
     from runtime.agent_worker import AgentWorkerBackend
     from runtime.diagnostics import DiagnosticReport, RecoveryActions
     from runtime.health import HealthService
+    from runtime.controller import RuntimeController
     from runtime.result_registry import ResultRegistry
     from runtime.scheduler import RuntimeScheduler
     from runtime.websocket import WebSocketManager
@@ -85,6 +87,9 @@ class RuntimeSubsystem:
     scheduler: RuntimeScheduler
     policy: PolicyEngine
     worker_backend: AgentWorkerBackend
+    processor: EventProcessor | None = None
+    controller: RuntimeController | None = None
+    request_recovery: Any = None
     executors: dict[str, Any] = field(default_factory=dict)
     executor_audit_log: ExecutorAuditLog | None = None
     websocket: WebSocketManager | None = None
@@ -98,6 +103,10 @@ class RuntimeSubsystem:
 class IntegrationSubsystem:
     github_poller: Any = None
     mvsc: dict[str, Any] | None = None
+    minimal_brain: Any = None
+    business_goals: Any = None
+    processing_episodes: Any = None
+    durable_requests: Any = None
 
 
 @dataclass

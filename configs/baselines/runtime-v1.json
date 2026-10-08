@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "name": "offline-http-runtime-v1",
+  "seed": 1729,
+  "concurrency": 4,
+  "poll_initial_sec": 0.1,
+  "poll_max_sec": 0.5,
+  "warmup": ["Hello EVA", "Good morning"],
+  "messages": [
+    "Hello EVA", "Good morning", "Thank you", "Hi there",
+    "Good evening", "How are you", "Hello again", "Have a nice day",
+    "Nice to meet you", "Good afternoon", "Thanks EVA", "Goodbye"
+  ],
+  "settings": {
+    "env": "dev", "log_level": "ERROR", "storage_backend": "sqlite",
+    "embedding_provider": "none", "enable_code_tool": false,
+    "enable_network_tools": false, "github_api_token": "", "github_poll_repos": "",
+    "cognition_worker_count": 1, "agent_worker_backend": "thread", "agent_worker_count": 1,
+    "agent_worker_queue_capacity": 16, "agent_worker_queue_timeout_sec": 5.0,
+    "agent_worker_max_tasks": 100, "agent_execution_timeout_sec": 30.0,
+    "tick_interval_sec": 0.5, "queue_poll_timeout_sec": 0.02,
+    "scheduler_tick_interval_sec": 86400, "scheduler_maintenance_interval_sec": 86400,
+    "scheduler_snapshot_interval_sec": 86400, "stagnation_threshold_sec": 86400,
+    "reminder_cooldown_sec": 86400, "request_timeout_sec": 10.0,
+    "result_pending_timeout_sec": 30.0, "result_ttl_sec": 60.0,
+    "result_registry_capacity": 20000, "minimal_brain_queue_capacity": 64,
+    "minimal_brain_poll_sec": 0.02, "mvsc_subject_id": "eva-baseline"
+  }
+}

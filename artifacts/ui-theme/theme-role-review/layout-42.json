@@ -1,0 +1,914 @@
+[
+  {
+    "path": "/memory",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 277,
+        "pass": true,
+        "scroll": 277
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 277,
+        "pass": true,
+        "scroll": 277
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 874,
+        "pass": true,
+        "scroll": 874
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/memory",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 277,
+        "pass": true,
+        "scroll": 277
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 515,
+        "pass": true,
+        "scroll": 515
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/memory",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "graph-main",
+        "client": 874,
+        "pass": true,
+        "scroll": 874
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/chat",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 245,
+        "pass": true,
+        "scroll": 245
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/chat",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 693,
+        "pass": true,
+        "scroll": 693
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 753,
+    "width": 768
+  },
+  {
+    "path": "/chat",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 1356,
+        "pass": true,
+        "scroll": 1356
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/chat",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 245,
+        "pass": true,
+        "scroll": 245
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/chat",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 693,
+        "pass": true,
+        "scroll": 693
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 753,
+    "width": 768
+  },
+  {
+    "path": "/chat",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "conversation-layout",
+        "client": 1356,
+        "pass": true,
+        "scroll": 1356
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/settings",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/settings",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 588,
+        "pass": true,
+        "scroll": 588
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/settings",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 1222,
+        "pass": true,
+        "scroll": 1222
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/settings",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/settings",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 588,
+        "pass": true,
+        "scroll": 588
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/settings",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "studio-content",
+        "client": 588,
+        "pass": true,
+        "scroll": 588
+      },
+      {
+        "class": "grid",
+        "client": 0,
+        "pass": true,
+        "scroll": 0
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/memory/list",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory/list",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 768,
+        "pass": true,
+        "scroll": 768
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/memory/list",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 900,
+        "pass": true,
+        "scroll": 900
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/memory/list",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory/list",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/memory/list",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "mem-explorer",
+        "client": 768,
+        "pass": true,
+        "scroll": 768
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/dashboard",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      },
+      {
+        "class": "grid",
+        "client": 273,
+        "pass": true,
+        "scroll": 273
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/dashboard",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 768,
+        "pass": true,
+        "scroll": 768
+      },
+      {
+        "class": "grid",
+        "client": 736,
+        "pass": true,
+        "scroll": 736
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/dashboard",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 1440,
+        "pass": true,
+        "scroll": 1440
+      },
+      {
+        "class": "grid",
+        "client": 1408,
+        "pass": true,
+        "scroll": 1408
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/dashboard",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      },
+      {
+        "class": "grid",
+        "client": 273,
+        "pass": true,
+        "scroll": 273
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/dashboard",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 305,
+        "pass": true,
+        "scroll": 305
+      },
+      {
+        "class": "grid",
+        "client": 273,
+        "pass": true,
+        "scroll": 273
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/dashboard",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "page",
+        "client": 1440,
+        "pass": true,
+        "scroll": 1440
+      },
+      {
+        "class": "grid",
+        "client": 1408,
+        "pass": true,
+        "scroll": 1408
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/mvsc",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 288,
+        "pass": true,
+        "scroll": 288
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/mvsc",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 720,
+        "pass": true,
+        "scroll": 720
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 768,
+    "width": 768
+  },
+  {
+    "path": "/mvsc",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 1392,
+        "pass": true,
+        "scroll": 1392
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/mvsc",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 288,
+        "pass": true,
+        "scroll": 288
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/mvsc",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 288,
+        "pass": true,
+        "scroll": 288
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 320,
+    "width": 320
+  },
+  {
+    "path": "/mvsc",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "grid",
+        "client": 1392,
+        "pass": true,
+        "scroll": 1392
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1440,
+    "width": 1440
+  },
+  {
+    "path": "/unavailable",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 255,
+        "pass": true,
+        "scroll": 255
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/unavailable",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 255,
+        "pass": true,
+        "scroll": 255
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/unavailable",
+    "theme": "light",
+    "body": {
+      "background": "rgb(248, 248, 246)",
+      "color": "rgb(37, 37, 40)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 1359,
+        "pass": true,
+        "scroll": 1359
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 1425,
+    "width": 1440
+  },
+  {
+    "path": "/unavailable",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 255,
+        "pass": true,
+        "scroll": 255
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  },
+  {
+    "path": "/unavailable",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 687,
+        "pass": true,
+        "scroll": 687
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 753,
+    "width": 768
+  },
+  {
+    "path": "/unavailable",
+    "theme": "dark",
+    "body": {
+      "background": "rgb(27, 27, 29)",
+      "color": "rgb(237, 237, 235)",
+      "font": "Inter, \"Segoe UI\", \"PingFang SC\", \"Microsoft YaHei\", sans-serif"
+    },
+    "containers": [
+      {
+        "class": "appearance-settings",
+        "client": 255,
+        "pass": true,
+        "scroll": 255
+      }
+    ],
+    "pass": true,
+    "scrollWidth": 305,
+    "width": 320
+  }
+]

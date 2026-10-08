@@ -1,0 +1,7 @@
+{
+  "baseline": "artifacts/ui-release/local-20261001-theme-roles/report.json",
+  "baselineSha256": "479a9b6c29d634073a2ac3432f2e95d95ede91bed16247c924bc7830789a3f20",
+  "sourceFiles": 67,
+  "mismatches": [],
+  "currentSourceMatches": true
+}

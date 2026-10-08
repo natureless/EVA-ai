@@ -1,0 +1,117 @@
+{
+  "date": "2026-10-08",
+  "feature": "Particle hierarchy readability and resumable local orbital playback",
+  "behavior": [
+    "Dedicated play/pause button remains visible near the space selector on mobile.",
+    "New node selection automatically pauses; explicit resume preserves selection, details and local center.",
+    "Recentring or selecting a filtered-out fallback restores reading pause.",
+    "Explicit playback keeps a moving selected satellite within the usable viewport.",
+    "Speed readout reflects the actual multiplier with two decimals.",
+    "Immersive fit reserves header and bottom controls, accounting for detail drawer only once.",
+    "Weighted particle allocation prioritizes star, planet and moon density within the existing 1600-body-particle budget.",
+    "Allocation is deterministic across depth-order changes.",
+    "Selected record labels keep first priority; global tier names precede unselected record labels and avoid toolbar rectangles."
+  ],
+  "verification": {
+    "javascript_passed": 450,
+    "new_regressions": 6,
+    "interaction_passed": 104,
+    "python_passed": 34,
+    "origin_checks_passed": 21,
+    "browser": {
+      "data": "75 synthetic nodes, 100 synthetic edges; no database writes",
+      "local": "9 nodes, 8 edges, center World relation 14; resume retained selected record and center",
+      "local_clock_samples": {
+        "count": 22,
+        "first": 223.103,
+        "last": 223.303,
+        "distinct": 7
+      },
+      "new_selection": "Brand rules 13 selected; center remained World relation 14",
+      "reading_pause_samples": {
+        "count": 14,
+        "unchanged": true
+      },
+      "responsive": [
+        "1280x720",
+        "390x844",
+        "320x568"
+      ],
+      "mobile_playback_button": {
+        "bounds": [
+          154,
+          106.67,
+          72,
+          32
+        ],
+        "visible_without_horizontal_scrolling": true
+      },
+      "small_settings": {
+        "bounds": [
+          87,
+          172,
+          225,
+          226
+        ],
+        "scrollable": true,
+        "top_hit_inside_panel": true,
+        "horizontal_overflow": false
+      },
+      "speed_control": "End key set slider to 200 and output to 2.00x",
+      "reduced_motion": {
+        "playback_disabled": true,
+        "clock_stable_across_12_reads": true,
+        "restored": true
+      },
+      "console_warnings_errors": 0
+    }
+  },
+  "versions": {
+    "memory_graph.css": 23,
+    "memory_galaxy.js": 3,
+    "memory_galaxy_renderer.js": 5,
+    "memory_graph.js": 29
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/memory-galaxy-orbit-controls-desktop-2026-10-08.jpg",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-orbit-controls-local-2026-10-08.jpg",
+      "size": [
+        1280,
+        720
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-orbit-controls-mobile-2026-10-08.jpg",
+      "size": [
+        390,
+        844
+      ]
+    },
+    {
+      "path": "artifacts/memory-galaxy-orbit-controls-small-settings-2026-10-08.jpg",
+      "size": [
+        320,
+        568
+      ]
+    }
+  ],
+  "cleanup": {
+    "preview_stopped": true,
+    "temporary_tab_closed": true,
+    "viewport_reset": true,
+    "media_emulation_restored": true,
+    "production_process": 17984,
+    "production_restarted": false
+  },
+  "limitations": [
+    "Public domain authenticated session and physical phone remain unverified.",
+    "Particle orbits are visual layout; no memory relationships or credibility ranking are inferred."
+  ]
+}

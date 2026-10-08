@@ -1,0 +1,174 @@
+{
+  "client_date": "2026-10-06",
+  "finished_at": "2026-10-06T13:22:45.630754+00:00",
+  "status": "implemented_verified_source_served_public_browser_pending",
+  "request": "将记忆星图升级为三维结构，主次展示参考太阳系等星系",
+  "implementation": {
+    "projection": "Deterministic XYZ coordinates, yaw/pitch rotation and perspective projection on Canvas; no third-party dependencies",
+    "global": "Tier systems; actual highest-visible-degree primary, with tier peers on tilted orbits",
+    "local": "Actual fixed center as star; one-hop neighbors as planets; farther nodes as moons around filtered BFS path parents",
+    "navigation": [
+      "drag to rotate",
+      "Shift drag or pan mode to translate",
+      "wheel, buttons or two-pointer zoom",
+      "two-pointer translation",
+      "keyboard rotation/pan and Home reset",
+      "2D fallback/switch"
+    ],
+    "preservation": "Selection, local center, filters and page refresh state retained; cameras scoped by view, center and dimension; new searches reset cached cameras",
+    "data_semantics": "Orbit guides, role sizes and geometry are display only; existing actual node/edge identities and provenance retained; no writes or inferred relations",
+    "bounded_rendering": {
+      "nodes": 600,
+      "edges": 3000,
+      "orbits": 30,
+      "node_labels": 35,
+      "fps_max": 30
+    },
+    "mobile": "Scrollable height-limited local controls; projection uses canvas area unobscured by inspector"
+  },
+  "verification": {
+    "javascript_passed": 414,
+    "python_passed": 58,
+    "origin_readonly_checks_passed": 13,
+    "syntax_and_ruff_passed": true,
+    "tests_report": "artifacts/memory-galaxy-3d-tests-2026-10-06.json",
+    "origin_report": "artifacts/memory-galaxy-3d-origin-2026-10-06.json",
+    "browser_report": "artifacts/memory-galaxy-3d-browser-2026-10-06.json",
+    "public_anonymous": "302 Cloudflare Access redirect; not authenticated browser acceptance"
+  },
+  "release": {
+    "status": "passed",
+    "verified_at": "2026-10-06T13:20:21.227832+00:00",
+    "origin": "http://127.0.0.1:8000",
+    "listener": {
+      "address": "127.0.0.1",
+      "port": 8000,
+      "pid": 17984,
+      "command": "python -m app.cloudflare_server",
+      "verified_by": "Get-NetTCPConnection and Get-CimInstance"
+    },
+    "html_versions": {
+      "memory_graph_js": "20",
+      "memory_graph_css": "13",
+      "memory_galaxy_js": "1",
+      "memory_galaxy_renderer_js": "1"
+    },
+    "script_order": [
+      "memory_galaxy.js",
+      "memory_galaxy_renderer.js",
+      "memory_graph.js"
+    ],
+    "script_order_valid": true,
+    "assets": {
+      "memory_graph.css": {
+        "version": "13",
+        "http_status": 200,
+        "sha256": "691560e7ea17fdb994f7d59d9c3b0551cdb88d5daf9600b3ff3cf16fe1eef841",
+        "response_matches_disk": true
+      },
+      "memory_galaxy.js": {
+        "version": "1",
+        "http_status": 200,
+        "sha256": "1cafe986698334f5cd61917be1265aa4aa753f9ca671da78efdb11dce8540a56",
+        "response_matches_disk": true
+      },
+      "memory_galaxy_renderer.js": {
+        "version": "1",
+        "http_status": 200,
+        "sha256": "9ed7215cb87859cb73f6c09dab6bcb54f1312eb9916602364b7243ca9d38c6df",
+        "response_matches_disk": true
+      },
+      "memory_graph.js": {
+        "version": "20",
+        "http_status": 200,
+        "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f",
+        "response_matches_disk": true
+      }
+    },
+    "authenticated_requests_fixed_loopback_only": true,
+    "requests_trust_env": false,
+    "service_restarted": false,
+    "chat_sent": false,
+    "limitations": [
+      "Public login and authenticated browser interaction not checked",
+      "Physical phone interaction not checked",
+      "Live dialogue and model responses not checked",
+      "Anonymous public 302 verifies Access redirect only"
+    ]
+  },
+  "cleanup": {
+    "synthetic_preview_pid": 25476,
+    "port": 8779,
+    "verified_command_before_stop": "scripts/preview_cube_chat.py --port 8779",
+    "preview_stopped": true,
+    "temporary_browser_tab_closed": true,
+    "viewport_reset": true,
+    "original_light_theme_restored": true,
+    "production_pid_after_cleanup": 17984,
+    "production_restarted": false
+  },
+  "screenshots": [
+    "memory-galaxy-3d-preview-2026-10-06.jpg",
+    "memory-galaxy-3d-local-2026-10-06.jpg",
+    "memory-galaxy-3d-local-dark-2026-10-06.jpg",
+    "memory-galaxy-3d-mobile-2026-10-06.jpg",
+    "memory-galaxy-3d-mobile-expanded-2026-10-06.jpg",
+    "memory-galaxy-3d-small-expanded-2026-10-06.jpg"
+  ],
+  "limitations": [
+    "Authenticated public Cloudflare Access browser",
+    "Physical mobile device / native multitouch",
+    "Live model responses or SSE"
+  ],
+  "changed_files": [
+    {
+      "path": "ui/web/static/memory_graph.js",
+      "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f"
+    },
+    {
+      "path": "ui/web/static/memory_graph.css",
+      "sha256": "691560e7ea17fdb994f7d59d9c3b0551cdb88d5daf9600b3ff3cf16fe1eef841"
+    },
+    {
+      "path": "ui/web/templates/memory_graph.html",
+      "sha256": "a726f910275ab68fab2851fdadb5de1fa3ae7762742b86250320722628da6482"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy.js",
+      "sha256": "1cafe986698334f5cd61917be1265aa4aa753f9ca671da78efdb11dce8540a56"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy_renderer.js",
+      "sha256": "9ed7215cb87859cb73f6c09dab6bcb54f1312eb9916602364b7243ca9d38c6df"
+    },
+    {
+      "path": "tests/js/test_memory_graph_interactions.cjs",
+      "sha256": "4e958ac90520cc69debc0898c8da854167a82946675b6ff938bf0f63748f755d"
+    },
+    {
+      "path": "tests/js/test_memory_galaxy.cjs",
+      "sha256": "d20283cd28399e41f3c646873c2cf82ab5ddeb40c993ef0c6d112938b00dbaf5"
+    },
+    {
+      "path": "tests/js/test_memory_galaxy_renderer.cjs",
+      "sha256": "24b77c92244785e8da0821c9e3d01902068aa290a34427997f3db474cf7effd3"
+    },
+    {
+      "path": "docs/obsidian-memory-graph.md",
+      "sha256": "292612626c82a4565c691f8c05d499ad4bbe8bf45c2d660c668d6ecb9164f01a"
+    },
+    {
+      "path": "docs/p0-acceptance.md",
+      "sha256": "990cf4c08cd2c78ea6656efcf5511ae815104f5f85971ce0b71720abfa16752f"
+    }
+  ],
+  "private_backup": {
+    "path": "D:\\EVA-ai\\.cloudflare\\backups\\memory-galaxy-20261006-210013",
+    "before_hashes": {
+      "memory_graph.css": "3c7ddb969714f8d256337131ff9c11b3d67dc201bb36142b8856c8232b0bf7e2",
+      "memory_graph.html": "ef9ea535f3a30788e5d27fc2300293436682c65ad59c4521deb6477321dfea7c",
+      "memory_graph.js": "0969f632653e231c21ea026c20b997d13861355073315989d99c03a07e805f01",
+      "test_memory_graph_interactions.cjs": "3f3c62ba04a87c0db0dba586fe49b6ae62e9d93c3ec9ca44775d01f3f4528daa"
+    }
+  }
+}

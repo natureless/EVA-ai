@@ -8,6 +8,7 @@ from typing import Any
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
+from core.chat_mode import configure_chat_llm
 
 
 logger = logging.getLogger(__name__)
@@ -52,12 +53,12 @@ class CodingAgent(BaseAgent):
 
             # ── LLM summary ────────────────────────────────
             context = task.payload.get("context")
-            llm = get_llm()
+            llm = configure_chat_llm(get_llm(), task.payload.get("mode", "normal"))
             content = self._llm_summarize(llm, analysis, meta, context)
 
             return AgentResult(ok=True, agent=self.name,
                 content=content, summary=content[:120],
-                meta={**meta, "llm_provider": llm.provider})
+                meta={**meta, "llm_provider": llm.provider, "mode_info": llm.mode_info})
 
         except Exception as e:
             logger.exception("coding_agent error: %s", e)
@@ -66,7 +67,7 @@ class CodingAgent(BaseAgent):
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
     def _llm_summarize(self, llm: Any, analysis: Any, meta: Any, context: Any = None) -> str:
-        if isinstance(llm, MockLLM):
+        if isinstance(getattr(llm, "inner", llm), MockLLM):
             path_hint = f" {meta.get('path', '')}" if meta.get("path") else ""
             return f"[coding_agent]{path_hint}\n{analysis}"
 

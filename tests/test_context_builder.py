@@ -37,9 +37,10 @@ class TestContextBuilder:
         assert "dark mode" in result["context_summary"]
 
     def test_build_with_active_tasks(self):
-        wm = MagicMock()
-        wm.active_tasks = [{"name": "Fix login bug"}, {"name": "Deploy v2"}]
-        wm.recent_entities = ["task_1", "user_alice"]
+        from world.world_model import WorldModelGraph
+        wm = WorldModelGraph()
+        wm.upsert_entity("task", "Fix login bug")
+        wm.upsert_entity("task", "Deploy v2")
         builder = ContextBuilder(world_model=wm)
         result = builder.build(user_id="user1", text="status")
         assert len(result["active_tasks"]) == 2

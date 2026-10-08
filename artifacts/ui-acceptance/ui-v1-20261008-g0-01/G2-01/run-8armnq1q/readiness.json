@@ -1,0 +1,76 @@
+{
+  "taskId": "G2-01",
+  "candidateId": "ui-v1-20261008-g0-01",
+  "startedAt": "2026-10-08T15:09:41.196415+00:00",
+  "finishedAt": "2026-10-08T15:09:43.790885+00:00",
+  "status": "failed",
+  "environmentPath": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g0-01\\G2-01\\run-8armnq1q\\environment.json",
+  "checks": [
+    {
+      "name": "auth_missing",
+      "passed": true,
+      "actual": {
+        "status": 401
+      }
+    },
+    {
+      "name": "actual_runtime_ready",
+      "passed": true,
+      "actual": {
+        "status": "ready",
+        "components": {
+          "db": true,
+          "event_bus": true,
+          "event_persistence": true,
+          "planner": true,
+          "registry": true,
+          "result_registry": true,
+          "snapshot": true,
+          "profile": true,
+          "persona": true,
+          "self_model": true,
+          "scheduler": true,
+          "proactive": true,
+          "cognition_loop": true,
+          "llm": false
+        },
+        "runtime": {
+          "scheduler_running": true,
+          "last_snapshot_at": null,
+          "last_proactive_reason": null,
+          "pending_events": 0,
+          "bootstrap_sec": 0.05
+        },
+        "mvsc": {
+          "requested": false,
+          "status": "disabled",
+          "attached": false,
+          "is_http_consumer": false
+        }
+      }
+    },
+    {
+      "name": "sandbox_identity",
+      "passed": false,
+      "actual": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "query",
+              "request"
+            ],
+            "msg": "Field required",
+            "input": null
+          }
+        ]
+      }
+    }
+  ],
+  "blockedAuditEvents": [],
+  "failure": {
+    "type": "AssertionError",
+    "message": "sandbox_identity"
+  },
+  "scope": "actual API/bootstrap readiness in TestClient; not end-to-end browser or full G2-02 acceptance"
+}

@@ -1,0 +1,64 @@
+{
+  "client_date": "2026-10-08",
+  "status": "implemented_and_origin_verified_public_browser_pending",
+  "changes": [
+    "Optional smooth three-dimensional camera navigation for system location, node focus, camera presets, reset, viewport fitting and path fitting",
+    "420 ms eased camera transition; orientation uses the shorter turn and lands at the exact destination",
+    "Camera transitions run independently of decorative particle animation",
+    "A new destination replaces the current transition from the current visible pose",
+    "Manual pointer, zoom and keyboard input immediately take control; scope, size, refresh, hidden-page and modal changes cancel old movement",
+    "Reduced motion disables smooth cameras and settles ongoing transitions at their destination; disabling the control also settles the destination",
+    "Immersive display settings sit below the top toolbar and scroll within the remaining mobile space; choosing a preset closes the panel"
+  ],
+  "scope": "Only the observation camera changes. Node positions, relationships, local centers and selected paths remain data-driven; this does not query or write memories.",
+  "validation": {
+    "javascript": {"passed": 438, "failed": 0, "new_regressions": 6, "interaction_suite": 97, "command": "node --test tests/js/*.cjs"},
+    "python_targeted": {"passed": 34, "failed": 0, "paths": ["tests/test_memory_graph.py", "tests/test_ui_release.py"]},
+    "origin": {"passed": 15, "total": 15, "report": "artifacts/memory-galaxy-flight-assets-2026-10-08.json"},
+    "asset_versions": {"css": 21, "layout": 2, "renderer": 3, "main": 27}
+  },
+  "browser": {
+    "target": "http://127.0.0.1:8779/memory",
+    "data": "synthetic preview fixture, not production memories",
+    "fixture": {"nodes": 75, "edges": 100, "systems": 5},
+    "viewports": [{"width": 1280, "height": 720}, {"width": 390, "height": 844}, {"width": 320, "height": 568}],
+    "overview_transition_with_particles_disabled_distinct_zoom_samples": ["150%", "148%", "143%", "135%", "125%", "113%", "100%", "88%", "75%", "64%", "55%", "48%", "44%", "43%"],
+    "manual_zoom_interruption": {"sample_count": 20, "all_samples": "63%"},
+    "reduced_motion_emulation": {"smooth_checked": false, "smooth_disabled": true, "settled_zoom": "150%", "emulation_reset": true, "control_enabled_after_reset": true},
+    "preset_change": {"preset": "top", "angle": "方位 0° · 仰角 0°", "settings_closed": true},
+    "small_phone_focus": {
+      "selected": "品牌规则 · 13",
+      "center": "品牌规则 · 13",
+      "scope": "局部关系 · 4 节点",
+      "visible_zoom_samples": ["116%", "122%", "128%", "134%", "140%", "144%", "148%", "150%"],
+      "inspector": {"top": 205, "bottom": 398, "height": 193}
+    },
+    "settings_bounds": {
+      "desktop": {"top": 180, "bottom": 526.3333435058594, "height": 346.3333435058594},
+      "mobile": {"top": 172, "bottom": 518.3333435058594, "height": 346.3333435058594},
+      "small_phone": {"top": 172, "bottom": 398, "height": 226}
+    },
+    "horizontal_overflow": false,
+    "console_warnings_and_errors": [],
+    "screenshots": [
+      "artifacts/memory-galaxy-flight-desktop-2026-10-08.jpg",
+      "artifacts/memory-galaxy-flight-mobile-settings-2026-10-08.jpg",
+      "artifacts/memory-galaxy-flight-small-settings-2026-10-08.jpg",
+      "artifacts/memory-galaxy-flight-small-focus-2026-10-08.jpg"
+    ],
+    "temporary_tab_closed": true,
+    "viewport_reset": true,
+    "public_authenticated_browser_verified": false,
+    "physical_phone_verified": false
+  },
+  "runtime": {
+    "production_port": 8000,
+    "production_pid": 17984,
+    "production_restarted": false,
+    "preview_port": 8779,
+    "preview_pid": 40904,
+    "preview_stopped_and_port_closed": true,
+    "memory_writes": false,
+    "model_requests": false
+  }
+}

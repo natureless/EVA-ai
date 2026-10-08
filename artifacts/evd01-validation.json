@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "work_item": "EVD-01",
+  "command": "python -m pytest -q --tb=short -W error::pytest.PytestUnhandledThreadExceptionWarning",
+  "exit_code": 0,
+  "elapsed_seconds": 116.87,
+  "summary": "1206 passed in 113.79s (0:01:53)",
+  "before_sha256": {
+    "data/eva.db": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+    "data/snapshots/latest.json": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+  },
+  "after_sha256": {
+    "data/eva.db": "7e24e04e6fd4fbf537fe6f904da2cb481b510bc18aee90109cddff5700d8bedc",
+    "data/snapshots/latest.json": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac",
+    "data/profile.json": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08",
+    "data/self_model.json": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+  },
+  "protected_default_data_unchanged": true,
+  "earlier_run": "artifacts/evd01-validation-first.json",
+  "test_adjustment": "Wait for EVENT_JOB_SUBMITTED before shutting down the fixture one-shot registration while its snapshot callback remains blocked. No production scheduler behavior changed.",
+  "additional_checks": {
+    "ruff_changed_python_files": "passed",
+    "node_check_memory_explorer": "passed",
+    "document_relative_links": "passed",
+    "browser_visual_validation": "not_performed",
+    "real_llm_quality_evaluation": "not_performed"
+  }
+}

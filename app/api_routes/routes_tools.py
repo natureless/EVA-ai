@@ -22,6 +22,7 @@ def list_tools(request: Request) -> dict[str, object]:
             "name": tool.name,
             "description": tool.description,
             "parameters": tool.parameters,
+            "requires_user_authorization": tool.requires_user_authorization,
         })
 
     return {"tools": tools, "count": len(tools)}
@@ -47,7 +48,9 @@ def call_tool(request: Request, payload: dict[str, object]) -> dict[str, object]
     if not isinstance(tool_args, dict):
         return {"ok": False, "error": "args must be a dict"}
 
-    result = execute_tool(tool_name, tool_args, tool_registry)
+    # The authenticated caller explicitly selected this exact operation.
+    # Model-generated calls never reach this authorization path.
+    result = execute_tool(tool_name, tool_args, tool_registry, authorized=True)
     formatted = format_tool_result(tool_name, result)
 
     return {

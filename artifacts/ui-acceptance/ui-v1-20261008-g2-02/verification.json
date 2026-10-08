@@ -1,0 +1,22 @@
+{
+  "candidateId": "ui-v1-20261008-g2-02",
+  "finishedAt": "2026-10-08T15:58:32.425272+00:00",
+  "sourceStable": true,
+  "previousSealedG0Unchanged": true,
+  "results": {
+    "javascript": 480,
+    "pythonUi": 34,
+    "isolatedBackend": 43,
+    "actualApiChecks": 33,
+    "requestCases": 4,
+    "clientReplays": 4,
+    "readinessChecks": 18
+  },
+  "limits": [
+    "controlled DOM/animator, no native paint or screen reader",
+    "no literal TCP stream disconnect this batch",
+    "remote model and Cloudflare login untested",
+    "goal/ACT feature-on profiles not prepared"
+  ],
+  "releasePassed": false
+}

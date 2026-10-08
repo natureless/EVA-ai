@@ -132,6 +132,24 @@ class OpenAIAdapter(LLMAdapter):
         self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
         self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
+    def _request_body(self, messages: list[dict[str, Any]], *, stream: bool = False) -> dict[str, Any]:
+        body = {"model": self.model, "messages": messages, "max_tokens": self.max_tokens,
+                "temperature": self.temperature}
+        style = getattr(self, "reasoning_style", "prompt")
+        deep = getattr(self, "chat_mode", "normal") == "deep"
+        if style == "openai":
+            body.pop("temperature")
+            body.pop("max_tokens")
+            body.update(max_completion_tokens=self.max_tokens, reasoning_effort="high" if deep else "low")
+        elif style == "deepseek":
+            body["thinking"] = {"type": "enabled" if deep else "disabled"}
+            if deep:
+                body.pop("temperature")
+                body["reasoning_effort"] = "high"
+        if stream:
+            body["stream"] = True
+        return body
+
     def chat(self, messages: list[dict[str, Any]]) -> str:
         if not self.api_key:
             logger.warning("OPENAI_API_KEY not set — falling back to mock")
@@ -145,12 +163,7 @@ class OpenAIAdapter(LLMAdapter):
                     "Authorization": f"Bearer {self.api_key}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "model": self.model,
-                    "messages": messages,
-                    "max_tokens": self.max_tokens,
-                    "temperature": self.temperature,
-                },
+                json=self._request_body(messages),
                 timeout=self.timeout,
             )
             if resp.status_code == 200:
@@ -176,13 +189,7 @@ class OpenAIAdapter(LLMAdapter):
                     "Authorization": f"Bearer {self.api_key}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "model": self.model,
-                    "messages": messages,
-                    "max_tokens": self.max_tokens,
-                    "temperature": self.temperature,
-                    "stream": True,
-                },
+                json=self._request_body(messages, stream=True),
                 timeout=self.timeout,
             ) as resp:
                 if resp.status_code != 200:
@@ -231,6 +238,15 @@ class ClaudeAdapter(LLMAdapter):
         self.temperature = temperature or float(os.environ.get("EVA_LLM_TEMPERATURE", "0.7"))
         self.max_tokens = max_tokens or int(os.environ.get("EVA_LLM_MAX_TOKENS", "1024"))
 
+    def _thinking_options(self) -> dict[str, Any]:
+        style = getattr(self, "reasoning_style", "prompt")
+        deep = getattr(self, "chat_mode", "normal") == "deep"
+        if style == "claude-adaptive":
+            return {"thinking": {"type": "adaptive"}, "output_config": {"effort": "high" if deep else "low"}}
+        if style == "claude-budget":
+            return {"thinking": {"type": "enabled", "budget_tokens": min(2048, self.max_tokens - 1024)}} if deep else {"thinking": {"type": "disabled"}}
+        return {"temperature": self.temperature}
+
     def chat(self, messages: list[dict[str, Any]]) -> str:
         if not self.api_key:
             logger.warning("ANTHROPIC_API_KEY not set — falling back to mock")
@@ -238,7 +254,7 @@ class ClaudeAdapter(LLMAdapter):
 
         try:
             import anthropic
-            client = anthropic.Anthropic(api_key=self.api_key)
+            client = anthropic.Anthropic(api_key=self.api_key, timeout=self.timeout)
 
             # separate system message from user/assistant turns
             system = ""
@@ -252,14 +268,14 @@ class ClaudeAdapter(LLMAdapter):
             kwargs = {
                 "model": self.model,
                 "max_tokens": self.max_tokens,
-                "temperature": self.temperature,
                 "messages": user_messages,
+                **self._thinking_options(),
             }
             if system:
                 kwargs["system"] = system
 
             resp = client.messages.create(**kwargs)
-            return resp.content[0].text  # type: ignore[no-any-return]  # anthropic SDK untyped
+            return "".join(block.text for block in resp.content if block.type == "text")
         except Exception as e:
             logger.error("Claude API request failed: %s", e)
             return f"[EVA] LLM unavailable: {e}"
@@ -271,7 +287,7 @@ class ClaudeAdapter(LLMAdapter):
 
         try:
             import anthropic
-            client = anthropic.Anthropic(api_key=self.api_key)
+            client = anthropic.Anthropic(api_key=self.api_key, timeout=self.timeout)
 
             system = ""
             user_messages = []
@@ -284,8 +300,8 @@ class ClaudeAdapter(LLMAdapter):
             kwargs = {
                 "model": self.model,
                 "max_tokens": self.max_tokens,
-                "temperature": self.temperature,
                 "messages": user_messages,
+                **self._thinking_options(),
             }
             if system:
                 kwargs["system"] = system

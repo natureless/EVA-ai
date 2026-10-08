@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-08",
+  "python_exit_code": 1,
+  "elapsed_seconds": 298.5,
+  "isolation": "temporary storage; dotenv disabled; mock model; optional features off unless explicitly enabled by tests; guarded multiprocessing entry point",
+  "discarded_first_run": "test runner lacked __main__ guard; aborted, not counted as product verification",
+  "production_feature_flags_changed": false,
+  "browser_visual_acceptance": false
+}

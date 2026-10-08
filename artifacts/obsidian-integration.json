@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-09-12T17:45:55.659470+00:00",
+  "written": 1,
+  "unchanged": 420,
+  "conflicts": [],
+  "retained_outside_projection": 0,
+  "nodes": 420,
+  "edges": 690,
+  "scope": {
+    "node_limit": 420,
+    "edge_limit": 1800,
+    "matched_nodes": 13205,
+    "nodes_truncated": true,
+    "stored_world_edges": 834,
+    "eligible_world_edges": 642,
+    "dangling_world_edges": 192,
+    "edges_truncated": false,
+    "session_available": false,
+    "selection": "balanced tiers; recent world/working, important long-term, conversation events first; explicit source events included"
+  },
+  "vault": "D:\\EVA-ai",
+  "open_uri": "obsidian://open?path=D%3A%5CEVA-ai%5CEVA-Memory%5CIndex.md",
+  "counts": {
+    "S1": {
+      "available": false,
+      "total": 0,
+      "matched": 0,
+      "shown": 0
+    },
+    "S2": {
+      "available": true,
+      "total": 48,
+      "matched": 48,
+      "shown": 48
+    },
+    "S3": {
+      "available": true,
+      "total": 1,
+      "matched": 1,
+      "shown": 1
+    },
+    "S4": {
+      "available": true,
+      "total": 183,
+      "matched": 183,
+      "shown": 183
+    },
+    "S5": {
+      "available": true,
+      "total": 12973,
+      "matched": 12973,
+      "shown": 188
+    }
+  },
+  "source_database": "data/eva.db",
+  "preview_url": "http://127.0.0.1:8767/",
+  "browser_checks": {
+    "desktop": "420 nodes, 690 edges, full page inspected",
+    "node_detail": "S2 assistant inference and one explicit source event verified",
+    "local_graph": "2 nodes and 1 provenance edge verified",
+    "search": "empty result and EVA-ai: 39 matching nodes verified",
+    "mobile": "390x844; directory toggle works; document scrollWidth equals viewport width",
+    "console_errors": 0,
+    "native_obsidian_launch": "not exercised"
+  }
+}

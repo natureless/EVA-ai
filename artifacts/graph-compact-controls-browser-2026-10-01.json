@@ -1,0 +1,51 @@
+{
+  "syntheticFixture": true,
+  "mobileClosed": {
+    "canvasHeight": 439.78125,
+    "canvasTop": 370.5520935058594,
+    "filtersOpen": false,
+    "scrollWidth": 390,
+    "summary": "1 层 · 双向 · 全部连接 · 全部名称",
+    "zoom": "172%"
+  },
+  "mobileOpened": {
+    "canvasHeight": 216.40625,
+    "filtersOpen": true,
+    "scrollWidth": 390,
+    "zoom": "172%"
+  },
+  "smallPhone": {
+    "canvasHeight": 168.6666717529297,
+    "controlsHeight": 238,
+    "controlsScrollHeight": 602,
+    "filterOpen": true,
+    "scrollWidth": 320,
+    "zoom": "38%"
+  },
+  "desktop": {
+    "canvasHeight": 400.21875,
+    "filtersOpen": true,
+    "scrollWidth": 1400,
+    "zoom": "150%"
+  },
+  "finalMobile": {
+    "canvasHeight": 439.78125,
+    "center": "模块化标识 · 1",
+    "filtersOpen": false,
+    "scrollWidth": 390,
+    "stats": "9 节点 · 8 连接",
+    "summary": "2 层 · 双向 · 全部连接 · 全部名称",
+    "zoomHit": "zoomIn"
+  },
+  "withDetails": {
+    "canvasHeight": 439.78125,
+    "center": "模块化标识 · 1",
+    "filtersOpen": false,
+    "selection": "模块化标识 · 1",
+    "usableHeight": 197.90625,
+    "zoomHit": "zoomIn"
+  },
+  "keyboardClosedNextFocus": "memoryCanvas",
+  "desktopSpaceCloseZoom": "150%",
+  "observedConsoleErrors": []
+}

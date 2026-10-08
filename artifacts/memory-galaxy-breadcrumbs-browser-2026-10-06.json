@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-06T15:02:00+08:00",
+  "preview_origin": "http://127.0.0.1:8779",
+  "fixture_nodes": 75,
+  "local_depth": 3,
+  "exploration_path": ["模块化标识 · 1", "对话空间 · 2", "品牌规则 · 3"],
+  "desktop": {
+    "breadcrumb_text": "模块化标识 · 1 › 对话空间 · 2 › 品牌规则 · 3",
+    "center_after_deep_navigation": "品牌规则 · 3",
+    "direct_jump_target": "模块化标识 · 1",
+    "center_after_direct_jump": "模块化标识 · 1",
+    "history_after_jump": "empty"
+  },
+  "mobile": {
+    "viewport": [390, 844],
+    "breadcrumb_box": {"x": 61.6667, "y": 220, "width": 299.6667, "height": 38},
+    "scroll_width": 300,
+    "horizontal_overflow": false,
+    "local_controls_bottom": 484.3333,
+    "console_warnings_and_errors": []
+  },
+  "synthetic_fixture_notice": "This preview uses 75 synthetic nodes and does not replace the authenticated public-domain or physical-phone check."
+}

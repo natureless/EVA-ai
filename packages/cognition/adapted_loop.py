@@ -70,7 +70,9 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     # ── Phase 2: UPDATE_WORLD ──────────────────────────────────
 
     async def _update_world(
-        self, state: ConsciousState, event: EventEnvelope,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
     ) -> dict:
         """使用现有 WorldModelGraph 更新世界模型。
 
@@ -99,7 +101,9 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     # ── Phase 3: UPDATE_BODY ───────────────────────────────────
 
     async def _update_body(
-        self, state: ConsciousState, event: EventEnvelope,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
     ) -> dict:
         """从现有运行时指标更新身体状态。"""
         if self._container is None:
@@ -122,7 +126,9 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     # ── Phase 7: ATTRIBUTE_SELF ────────────────────────────────
 
     async def _attribute_self(
-        self, state: ConsciousState, event: EventEnvelope,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
         broadcast: list[BroadcastContent],
     ) -> dict:
         """使用现有 SelfModelStore + PredictionTracker 做自我归属。"""
@@ -145,7 +151,9 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
                 if store:
                     sm = self._container.self_model
                     if sm is not None:
-                        store.record_prediction_error(sm, error=rec.error, focus=prev_focus)
+                        store.record_prediction_error(
+                            sm, error=rec.error, focus=prev_focus
+                        )
                         if rec.error > 0.6:
                             store.record_perturbation(
                                 sm,
@@ -160,7 +168,10 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
     # ── Phase 11: ACT ──────────────────────────────────────────
 
     async def _execute_action(
-        self, state: ConsciousState, decision: dict, plan: Any,
+        self,
+        state: ConsciousState,
+        decision: dict,
+        plan: Any,
     ) -> list[EventEnvelope]:
         """使用 IntentParser → PlannerDAG → AgentOS → Verifier 全链路执行。
 
@@ -186,6 +197,7 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
 
             if intent is None:
                 from packages.contracts.protocols import Intent as IntentModel
+
                 intent = IntentModel(
                     intent_id=f"int_{state.tick}",
                     description=intent_dict.get("description", ""),
@@ -195,20 +207,24 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
             # ── Step 2: Create plan ──
             if self._planner_dag and plan is None:
                 plan = await self._planner_dag.create(state=state, intent=intent)
-                events.append(EventEnvelope(
-                    event_type=EventFamily.PLAN.CREATED,
-                    source="adapted_loop",
-                    payload={"plan_id": plan.plan_id, "steps": len(plan.steps)},
-                ))
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.PLAN.CREATED,
+                        source="adapted_loop",
+                        payload={"plan_id": plan.plan_id, "steps": len(plan.steps)},
+                    )
+                )
 
             # ── Step 3: Execute each plan step ──
             router = self._container.agent_router
             orchestrator = self._container.orchestrator
 
-            for step in (plan.steps if plan else []):
+            for step in plan.steps if plan else []:
                 # Build AgentTask from PlanStep
                 task = AgentTask(
-                    kind="chat" if step.agent_type == "chat_agent" else step.agent_type.replace("_agent", ""),
+                    kind="chat"
+                    if step.agent_type == "chat_agent"
+                    else step.agent_type.replace("_agent", ""),
                     payload={
                         "text": intent.description,
                         "context": {
@@ -221,15 +237,22 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
                 selected_agent = router.route(step.agent_type, task)
                 result, duration_ms = orchestrator.execute(selected_agent, task)
 
-                events.append(EventEnvelope(
-                    event_type=EventFamily.ACTION.AGENT_INVOKED,
-                    source="adapted_loop",
-                    payload={"agent": selected_agent, "step": step.step_id, "duration_ms": duration_ms},
-                ))
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.ACTION.AGENT_INVOKED,
+                        source="adapted_loop",
+                        payload={
+                            "agent": selected_agent,
+                            "step": step.step_id,
+                            "duration_ms": duration_ms,
+                        },
+                    )
+                )
 
                 # ── Step 4: Verify ──
                 if self._verifier:
                     from packages.contracts.protocols import ToolResult
+
                     vr = await self._verifier.verify(
                         intent=intent,
                         plan=plan,
@@ -240,17 +263,29 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
                             duration_ms=duration_ms,
                         ),
                     )
-                    verification_events = self._verifier.to_events(vr, events[-1].event_id)
+                    verification_events = self._verifier.to_events(
+                        vr, events[-1].event_id
+                    )
                     events.extend(verification_events)
 
                     if not vr.passed:
-                        logger.warning("verification failed for step %s: %s", step.step_id, vr.summary)
+                        logger.warning(
+                            "verification failed for step %s: %s",
+                            step.step_id,
+                            vr.summary,
+                        )
 
-                events.append(EventEnvelope(
-                    event_type=EventFamily.ACTION.AGENT_COMPLETED,
-                    source="adapted_loop",
-                    payload={"agent": selected_agent, "ok": result.ok, "summary": result.summary},
-                ))
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.ACTION.AGENT_COMPLETED,
+                        source="adapted_loop",
+                        payload={
+                            "agent": selected_agent,
+                            "ok": result.ok,
+                            "summary": result.summary,
+                        },
+                    )
+                )
 
             # Fallback: no plan steps → direct agent call
             if not plan or not plan.steps:
@@ -260,16 +295,24 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
                 )
                 selected_agent = router.route("chat_agent", task)
                 result, duration_ms = orchestrator.execute(selected_agent, task)
-                events.append(EventEnvelope(
-                    event_type=EventFamily.ACTION.AGENT_INVOKED,
-                    source="adapted_loop",
-                    payload={"agent": selected_agent, "duration_ms": duration_ms},
-                ))
-                events.append(EventEnvelope(
-                    event_type=EventFamily.ACTION.AGENT_COMPLETED,
-                    source="adapted_loop",
-                    payload={"agent": selected_agent, "ok": result.ok, "summary": result.summary},
-                ))
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.ACTION.AGENT_INVOKED,
+                        source="adapted_loop",
+                        payload={"agent": selected_agent, "duration_ms": duration_ms},
+                    )
+                )
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.ACTION.AGENT_COMPLETED,
+                        source="adapted_loop",
+                        payload={
+                            "agent": selected_agent,
+                            "ok": result.ok,
+                            "summary": result.summary,
+                        },
+                    )
+                )
 
             # Update world model with final result
             if self._container.world_model:
@@ -292,23 +335,28 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
 
         except Exception:
             logger.exception("agent execution failed in adapted loop")
-            events.append(EventEnvelope(
-                event_type=EventFamily.ACTION.TOOL_FAILED,
-                source="adapted_loop",
-                payload={
-                    "error": "agent execution failed",
-                    "error_type": "agent_execution",
-                    "tick": state.tick,
-                },
-            ))
+            events.append(
+                EventEnvelope(
+                    event_type=EventFamily.ACTION.TOOL_FAILED,
+                    source="adapted_loop",
+                    payload={
+                        "error": "agent execution failed",
+                        "error_type": "agent_execution",
+                        "tick": state.tick,
+                    },
+                )
+            )
 
         return events
 
     # ── Phase 13: CONSOLIDATE ──────────────────────────────────
 
     async def _consolidate_memory(
-        self, state: ConsciousState, event: EventEnvelope,
-        broadcast: list[BroadcastContent], evaluation: dict,
+        self,
+        state: ConsciousState,
+        event: EventEnvelope,
+        broadcast: list[BroadcastContent],
+        evaluation: dict,
         action_events: list[EventEnvelope],
     ) -> list[EventEnvelope]:
         """使用现有 TieredMemoryManager + MemoryIngestor 整合记忆。
@@ -330,6 +378,7 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
             if event.event_type == EventFamily.PERCEPTION.USER_MESSAGE:
                 try:
                     from core.memory_ingestor import MemoryIngestor
+
                     ingestor = MemoryIngestor(
                         self._container.memory_governor,
                         self._container.self_model,
@@ -355,14 +404,16 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
                     self_model_delta=evaluation.get("self_model_delta", 0.0),
                     prediction_error=evaluation.get("prediction_error", 0.0),
                 )
-                events.append(EventEnvelope(
-                    event_type=EventFamily.MEMORY.EPISODE_COMMITTED,
-                    source="adapted_loop",
-                    payload={
-                        "content_id": bc.content.content_id,
-                        "importance": importance,
-                    },
-                ))
+                events.append(
+                    EventEnvelope(
+                        event_type=EventFamily.MEMORY.EPISODE_COMMITTED,
+                        source="adapted_loop",
+                        payload={
+                            "content_id": bc.content.content_id,
+                            "importance": importance,
+                        },
+                    )
+                )
 
             # Memory governor maintenance on consolidation ticks
             if state.tick % 100 == 0 and self._container.memory_governor:
@@ -393,7 +444,14 @@ class AdaptedCognitionLoop(PipelineCognitionLoop):
 # Bootstrap 集成 helper
 # ═══════════════════════════════════════════════════════════════
 
-def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = None) -> AdaptedCognitionLoop:
+
+def create_adapted_loop(
+    container: Any,
+    feature_flags: dict[str, bool] | None = None,
+    *,
+    state_repo: Any = None,
+    action_dispatcher: Any = None,
+) -> AdaptedCognitionLoop:
     """从 AppContainer 创建 AdaptedCognitionLoop。
 
     使用容器中的所有现有后端组件 + 新的 MVSC AgentOS 组件。
@@ -404,6 +462,8 @@ def create_adapted_loop(container: Any, feature_flags: dict[str, bool] | None = 
 
     loop = AdaptedCognitionLoop(
         container=container,
+        state_repo=state_repo,
+        action_dispatcher=action_dispatcher,
         event_bus=container.event_bus,
         world_model=container.world_model,
         self_model=container.self_model,

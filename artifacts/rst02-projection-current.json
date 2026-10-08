@@ -1,0 +1,24 @@
+{
+  "dataset": "snapshot_decoded_by_current_restore_rules",
+  "schema_version": 1,
+  "python": "3.11.9",
+  "platform": "Windows",
+  "graph": {
+    "entities": 183,
+    "edges": 834
+  },
+  "iterations": 30,
+  "scope": "In-process context read only; graph creation, startup, DB IO and LLM costs excluded. No production latency claim.",
+  "full_snapshot_then_slice": {
+    "median_ms": 1.2580999900819734,
+    "p95_ms": 1.3299999991431832,
+    "peak_traced_bytes": 281432,
+    "returned_json_bytes": 2962
+  },
+  "bounded_projection": {
+    "median_ms": 0.024499997380189598,
+    "p95_ms": 0.02889998722821474,
+    "peak_traced_bytes": 4240,
+    "returned_json_bytes": 2255
+  }
+}

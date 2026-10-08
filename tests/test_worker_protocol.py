@@ -7,9 +7,7 @@ and WorkerHeartbeat.
 
 from __future__ import annotations
 
-import json
 import threading
-import time
 
 import pytest
 from pydantic import ValidationError
@@ -18,7 +16,6 @@ from runtime.worker_protocol import (
     CURRENT_PROTOCOL_VERSION,
     SUPPORTED_VERSIONS,
     Capability,
-    CapabilityGrant,
     TaskOutcome,
     WorkerControl,
     WorkerHeartbeat,
@@ -26,7 +23,6 @@ from runtime.worker_protocol import (
     WorkerRequest,
     WorkerResponse,
     WorkerStatus,
-    _assert_json_serializable,
     is_serializable,
 )
 

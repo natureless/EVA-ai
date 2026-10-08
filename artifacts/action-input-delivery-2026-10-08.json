@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-08",
+  "files": {
+    "memory/action_context_graph.py": "6bc8c992b203701b45d9d1e6cc4cdfd2f3c9bca13df7e8399efd01f41d7b5769",
+    "app/api_routes/routes_action_context.py": "8a237fede06d71ec91af188f97637d25d21fc7f71aafd9564660db6d7b740f6c",
+    "ui/web/static/memory_graph.js": "75efda335f05910e1ae886de5dce7ab8768527abe5200228d5ed280d652e0164",
+    "ui/web/static/memory_galaxy.js": "4882a95fcfb1c5501de490a4eb40aa1f60727302de56dd6d272bc5976a7ec263",
+    "ui/web/templates/memory_graph.html": "502a48429da8d69a92a48a89654229d3a597519c61f64739e72f82007f6aef19",
+    "tests/test_action_context_graph.py": "8cf80d00f07b5e6a32df1aa25c05ea2ffa8b8697db6e76d8ea752b0b7a8e5bf5",
+    "tests/test_action_context.py": "bd1b64d0ec7e6e00e22bc6402dba2f18dffa61489e7c1b402aab9933311d0fc6",
+    "tests/test_market_snapshot.py": "2849aaf085921e5043a5620054fc817b3711dbc0fe9cf59c598e5cc0d81f9a86",
+    "tests/js/test_memory_graph.cjs": "f84829f377c8faae2bd1fc67ba8028c0d4452fa8dbf51fb61c989d3774cf27c7",
+    "tests/js/test_memory_graph_interactions.cjs": "c835f2fa9b2c192b3e0d70b66d67e62edd5736d73d381de6311300cf03d3afa7",
+    "tests/js/test_memory_galaxy.cjs": "971aaf8fcf6f939d871487d4aaf162df7c5a5e8ff9dd5d459b34f590ec85bbfa"
+  },
+  "backend_published": false,
+  "production_optional_flags_enabled": false,
+  "browser_visual_acceptance": false,
+  "origin_recovery_checks": 13,
+  "javascript_tests_passed": 465,
+  "python_targeted_tests_passed": 68,
+  "ruff": "passed",
+  "mypy_scope": "memory/action_context_graph.py, app/api_routes/routes_action_context.py",
+  "preflight": "passed using database backup and free port; explicit integrity_check returned ok",
+  "temporary_cleanup_blocked": "C:/Users/origi/AppData/Local/Temp/eva-input-preflight-u83luq3p/memory.db",
+  "python_full_tests_passed": 1964,
+  "python_skipped": 1,
+  "python_full_log": "artifacts/action-input-final-python-2026-10-08.log"
+}

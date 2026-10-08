@@ -1,0 +1,1274 @@
+[
+  {
+    "path": "/dashboard",
+    "theme": "light",
+    "roles": [
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "badge healthy",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "badge disconnected",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "badge connecting",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "badge critical",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag person",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag file",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tag task",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tag risk",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag dependency",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag timeout",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "entry-status processed",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "entry-status pending",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "entry-status failed",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/dashboard",
+    "theme": "dark",
+    "roles": [
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "badge healthy",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "badge disconnected",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "badge connecting",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "badge critical",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag person",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag file",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tag task",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tag risk",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag dependency",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag timeout",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "entry-status processed",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "entry-status pending",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "entry-status failed",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/memory/list",
+    "theme": "light",
+    "roles": [
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "badge healthy",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "badge disconnected",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "badge connecting",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "badge critical",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag person",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag file",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tag task",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tag risk",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag dependency",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag timeout",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "entry-status processed",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "entry-status pending",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "entry-status failed",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/memory/list",
+    "theme": "dark",
+    "roles": [
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "badge healthy",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "badge disconnected",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "badge connecting",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "badge critical",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag person",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag file",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tag task",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tag risk",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag dependency",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag timeout",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "entry-status processed",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "entry-status pending",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "entry-status failed",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/settings",
+    "theme": "light",
+    "roles": [
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "badge healthy",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "badge disconnected",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "badge connecting",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "badge critical",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag person",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag file",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tag task",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tag risk",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag dependency",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag timeout",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "entry-status processed",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "entry-status pending",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "entry-status failed",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/settings",
+    "theme": "dark",
+    "roles": [
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "badge healthy",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "badge disconnected",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "badge connecting",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "badge critical",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag person",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag file",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tag task",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tag risk",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag dependency",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag timeout",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "entry-status processed",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "entry-status pending",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "entry-status failed",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/chat",
+    "theme": "light",
+    "roles": [
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "badge healthy",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "badge disconnected",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "badge connecting",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "badge critical",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag person",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(240, 235, 245)",
+        "classes": "tag file",
+        "color": "rgb(112, 83, 145)",
+        "expectedBackground": "rgb(240, 235, 245)",
+        "expectedColor": "rgb(112, 83, 145)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tag task",
+        "color": "rgb(53, 95, 135)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tag risk",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag dependency",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tag timeout",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "entry-status processed",
+        "color": "rgb(40, 107, 84)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "entry-status pending",
+        "color": "rgb(137, 90, 37)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "entry-status failed",
+        "color": "rgb(150, 59, 50)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(233, 239, 246)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(233, 239, 246)",
+        "expectedColor": "rgb(53, 95, 135)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(231, 242, 235)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(231, 242, 235)",
+        "expectedColor": "rgb(40, 107, 84)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(255, 241, 239)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(255, 241, 239)",
+        "expectedColor": "rgb(150, 59, 50)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(251, 240, 218)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(37, 37, 40)",
+        "expectedBackground": "rgb(251, 240, 218)",
+        "expectedColor": "rgb(137, 90, 37)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  },
+  {
+    "path": "/chat",
+    "theme": "dark",
+    "roles": [
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "badge healthy",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "badge disconnected",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "badge connecting",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "badge critical",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag person",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(50, 42, 63)",
+        "classes": "tag file",
+        "color": "rgb(196, 176, 220)",
+        "expectedBackground": "rgb(50, 42, 63)",
+        "expectedColor": "rgb(196, 176, 220)",
+        "pass": true,
+        "role": "violet"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tag task",
+        "color": "rgb(169, 199, 230)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tag risk",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag dependency",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tag timeout",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "entry-status processed",
+        "color": "rgb(162, 213, 187)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "entry-status pending",
+        "color": "rgb(225, 193, 145)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "entry-status failed",
+        "color": "rgb(255, 192, 183)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(38, 52, 69)",
+        "classes": "tool-card tool-start",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(38, 52, 69)",
+        "expectedColor": "rgb(169, 199, 230)",
+        "pass": true,
+        "role": "info"
+      },
+      {
+        "background": "rgb(34, 55, 45)",
+        "classes": "tool-card tool-result",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(34, 55, 45)",
+        "expectedColor": "rgb(162, 213, 187)",
+        "pass": true,
+        "role": "success"
+      },
+      {
+        "background": "rgb(56, 38, 35)",
+        "classes": "tool-card tool-error",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(56, 38, 35)",
+        "expectedColor": "rgb(255, 192, 183)",
+        "pass": true,
+        "role": "danger"
+      },
+      {
+        "background": "rgb(58, 48, 33)",
+        "classes": "tool-card tool-warn",
+        "color": "rgb(237, 237, 235)",
+        "expectedBackground": "rgb(58, 48, 33)",
+        "expectedColor": "rgb(225, 193, 145)",
+        "pass": true,
+        "role": "warning"
+      }
+    ]
+  }
+]

@@ -1,0 +1,154 @@
+{
+  "taskId": "G2-01",
+  "candidateId": "ui-v1-20261008-g0-01",
+  "startedAt": "2026-10-08T15:11:35.084469+00:00",
+  "finishedAt": "2026-10-08T15:11:37.724883+00:00",
+  "status": "failed",
+  "environmentPath": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g0-01\\G2-01\\run-v4jqjxgb\\environment.json",
+  "checks": [
+    {
+      "name": "auth_missing",
+      "passed": true,
+      "actual": {
+        "status": 401
+      }
+    },
+    {
+      "name": "actual_runtime_ready",
+      "passed": true,
+      "actual": {
+        "status": "ready",
+        "components": {
+          "db": true,
+          "event_bus": true,
+          "event_persistence": true,
+          "planner": true,
+          "registry": true,
+          "result_registry": true,
+          "snapshot": true,
+          "profile": true,
+          "persona": true,
+          "self_model": true,
+          "scheduler": true,
+          "proactive": true,
+          "cognition_loop": true,
+          "llm": false
+        },
+        "runtime": {
+          "scheduler_running": true,
+          "last_snapshot_at": null,
+          "last_proactive_reason": null,
+          "pending_events": 0,
+          "bootstrap_sec": 0.04
+        },
+        "mvsc": {
+          "requested": false,
+          "status": "disabled",
+          "attached": false,
+          "is_http_consumer": false
+        }
+      }
+    },
+    {
+      "name": "sandbox_identity",
+      "passed": true,
+      "actual": {
+        "acceptanceOnly": true,
+        "sandbox": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g0-01\\G2-01\\run-v4jqjxgb",
+        "model": "mock",
+        "featureFlags": {
+          "business_goals": false,
+          "processing_episodes": false,
+          "durable_requests": false,
+          "action_context": false,
+          "minimal_brain": false,
+          "mvsc_pipeline": false,
+          "resume_durable_requests": false
+        },
+        "ready": true
+      }
+    },
+    {
+      "name": "template_/",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 20752
+      }
+    },
+    {
+      "name": "template_/chat",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 15130
+      }
+    },
+    {
+      "name": "template_/settings",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 19939
+      }
+    },
+    {
+      "name": "template_/memory",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 20752
+      }
+    },
+    {
+      "name": "template_/memory/list",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 2777
+      }
+    },
+    {
+      "name": "template_/mvsc",
+      "passed": true,
+      "actual": {
+        "status": 200,
+        "bytes": 5785
+      }
+    },
+    {
+      "name": "actual_mode_capabilities",
+      "passed": true,
+      "actual": {
+        "modes": [
+          {
+            "mode": "normal",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          },
+          {
+            "mode": "deep",
+            "strategy": "mock",
+            "reasoning_style": "mock"
+          }
+        ]
+      }
+    },
+    {
+      "name": "actual_graph_projection",
+      "passed": false,
+      "actual": {
+        "status": 503,
+        "nodes": 0
+      }
+    }
+  ],
+  "blockedAuditEvents": [
+    "sqlite3.connect"
+  ],
+  "failure": {
+    "type": "AssertionError",
+    "message": "actual_graph_projection"
+  },
+  "scope": "actual API/bootstrap readiness in TestClient; not end-to-end browser or full G2-02 acceptance"
+}

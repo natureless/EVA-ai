@@ -1,0 +1,46 @@
+[
+  {
+    "theme": "light",
+    "lang": "zh",
+    "active": "#brandConfigCard",
+    "font": "32px",
+    "gap": 16.604171752929688,
+    "navHeight": 177.6666717529297,
+    "offset": "194px",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "active": "#brandConfigCard",
+    "font": "32px",
+    "gap": 16.64581298828125,
+    "navHeight": 287.66668701171875,
+    "offset": "304px",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "active": "#brandConfigCard",
+    "font": "32px",
+    "gap": 16.604171752929688,
+    "navHeight": 177.6666717529297,
+    "offset": "194px",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "active": "#brandConfigCard",
+    "font": "32px",
+    "gap": 16.64581298828125,
+    "navHeight": 287.66668701171875,
+    "offset": "304px",
+    "overflow": false,
+    "width": 320
+  }
+]

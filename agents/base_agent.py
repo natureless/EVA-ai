@@ -13,6 +13,8 @@ class AgentTask:
     """
     kind: str
     payload: dict[str, Any] = field(default_factory=dict)
+    # Set by Core, separately from agent/model payload data.
+    trace_context: dict[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not self.kind or not isinstance(self.kind, str):
@@ -96,4 +98,3 @@ class BaseAgent(ABC):
         result = self.run(task)
         on_token(result.content)
         return result
-

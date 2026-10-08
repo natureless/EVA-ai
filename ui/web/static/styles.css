@@ -1,44 +1,5 @@
 /* EVA Dashboard — professional dark/light UI with i18n support */
 
-:root {
-  --bg: #f5f3ef;
-  --card-bg: #ffffff;
-  --border: #e2ded8;
-  --text: #3a3733;
-  --header: #1e1b18;
-  --dim: #8c8880;
-  --accent: #0f766e;
-  --accent-hover: #115e59;
-  --accent-light: #ccfbf1;
-  --ok: #22c55e;
-  --warn: #f59e0b;
-  --error: #ef4444;
-  --info: #3b82f6;
-  --dormant: #94a3b8;
-  --commanded: #3b82f6;
-  --supervised: #a855f7;
-  --quarantined: #ef4444;
-  --radius: 8px;
-  --radius-sm: 5px;
-  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.08);
-  --transition: 150ms ease;
-}
-
-[data-theme="dark"] {
-  --bg: #111110;
-  --card-bg: #1c1c1a;
-  --border: #2e2d2a;
-  --text: #dedcd6;
-  --header: #f0ede6;
-  --dim: #787670;
-  --accent: #2dd4bf;
-  --accent-hover: #5ee4d4;
-  --accent-light: #0d3d38;
-  --shadow: 0 1px 3px rgba(0,0,0,.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.4);
-}
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -84,12 +45,6 @@ body {
   display: inline-block; padding: 2px 8px; border-radius: 10px;
   font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
 }
-.badge.ok, .badge.healthy { background: #dcfce7; color: #166534; }
-[data-theme="dark"] .badge.ok, [data-theme="dark"] .badge.healthy { background: #064e3b; color: #6ee7b7; }
-.badge.disconnected, .badge.critical { background: #fef2f2; color: #991b1b; }
-[data-theme="dark"] .badge.disconnected, [data-theme="dark"] .badge.critical { background: #450a0a; color: #fca5a5; }
-.badge.degraded, .badge.warn { background: #fef9e7; color: #92400e; }
-[data-theme="dark"] .badge.degraded, [data-theme="dark"] .badge.warn { background: #451a03; color: #fbbf24; }
 .badge.stream { background: var(--accent-light); color: var(--accent); }
 .dot {
   display: inline-block; width: 8px; height: 8px; border-radius: 50%;
@@ -147,7 +102,7 @@ body {
 .chat-toolbar .toggle-row { display: flex; gap: 8px; align-items: center; font-size: 11px; color: var(--dim); }
 .chat-toolbar button {
   padding: 8px 20px; background: var(--accent);
-  color: #fff; border: none; border-radius: var(--radius);
+  color: var(--ui-panel); border: none; border-radius: var(--radius);
   cursor: pointer; font-weight: 600; transition: background var(--transition);
 }
 .chat-toolbar button:hover { background: var(--accent-hover); }
@@ -161,7 +116,7 @@ body {
 }
 .toggle-switch .slider::before {
   content: ""; position: absolute; height: 14px; width: 14px;
-  left: 2px; bottom: 2px; background: #fff; border-radius: 50%; transition: var(--transition);
+  left: 2px; bottom: 2px; background: var(--ui-panel); border-radius: 50%; transition: var(--transition);
 }
 .toggle-switch input:checked + .slider { background: var(--accent); }
 .toggle-switch input:checked + .slider::before { transform: translateX(14px); }
@@ -217,25 +172,7 @@ body {
   font-size: 10px; font-weight: 600; text-transform: uppercase; margin-right: 6px;
   flex-shrink: 0;
 }
-.tag.task { background: #dbeafe; color: #1e40af; }
-.tag.person { background: #fce7f3; color: #9d174d; }
-.tag.file { background: #e0e7ff; color: #3730a3; }
-.tag.risk { background: #fef2f2; color: #991b1b; }
-.tag.project { background: #d1fae5; color: #065f46; }
-.tag.dependency { background: #fef3c7; color: #92400e; }
-.tag.blocker { background: #fee2e2; color: #991b1b; }
-.tag.success, .tag.succeeded { background: #dcfce7; color: #166534; }
-.tag.error, .tag.denied { background: #fef2f2; color: #991b1b; }
-.tag.timeout { background: #fef9e7; color: #92400e; }
 .tag.channel { background: var(--accent-light); color: var(--accent); }
-
-[data-theme="dark"] .tag.task { background: #1e3a5f; color: #93c5fd; }
-[data-theme="dark"] .tag.person { background: #4a1942; color: #f0abfc; }
-[data-theme="dark"] .tag.file { background: #312e81; color: #a5b4fc; }
-[data-theme="dark"] .tag.risk { background: #450a0a; color: #fca5a5; }
-[data-theme="dark"] .tag.project { background: #064e3b; color: #6ee7b7; }
-[data-theme="dark"] .tag.success, [data-theme="dark"] .tag.succeeded { background: #064e3b; color: #6ee7b7; }
-[data-theme="dark"] .tag.error, [data-theme="dark"] .tag.denied { background: #450a0a; color: #fca5a5; }
 
 .dim { color: var(--dim); font-size: 11px; }
 

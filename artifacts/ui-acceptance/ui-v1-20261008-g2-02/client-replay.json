@@ -1,0 +1,4100 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "mode": "normal",
+      "transport": "WS",
+      "taskId": "3073247a-2603-44c7-a88d-1cacae9a383f",
+      "activeOrder": 2,
+      "initial": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "activeSnapshot": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "activeMoves": [
+        "L2",
+        "D",
+        "F",
+        "U",
+        "R'",
+        "F'",
+        "R",
+        "B'",
+        "L'",
+        "D2"
+      ],
+      "activeModeStayedFixed": true,
+      "replyStatus": "completed",
+      "finalActiveSnapshot": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "finalActiveSolved": true,
+      "nextOrder": 3,
+      "nextSolved": true,
+      "draftPreserved": true,
+      "networkReplay": [
+        {
+          "url": "/api/chat",
+          "method": "POST",
+          "body": {
+            "text": "隔离normalWS请求",
+            "remember": false,
+            "mode": "normal"
+          }
+        },
+        {
+          "url": "/api/chat/result/3073247a-2603-44c7-a88d-1cacae9a383f",
+          "method": "GET",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "normal",
+      "transport": "SSE",
+      "taskId": "de7311cc-c3ba-4d81-bd47-05b08e2ac330",
+      "activeOrder": 2,
+      "initial": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "activeSnapshot": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "activeMoves": [
+        "L2",
+        "D",
+        "F",
+        "U",
+        "R'",
+        "F'",
+        "R",
+        "B'",
+        "L'",
+        "D2"
+      ],
+      "activeModeStayedFixed": true,
+      "replyStatus": "completed",
+      "finalActiveSnapshot": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "finalActiveSolved": true,
+      "nextOrder": 3,
+      "nextSolved": true,
+      "draftPreserved": true,
+      "networkReplay": [
+        {
+          "url": "/api/chat/stream",
+          "method": "POST",
+          "body": {
+            "text": "隔离normalSSE请求",
+            "remember": false,
+            "mode": "normal"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "deep",
+      "transport": "WS",
+      "taskId": "13f84255-aedb-4101-8557-25fcf433a16f",
+      "activeOrder": 3,
+      "initial": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "activeSnapshot": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "activeMoves": [
+        "L2",
+        "D",
+        "F",
+        "U",
+        "R'",
+        "F'",
+        "R",
+        "B'",
+        "L'",
+        "D2",
+        "L",
+        "B'",
+        "R2",
+        "U'"
+      ],
+      "activeModeStayedFixed": true,
+      "replyStatus": "completed",
+      "finalActiveSnapshot": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "finalActiveSolved": true,
+      "nextOrder": 2,
+      "nextSolved": true,
+      "draftPreserved": true,
+      "networkReplay": [
+        {
+          "url": "/api/chat",
+          "method": "POST",
+          "body": {
+            "text": "隔离deepWS请求",
+            "remember": false,
+            "mode": "deep"
+          }
+        },
+        {
+          "url": "/api/chat/result/13f84255-aedb-4101-8557-25fcf433a16f",
+          "method": "GET",
+          "body": null
+        }
+      ]
+    },
+    {
+      "mode": "deep",
+      "transport": "SSE",
+      "taskId": "fe40d852-8d26-4e7e-b873-64365fdc0f35",
+      "activeOrder": 3,
+      "initial": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "activeSnapshot": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              0,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              0,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              -1,
+              0,
+              0,
+              0,
+              -1,
+              0
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              -1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              -1
+            ]
+          }
+        ]
+      },
+      "activeMoves": [
+        "L2",
+        "D",
+        "F",
+        "U",
+        "R'",
+        "F'",
+        "R",
+        "B'",
+        "L'",
+        "D2",
+        "L",
+        "B'",
+        "R2",
+        "U'"
+      ],
+      "activeModeStayedFixed": true,
+      "replyStatus": "completed",
+      "finalActiveSnapshot": {
+        "order": 3,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              -1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              -1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              -1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-8",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-9",
+            "position": [
+              0,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-10",
+            "position": [
+              0,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-11",
+            "position": [
+              0,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-12",
+            "position": [
+              0,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-13",
+            "position": [
+              0,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-14",
+            "position": [
+              0,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-15",
+            "position": [
+              0,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-16",
+            "position": [
+              0,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-17",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-18",
+            "position": [
+              1,
+              -1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-19",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-20",
+            "position": [
+              1,
+              0,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-21",
+            "position": [
+              1,
+              0,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-22",
+            "position": [
+              1,
+              0,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-23",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-24",
+            "position": [
+              1,
+              1,
+              0
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-25",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "finalActiveSolved": true,
+      "nextOrder": 2,
+      "nextSolved": true,
+      "draftPreserved": true,
+      "networkReplay": [
+        {
+          "url": "/api/chat/stream",
+          "method": "POST",
+          "body": {
+            "text": "隔离deepSSE请求",
+            "remember": false,
+            "mode": "deep"
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "Actual API transcript replay through shipped Chat/ParticleController/CubeLogo/CubeState; controlled DOM and animator, no browser paint"
+}

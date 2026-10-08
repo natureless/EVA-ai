@@ -1,0 +1,151 @@
+{
+  "client_date": "2026-10-06",
+  "finished_at": "2026-10-06T14:21:32.174677+00:00",
+  "status": "implemented_and_source_verified_public_browser_pending",
+  "request": "继续优化三维记忆星图",
+  "changes": [
+    "Compact local heading/count/action/scope layout while keeping mobile scroll bounds",
+    "Wider second- and third-hop satellite orbits; original stored paths remain unchanged",
+    "Visible local indirect bodies and labels retain stronger contrast",
+    "Reserve body bounds when placing labels; selected record names precede edge names; reserve bottom caption/control margin"
+  ],
+  "verification": {
+    "javascript_passed": 416,
+    "javascript_failed": 0,
+    "python_passed": 58,
+    "origin_readonly_checks_passed": 13,
+    "javascript_log": "artifacts/memory-galaxy-readability-js-2026-10-06.txt",
+    "python_log": "artifacts/memory-galaxy-readability-python-2026-10-06.txt",
+    "origin_report": "artifacts/memory-galaxy-readability-origin-2026-10-06.json",
+    "asset_report": "artifacts/memory-galaxy-readability-assets-2026-10-06.json",
+    "browser_report": "artifacts/memory-galaxy-readability-browser-2026-10-06.json"
+  },
+  "release": {
+    "verified_at": "2026-10-06T14:17:18.606862+00:00",
+    "origin": "http://127.0.0.1:8000",
+    "assets": {
+      "memory_graph.css": {
+        "version": "14",
+        "http_status": 200,
+        "sha256": "abdb953ff6bb655c80ccaccdbe7200fe35a3a2ead0c7beb82e075274993f1a4e",
+        "response_matches_disk": true
+      },
+      "memory_galaxy.js": {
+        "version": "2",
+        "http_status": 200,
+        "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c",
+        "response_matches_disk": true
+      },
+      "memory_galaxy_renderer.js": {
+        "version": "2",
+        "http_status": 200,
+        "sha256": "eb9b06ae9536f32811453901c3250aca5e5128f96b55ea8db67087d8af68482a",
+        "response_matches_disk": true
+      },
+      "memory_graph.js": {
+        "version": "20",
+        "http_status": 200,
+        "sha256": "df5da5d289d8a506809a47698d931e0537308b9fc1c94adc46a52db411a6e10f",
+        "response_matches_disk": true
+      }
+    },
+    "script_order": [
+      "memory_galaxy.js",
+      "memory_galaxy_renderer.js",
+      "memory_graph.js"
+    ],
+    "script_order_valid": true,
+    "requests_trust_env": false,
+    "chat_sent": false,
+    "service_restarted": false
+  },
+  "browser_summary": {
+    "fixture_nodes": 75,
+    "local_three_hop_nodes": 17,
+    "local_three_hop_edges": 16,
+    "actual_satellite_click": {
+      "point": [
+        715,
+        496
+      ],
+      "selected": "品牌规则 · 3",
+      "center_retained": "模块化标识 · 1",
+      "path": "2 步连接"
+    },
+    "viewport_sizes": [
+      [
+        1280,
+        720
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        320,
+        568
+      ]
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "desktop_canvas_height": 330.60418701171875,
+    "mobile_canvas_height": 407.78125,
+    "expanded_controls_above_drawer": true,
+    "console_warnings_and_errors": []
+  },
+  "screenshots": [
+    "memory-galaxy-readability-preview-2026-10-06.jpg",
+    "memory-galaxy-readability-desktop-2026-10-06.jpg",
+    "memory-galaxy-readability-mobile-2026-10-06.jpg",
+    "memory-galaxy-readability-expanded-2026-10-06.jpg",
+    "memory-galaxy-readability-small-2026-10-06.jpg"
+  ],
+  "changed_files": [
+    {
+      "path": "ui/web/static/memory_galaxy.js",
+      "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c"
+    },
+    {
+      "path": "ui/web/static/memory_galaxy_renderer.js",
+      "sha256": "eb9b06ae9536f32811453901c3250aca5e5128f96b55ea8db67087d8af68482a"
+    },
+    {
+      "path": "ui/web/static/memory_graph.css",
+      "sha256": "abdb953ff6bb655c80ccaccdbe7200fe35a3a2ead0c7beb82e075274993f1a4e"
+    },
+    {
+      "path": "ui/web/templates/memory_graph.html",
+      "sha256": "aec0ba42a8a505cc103e50991d86c1242bf21f97a68c90f0b19c86111863da89"
+    },
+    {
+      "path": "tests/js/test_memory_galaxy_renderer.cjs",
+      "sha256": "55dc20ac3739bb475db30353de60523cfdf198e0fcbf4d121a488ce500bc85d8"
+    },
+    {
+      "path": "docs/obsidian-memory-graph.md",
+      "sha256": "8f70a0e60646be455d0f296591a20cf1d86d0a77a3d8bd360fe85d6a4ad9f124"
+    },
+    {
+      "path": "docs/p0-acceptance.md",
+      "sha256": "354e101190b51c0019d96f6f5d36c0f530cd7e50257d1e1a5a106d860d4c7fe1"
+    }
+  ],
+  "private_backup": "D:/EVA-ai/.cloudflare/backups/memory-galaxy-readability-20261006-221108",
+  "cleanup": {
+    "synthetic_preview_pid": 10092,
+    "verified_command_before_stop": "scripts/preview_cube_chat.py --port 8779",
+    "preview_stopped": true,
+    "temporary_tab_closed": true,
+    "viewport_reset": true,
+    "original_light_theme_restored": true,
+    "source_pid_after_cleanup": 17984,
+    "source_restarted": false
+  },
+  "limitations": [
+    "Browser screenshot uses synthetic UI fixture",
+    "Public authenticated browser and physical phone not tested",
+    "No model requests, migrations or memory writes"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "candidateId": "ui-v1-20261008-g0-01",
+  "finishedAt": "2026-10-08T12:55:18.045486+00:00",
+  "captureBeganAt": "2026-10-08T12:55:17.188036+00:00",
+  "scope": "G0 source review and artifact consistency; no new frontend regression/browser/service run",
+  "reportSourceExactMatch": true,
+  "productSourceFiles": 78,
+  "apiDependencyFiles": 113,
+  "sourcesStableDuringCapture": true,
+  "pageClasses": 7,
+  "surfaceAreas": 35,
+  "sourceControlEntries": 203,
+  "dynamicControlFamilies": 8,
+  "unassignedControls": 0,
+  "clientApiContracts": 32,
+  "allApiRoutesResolved": true,
+  "allReferencedTestFilesExist": true,
+  "taskCount": 30,
+  "taskStatusCounts": {
+    "passed": 4,
+    "planned": 26
+  },
+  "findings": 6,
+  "estimatedHours": [
+    40,
+    80
+  ],
+  "g0Passed": true,
+  "overallReleasePassed": false,
+  "manualGateStatus": "unverified"
+}

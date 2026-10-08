@@ -28,6 +28,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from memory.storage_adapter import BaseStorageAdapter
+from core.tool_execution import invoke_tool
 
 logger = logging.getLogger("eva.executor")
 
@@ -53,6 +54,7 @@ class ExecutorAuditLog:
 
     Each audit entry includes ``chain_hash`` = SHA-256(prev_chain_hash || record_data).
     The chain can be verified by recomputing hashes from the first entry forward.
+    SQLite append order breaks equal timestamp ties consistently in every read.
     """
 
     def __init__(self, store: BaseStorageAdapter) -> None:
@@ -63,7 +65,7 @@ class ExecutorAuditLog:
     def _load_last_hash(self) -> str:
         try:
             row = self.store.fetchone(
-                "SELECT chain_hash FROM executor_audit ORDER BY timestamp DESC LIMIT 1"
+                "SELECT chain_hash FROM executor_audit ORDER BY timestamp DESC, rowid DESC LIMIT 1"
             )
             return row["chain_hash"] if row else ""
         except Exception:
@@ -138,7 +140,7 @@ class ExecutorAuditLog:
         """
         try:
             rows = self.store.fetchall(
-                "SELECT * FROM executor_audit ORDER BY timestamp ASC"
+                "SELECT * FROM executor_audit ORDER BY timestamp ASC, rowid ASC"
             )
         except Exception:
             logger.warning("could not read audit table for chain verification", exc_info=True)
@@ -178,26 +180,26 @@ class ExecutorAuditLog:
             rows = self.store.fetchall(
                 """SELECT * FROM executor_audit
                    WHERE executor_type = ? AND status = ?
-                   ORDER BY timestamp DESC LIMIT ?""",
+                   ORDER BY timestamp DESC, rowid DESC LIMIT ?""",
                 (executor_type, status, limit),
             )
         elif executor_type:
             rows = self.store.fetchall(
                 """SELECT * FROM executor_audit
                    WHERE executor_type = ?
-                   ORDER BY timestamp DESC LIMIT ?""",
+                   ORDER BY timestamp DESC, rowid DESC LIMIT ?""",
                 (executor_type, limit),
             )
         elif status:
             rows = self.store.fetchall(
                 """SELECT * FROM executor_audit
                    WHERE status = ?
-                   ORDER BY timestamp DESC LIMIT ?""",
+                   ORDER BY timestamp DESC, rowid DESC LIMIT ?""",
                 (status, limit),
             )
         else:
             rows = self.store.fetchall(
-                "SELECT * FROM executor_audit ORDER BY timestamp DESC LIMIT ?",
+                "SELECT * FROM executor_audit ORDER BY timestamp DESC, rowid DESC LIMIT ?",
                 (limit,),
             )
         for r in rows:
@@ -282,15 +284,16 @@ class BaseExecutor(ABC):
 
         # 3. Execute
         try:
-            result = self._run(action, params)
+            result = invoke_tool(f"executor:{self.name}:{action}", params, lambda: self._run(action, params))
             duration_ms = int((time.perf_counter() - start) * 1000)
+            status = "success" if result.get("ok") is True else "error"
             self.audit_log.record(
                 executor_type=self.name, action=action, task_id=task_id,
                 token_id=token_id, parameters=params,
                 result_summary=result.get("summary", "")[:200],
-                duration_ms=duration_ms, status="success",
+                duration_ms=duration_ms, status=status,
             )
-            result["status"] = "success"
+            result["status"] = status
             result["duration_ms"] = duration_ms
             return result
         except Exception as e:
@@ -739,7 +742,8 @@ class BrowserExecutor(BaseExecutor):
                 headers={"User-Agent": "EVA/0.1 (cognitive-agent)"},
             )
             content_type = resp.headers.get("content-type", "")
-            is_text = "text/" in content_type or "application/json" in content_type or "xml" in content_type
+            is_text = ("text/" in content_type or "application/json" in content_type
+                       or "application/csv" in content_type or "xml" in content_type)
             body = resp.text[:self.max_size] if is_text else f"[binary: {len(resp.content)} bytes, type={content_type}]"
             return {
                 "ok": resp.is_success,

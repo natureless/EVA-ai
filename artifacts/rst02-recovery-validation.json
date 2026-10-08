@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "bundle": "data/world-recovery/rst02-20260912",
+  "mode": "copy_only",
+  "entities": {
+    "all_distinct_keys_preserved": true,
+    "candidate_records": 183,
+    "conflicting_snapshot_keys": 0,
+    "duplicate_records": 0,
+    "overlapping_keys": 183,
+    "s4_records": 183,
+    "sample_limit": 100,
+    "snapshot_distinct_keys": 183,
+    "snapshot_records": 183,
+    "snapshot_s4_payload_conflict_keys": 0,
+    "snapshot_timestamp_variant_keys": 0
+  },
+  "edges": {
+    "all_distinct_keys_preserved": true,
+    "candidate_records": 834,
+    "conflicting_snapshot_keys": 0,
+    "duplicate_records": 0,
+    "overlapping_keys": 834,
+    "s4_records": 834,
+    "sample_limit": 100,
+    "snapshot_distinct_keys": 834,
+    "snapshot_records": 834,
+    "snapshot_s4_payload_conflict_keys": 0,
+    "snapshot_timestamp_variant_keys": 0
+  },
+  "backup_files": {
+    "candidate.snapshot.json": {
+      "bytes": 414630,
+      "sha256": "f35392c8468ffcbdc443e5ca7b30efb90fc83ee4c4faa728ac9d28df3e642130"
+    },
+    "database.sqlite": {
+      "bytes": 4866048,
+      "sha256": "f53d0e6039867252bed909be9f6a44da90bea96b47a984a8bb6a01bfc7a917e5"
+    },
+    "original.snapshot.json": {
+      "bytes": 424940,
+      "sha256": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac"
+    },
+    "report.json": {
+      "bytes": 1420,
+      "sha256": "cc205a85f0918473ae6cac99ca44ada9365c3cbb71cd78df6ab8f64c58c1b8b8"
+    }
+  },
+  "candidate_restore": {
+    "schema_version": 1,
+    "sha256": {
+      "eva.db": "f53d0e6039867252bed909be9f6a44da90bea96b47a984a8bb6a01bfc7a917e5",
+      "latest.json": "f35392c8468ffcbdc443e5ca7b30efb90fc83ee4c4faa728ac9d28df3e642130"
+    },
+    "variant": "candidate",
+    "verified": true
+  },
+  "original_restore": {
+    "schema_version": 1,
+    "sha256": {
+      "eva.db": "f53d0e6039867252bed909be9f6a44da90bea96b47a984a8bb6a01bfc7a917e5",
+      "latest.json": "6b2be7ce9e33845b9b908abf6fbf18b0c3270959c13aa7272f9554411f7e1eac"
+    },
+    "variant": "original",
+    "verified": true
+  },
+  "sample_note": "Current snapshot already contained 834 distinct edges before this operation. Earlier 102013-edge observation is historical and is not the input to this bundle.",
+  "source_files_replaced": false,
+  "validation": {
+    "full_pytest_after_isolation_fix": {
+      "passed": 1182,
+      "seconds": 122.09
+    },
+    "new_regression_cases": 19,
+    "ruff": "passed",
+    "preflight": "passed",
+    "test_data_isolation": "rst02-test-data-isolation.json",
+    "test_side_effect_repair": "rst02-test-data-repair.json"
+  }
+}

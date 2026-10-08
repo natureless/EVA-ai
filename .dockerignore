@@ -28,6 +28,13 @@ logs/
 data/
 *.db
 *.tmp
+.env
+.env.*
+.cloudflare/
+.tools/
+.obsidian/
+EVA-Memory/
+artifacts/
 
 # OS
 .DS_Store

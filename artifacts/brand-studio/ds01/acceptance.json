@@ -1,0 +1,4100 @@
+{
+  "date": "2026-09-30",
+  "scope": "Codex in-app browser / local fixture only",
+  "layouts": [
+    {
+      "bodyWidth": 320,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 260,
+          "left": 60,
+          "right": 320,
+          "scrollWidth": 260,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 260,
+          "left": 60,
+          "right": 320,
+          "scrollWidth": 260,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 227,
+          "left": 76,
+          "right": 304,
+          "scrollWidth": 227,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 320,
+      "sendBottom": 742.09375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 211,
+          "left": 76,
+          "right": 288.6666717529297,
+          "scrollWidth": 211,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 305,
+      "sendBottom": 824.125,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 211,
+          "left": 76,
+          "right": 288.6666717529297,
+          "scrollWidth": 211,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 305,
+      "sendBottom": 824.125,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 245,
+          "left": 60,
+          "right": 304.6666717529297,
+          "scrollWidth": 245,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 211,
+          "left": 76,
+          "right": 288.6666717529297,
+          "scrollWidth": 211,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 305,
+      "sendBottom": 803.0416870117188,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 390,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 330,
+          "left": 60,
+          "right": 390,
+          "scrollWidth": 330,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 330,
+          "left": 60,
+          "right": 390,
+          "scrollWidth": 330,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 297,
+          "left": 76,
+          "right": 374,
+          "scrollWidth": 297,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 390,
+      "sendBottom": 727.09375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 375,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 315,
+          "left": 60,
+          "right": 374.6666870117187,
+          "scrollWidth": 315,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 315,
+          "left": 60,
+          "right": 374.6666870117187,
+          "scrollWidth": 315,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 281,
+          "left": 76,
+          "right": 358.66668701171875,
+          "scrollWidth": 281,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 375,
+      "sendBottom": 765.09375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 375,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 315,
+          "left": 60,
+          "right": 374.6666870117187,
+          "scrollWidth": 315,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 315,
+          "left": 60,
+          "right": 374.6666870117187,
+          "scrollWidth": 315,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 281,
+          "left": 76,
+          "right": 358.66668701171875,
+          "scrollWidth": 281,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 375,
+      "sendBottom": 765.09375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 390,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 330,
+          "left": 60,
+          "right": 390,
+          "scrollWidth": 330,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 330,
+          "left": 60,
+          "right": 390,
+          "scrollWidth": 330,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 297,
+          "left": 76,
+          "right": 374,
+          "scrollWidth": 297,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 390,
+      "sendBottom": 727.09375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 753,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 659,
+          "left": 76,
+          "right": 736.6666870117188,
+          "scrollWidth": 659,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 753,
+      "sendBottom": 849.5521240234375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 753,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 659,
+          "left": 76,
+          "right": 736.6666870117188,
+          "scrollWidth": 659,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 753,
+      "sendBottom": 849.5521240234375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 753,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 659,
+          "left": 76,
+          "right": 736.6666870117188,
+          "scrollWidth": 659,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 753,
+      "sendBottom": 849.5521240234375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 753,
+      "compact": "true",
+      "detailsHidden": true,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 693,
+          "left": 60,
+          "right": 752.6666870117188,
+          "scrollWidth": 693,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 659,
+          "left": 76,
+          "right": 736.6666870117188,
+          "scrollWidth": 659,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 753,
+      "sendBottom": 849.5521240234375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 1440,
+      "compact": "false",
+      "detailsHidden": false,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 1356,
+          "left": 84,
+          "right": 1440,
+          "scrollWidth": 1356,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 719,
+          "left": 721.3125,
+          "right": 1439.9896240234375,
+          "scrollWidth": 719,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 641,
+          "left": 759.3125,
+          "right": 1401.9896240234375,
+          "scrollWidth": 641,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 1440,
+      "sendBottom": 785.6666870117188,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "compact": "false",
+      "detailsHidden": false,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 1356,
+          "left": 84,
+          "right": 1440,
+          "scrollWidth": 1356,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 719,
+          "left": 721.3125,
+          "right": 1439.9896240234375,
+          "scrollWidth": 719,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 641,
+          "left": 759.3125,
+          "right": 1401.9896240234375,
+          "scrollWidth": 641,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 1440,
+      "sendBottom": 785.6666870117188,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "compact": "false",
+      "detailsHidden": false,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "Main navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.models",
+          "text": "Cube model"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "Reset view"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.phases",
+          "text": "Form evolution"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "Talk to EVA"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "Conversation transcript"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "Response mode"
+        }
+      ],
+      "lang": "en",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 1356,
+          "left": 84,
+          "right": 1440,
+          "scrollWidth": 1356,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 719,
+          "left": 721.3125,
+          "right": 1439.9896240234375,
+          "scrollWidth": 719,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 641,
+          "left": 759.3125,
+          "right": 1401.9896240234375,
+          "scrollWidth": 641,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 1440,
+      "sendBottom": 785.6666870117188,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "compact": "false",
+      "detailsHidden": false,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.navMain",
+          "text": "主导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.models",
+          "text": "切换魔方模型"
+        },
+        {
+          "key": "ui.resetView",
+          "text": "复位视角"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.phases",
+          "text": "演变阶段"
+        },
+        {
+          "key": "ui.conversation",
+          "text": "与 EVA 对话"
+        },
+        {
+          "key": "ui.transcript",
+          "text": "对话记录"
+        },
+        {
+          "key": "ui.responseMode",
+          "text": "回答模式"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "chat",
+      "regions": [
+        {
+          "clientWidth": 1356,
+          "left": 84,
+          "right": 1440,
+          "scrollWidth": 1356,
+          "selector": ".workspace-main"
+        },
+        {
+          "clientWidth": 719,
+          "left": 721.3125,
+          "right": 1439.9896240234375,
+          "scrollWidth": 719,
+          "selector": ".dialogue-panel"
+        },
+        {
+          "clientWidth": 641,
+          "left": 759.3125,
+          "right": 1401.9896240234375,
+          "scrollWidth": 641,
+          "selector": ".chat-form"
+        },
+        {
+          "clientWidth": 0,
+          "left": 0,
+          "right": 0,
+          "scrollWidth": 0,
+          "selector": ".chat-messages"
+        }
+      ],
+      "rootWidth": 1440,
+      "sendBottom": 785.6666870117188,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 305,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16.666667938232422,
+          "right": 288.0000114440918,
+          "scrollWidth": 271,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 305,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16.666667938232422,
+          "right": 288.0000114440918,
+          "scrollWidth": 271,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 305,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16.666667938232422,
+          "right": 288.0000114440918,
+          "scrollWidth": 271,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 305,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 305,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 305,
+          "left": 0,
+          "right": 304.66668701171875,
+          "scrollWidth": 305,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16.666667938232422,
+          "right": 288.0000114440918,
+          "scrollWidth": 271,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 271,
+          "left": 16,
+          "right": 288.66668701171875,
+          "scrollWidth": 271,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 305,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 320
+    },
+    {
+      "bodyWidth": 375,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16.666667938232422,
+          "right": 358.0000114440918,
+          "scrollWidth": 341,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 375,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16.666667938232422,
+          "right": 358.0000114440918,
+          "scrollWidth": 341,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 375,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 375,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16.666667938232422,
+          "right": 358.0000114440918,
+          "scrollWidth": 341,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 375,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 375,
+          "left": 0,
+          "right": 374.6666870117187,
+          "scrollWidth": 375,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16.666667938232422,
+          "right": 358.0000114440918,
+          "scrollWidth": 341,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 341,
+          "left": 16,
+          "right": 358.66668701171875,
+          "scrollWidth": 341,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 375,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 390
+    },
+    {
+      "bodyWidth": 768,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 768,
+          "left": 0,
+          "right": 768,
+          "scrollWidth": 768,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 588,
+          "left": 170,
+          "right": 768,
+          "scrollWidth": 588,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194.6666717529297,
+          "right": 733.3333587646484,
+          "scrollWidth": 539,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 768,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 768,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 768,
+          "left": 0,
+          "right": 768,
+          "scrollWidth": 768,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 588,
+          "left": 170,
+          "right": 768,
+          "scrollWidth": 588,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194.6666717529297,
+          "right": 733.3333587646484,
+          "scrollWidth": 539,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 768,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 768,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 768,
+          "left": 0,
+          "right": 768,
+          "scrollWidth": 768,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 588,
+          "left": 170,
+          "right": 768,
+          "scrollWidth": 588,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194.6666717529297,
+          "right": 733.3333587646484,
+          "scrollWidth": 539,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 768,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 768,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 768,
+          "left": 0,
+          "right": 768,
+          "scrollWidth": 768,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 588,
+          "left": 170,
+          "right": 768,
+          "scrollWidth": 588,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194.6666717529297,
+          "right": 733.3333587646484,
+          "scrollWidth": 539,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 539,
+          "left": 194,
+          "right": 734,
+          "scrollWidth": 539,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 768,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 768
+    },
+    {
+      "bodyWidth": 1440,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 1440,
+          "left": 0,
+          "right": 1440,
+          "scrollWidth": 1440,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 1222,
+          "left": 208,
+          "right": 1440,
+          "scrollWidth": 1222,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 448,
+          "left": 919.8958740234376,
+          "right": 1368.3333740234375,
+          "scrollWidth": 448,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 1440,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 1440,
+          "left": 0,
+          "right": 1440,
+          "scrollWidth": 1440,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 1222,
+          "left": 208,
+          "right": 1440,
+          "scrollWidth": 1222,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 448,
+          "left": 919.8958740234376,
+          "right": 1368.3333740234375,
+          "scrollWidth": 448,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 1440,
+      "theme": "light",
+      "tokens": {
+        "--ui-bg": "#f8f8f6",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#67676c",
+        "--ui-panel": "#fdfdfc",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#707075",
+        "--ui-surface": "#efefec",
+        "--ui-text": "#252528"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "切换语言"
+        },
+        {
+          "key": "btn.theme",
+          "text": "切换深色/浅色模式"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "设置导航"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA 对话"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "设置分类"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo 预览"
+        },
+        {
+          "key": "ui.views",
+          "text": "魔方视角"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo 动效操作"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "品牌资产"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · 主标"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome · 单色"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · 深色背景"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · 微标"
+        }
+      ],
+      "lang": "zh-CN",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 1440,
+          "left": 0,
+          "right": 1440,
+          "scrollWidth": 1440,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 1222,
+          "left": 208,
+          "right": 1440,
+          "scrollWidth": 1222,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 448,
+          "left": 919.8958740234376,
+          "right": 1368.3333740234375,
+          "scrollWidth": 448,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 1440,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 1440
+    },
+    {
+      "bodyWidth": 1440,
+      "height": 900,
+      "labels": [
+        {
+          "key": "ui.language",
+          "text": "Switch language"
+        },
+        {
+          "key": "btn.theme",
+          "text": "Toggle dark/light mode"
+        },
+        {
+          "key": "ui.settingsNav",
+          "text": "Settings navigation"
+        },
+        {
+          "key": "ui.chatHome",
+          "text": "EVA chat"
+        },
+        {
+          "key": "ui.settingsCategories",
+          "text": "Settings categories"
+        },
+        {
+          "key": "ui.logoPreview",
+          "text": "Logo preview"
+        },
+        {
+          "key": "ui.views",
+          "text": "Cube views"
+        },
+        {
+          "key": "ui.logoControls",
+          "text": "Logo motion controls"
+        },
+        {
+          "key": "ui.brandAssets",
+          "text": "Brand assets"
+        },
+        {
+          "key": "brand.primary",
+          "text": "Primary · master"
+        },
+        {
+          "key": "brand.monochrome",
+          "text": "Monochrome"
+        },
+        {
+          "key": "brand.dark",
+          "text": "Dark · dark background"
+        },
+        {
+          "key": "brand.favicon",
+          "text": "Favicon · micro mark"
+        }
+      ],
+      "lang": "en",
+      "page": "settings",
+      "regions": [
+        {
+          "clientWidth": 1440,
+          "left": 0,
+          "right": 1440,
+          "scrollWidth": 1440,
+          "selector": ".settings-page"
+        },
+        {
+          "clientWidth": 1222,
+          "left": 208,
+          "right": 1440,
+          "scrollWidth": 1222,
+          "selector": ".studio-content"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-preview-card"
+        },
+        {
+          "clientWidth": 448,
+          "left": 919.8958740234376,
+          "right": 1368.3333740234375,
+          "scrollWidth": 448,
+          "selector": ".brand-controls"
+        },
+        {
+          "clientWidth": 1099,
+          "left": 269,
+          "right": 1369,
+          "scrollWidth": 1099,
+          "selector": ".studio-delivery-card"
+        }
+      ],
+      "rootWidth": 1440,
+      "theme": "dark",
+      "tokens": {
+        "--ui-bg": "#1b1b1d",
+        "--ui-control-height": "36px",
+        "--ui-muted": "#b0b0b5",
+        "--ui-panel": "#212123",
+        "--ui-radius-control": "8px",
+        "--ui-secondary": "#a4a4ab",
+        "--ui-surface": "#2b2b2e",
+        "--ui-text": "#ededeb"
+      },
+      "width": 1440
+    }
+  ],
+  "fold": {
+    "unchanged": true,
+    "before": {
+      "state": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "history": [
+        "U'"
+      ],
+      "paused": true,
+      "reasons": [
+        "user"
+      ]
+    },
+    "after": {
+      "state": {
+        "order": 2,
+        "cubies": [
+          {
+            "id": "cubie-0",
+            "position": [
+              -1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-1",
+            "position": [
+              1,
+              -1,
+              1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-2",
+            "position": [
+              -1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-3",
+            "position": [
+              -1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-4",
+            "position": [
+              -1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-5",
+            "position": [
+              1,
+              -1,
+              -1
+            ],
+            "orientation": [
+              0,
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1,
+              0,
+              0
+            ]
+          },
+          {
+            "id": "cubie-6",
+            "position": [
+              1,
+              1,
+              -1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          {
+            "id": "cubie-7",
+            "position": [
+              1,
+              1,
+              1
+            ],
+            "orientation": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        ]
+      },
+      "history": [
+        "U'"
+      ],
+      "paused": true,
+      "reasons": [
+        "user"
+      ]
+    }
+  },
+  "restore": {
+    "solved": true,
+    "history": 0,
+    "order": 2,
+    "phase": 0,
+    "restoring": false
+  },
+  "longChat": {
+    "bodyWidth": 305,
+    "compact": "true",
+    "detailsHidden": true,
+    "height": 844,
+    "labels": [
+      {
+        "key": "ui.navMain",
+        "text": "Main navigation"
+      },
+      {
+        "key": "ui.chatHome",
+        "text": "EVA chat"
+      },
+      {
+        "key": "ui.language",
+        "text": "Switch language"
+      },
+      {
+        "key": "btn.theme",
+        "text": "Toggle dark/light mode"
+      },
+      {
+        "key": "ui.models",
+        "text": "Cube model"
+      },
+      {
+        "key": "ui.resetView",
+        "text": "Reset view"
+      },
+      {
+        "key": "ui.views",
+        "text": "Cube views"
+      },
+      {
+        "key": "ui.phases",
+        "text": "Form evolution"
+      },
+      {
+        "key": "ui.conversation",
+        "text": "Talk to EVA"
+      },
+      {
+        "key": "ui.transcript",
+        "text": "Conversation transcript"
+      },
+      {
+        "key": "ui.responseMode",
+        "text": "Response mode"
+      }
+    ],
+    "lang": "en",
+    "page": "chat",
+    "regions": [
+      {
+        "clientWidth": 245,
+        "left": 60,
+        "right": 304.6666717529297,
+        "scrollWidth": 245,
+        "selector": ".workspace-main"
+      },
+      {
+        "clientWidth": 245,
+        "left": 60,
+        "right": 304.6666717529297,
+        "scrollWidth": 245,
+        "selector": ".dialogue-panel"
+      },
+      {
+        "clientWidth": 211,
+        "left": 76,
+        "right": 288.6666717529297,
+        "scrollWidth": 211,
+        "selector": ".chat-form"
+      },
+      {
+        "clientWidth": 208,
+        "left": 76,
+        "right": 288.6666717529297,
+        "scrollWidth": 208,
+        "selector": ".chat-messages"
+      }
+    ],
+    "rootWidth": 305,
+    "sendBottom": 729.25,
+    "theme": "dark",
+    "tokens": {
+      "--ui-bg": "#1b1b1d",
+      "--ui-control-height": "36px",
+      "--ui-muted": "#b0b0b5",
+      "--ui-panel": "#212123",
+      "--ui-radius-control": "8px",
+      "--ui-secondary": "#a4a4ab",
+      "--ui-surface": "#2b2b2e",
+      "--ui-text": "#ededeb"
+    },
+    "width": 320
+  },
+  "longContent": {
+    "code": [
+      {
+        "clientWidth": 191,
+        "scrollWidth": 4013
+      }
+    ],
+    "messageHeight": 380,
+    "messageScrollHeight": 2360,
+    "pageWidth": 305,
+    "table": [
+      {
+        "clientWidth": 191,
+        "scrollWidth": 191
+      }
+    ],
+    "viewport": 320
+  },
+  "codeCopyExact": true,
+  "keyboardRuntime": {
+    "active": "runtimeTab",
+    "orientation": "vertical",
+    "runtimeText": "SYSTEM / 02\nSystem runtime\nPolicy\nUI preview · No runtime service connected\nMemory Tiers\n--\nUI preview · No runtime service connected\nWorld Model\n0\nUI preview · No runtime service connected\nAudit Timeline\nUI preview · No runtime service connected\nSystem State\nUI preview · No runtime service connected\nHealth\n--\nUI preview · No runtime service connected\nWS Events\n0\nUI preview · No runtime service connected\nAgents & Scheduler\nUI preview · No runtime service connected",
+    "selected": "runtimeTab"
+  },
+  "announcements": {
+    "changes": {
+      "spoken": [
+        "The selected motion is running.",
+        "Animation paused."
+      ],
+      "visual": [
+        "Settling",
+        "Ready",
+        "Starting",
+        "Scrambling · 1/10 · U'",
+        "Scrambling · 2/10 · L2",
+        "Scrambling · 3/10 · B'",
+        "Scrambling · 4/10 · D2",
+        "Scrambling · 5/10 · F2",
+        "Scrambling · 6/10 · L'",
+        "Scrambling · 7/10 · U2",
+        "Scrambling · 8/10 · R",
+        "Scrambling · 9/10 · F2",
+        "Scrambling · 10/10 · R2",
+        "Scrambling · 10/10 · R2",
+        "Scrambled · Ready to solve",
+        "Solving · 1/10 · R2",
+        "Solving · 2/10 · F2",
+        "Solving · 3/10 · R'",
+        "Solving · 4/10 · U2",
+        "Solving · 5/10 · L",
+        "Solving · 6/10 · F2",
+        "Solving · 7/10 · D2",
+        "Solving · 8/10 · B",
+        "Solving · 9/10 · L2",
+        "Solving · 10/10 · U",
+        "Solving · 10/10 · U",
+        "Settling",
+        "Ready",
+        "Starting",
+        "Scrambling · 1/10 · U2",
+        "Scrambling · 2/10 · F2",
+        "Scrambling · 3/10 · R",
+        "Scrambling · 4/10 · F",
+        "Scrambling · 5/10 · U'",
+        "Scrambling · 6/10 · R'",
+        "Scrambling · 7/10 · U'",
+        "Scrambling · 8/10 · R2",
+        "Scrambling · 9/10 · F2",
+        "Scrambling · 10/10 · U2",
+        "Scrambling · 10/10 · U2",
+        "Scrambled · Ready to solve",
+        "Solving · 1/10 · U2",
+        "Solving · 2/10 · F2",
+        "Solving · 3/10 · R2",
+        "Solving · 4/10 · U",
+        "Solving · 5/10 · R",
+        "Solving · 6/10 · U",
+        "Paused · Solving · 6/10 · U"
+      ]
+    },
+    "journal": "U2 F2 R2 U R U F' R' F2 U2",
+    "paused": "true",
+    "spokenRole": "status",
+    "visualLive": "off",
+    "summary": {
+      "visualUpdates": 48,
+      "spokenUpdates": 2
+    }
+  },
+  "keyboardMobile": {
+    "orientation": "horizontal",
+    "runtimeText": "SYSTEM / 02\n系统运行\n策略\n交互预览 · 未连接运行服务\n记忆层级\n--\n交互预览 · 未连接运行服务\n世界模型\n0\n交互预览 · 未连接运行服务\n审计时间线\n交互预览 · 未连接运行服务\n系统状态\n交互预览 · 未连接运行服务\n健康\n--\n交互预览 · 未连接运行服务\nWS 事件\n0\n交互预览 · 未连接运行服务\n智能体 & 调度器\n交互预览 · 未连接运行服务",
+    "selected": "runtimeTab"
+  },
+  "compactFailure": {
+    "detailsHidden": true,
+    "inputVisible": true,
+    "recoveryHidden": false,
+    "recoveryParent": "cubePanel",
+    "retryVisible": true
+  },
+  "compactRecovery": {
+    "history": 0,
+    "sameState": true,
+    "solved": true
+  },
+  "finalCompact": {
+    "bodyWidth": 390,
+    "compact": "true",
+    "detailsHidden": true,
+    "height": 900,
+    "labels": [
+      {
+        "key": "ui.navMain",
+        "text": "主导航"
+      },
+      {
+        "key": "ui.chatHome",
+        "text": "EVA 对话"
+      },
+      {
+        "key": "ui.language",
+        "text": "切换语言"
+      },
+      {
+        "key": "btn.theme",
+        "text": "切换深色/浅色模式"
+      },
+      {
+        "key": "ui.models",
+        "text": "切换魔方模型"
+      },
+      {
+        "key": "ui.resetView",
+        "text": "复位视角"
+      },
+      {
+        "key": "ui.views",
+        "text": "魔方视角"
+      },
+      {
+        "key": "ui.phases",
+        "text": "演变阶段"
+      },
+      {
+        "key": "ui.conversation",
+        "text": "与 EVA 对话"
+      },
+      {
+        "key": "ui.transcript",
+        "text": "对话记录"
+      },
+      {
+        "key": "ui.responseMode",
+        "text": "回答模式"
+      }
+    ],
+    "lang": "zh-CN",
+    "page": "chat",
+    "regions": [
+      {
+        "clientWidth": 330,
+        "left": 60,
+        "right": 390,
+        "scrollWidth": 330,
+        "selector": ".workspace-main"
+      },
+      {
+        "clientWidth": 330,
+        "left": 60,
+        "right": 390,
+        "scrollWidth": 330,
+        "selector": ".dialogue-panel"
+      },
+      {
+        "clientWidth": 297,
+        "left": 76,
+        "right": 374,
+        "scrollWidth": 297,
+        "selector": ".chat-form"
+      },
+      {
+        "clientWidth": 0,
+        "left": 0,
+        "right": 0,
+        "scrollWidth": 0,
+        "selector": ".chat-messages"
+      }
+    ],
+    "rootWidth": 390,
+    "sendBottom": 727.09375,
+    "theme": "light",
+    "tokens": {
+      "--ui-bg": "#f8f8f6",
+      "--ui-control-height": "36px",
+      "--ui-muted": "#67676c",
+      "--ui-panel": "#fdfdfc",
+      "--ui-radius-control": "8px",
+      "--ui-secondary": "#68686d",
+      "--ui-surface": "#efefec",
+      "--ui-text": "#252528"
+    },
+    "width": 390
+  },
+  "testSummary": {
+    "javascript": 287,
+    "failed": 0,
+    "brandAssetCheck": "passed",
+    "syntax": "passed"
+  },
+  "limits": [
+    "Codex in-app browser and local fixture only",
+    "Native desktop browser 200% zoom and actual screen reader not tested",
+    "Native Chrome/Edge download, direct offline execution and long lifecycle remain pending"
+  ],
+  "compactRetrySnapshot": {
+    "fault": false,
+    "history": 9,
+    "solved": false
+  },
+  "cleanFinal": {
+    "bodyWidth": 390,
+    "compact": "true",
+    "detailsHidden": true,
+    "height": 900,
+    "labels": [
+      {
+        "key": "ui.navMain",
+        "text": "主导航"
+      },
+      {
+        "key": "ui.chatHome",
+        "text": "EVA 对话"
+      },
+      {
+        "key": "ui.language",
+        "text": "切换语言"
+      },
+      {
+        "key": "btn.theme",
+        "text": "切换深色/浅色模式"
+      },
+      {
+        "key": "ui.models",
+        "text": "切换魔方模型"
+      },
+      {
+        "key": "ui.resetView",
+        "text": "复位视角"
+      },
+      {
+        "key": "ui.views",
+        "text": "魔方视角"
+      },
+      {
+        "key": "ui.phases",
+        "text": "演变阶段"
+      },
+      {
+        "key": "ui.conversation",
+        "text": "与 EVA 对话"
+      },
+      {
+        "key": "ui.transcript",
+        "text": "对话记录"
+      },
+      {
+        "key": "ui.responseMode",
+        "text": "回答模式"
+      }
+    ],
+    "lang": "zh-CN",
+    "page": "chat",
+    "regions": [
+      {
+        "clientWidth": 330,
+        "left": 60,
+        "right": 390,
+        "scrollWidth": 330,
+        "selector": ".workspace-main"
+      },
+      {
+        "clientWidth": 330,
+        "left": 60,
+        "right": 390,
+        "scrollWidth": 330,
+        "selector": ".dialogue-panel"
+      },
+      {
+        "clientWidth": 297,
+        "left": 76,
+        "right": 374,
+        "scrollWidth": 297,
+        "selector": ".chat-form"
+      },
+      {
+        "clientWidth": 0,
+        "left": 0,
+        "right": 0,
+        "scrollWidth": 0,
+        "selector": ".chat-messages"
+      }
+    ],
+    "rootWidth": 390,
+    "sendBottom": 727.09375,
+    "theme": "light",
+    "tokens": {
+      "--ui-bg": "#f8f8f6",
+      "--ui-control-height": "36px",
+      "--ui-muted": "#67676c",
+      "--ui-panel": "#fdfdfc",
+      "--ui-radius-control": "8px",
+      "--ui-secondary": "#68686d",
+      "--ui-surface": "#efefec",
+      "--ui-text": "#252528"
+    },
+    "width": 390
+  },
+  "viewportReset": {
+    "height": 720,
+    "lang": "zh-CN",
+    "theme": "light",
+    "width": 1280
+  }
+}

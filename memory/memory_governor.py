@@ -145,10 +145,12 @@ class MemoryGovernor:
         self.decay_policy = MemoryDecayPolicy()
 
     def ingest(
-        self, record: MemoryRecord, features: ImportanceFeatures
+        self, record: MemoryRecord, features: ImportanceFeatures, *, sync_tiers: bool = True
     ) -> MemoryRecord:
         now = datetime.now(timezone.utc)
         record.salience = self.importance.score(features)
+        if record.metadata.get("long_term_allowed") is True:
+            record.salience = max(0.8, record.salience)
         record.updated_at = now
 
         conflicts = self.conflict_resolver.detect(
@@ -159,14 +161,17 @@ class MemoryGovernor:
         self.repository.upsert(record)
 
         # bridge to tiered memory — high-salience memories flow into S2/S3
-        if self.tiered_memory and record.salience >= 0.6:
+        if sync_tiers and self.tiered_memory and record.salience >= 0.6 and record.status == MemoryStatus.ACTIVE:
             try:
-                self.tiered_memory.ingest(
+                record.metadata["tier_ids"] = self.tiered_memory.ingest(
                     record.content,
                     importance=record.salience,
                     source=record.memory_type.value,
                     category=record.memory_type.value,
                     source_event_id=record.source_event_id or "",
+                    origin=record.metadata.get("provenance"),
+                    allow_long_term=record.metadata.get("long_term_allowed") is True,
+                    sync_governor=False,
                 )
             except Exception:
                 pass

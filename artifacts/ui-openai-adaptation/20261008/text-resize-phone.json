@@ -1,0 +1,8 @@
+{
+  "method": "32px root text size fixture; focus send button with ArrowLeft, without submission.",
+  "focus": "sendBtn",
+  "navTop": 576,
+  "overflow": false,
+  "sendBottom": 458.5208435058594,
+  "width": 305
+}

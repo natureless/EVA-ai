@@ -24,6 +24,7 @@ from app.bootstrap import bootstrap_system, shutdown_system
 from app.config import settings
 from runtime.rate_limiter import RateLimitMiddleware, SlidingWindowLimiter
 from runtime.auth import AuthMiddleware
+from runtime.cloudflare_access import AccessConfig, CloudflareAccessMiddleware
 from runtime.websocket import WebSocketManager
 
 
@@ -62,6 +63,10 @@ app.add_middleware(
     trust_proxy_headers=settings.trust_proxy_headers,
 )
 app.state.rate_limiter = _rate_limiter
+
+# Added last so the same Access identity protects HTTP and WebSocket handshakes.
+app.add_middleware(CloudflareAccessMiddleware, config=AccessConfig.from_env(),
+                   api_token=os.environ.get("EVA_API_TOKEN", ""))
 
 
 @app.websocket("/ws")

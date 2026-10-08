@@ -4,6 +4,7 @@ from typing import Any
 from agents.base_agent import AgentResult, AgentTask, BaseAgent
 from core.llm_adapter import get_llm, MockLLM, load_system_prompt
 from core.llm_helpers import build_context_text
+from core.chat_mode import configure_chat_llm
 
 
 logger = logging.getLogger(__name__)
@@ -31,13 +32,13 @@ class DocsAgent(BaseAgent):
 
             # ── LLM summary ────────────────────────────────
             context = task.payload.get("context")
-            llm = get_llm()
+            llm = configure_chat_llm(get_llm(), task.payload.get("mode", "normal"))
             compact = " ".join(text.split())
             summary_text = self._llm_summarize(llm, compact, context)
 
             return AgentResult(ok=True, agent=self.name,
                 content=summary_text, summary=summary_text[:120],
-                meta={"source_length": len(text), "llm_provider": llm.provider})
+                meta={"source_length": len(text), "llm_provider": llm.provider, "mode_info": llm.mode_info})
 
         except Exception as e:
             logger.exception("docs_agent error: %s", e)
@@ -46,7 +47,7 @@ class DocsAgent(BaseAgent):
                 summary=str(e)[:120], meta={"error": type(e).__name__})
 
     def _llm_summarize(self, llm: Any, text: Any, context: Any = None) -> str:
-        if isinstance(llm, MockLLM):
+        if isinstance(getattr(llm, "inner", llm), MockLLM):
             preview = text[:160]
             return f"[docs_agent] document task accepted, preview: {preview}"
 

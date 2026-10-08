@@ -1,0 +1,45 @@
+{
+  "status": "deployed_and_verified",
+  "verified_at": "2026-09-27T13:59:03+00:00",
+  "scope": "Current market/weather/news requests without a network tool receive a deterministic capability boundary before LLM generation.",
+  "source_files": [
+    "agents/chat_agent.py",
+    "tests/test_chat_capabilities.py",
+    "tests/test_acceptance_cloudflare.py"
+  ],
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\chat-guard-20260927T215535",
+  "production": {
+    "old_pid": 27264,
+    "new_pid": 39752,
+    "health_ready": 200,
+    "runtime_mode": "legacy",
+    "scheduled_tasks": {
+      "EVA Cloudflare App": "Running",
+      "EVA Cloudflare Tunnel": "Running"
+    },
+    "guard_replay": {
+      "question_class": "current market",
+      "http_status": 200,
+      "completed": true,
+      "terminal_state": "succeeded",
+      "reply_contains_no_live_data_claim": true,
+      "remember": false
+    }
+  },
+  "tests": {
+    "chat_access_websocket_acceptance": 105,
+    "ruff": "passed",
+    "production_origin_acceptance_without_chat": 15,
+    "full_repository_suite": "not run"
+  },
+  "boundaries": [
+    "A network-enabled request still requires a successful tool result and source timestamp.",
+    "This guard does not create a quote feed or validate third-party data.",
+    "The replay event used remember=false but still remains an operational test event."
+  ],
+  "source_hashes": {
+    "agents/chat_agent.py": "98f5be629742c9cdf41a879bc190ac159048ed1b8391fed988c15e2157ec643c",
+    "tests/test_chat_capabilities.py": "e7291ad7d44aad0442c27a430c55a77d1ef6987c3448f93fb010a9d338f58815",
+    "tests/test_acceptance_cloudflare.py": "f44e0aae03e48799d1ac279b9067c2b8b62179a76a282d1761ba3599c7eeafd3"
+  }
+}

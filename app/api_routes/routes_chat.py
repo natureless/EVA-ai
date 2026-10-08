@@ -1,21 +1,17 @@
-"""Chat API routes — unified event-driven execution model.
+"""Chat admission and delivery through retained in-process result receipts.
 
-Both sync and streaming paths publish events to the EventBus and
-return immediately. Results are delivered via WebSocket channels:
-
-- ``chat_token``  — per-token streaming output
-- ``chat_reply``  — final agent response
-
-Poll fallback: ``GET /api/chat/result/{task_id}`` for clients that
-cannot open a WebSocket connection.
+Async returns a task ID. Sync bounds HTTP waiting. SSE and polling read the
+same terminal record; WebSocket chat_reply is an additional delivery channel.
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
+import sqlite3
 import time
-from typing import Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Literal
 from uuid import uuid4
 
 from fastapi import APIRouter, Request, status
@@ -23,19 +19,64 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.config import settings
+from app.api_routes.admission import admission_rejected, publish_event
 from event.event_schema import Event
+from event.codec import source_event_identity
+from core.chat_mode import configure_chat_llm
+from core.llm_adapter import get_llm
+from runtime.request_persistence import RequestAdmissionError
 
 router = APIRouter()
 
 
 class ChatRequest(BaseModel):
+    schema_version: Literal["1.0"] = "1.0"
+    source_event_id: str | None = Field(default=None, min_length=1, max_length=128)
     text: str = Field(min_length=1, max_length=4000)
+    mode: Literal["normal", "deep"] = "normal"
+    remember: bool = Field(
+        default=False,
+        strict=True,
+        description="Explicitly retain this user message in long-term memory as a user statement.",
+    )
+
+
+def _chat_event(
+    req: ChatRequest, correlation_id: str, *, stream: bool = False
+) -> Event:
+    data = req.model_dump(exclude={"schema_version", "source_event_id"})
+    if stream:
+        data["stream"] = True
+    identity: dict[str, Any] = (
+        {"id": source_event_identity("user", "user_message", req.source_event_id)}
+        if req.source_event_id
+        else {}
+    )
+    return Event(
+        **identity,
+        type="user_message",
+        source="user",
+        payload=data,
+        correlation_id=correlation_id,
+        source_event_id=req.source_event_id,
+    )
 
 
 # ── unified async endpoint (returns immediately) ──────────────
 
+
+@router.get("/api/chat/modes")
+def chat_modes() -> dict[str, Any]:
+    llm = get_llm()
+    return {
+        "modes": [
+            configure_chat_llm(llm, mode).mode_info for mode in ("normal", "deep")
+        ]
+    }
+
+
 @router.post("/api/chat")
-def chat(req: ChatRequest, request: Request) -> dict[str, Any]:
+def chat(req: ChatRequest, request: Request) -> Any:
     """Publish a user message and return immediately with a task_id.
 
     The client receives the result via WebSocket ``chat_reply`` channel
@@ -46,110 +87,91 @@ def chat(req: ChatRequest, request: Request) -> dict[str, Any]:
     start = time.perf_counter()
 
     correlation_id = str(uuid4())
-    container.result_registry.create(correlation_id)
-
-    event = Event(
-        type="user_message",
-        source="user",
-        payload={"text": req.text},
-        correlation_id=correlation_id,
-    )
-    container.event_bus.publish(event)
+    event = _chat_event(req, correlation_id)
+    if reservation_error := _reserve(container, event):
+        return reservation_error
+    if rejection := publish_event(container, event):
+        return _queue_rejected(container, correlation_id, rejection)
     container.system_state["pending_events"] = container.event_bus.size()
     container.system_state["pending_results"] = container.result_registry.size()
 
     queue_ms = int((time.perf_counter() - start) * 1000)
-    logger.info("chat queued event_id=%s correlation_id=%s queue_ms=%s",
-                event.id, correlation_id, queue_ms)
+    logger.info(
+        "chat queued event_id=%s correlation_id=%s queue_ms=%s",
+        event.id,
+        correlation_id,
+        queue_ms,
+    )
 
     return {
         "accepted": True,
         "task_id": correlation_id,
         "event_id": event.id,
+        "mode": req.mode,
+        "request_deadline_sec": container.result_registry.pending_timeout_sec,
+        "result_retention_sec": container.result_registry.retention_sec,
         "message": "event queued; listen on WS chat_reply or poll /api/chat/result/{task_id}",
     }
 
 
-# ── SSE streaming endpoint (WS-backed, full pipeline) ─────────
+# ── SSE receipt endpoint (full processing pipeline) ──────────
+
 
 @router.post("/api/chat/stream")
 async def chat_stream(req: ChatRequest, request: Request) -> Any:
-    """SSE endpoint backed by the unified cognition pipeline.
+    """SSE of the canonical reviewed receipt, with bounded request lifetime.
 
-    Publishes a ``user_message`` event with ``stream: true``, then
-    subscribes to WebSocket ``chat_token`` and ``chat_reply`` channels
-    and forwards tokens as Server-Sent Events.
-
-    This replaces the old direct-to-LLM SSE path — the full
-    Planner → Router → Policy → Agent pipeline runs, and tokens
-    arrive via WS broadcast.
+    The registry is authoritative even if WebSocket delivery is unavailable.
+    The named result event carries failure/uncertainty, followed by [DONE].
+    Disconnecting a stream does not cancel the admitted request.
     """
     logger = logging.getLogger("eva.api.chat_stream")
     container = request.app.state.container
-    ws = container.ws_manager
-
-    if ws is None:
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={"detail": "WebSocket manager not available"},
-        )
-
     correlation_id = str(uuid4())
-    container.result_registry.create(correlation_id)
-
-    token_queue: asyncio.Queue[str | None] = asyncio.Queue()
-
-    # Track whether we've received the final reply so we can
-    # stop the SSE stream cleanly.
-    stream_done = asyncio.Event()
-
-    async def _on_chat_token(channel: str, payload: dict[str, Any]) -> None:
-        if payload.get("task_id") == correlation_id:
-            await token_queue.put(payload.get("token", ""))
-
-    async def _on_chat_reply(channel: str, payload: dict[str, Any]) -> None:
-        if payload.get("task_id") == correlation_id:
-            stream_done.set()
-
-    ws.subscribe("chat_token", _on_chat_token)
-    ws.subscribe("chat_reply", _on_chat_reply)
-
-    event = Event(
-        type="user_message",
-        source="user",
-        payload={"text": req.text, "stream": True},
-        correlation_id=correlation_id,
-    )
-    container.event_bus.publish(event)
+    event = _chat_event(req, correlation_id, stream=True)
+    if reservation_error := await asyncio.to_thread(_reserve, container, event):
+        return reservation_error
+    if rejection := publish_event(container, event):
+        return _queue_rejected(container, correlation_id, rejection)
     container.system_state["pending_events"] = container.event_bus.size()
 
     async def event_generator() -> AsyncGenerator[str, None]:
-        heartbeat_interval = 15.0  # seconds between heartbeats
         last_heartbeat = time.monotonic()
         try:
-            while not stream_done.is_set():
-                try:
-                    token = await asyncio.wait_for(token_queue.get(), timeout=0.1)
-                    if token is None:
-                        break
-                    if token:
-                        yield f"data: {_sse_escape(token)}\n\n"
-                except asyncio.TimeoutError:
-                    # Send heartbeat to keep connection alive
-                    now = time.monotonic()
-                    if now - last_heartbeat >= heartbeat_interval:
-                        yield ": heartbeat\n\n"
-                        last_heartbeat = now
-                    continue
-            yield "data: [DONE]\n\n"
+            while True:
+                view = await asyncio.to_thread(
+                    container.result_registry.lookup, correlation_id
+                )
+                if view["state"] == "terminal":
+                    result = view["payload"]
+                    if result.get("reply"):
+                        yield f"data: {_sse_escape(result['reply'])}\n\n"
+                    yield (
+                        "event: result\ndata: "
+                        + json.dumps(
+                            {**result, "completed": True},
+                            ensure_ascii=False,
+                        )
+                        + "\n\n"
+                    )
+                    yield "data: [DONE]\n\n"
+                    return
+                if view["state"] == "missing":
+                    yield 'event: result\ndata: {"completed": false, "error": "result_unknown_or_expired"}\n\n'
+                    yield "data: [DONE]\n\n"
+                    return
+                if time.monotonic() - last_heartbeat >= 15.0:
+                    yield ": heartbeat\n\n"
+                    last_heartbeat = time.monotonic()
+                await asyncio.sleep(0.1)
         except asyncio.CancelledError:
-            logger.debug("SSE stream cancelled correlation_id=%s", correlation_id)
+            logger.debug(
+                "SSE disconnected; task retained correlation_id=%s", correlation_id
+            )
+            raise
         except Exception:
-            logger.exception("SSE stream error correlation_id=%s", correlation_id)
+            logger.exception("SSE delivery failed correlation_id=%s", correlation_id)
             yield "data: [ERROR]\n\n"
-        finally:
-            ws.unsubscribe("chat_token", _on_chat_token)
-            ws.unsubscribe("chat_reply", _on_chat_reply)
 
     return StreamingResponse(
         event_generator(),
@@ -158,11 +180,13 @@ async def chat_stream(req: ChatRequest, request: Request) -> Any:
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",
+            "X-EVA-Task-ID": correlation_id,
         },
     )
 
 
 # ── backward-compatible sync endpoint ─────────────────────────
+
 
 @router.post("/api/chat/sync")
 def chat_sync(req: ChatRequest, request: Request) -> Any:
@@ -176,15 +200,11 @@ def chat_sync(req: ChatRequest, request: Request) -> Any:
     start = time.perf_counter()
 
     correlation_id = str(uuid4())
-    container.result_registry.create(correlation_id)
-
-    event = Event(
-        type="user_message",
-        source="user",
-        payload={"text": req.text},
-        correlation_id=correlation_id,
-    )
-    container.event_bus.publish(event)
+    event = _chat_event(req, correlation_id)
+    if reservation_error := _reserve(container, event):
+        return reservation_error
+    if rejection := publish_event(container, event):
+        return _queue_rejected(container, correlation_id, rejection)
     container.system_state["pending_events"] = container.event_bus.size()
     container.system_state["pending_results"] = container.result_registry.size()
 
@@ -201,21 +221,34 @@ def chat_sync(req: ChatRequest, request: Request) -> Any:
                 "accepted": True,
                 "completed": False,
                 "task_id": correlation_id,
-                "message": "event queued but timed out waiting for result",
+                "wait_timed_out": True,
+                "message": "request accepted; HTTP wait ended before a receipt was available",
             },
         )
 
-    container.result_registry.pop(correlation_id)
     container.system_state["pending_results"] = container.result_registry.size()
     wait_ms = int((time.perf_counter() - start) * 1000)
-    logger.info("chat_sync done correlation_id=%s agent=%s wait_ms=%s",
-                correlation_id, result.get("selected_agent", ""), wait_ms)
+    logger.info(
+        "chat_sync done correlation_id=%s agent=%s wait_ms=%s",
+        correlation_id,
+        result.get("selected_agent", ""),
+        wait_ms,
+    )
 
     return {
         "accepted": True,
         "completed": True,
         "task_id": correlation_id,
+        "ok": result.get("ok", False),
+        "error": result.get("error"),
+        "terminal_state": result.get("terminal_state"),
+        "execution_state": result.get("execution_state"),
+        "review": result.get("review"),
+        "mode": result.get("mode", req.mode),
+        "mode_info": result.get("mode_info"),
+        "memory_write_ids": result.get("memory_write_ids", {}),
         "reply": result.get("reply", ""),
+        "reply_available": result.get("reply_available", True),
         "selected_agent": result.get("selected_agent", ""),
         "loop_id": result.get("loop_id", ""),
         "duration_ms": result.get("duration_ms", 0),
@@ -223,6 +256,7 @@ def chat_sync(req: ChatRequest, request: Request) -> Any:
 
 
 # ── poll fallback ─────────────────────────────────────────────
+
 
 @router.get("/api/chat/result/{task_id}")
 def get_chat_result(task_id: str, request: Request) -> Any:
@@ -233,17 +267,52 @@ def get_chat_result(task_id: str, request: Request) -> Any:
     WebSocket ``chat_reply``.
     """
     container = request.app.state.container
-    result = container.result_registry.peek(task_id)
-    if result is None:
+    try:
+        view = container.result_registry.lookup(task_id)
+    except (ValueError, RuntimeError, sqlite3.Error):
+        return JSONResponse(
+            status_code=503,
+            content={
+                "completed": False,
+                "task_id": task_id,
+                "error": "durable_request_unavailable",
+            },
+        )
+    if view["state"] == "missing":
+        return JSONResponse(
+            status_code=404,
+            content={
+                "completed": False,
+                "task_id": task_id,
+                "error": "result_unknown_or_expired",
+                "detail": "No retained receipt exists for this task.",
+            },
+        )
+    result = view["payload"]
+    if view["state"] != "terminal":
         return JSONResponse(
             status_code=status.HTTP_202_ACCEPTED,
-            content={"completed": False, "task_id": task_id},
+            content={
+                "completed": False,
+                "task_id": task_id,
+                "state": view["state"],
+                "timing": view["timing"],
+            },
         )
-    container.result_registry.pop(task_id)
     return {
         "completed": True,
+        "timing": view["timing"],
         "task_id": task_id,
+        "ok": result.get("ok", False),
+        "error": result.get("error"),
+        "terminal_state": result.get("terminal_state"),
+        "execution_state": result.get("execution_state"),
+        "review": result.get("review"),
+        "mode": result.get("mode", "normal"),
+        "mode_info": result.get("mode_info"),
+        "memory_write_ids": result.get("memory_write_ids", {}),
         "reply": result.get("reply", ""),
+        "reply_available": result.get("reply_available", True),
         "selected_agent": result.get("selected_agent", ""),
         "loop_id": result.get("loop_id", ""),
         "duration_ms": result.get("duration_ms", 0),
@@ -251,6 +320,7 @@ def get_chat_result(task_id: str, request: Request) -> Any:
 
 
 # ── state endpoint ────────────────────────────────────────────
+
 
 @router.get("/api/state")
 def get_state(request: Request) -> dict[str, Any]:
@@ -276,6 +346,7 @@ def get_state(request: Request) -> dict[str, Any]:
         "pending_events": ss["pending_events"],
         "events_dropped": container.event_bus.dropped,
         "pending_results": ss.get("pending_results", 0),
+        "result_registry": container.result_registry.stats(),
         "last_reply": ss["last_reply"],
         "last_selected_agent": ss["last_selected_agent"],
         "last_loop_id": ss["last_loop_id"],
@@ -292,19 +363,50 @@ def get_state(request: Request) -> dict[str, Any]:
         "memory_stats": memory_stats,
     }
 
-    # ── MVSC status (when enabled) ──
-    if ss.get("mvsc_feature_flags"):
-        result["mvsc"] = {
-            "enabled": True,
-            "tick": ss.get("mvsc_tick", 0),
-            "runtime_mode": ss.get("mvsc_runtime_mode", "unknown"),
-            "cognition_phase": ss.get("mvsc_cognition_phase", "unknown"),
-        }
+    if ss.get("minimal_brain") is not None:
+        result["minimal_brain"] = ss["minimal_brain"]
+
+    # Attachment is independent of HTTP execution. No unmeasured tick is invented.
+    if "mvsc_status" in ss:
+        result["mvsc"] = dict(ss["mvsc_status"])
+    controller = container.runtime.controller
+    result["runtime_mode"] = controller.mode if controller else "unknown"
 
     return result
 
 
 # ── internal helpers ──────────────────────────────────────────
+
+
+def _queue_rejected(container: Any, correlation_id: str, reason: str) -> JSONResponse:
+    """Undo request-local bookkeeping when the bus declines admission."""
+    container.result_registry.reject_unpublished(correlation_id, reason)
+    container.system_state["pending_events"] = container.event_bus.size()
+    container.system_state["pending_results"] = container.result_registry.size()
+    return admission_rejected(reason)
+
+
+def _reserve(container: Any, event: Event) -> JSONResponse | None:
+    try:
+        if not container.result_registry.create(
+            event.correlation_id, event_id=event.id, event=event
+        ):
+            return admission_rejected("result_capacity_full")
+    except RequestAdmissionError as error:
+        if error.reason == "durable_request_conflict":
+            return JSONResponse(
+                status_code=409,
+                content={
+                    "accepted": False,
+                    "error": error.reason,
+                    "task_id": error.task_id,
+                    "event_id": error.event_id,
+                    "detail": "This source event already has a registered task. Poll its receipt instead of executing it again.",
+                },
+            )
+        return admission_rejected(error.reason)
+    return None
+
 
 def _sse_escape(text: str) -> str:
     return text.replace("\n", "\\n").replace("\r", "")

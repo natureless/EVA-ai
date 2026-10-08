@@ -12,10 +12,12 @@ route shadowing (registered first).
 from __future__ import annotations
 
 import logging
+from dataclasses import asdict
 from typing import Any
 
 from fastapi import APIRouter, Query, Request
 from pydantic import BaseModel, Field
+from memory.provenance import read_provenance
 
 logger = logging.getLogger("eva.api.memory")
 
@@ -57,6 +59,7 @@ def get_memory_entries(
                     "importance": float(value.get("importance", 0.5)),
                     "ts": value.get("ts", 0),
                     "tier": "S1",
+                    "provenance": read_provenance(value),
                 })
 
     elif tier == "S2":
@@ -76,6 +79,7 @@ def get_memory_entries(
                         "created_at": str(row.get("created_at", "")),
                         "expires_at": str(row.get("expires_at", "")),
                         "tier": "S2",
+                        "provenance": read_provenance(row),
                     })
             except Exception:
                 logger.debug("S2 browse failed", exc_info=True)
@@ -95,6 +99,7 @@ def get_memory_entries(
                         "source_event_id": str(row.get("source_event_id", "")),
                         "created_at": str(row.get("created_at", "")),
                         "tier": "S3",
+                        "provenance": read_provenance(row),
                     })
             except Exception:
                 logger.debug("S3 browse failed", exc_info=True)
@@ -113,6 +118,8 @@ def get_memory_entries(
                         "properties": e.get("properties_json", "{}"),
                         "updated_at": str(e.get("updated_at", "")),
                         "tier": "S4",
+                        "provenance": read_provenance(e),
+                        "field_provenance": e.get("field_provenance", {}),
                     })
             except Exception:
                 logger.debug("S4 browse failed", exc_info=True)
@@ -220,6 +227,8 @@ def search_memory(payload: MemorySearchRequest, request: Request) -> dict[str, A
                                 "type": etype,
                                 "name": name[:200],
                                 "tier": "S4",
+                                "provenance": read_provenance(e),
+                                "field_provenance": e.get("field_provenance", {}),
                             })
                             if len(tier_results) >= payload.limit:
                                 break
@@ -257,7 +266,7 @@ def get_memory_entry(tier: str, entry_id: str, request: Request) -> dict[str, An
         if wm:
             entity = wm.get_entity(entry_id)
             if entity:
-                return {"found": True, "tier": tier, "entry": dict(entity)}
+                return {"found": True, "tier": tier, "entry": asdict(entity)}
     elif tier == "S5":
         store = getattr(container, "store", None)
         if store:

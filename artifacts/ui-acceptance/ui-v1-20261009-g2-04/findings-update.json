@@ -1,0 +1,29 @@
+{
+  "candidateId": "ui-v1-20261009-g2-04",
+  "findings": [
+    {
+      "id": "G2-LIST-01",
+      "priority": "P1",
+      "status": "fixed-automatically-verified",
+      "problem": "Old browse/search responses replaced the current selection",
+      "regression": "late selection/late error/search versus browse"
+    },
+    {
+      "id": "G2-LIST-02",
+      "priority": "P1",
+      "status": "fixed-automatically-verified",
+      "problem": "HTTP and login errors parsed as data; search failures could look empty; overview refresh lost valid cards",
+      "regression": "503/malformed/login/timeout/retry/stale overview"
+    },
+    {
+      "id": "G0-F03",
+      "status": "partially-improved",
+      "note": "List state/title/cards translated; other graph/goal/MVSC surfaces still need shared language coverage"
+    },
+    {
+      "id": "G0-F05",
+      "status": "partially-improved",
+      "note": "List now uses EvaHttp; settings and other remaining direct-fetch surfaces are not certified"
+    }
+  ]
+}

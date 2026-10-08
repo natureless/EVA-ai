@@ -1,0 +1,45 @@
+{
+  "client_date": "2026-10-06",
+  "finished_at": "2026-10-06T23:12:00+08:00",
+  "fixture": {
+    "nodes": 75,
+    "edges": 100,
+    "preview_port": 8779
+  },
+  "desktop": {
+    "viewport": [1280, 720],
+    "immersive": true,
+    "stage": {"left": 52, "top": 0, "width": 1228, "height": 720},
+    "hud": {"left": 52, "top": 0, "width": 1228, "height": 720},
+    "scope": "全局图谱 · 75 节点",
+    "explorer_display": "none",
+    "inspector_display": "none",
+    "hud_controls": ["复位视角", "退出沉浸"],
+    "screenshot_observed": true
+  },
+  "local_scope": {
+    "immersive": true,
+    "scope": "局部关系 · 4 节点",
+    "inspector_display": "none"
+  },
+  "mobile": {
+    "viewport": [390, 844],
+    "immersive": true,
+    "stage": {"left": 43, "top": 0, "width": 347, "height": 844},
+    "hud": {"left": 43, "top": 0, "width": 347, "height": 844},
+    "toolbar_top": 52,
+    "spatial_toolbar_top": 106,
+    "footer_top": 813,
+    "screenshot_observed": true,
+    "page_horizontal_overflow": false
+  },
+  "console": {"warnings": 0, "errors": 0},
+  "controls": {
+    "reset_action": "passed",
+    "exit_action": "passed",
+    "escape_action": "covered_by_unit_test"
+  },
+  "public_authenticated_browser": false,
+  "physical_phone": false,
+  "preview_cleaned_up": true
+}

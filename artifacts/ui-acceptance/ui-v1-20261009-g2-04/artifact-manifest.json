@@ -1,0 +1,27 @@
+{
+  "candidateId": "ui-v1-20261009-g2-04",
+  "sealedAt": "2026-10-08T16:25:53.236557+00:00",
+  "sourceSetSha256": "c1cd2024b4727477f844a9ac781cc2a885a5ec5a0631d6548a0fb87fe02f73d0",
+  "artifactHashes": {
+    "before-tests.log": "9b0833aa3e2547e90fe89d940e5b15952d16e358a77c84432cc786509b77b855",
+    "check_api.py": "c0aa7f3faf0b674577a4bf03279b56ad85d2dc1ebbde40a629ad0581ff0d7990",
+    "client-replay.json": "2aaa77614a65f3ceb76e7b74295d8898d5791308b7d65bd1b66f098e42cf9658",
+    "edit_memory.py": "7c1fe41fb3ffd168b3d83da1e5a76274ac537b9d083cd98da6cac955e621f86a",
+    "finalize.py": "c32a4a068f22496547d19d75a96b649c7606ff818ea9f7a4e7a7b6f4ea8fe446",
+    "findings-update.json": "ed9a7923bce865064636f93bd9bec08e2206c5486f11832cfce6ffe45d5c9b40",
+    "implementation.patch": "2eef09f39647a08eba2a3a5754414f4c9b76f11410172631b92670f0bf5d06bd",
+    "progress.json": "e70882fd594c30cdbcb1ad2e88d80634b79a82c2ba2e401970cf083c88d6aeec",
+    "README.md": "0b4d81cf961c6849f7a72931e882c357d9c3c1d49041f0f7bacb3b2681006bac",
+    "replay-position-diagnostic.json": "d09e9152e164e170d7c13415c63a637cc52ef6009597f010113bf71147c7f97c",
+    "replay_client.cjs": "d988b45cba02271335d05f9ab6d55652854a33f1b98a415020c783b7eab6ac8e",
+    "source-baseline.json": "9f154468cbdc43f87270b0042f360c71cb01376a29a3e4d24ac569de5d1e6ba6",
+    "verification.json": "a9857a0f83bdc915a7332949fe016a7c1d057a63bb510570f6c90fb7cb9aee3e",
+    "run-0r8k8u6o/memory-api.json": "34ccb52ca1ff8200096bba962f52f7e80bb2dcdd2cb89cf7c72f7cb9c5fa79fc",
+    "before/memory.html": "2458d9e148a36f1ab07e1bd8120e05f9b3a3f3b70099498970c1363c305722c9",
+    "before/memory_explorer.js": "95bce1e606c19996a2091547e4c731fdfd9b0eedd8e216b4c7b78d0f2df167d0"
+  },
+  "externalEvidenceHashes": {
+    "artifacts/ui-release/local-20261009-memory-status/report.json": "9dfd7db96584d3403f0d4be904e50fa285607047e8ea388323dd444f63444ac4"
+  },
+  "releasePassed": false
+}

@@ -1,0 +1,67 @@
+{
+  "status": "static_verified_public_browser_pending",
+  "started_at": "2026-10-01T04:38:05.054462+00:00",
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\graph-gestures-20261001T043805Z",
+  "before_hashes": {
+    "ui/web/static/memory_graph.js": "487c417f7e27c20add9f31bd80ce5f4cfceb06312e4a41905dfbf8e5525524c8",
+    "ui/web/templates/memory_graph.html": "0b8c16645ec85b0d1400a4e9416ac41fcd7309af994780c81411b90a227908fd",
+    "tests/js/test_memory_graph_interactions.cjs": "8156fa4fcc327f960645f7479f3ebe92f8752065cd1c9504fd073f955389a5c4"
+  },
+  "source_hashes": {
+    "ui/web/static/memory_graph.js": "8c99c8dd6be66ddd6994753e60fde968d2a3344d7c72bf967f9541dd49921da9",
+    "ui/web/templates/memory_graph.html": "a6c5ae5eea178485586d63f5e5d8bbb6f0b95bf986bb947a9b738578d4d94528",
+    "tests/js/test_memory_graph_interactions.cjs": "1c0c4a063a964551c2402755ce53f24b2c7fe7a5f30289bebeb3b37fe2785539"
+  },
+  "production": {
+    "template_version": 12,
+    "static_content_matches": true,
+    "execution_idle": true,
+    "backend_restarted": false,
+    "database_modified_by_acceptance": false,
+    "pid": 34428
+  },
+  "tests": {
+    "javascript_passed": 337,
+    "graph_interaction_passed": 42,
+    "python_targeted_passed": 29,
+    "ruff": "passed",
+    "before_fix_reproduced_failures": 5
+  },
+  "origin": {
+    "passed": 13,
+    "report": "artifacts/graph-gestures-origin-2026-10-01.json"
+  },
+  "browser": {
+    "public_navigation": "ERR_CONNECTION_CLOSED",
+    "public_anonymous_http": "Access redirect passed",
+    "chrome_edge_control": "connection unavailable",
+    "local_preview": "passed",
+    "fixture_data_only": true,
+    "checks": [
+      "75 nodes / 100 edges loaded",
+      "node list selects matching detail",
+      "local center shown",
+      "zoom button changed 100% to 125% in local view",
+      "390x844 document width 390; no horizontal overflow",
+      "all original tier filters restored",
+      "default viewport restored",
+      "no page error logs observed"
+    ],
+    "touch_input": "Input.dispatchTouchEvent unsupported in in-app browser; no browser pinch result claimed",
+    "touch_emulation_restored": true,
+    "screenshot": "artifacts/graph-gestures-preview-2026-10-01.jpg",
+    "screenshot_sha256": "b6018c57f0cf2c6e194a34a5b26bf89c373608525e3f989938865e6de3d3fd02"
+  },
+  "boundaries": [
+    "Synthetic pointer regressions are not physical phone verification.",
+    "Public authenticated browser interaction remains pending.",
+    "No backend restart, DNS changes or Access changes."
+  ],
+  "verified_at": "2026-10-01T04:51:58.420334+00:00",
+  "preview_cleanup": {
+    "fixture_server_stopped": true,
+    "fixture_tab_closed": true,
+    "viewport_restored": true,
+    "touch_emulation_restored": true
+  }
+}

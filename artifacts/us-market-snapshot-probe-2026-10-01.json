@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "error": null,
+  "review": {
+    "schema_version": 1,
+    "status": "contract_checked",
+    "passed": true,
+    "fact_verified": false,
+    "findings": []
+  },
+  "tool_rounds": 1,
+  "reply_sha256": "967c3878fa8f7af076e46b60cfd548aaa8e6ff41a2283e3a8edd514cbaccabbd",
+  "quotes_have_source": true,
+  "daily_close_disclosed": true,
+  "retrieval_time_disclosed": true
+}

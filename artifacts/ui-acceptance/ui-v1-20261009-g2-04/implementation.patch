@@ -1,0 +1,542 @@
+--- a/ui/web/static/memory_explorer.js
++++ b/ui/web/static/memory_explorer.js
+@@ -1,99 +1,212 @@
+-// EVA Memory Explorer — browse and search the five-tier memory system
++// EVA Memory Explorer — one owner for every browse/search result.
+ const MemoryExplorer = {
+   _tiers: [],
+   _activeTier: null,
++  _initialized: false,
++  _tierLoading: false,
++  _overviewLoaded: false,
++  _tierError: null,
++  _result: null,
++  _resultSerial: 0,
++  _resultController: null,
++
++  _text(zh, en) { return typeof I18N !== 'undefined' && I18N._lang === 'en' ? en : zh; },
+ 
+   _worldOriginText(entry) {
+     const origin = entry.field_provenance?.name || entry.provenance || {};
+     const labels = {
+-      verified_fact: "事实声明", user_statement: "用户陈述", working_model: "工作模型",
+-      hypothesis: "假设", assistant_inference: "助手推断", tool_observation: "工具观察",
+-      simulation: "模拟结果", unknown: "未知",
++      verified_fact: ['事实声明','Fact claim'], user_statement: ['用户陈述','User statement'],
++      working_model: ['工作模型','Working model'], hypothesis: ['假设','Hypothesis'],
++      assistant_inference: ['助手推断','Assistant inference'], tool_observation: ['工具观察','Tool observation'],
++      simulation: ['模拟结果','Simulation'], unknown: ['未知','Unknown'],
+     };
+-    return `名称来源：${labels[origin.epistemic_status] || labels.unknown}${origin.source ? ` · ${origin.source}` : ""}`;
++    return this._text('名称来源：','Name origin: ') + this._text(...(labels[origin.epistemic_status] || labels.unknown)) + (origin.source ? ` · ${origin.source}` : '');
+   },
+ 
+   init() {
++    if (this._initialized) return;
++    this._initialized = true;
+     this._bindSearch();
+-    this._loadTiers();
+-    // Auto-refresh every 30s
+-    setInterval(() => this._loadTiers(), 30000);
+-  },
+-
+-  // ── Load tier overview ────────────────────────────────────
++    document.getElementById('memTierRetry')?.addEventListener('click', () => this._loadTiers());
++    document.getElementById('memResultsRetry')?.addEventListener('click', () => {
++      if (this._result) return this._runSelection(this._result.selection);
++    });
++    window.addEventListener('lang-changed', () => {
++      this._renderLabels();
++      this._renderTiers();
++      this._renderTierStatus();
++      this._renderResult();
++    });
++    this._renderLabels();
++    const poll = async () => {
++      await this._loadTiers();
++      // Schedule after completion; a slow request never accumulates polls.
++      this._pollTimer = setTimeout(poll, 30000);
++    };
++    poll();
++  },
++
++  _renderLabels() {
++    const input = document.getElementById('memSearch');
++    if (input) {
++      input.placeholder = this._text('搜索所有记忆层级…','Search across all memory tiers…');
++      input.setAttribute('aria-label', this._text('搜索记忆','Search memory'));
++    }
++    document.getElementById('memSearchBtn').textContent = this._text('搜索','Search');
++    for (const id of ['memTierRetry','memResultsRetry']) {
++      const button = document.getElementById(id);
++      if (button) button.textContent = this._text('重试','Retry');
++    }
++    this._renderResult();
++  },
++
++  async _read(url, options = {}, controller = new AbortController()) {
++    let timedOut = false;
++    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 8000);
++    try {
++      return await EvaHttp.json(url, { ...options, signal: controller.signal, cache: 'no-store' });
++    } catch (error) {
++      if (timedOut) { const timeout = new Error('timeout'); timeout.name = 'ReadTimeout'; throw timeout; }
++      throw error;
++    } finally { clearTimeout(timer); }
++  },
++
++  _failure(error) {
++    if (error.name === 'LoginRequired') return this._text('登录需要更新，请重新登录。','Please sign in again.');
++    if (error.name === 'ReadTimeout') return this._text('读取超时，请重试。','Read timed out. Please retry.');
++    if (error.status) return this._text(`读取失败（HTTP ${error.status}），请重试。`,`Read failed (HTTP ${error.status}). Please retry.`);
++    return this._text('无法读取记忆数据，请检查连接后重试。','Could not read memory data. Check the connection and retry.');
++  },
++
++  _status(id, retryId, text, error) {
++    const status = document.getElementById(id), retry = document.getElementById(retryId);
++    if (status) status.textContent = text;
++    if (retry) retry.hidden = !error || error.name === 'LoginRequired';
++  },
++
+   async _loadTiers() {
+-    const el = document.getElementById("memTiers");
++    const el = document.getElementById('memTiers');
++    if (!el || this._tierLoading) return;
++    this._tierLoading = true;
++    el.setAttribute('aria-busy', 'true');
++    try {
++      const data = await this._read('/api/memory/tiers?format=explorer');
++      if (!Array.isArray(data.tiers) || data.tiers.some(t => !/^S[1-5]$/.test(t.name) || !Number.isFinite(t.entries) || t.entries < 0)) throw new Error('Invalid tiers');
++      this._tiers = data.tiers;
++      this._overviewLoaded = true;
++      this._tierError = null;
++      this._renderTiers();
++    } catch (error) {
++      this._tierError = error;
++      if (!this._overviewLoaded) el.innerHTML = '';
++    } finally {
++      this._tierLoading = false;
++      el.setAttribute('aria-busy', 'false');
++      this._renderTierStatus();
++    }
++  },
++
++  _renderTierStatus() {
++    const text = this._tierError ? this._failure(this._tierError) + (this._overviewLoaded ? this._text(' 显示上次读取的数据。',' Showing the last successful data.') : '') : '';
++    this._status('memTierStatus', 'memTierRetry', text, this._tierError);
++  },
++
++  _renderTiers() {
++    const el = document.getElementById('memTiers');
+     if (!el) return;
++    if (!this._overviewLoaded) {
++      if (!this._tierError) el.innerHTML = `<div class="loading">${this._text('正在读取记忆层级…','Loading memory tiers…')}</div>`;
++      return;
++    }
++    const focusTier = el.contains(document.activeElement) ? document.activeElement.dataset.tier : null;
++    el.innerHTML = this._tiers.length ? this._tiers.map(t => {
++      const pct = t.max ? Math.min(100, (t.entries / t.max) * 100) : 100;
++      const pctCls = pct > 90 ? 'full' : pct > 60 ? 'warn' : 'ok';
++      const labels = { S1:['会话','Session'], S2:['工作','Working'], S3:['长期','Long-term'], S4:['世界','World'], S5:['事件','Events'] };
++      const extra = [];
++      if (t.edges !== undefined) extra.push(this._text(`${t.edges} 条关系`,`${t.edges} edges`));
++      if (t.events !== undefined) extra.push(this._text(`${t.events} 条事件 · ${t.traces} 条轨迹`,`${t.events} events · ${t.traces} traces`));
++      if (t.hits !== undefined) extra.push(this._text(`${t.hits} 次命中 · ${t.misses} 次未命中`,`${t.hits} hits · ${t.misses} misses`));
++      if (t.expired !== undefined) extra.push(this._text(`${t.expired} 条已过期`,`${t.expired} expired`));
++      if (Number.isFinite(t.avg_importance)) extra.push(this._text('平均重要度：','Average importance: ') + t.avg_importance.toFixed(2));
++      return `<button type="button" data-tier="${t.name}" aria-pressed="${this._activeTier === t.name}" class="mem-tier-card ${this._activeTier === t.name ? 'active' : ''}"
++        style="border-left:3px solid var(--ui-tier-${t.name.toLowerCase()});background:var(--ui-surface)" onclick="MemoryExplorer._selectTier('${t.name}')">
++        <div class="tier-header"><span class="tier-badge" style="background:var(--ui-tier-${t.name.toLowerCase()});color:var(--ui-panel)">${t.name}</span><span class="tier-label">${this._text(...labels[t.name])}</span></div>
++        <div class="tier-count">${t.entries.toLocaleString()}<span class="tier-max">${t.max ? ' / ' + Number(t.max).toLocaleString() : ''}</span></div>
++        <div class="tier-bar"><div class="tier-fill ${pctCls}" style="width:${pct}%"></div></div>
++        <div class="tier-meta">${esc(t.ttl)} · ${esc(t.storage)}${extra.length ? ' · ' + esc(extra.join(' · ')) : ''}</div>
++      </button>`;
++    }).join('') : `<div class="empty-state">${this._text('暂无层级数据','No tier data available')}</div>`;
++    if (focusTier) [...el.querySelectorAll('[data-tier]')].find(button => button.dataset.tier === focusTier)?.focus();
++  },
++
++  _selectTier(name) {
++    if (!/^S[1-5]$/.test(name)) return;
++    return this._runSelection({ tier: name });
++  },
++
++  async _runSelection(selection) {
++    const serial = ++this._resultSerial;
++    this._resultController?.abort();
++    const controller = this._resultController = new AbortController();
++    this._activeTier = selection.tier || null;
++    this._result = { selection, status: 'loading' };
++    this._renderTiers();
++    this._renderResult();
+     try {
+-      const r = await fetch("/api/memory/tiers?format=explorer");
+-      const data = await r.json();
+-      this._tiers = data.tiers || [];
+-      this._renderTiers();
+-    } catch (e) {
+-      el.innerHTML = `<div class="empty-state">Failed to load: ${e.message}</div>`;
+-    }
+-  },
+-
+-  _renderTiers() {
+-    const el = document.getElementById("memTiers");
+-    const focusTier = el.contains(document.activeElement) ? document.activeElement.dataset.tier : null;
+-    const colors = {
+-      S1: { bg: "var(--ui-surface)", border: "var(--ui-tier-s1)", label: "Session" },
+-      S2: { bg: "var(--ui-surface)", border: "var(--ui-tier-s2)", label: "Working" },
+-      S3: { bg: "var(--ui-surface)", border: "var(--ui-tier-s3)", label: "Long-term" },
+-      S4: { bg: "var(--ui-surface)", border: "var(--ui-tier-s4)", label: "World" },
+-      S5: { bg: "var(--ui-surface)", border: "var(--ui-tier-s5)", label: "Events" },
+-    };
+-
+-    el.innerHTML = this._tiers.map(t => {
+-      const c = colors[t.name] || colors.S1;
+-      const pct = t.max ? Math.min(100, (t.entries / t.max) * 100) : 100;
+-      const pctCls = pct > 90 ? "full" : pct > 60 ? "warn" : "ok";
+-      const extra = [];
+-      if (t.edges !== undefined) extra.push(`${t.edges} edges`);
+-      if (t.events !== undefined) extra.push(`${t.events} events, ${t.traces} traces`);
+-      if (t.hits !== undefined) extra.push(`${t.hits} hits, ${t.misses} misses`);
+-      if (t.expired !== undefined) extra.push(`${t.expired} expired`);
+-      if (t.avg_importance !== undefined) extra.push(`avg imp: ${t.avg_importance.toFixed(2)}`);
+-
+-      return `<button type="button" data-tier="${t.name}" class="mem-tier-card ${this._activeTier === t.name ? 'active' : ''}"
+-                   style="border-left: 3px solid ${c.border}; background: ${c.bg}"
+-                   onclick="MemoryExplorer._selectTier('${t.name}')">
+-        <div class="tier-header">
+-          <span class="tier-badge" style="background:${c.border};color:var(--ui-panel)">${t.name}</span>
+-          <span class="tier-label">${t.label}</span>
+-        </div>
+-        <div class="tier-count">${t.entries.toLocaleString()}<span class="tier-max">${t.max ? ' / ' + t.max.toLocaleString() : ''}</span></div>
+-        <div class="tier-bar"><div class="tier-fill ${pctCls}" style="width:${pct}%"></div></div>
+-        <div class="tier-meta">${t.ttl} · ${t.storage}${extra.length ? ' · ' + extra.join(' · ') : ''}</div>
+-      </button>`;
+-    }).join("");
+-    if (focusTier) [...el.querySelectorAll('[data-tier]')].find(button => button.dataset.tier === focusTier)?.focus();
+-  },
+-
+-  // ── Select a tier to browse ────────────────────────────────
+-  async _selectTier(name) {
+-    this._activeTier = name;
+-    this._renderTiers();
+-    document.getElementById("memResultsTitle").textContent = `Browsing ${name}`;
+-    document.getElementById("memResultsCount").textContent = "";
+-    document.getElementById("memEntries").innerHTML = '<div class="loading">Loading…</div>';
+-
+-    try {
+-      const r = await fetch(`/api/memory/entries/${name}?limit=50`);
+-      const data = await r.json();
+-      document.getElementById("memResultsCount").textContent = `${data.total || data.entries.length} entries`;
+-      this._renderEntries(name, data.entries);
+-    } catch (e) {
+-      document.getElementById("memEntries").innerHTML = `<div class="empty-state">Error: ${e.message}</div>`;
+-    }
++      const data = selection.tier
++        ? await this._read(`/api/memory/entries/${selection.tier}?limit=50`, {}, controller)
++        : await this._read('/api/memory/search', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:selection.query,tiers:['S1','S2','S3','S4'],limit:30}) }, controller);
++      if (serial !== this._resultSerial) return;
++      let entries;
++      if (selection.tier) {
++        if (!Array.isArray(data.entries)) throw new Error('Invalid entries');
++        entries = data.entries;
++      } else {
++        if (!data.results || typeof data.results !== 'object' || Array.isArray(data.results) || Object.values(data.results).some(v => !Array.isArray(v))) throw new Error('Invalid results');
++        entries = Object.entries(data.results).flatMap(([tier, rows]) => rows.map(e => ({...e,_tier:tier})));
++      }
++      if (!Number.isFinite(data.total) || data.total < 0) throw new Error('Invalid count');
++      this._result = { selection, status:'ready', entries, total:data.total };
++    } catch (error) {
++      if (serial !== this._resultSerial) return;
++      this._result = { selection, status:'error', error };
++    } finally {
++      if (serial === this._resultSerial) {
++        this._resultController = null;
++        this._renderResult();
++      }
++    }
++  },
++
++  _renderResult() {
++    const title = document.getElementById('memResultsTitle'), count = document.getElementById('memResultsCount'), el = document.getElementById('memEntries');
++    const result = this._result;
++    if (!result) {
++      title.textContent = this._text('选择一个记忆层级','Select a tier to browse');
++      el.innerHTML = `<div class="empty-state">${this._text('点击上方层级卡片浏览记录','Click a tier card above to browse entries')}</div>`;
++      return;
++    }
++    const selection = result.selection;
++    title.textContent = selection.tier ? this._text(`浏览 ${selection.tier}`,`Browsing ${selection.tier}`) : this._text(`搜索：“${selection.query}”`,`Search: "${selection.query}"`);
++    count.textContent = result.status === 'ready' ? this._text(`${result.total} 条${selection.tier ? '记录' : '结果'}`,`${result.total} ${selection.tier ? 'entries' : 'results'}`) : '';
++    el.setAttribute('aria-busy', String(result.status === 'loading'));
++    this._status('memResultsStatus','memResultsRetry',result.error ? this._failure(result.error) : '',result.error);
++    if (result.status === 'loading') el.innerHTML = `<div class="loading">${this._text('正在读取…','Loading…')}</div>`;
++    else if (result.status === 'error') el.innerHTML = '';
++    else if (selection.tier) this._renderEntries(selection.tier, result.entries);
++    else if (!result.entries.length) el.innerHTML = `<div class="empty-state">${this._text('没有找到相关记忆','No results found')}</div>`;
++    else el.innerHTML = result.entries.map(e => `<div class="mem-entry search-result"><span class="tier-badge">${esc(e._tier)}</span>
++      <div class="entry-content">${esc((e.content || e.name || '').substring(0,300))}</div><div class="entry-footer"><span class="entry-source">${esc(e.source || e.category || e.type || '')}</span>
++      ${e._tier === 'S4' ? `<span class="entry-meta">${esc(this._worldOriginText(e))}</span>` : ''}
++      ${e.importance !== undefined ? `<span class="entry-imp">${this._text('重要度：','Importance: ')}${Number(e.importance).toFixed(2)}</span>` : ''}</div></div>`).join('');
+   },
+ 
+   // ── Render entries ─────────────────────────────────────────
+   _renderEntries(tier, entries) {
+     const el = document.getElementById("memEntries");
+     if (!entries || entries.length === 0) {
+-      el.innerHTML = '<div class="empty-state">No entries in this tier</div>';
++      el.innerHTML = `<div class="empty-state">${this._text('此层级暂无记录', 'No entries in this tier')}</div>`;
+       return;
+     }
+ 
+@@ -127,67 +240,21 @@
+     }
+   },
+ 
+-  // ── Search ─────────────────────────────────────────────────
+   _bindSearch() {
+-    const input = document.getElementById("memSearch");
+-    const btn = document.getElementById("memSearchBtn");
+-    if (!input || !btn) return;
+-
+-    const doSearch = async () => {
++    const input = document.getElementById('memSearch'), button = document.getElementById('memSearchBtn');
++    if (!input || !button) return;
++    const search = () => {
+       const query = input.value.trim();
+-      if (!query) return;
+-
+-      document.getElementById("memResultsTitle").textContent = `Search: "${query}"`;
+-      document.getElementById("memResultsCount").textContent = "";
+-      document.getElementById("memEntries").innerHTML = '<div class="loading">Searching…</div>';
+-
+-      try {
+-        const r = await fetch("/api/memory/search", {
+-          method: "POST",
+-          headers: { "Content-Type": "application/json" },
+-          body: JSON.stringify({ query, tiers: ["S1", "S2", "S3", "S4"], limit: 30 }),
+-        });
+-        const data = await r.json();
+-        document.getElementById("memResultsCount").textContent = `${data.total} results`;
+-
+-        // Flatten results from all tiers
+-        const all = [];
+-        for (const [tier, entries] of Object.entries(data.results || {})) {
+-          for (const e of entries) {
+-            all.push({ ...e, _tier: tier });
+-          }
+-        }
+-        if (all.length === 0) {
+-          document.getElementById("memEntries").innerHTML = '<div class="empty-state">No results found</div>';
+-          return;
+-        }
+-
+-        document.getElementById("memEntries").innerHTML = all.map(e => `
+-          <div class="mem-entry search-result">
+-            <span class="tier-badge" style="font-size:10px;padding:1px 6px">${e._tier}</span>
+-            <div class="entry-content">${esc((e.content || e.name || "").substring(0, 300))}</div>
+-            <div class="entry-footer">
+-              <span class="entry-source">${esc(e.source || e.category || e.type || "")}</span>
+-              ${e._tier === "S4" ? `<span class="entry-meta">${esc(this._worldOriginText(e))}</span>` : ""}
+-              ${e.importance !== undefined ? `<span class="entry-imp">imp: ${Number(e.importance).toFixed(2)}</span>` : ""}
+-            </div>
+-          </div>`).join("");
+-      } catch (e) {
+-        document.getElementById("memEntries").innerHTML = `<div class="empty-state">Search error: ${e.message}</div>`;
+-      }
++      if (query) return this._runSelection({ query });
+     };
+-
+-    btn.addEventListener("click", doSearch);
+-    input.addEventListener("keydown", (e) => {
+-      if (e.key === "Enter") doSearch();
+-    });
++    button.addEventListener('click', search);
++    input.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.isComposing) search(); });
+   },
+ };
+ 
+-function esc(v) {
+-  return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
++function esc(value) {
++  return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+ }
+ 
+-// Init
+ Nav.init();
+ MemoryExplorer.init();
+--- a/ui/web/templates/memory.html
++++ b/ui/web/templates/memory.html
+@@ -31,8 +31,8 @@
+   <main class="mem-explorer">
+     <!-- Search bar -->
+     <section class="mem-search-bar">
+-      <input type="text" id="memSearch" placeholder="Search across all memory tiers..." />
+-      <button id="memSearchBtn">Search</button>
++      <input type="search" aria-label="搜索记忆" id="memSearch" placeholder="Search across all memory tiers..." />
++      <button type="button" id="memSearchBtn">Search</button>
+     </section>
+ 
+     <!-- Tier overview cards -->
+@@ -40,12 +40,17 @@
+       <div class="loading">Loading memory tiers…</div>
+     </section>
+ 
++    <p id="memTierStatus" role="status" aria-live="polite"></p>
++    <button type="button" id="memTierRetry" hidden>重试</button>
++
+     <!-- Browse / Results area -->
+     <section class="mem-results" id="memResults">
+       <div class="mem-results-header">
+         <h3 id="memResultsTitle">Select a tier to browse</h3>
+         <span id="memResultsCount"></span>
+       </div>
++      <p id="memResultsStatus" role="status" aria-live="polite"></p>
++      <button type="button" id="memResultsRetry" hidden>重试</button>
+       <div class="mem-entries" id="memEntries">
+         <div class="empty-state">Click a tier card above to browse entries</div>
+       </div>
+@@ -54,6 +59,7 @@
+ 
+   <script src="/static/i18n.js?v=9"></script>
+   <script src="/static/nav.js?v=3"></script>
+-  <script src="/static/memory_explorer.js?v=3"></script>
++  <script src="/static/http.js?v=1"></script>
++  <script src="/static/memory_explorer.js?v=4"></script>
+ </body>
+ </html>
+--- /dev/null
++++ b/tests/js/test_memory_explorer.cjs
+@@ -0,0 +1,133 @@
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const {test} = require('node:test');
++const staticDir = path.join(__dirname, '../../ui/web/static');
++const flush = async () => { for (let i=0;i<12;i++) await Promise.resolve(); };
++function harness() {
++  const nodes = new Map(), requests = [], timers = new Map(), events = {};
++  function node(id='') {
++    return {id, innerHTML:'', textContent:'', value:'', hidden:false, dataset:{}, style:{}, attrs:{}, handlers:{}, children:[],
++      setAttribute(k,v) {this.attrs[k]=String(v);}, removeAttribute(k) {delete this.attrs[k];},
++      addEventListener(k,v) {(this.handlers[k] ||= []).push(v);},
++      append(...items) {this.children.push(...items); for(const item of items) if(item.id) nodes.set(item.id,item);},
++      contains() {return false;}, querySelectorAll() {return [];}, focus() {}};
++  }
++  for(const id of ['memTiers','memTierStatus','memTierRetry','memResultsTitle','memResultsCount','memEntries','memResultsStatus','memResultsRetry','memSearch','memSearchBtn']) nodes.set(id,node(id));
++  const document = {getElementById:id=>nodes.get(id)||null, createElement:()=>node(), body:node(), activeElement:null};
++  let timerId=0;
++  const context = {document, I18N:{_lang:'en'}, Nav:{init() {}}, AbortController,
++    setTimeout(fn) {const id=++timerId;timers.set(id,fn);return id;}, clearTimeout(id) {timers.delete(id);},
++    setInterval(fn) {const id=++timerId;timers.set(id,fn);return id;},
++    addEventListener(k,fn) {(events[k] ||= []).push(fn);}, location:{reload() {}},
++    fetch(url,options) {return new Promise((resolve,reject)=>requests.push({url,options,resolve,reject}));}};
++  context.window=context;
++  vm.runInNewContext(fs.readFileSync(path.join(staticDir,'http.js'),'utf8'),context);
++  vm.runInNewContext(fs.readFileSync(path.join(staticDir,'memory_explorer.js'),'utf8')+'\nglobalThis.explorer=MemoryExplorer;',context);
++  return {context, nodes, requests, timers, events, explorer:context.explorer,
++    respond(index,data,status=200) {requests[index].resolve(Response.json(data,{status}));},
++    click(id) {return nodes.get(id).handlers.click?.[0]();}};
++}
++const tiers = {tiers:['S2','S3'].map(name=>({name,label:name,entries:1,max:10,ttl:'1d',storage:'sqlite'}))};
++async function ready() {const h=harness();h.respond(0,tiers);await flush();return h;}
++
++test('late tier result and late failure cannot replace the newest selection',async()=>{
++  const h=await ready();
++  const older=h.explorer._selectTier('S2');const newer=h.explorer._selectTier('S3');
++  h.respond(2,{total:1,entries:[{content:'new-selection'}]});await newer;
++  h.respond(1,{total:1,entries:[{content:'old-selection'}]});await older;
++  assert.match(h.nodes.get('memEntries').innerHTML,/new-selection/);
++  assert.doesNotMatch(h.nodes.get('memEntries').innerHTML,/old-selection/);
++  const failing=h.explorer._selectTier('S2');const current=h.explorer._selectTier('S3');
++  h.respond(4,{total:1,entries:[{content:'current-again'}]});await current;
++  h.requests[3].reject(new Error('<img src=x onerror=oops>'));await failing;
++  assert.match(h.nodes.get('memEntries').innerHTML,/current-again/);
++  assert.equal(h.nodes.get('memResultsStatus').textContent,'');
++});
++
++test('search and tier browsing share one result ownership boundary',async()=>{
++  const h=await ready();h.nodes.get('memSearch').value='draft query';h.click('memSearchBtn');
++  const browse=h.explorer._selectTier('S2');
++  h.respond(2,{total:1,entries:[{content:'chosen-tier'}]});await browse;
++  h.respond(1,{total:1,results:{S3:[{content:'old-search'}]}});await flush();
++  assert.match(h.nodes.get('memEntries').innerHTML,/chosen-tier/);
++  assert.doesNotMatch(h.nodes.get('memEntries').innerHTML,/old-search/);
++  assert.equal(h.nodes.get('memSearch').value,'draft query');
++});
++
++test('HTTP failure is recoverable and never presented as successful empty search',async()=>{
++  const h=await ready();h.nodes.get('memSearch').value='needle';h.click('memSearchBtn');
++  h.respond(1,{detail:'unavailable'},503);await flush();
++  assert.match(h.nodes.get('memResultsStatus').textContent,/503/);
++  assert.equal(h.nodes.get('memResultsRetry').hidden,false);
++  assert.doesNotMatch(h.nodes.get('memEntries').innerHTML,/No results found/);
++  h.nodes.get('memSearch').value='unsent changed draft';h.click('memResultsRetry');
++  assert.equal(JSON.parse(h.requests[2].options.body).query,'needle');
++  h.respond(2,{total:0,results:{}});await flush();
++  assert.match(h.nodes.get('memEntries').innerHTML,/No results found/);
++  assert.equal(h.nodes.get('memResultsRetry').hidden,true);
++  assert.equal(h.nodes.get('memSearch').value,'unsent changed draft');
++});
++
++test('failed overview refresh preserves known cards with explicit stale notice; retry recovers',async()=>{
++  const h=await ready();const cards=h.nodes.get('memTiers').innerHTML;
++  const update=h.explorer._loadTiers();h.respond(1,{detail:'unavailable'},503);await update;
++  assert.equal(h.nodes.get('memTiers').innerHTML,cards);
++  assert.match(h.nodes.get('memTierStatus').textContent,/previous|last/i);
++  assert.equal(h.nodes.get('memTierRetry').hidden,false);
++  h.click('memTierRetry');h.respond(2,tiers);await flush();
++  assert.equal(h.nodes.get('memTierStatus').textContent,'');
++  assert.equal(h.nodes.get('memTierRetry').hidden,true);
++});
++
++test('malformed successful data and initial failures are distinct from valid empty states',async()=>{
++  const h=harness();h.respond(0,{detail:'wrong-shape'});await flush();
++  assert.match(h.nodes.get('memTierStatus').textContent,/read|data/i);
++  const pending=h.explorer._selectTier('S2');h.respond(1,{detail:'wrong-shape'});await pending;
++  assert.match(h.nodes.get('memResultsStatus').textContent,/read|data/i);
++  assert.doesNotMatch(h.nodes.get('memEntries').innerHTML,/No entries/);
++  const empty=h.explorer._selectTier('S2');h.respond(2,{total:0,entries:[]});await empty;
++  assert.match(h.nodes.get('memEntries').innerHTML,/No entries/);
++  assert.equal(h.nodes.get('memEntries').attrs['aria-busy'],'false');
++});
++
++test('login HTML and unauthorized responses keep the query and stop subsequent requests',async()=>{
++  for(const response of [new Response('<html>login</html>',{headers:{'content-type':'text/html'}}),Response.json({detail:'Unauthorized'},{status:401})]) {
++    const h=await ready();h.nodes.get('memSearch').value='private draft';h.click('memSearchBtn');
++    h.requests[1].resolve(response);await flush();
++    assert.equal(h.context.EvaHttp.loginRequired,true);
++    assert.equal(h.nodes.get('memSearch').value,'private draft');
++    assert.equal(h.nodes.get('memResultsRetry').hidden,true);
++    assert.equal(h.requests.length,2);
++    h.click('memSearchBtn');await flush();assert.equal(h.requests.length,2);
++  }
++});
++
++test('repeated initialization and slow overview polling do not duplicate listeners or requests',async()=>{
++  const h=await ready();const listeners=h.nodes.get('memSearchBtn').handlers.click.length;
++  h.explorer.init();assert.equal(h.nodes.get('memSearchBtn').handlers.click.length,listeners);
++  const first=h.explorer._loadTiers();const second=h.explorer._loadTiers();
++  assert.equal(h.requests.length,2);h.respond(1,tiers);await Promise.all([first,second]);
++});
++
++test('language changes rerender cached results without fetching or clearing drafts',async()=>{
++  const h=await ready();const pending=h.explorer._selectTier('S3');h.respond(1,{total:1,entries:[{content:'saved content'}]});await pending;
++  h.nodes.get('memSearch').value='pending draft';h.context.I18N._lang='zh';
++  for(const fn of h.events['lang-changed']||[]) fn();
++  assert.match(h.nodes.get('memResultsTitle').textContent,/浏览/);
++  assert.match(h.nodes.get('memEntries').innerHTML,/saved content/);
++  assert.equal(h.requests.length,2);assert.equal(h.nodes.get('memSearch').value,'pending draft');
++});
++
++test('request timeout exposes retry and aborts the original read',async()=>{
++  const h=await ready();const pending=h.explorer._selectTier('S2');
++  const request=h.requests[1];let timer;
++  // The request timeout is registered after the overview poll timer.
++  for(const fn of h.timers.values()) timer=fn;
++  request.options.signal.addEventListener('abort',()=>request.reject(new DOMException('Aborted','AbortError')));
++  timer();await pending;
++  assert.equal(request.options.signal.aborted,true);
++  assert.match(h.nodes.get('memResultsStatus').textContent,/timed out/i);
++  assert.equal(h.nodes.get('memResultsRetry').hidden,false);
++});

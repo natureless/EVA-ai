@@ -1,0 +1,49 @@
+{
+  "currentPassedReport": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261008-g0-01\\G2-01\\run-g3a196yw\\readiness.json",
+  "attempts": [
+    {
+      "folder": "run-5pqqb9qk",
+      "status": "passed",
+      "report": "G2-01/run-5pqqb9qk/readiness.json",
+      "failure": null,
+      "classification": "harness preparation; no product defect inferred"
+    },
+    {
+      "folder": "run-8armnq1q",
+      "status": "failed",
+      "report": "G2-01/run-8armnq1q/readiness.json",
+      "failure": {
+        "type": "AssertionError",
+        "message": "sandbox_identity"
+      },
+      "classification": "harness preparation; no product defect inferred"
+    },
+    {
+      "folder": "run-9y5sidcr",
+      "status": "failed",
+      "report": "G2-01/run-9y5sidcr/startup-failure.json",
+      "failure": {
+        "type": "RuntimeError",
+        "message": "Could not determine home directory."
+      },
+      "classification": "harness preparation; no product defect inferred"
+    },
+    {
+      "folder": "run-g3a196yw",
+      "status": "passed",
+      "report": "G2-01/run-g3a196yw/readiness.json",
+      "failure": null,
+      "classification": "harness preparation; no product defect inferred"
+    },
+    {
+      "folder": "run-v4jqjxgb",
+      "status": "failed",
+      "report": "G2-01/run-v4jqjxgb/readiness.json",
+      "failure": {
+        "type": "AssertionError",
+        "message": "actual_graph_projection"
+      },
+      "classification": "harness preparation; no product defect inferred"
+    }
+  ]
+}

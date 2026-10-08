@@ -6,7 +6,7 @@ from event.event_bus import EventBus, DEFAULT_MAX_QUEUE_SIZE
 from event.event_schema import Event
 
 # Use valid event types from EventType Literal
-_VALID_TYPE = "user_message"
+_VALID_TYPE = "system_tick"
 
 
 def _event(**kwargs) -> Event:

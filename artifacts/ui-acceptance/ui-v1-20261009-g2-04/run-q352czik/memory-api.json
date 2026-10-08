@@ -1,0 +1,2583 @@
+{
+  "status": "passed",
+  "startedAt": "2026-10-08T16:15:42.985146+00:00",
+  "finishedAt": "2026-10-08T16:15:43.550456+00:00",
+  "sandbox": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261009-g2-04\\run-q352czik",
+  "copiedUiHashes": {
+    "static/app.js": "4ee39a59b8a34ae353a5db43cf1741d3673e566e5311731c06a49c6b4782b8e1",
+    "static/avatar.js": "35f122602551806d6ac0c44c12dd3a93ebb3ebce580e093b204cf86742ccf490",
+    "static/brand-assets.js": "e24695fc216996290be3f89406d2a6b78c34a85dbcdf1a43be495f211365547b",
+    "static/brand-config.js": "4d312dae141c6a1c67d402b623b80cc3d2d6b20a18d6f36ea4d7ed945446b671",
+    "static/brand-identity.js": "ab3782edd871a509e1b9329c7423fb0d1b4c25ebf1dcde1fa68f206d384517d9",
+    "static/brand-package.js": "a8f79b5e877c8b6a2b974cb64d5aeb4a2f391f96c94c4c6c83236a501f0e4299",
+    "static/brand-source.json": "f8e222d314c25c073dad552a2ee04f5e01fcb72cb2d2ffa18f2bac0133ea8d63",
+    "static/brand-studio.css": "53e7a3d9c0bbe6394815a10224b57fe2749eaa16694ab1c0756cd89bddf47ca2",
+    "static/brand-system.js": "b79a775650566137edf469b4668cf1f6bbb973eb1cec1b2f60499b91e5838d8b",
+    "static/chat.js": "b4e3d491174509aee6deeb9b142ec264fb52e39ecf906da4be2195d2d4857d1a",
+    "static/cube-animator.js": "49f6856494ea46c520f5fe9db244bfac3b639fcb03f0b473bfbecd6d36aa3ee8",
+    "static/cube-avatar.js": "22ed341f56ac7aa92f42bfd17a01cf5cfec1ebd7d155d69153707b4b50a5065d",
+    "static/cube-chat.css": "1d4e78a0481c9ed84063c901019b1cb5b84ae6260f764365ec6691da36c5ee5f",
+    "static/cube-geometry.css": "87228a956b498bbaa556828f71b4df303d29b7a9882a90e9479901214fd6bd5b",
+    "static/cube-logo.js": "115c579d607ba8147edc2c9a05245c5b9855b42dc729f3b0d561f86f20df9e7b",
+    "static/cube-state.js": "a5982757ed930a75f3083c7652255025f5df14020104b4f317308271124dcde6",
+    "static/eva-favicon.svg": "f43434db848ccc69d6a74c0552e33e6798537e2facf7d18b6b793d564000e9ac",
+    "static/eva-mark.svg": "29b3f4c4ac7e198dffedb450cf3a152655509aa62ff1cd85b9807a73728722c4",
+    "static/goal_create.css": "66fddfd31c76bec8b66d476593b87337d33811f54b59b7c4ad1e3e4b704fbac7",
+    "static/goal_create.js": "04f45636cc466b066a5cd18159e0fc91541bb98b5b83a45bff43287454e94da3",
+    "static/http.js": "16219d877ed8aa0f6815c791680461d44b1ab7b664e2e859bfb76d494b84a5a5",
+    "static/i18n.js": "82228718c2c5c816e38f7a7f8b2c6d83ec6e1cb042cb9885bf8bc7ee3dca2f24",
+    "static/logo-tokens.js": "30203d1b0e2fd1e88dc2093dce2ef7f4ecbc8b5c33228cf8b338f1b191ad86dd",
+    "static/main.css": "8d9dcf4936b71e5ef03493a74fe8e14b3268bb7d4398f25fb8e397afc5fa2a9d",
+    "static/memory_diagnostics.js": "9826944d560b63a01dec6c54c8e0f2b4df4e52d32eb5a9f2988c2e0f3e329b07",
+    "static/memory_explorer.js": "78b2a92d703b307334fbd02335e97a4220a45795b27ab9c5ce6235f26f8e0993",
+    "static/memory_galaxy.js": "4882a95fcfb1c5501de490a4eb40aa1f60727302de56dd6d272bc5976a7ec263",
+    "static/memory_galaxy_renderer.js": "882420a105d85750acf20020743a9ec41e272d3dafe14fa0e63121811276f69c",
+    "static/memory_graph.css": "2a6263d6b672560ead7614a12626c668c9ccf0c8ae5d3dd13f9c75dc3bc6f0c6",
+    "static/memory_graph.js": "75efda335f05910e1ae886de5dce7ab8768527abe5200228d5ed280d652e0164",
+    "static/mvsc-dashboard.css": "97c16c50400acf20b1fd4c81354eba38f49e52afd707f1f1aaf8188ce11d5b10",
+    "static/nav.js": "7560d73f179329ac29dd4792d5c4264fac100de523f1829448b79730ca518afb",
+    "static/runtime_status.js": "7041d6baf8de463e1df1724dfe6e77e80272eb0da7932b171de34ec7a96da344",
+    "static/settings.js": "99c1c88dce0e1edcf1a55382e9f147f6ecd059284541327f338c009153a9791b",
+    "static/styles.css": "1c79176438536b823324dfc28ee5cc2396bbadf4c9fee57a21bec144551b9006",
+    "static/ui-reading.js": "e47f970bb05a7cc11cf9ed18d82f9840a2e5b280a4b52a3135725aa12f3bc3a4",
+    "static/ui-sections.js": "2a69d193d4eac22c829c894861bff06987b8e22d84a37f6e4409a2c5f88ccb53",
+    "static/ui-system.css": "8e967e36dd41a72429a21310c5fa7797993fbafcd224b9370da8c29ab6d70980",
+    "static/ui-theme.js": "a4b98896f97a20a96681182d55f940b6f5e95fefe09d29dca01bdf51be4c6ee7",
+    "static/ui-workspace.js": "d8a66a06879e811a78dd6ef28646b76c50c045cdc3b3e31162a12f33e3d8d51b",
+    "static/_ref.png": "2a95e1420747f096698401b5386f9cc09e70c6d070c5c9e3d42189707bc5dfda",
+    "templates/chat.html": "cd75395be64d6f47f280f8941a95792cd2108ea794894ca6fa7d2e5b637a576e",
+    "templates/dashboard.html": "e46ab7a431995cada38a028aeb636cb3ded081dc64fe3d484cb1988128f7517c",
+    "templates/index.html": "a90f3200d048e1c5569547521c42b8af7c98e97d259276858fb75de8a6dbcd03",
+    "templates/memory.html": "d9dae129a16c1c0a930c7c1d00f285e32562099904ea59f74f2c23ad33fb82f4",
+    "templates/memory_graph.html": "502a48429da8d69a92a48a89654229d3a597519c61f64739e72f82007f6aef19",
+    "templates/mvsc_dashboard.html": "4492c52846fd18a512b8b536a66f86fb623eb2fe5f296bc5de80cee767795aa5",
+    "templates/service_unavailable.html": "40391cdaac82245c5c7837192a8657773adfd62d8ddd19cd82e3c5bdb702075a",
+    "templates/settings.html": "5ffbe276d2c300b1b1e4e0c3ed5615ecb4b96646757666425e594c7d0f1b7abb"
+  },
+  "checks": [
+    {
+      "name": "database isolated",
+      "passed": true,
+      "actual": "D:\\EVA-ai\\artifacts\\ui-acceptance\\ui-v1-20261009-g2-04\\run-q352czik\\data\\eva.db"
+    },
+    {
+      "name": "tiers status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "five real tier records",
+      "passed": true,
+      "actual": {
+        "tiers": [
+          {
+            "name": "S1",
+            "label": "Session",
+            "entries": 0,
+            "max": 200,
+            "ttl": "30 min",
+            "storage": "in-memory",
+            "hits": 0,
+            "misses": 0
+          },
+          {
+            "name": "S2",
+            "label": "Working",
+            "entries": 1,
+            "max": 500,
+            "ttl": "72 hours",
+            "storage": "SQLite",
+            "expired": 0
+          },
+          {
+            "name": "S3",
+            "label": "Long-term",
+            "entries": 0,
+            "max": 10000,
+            "ttl": "permanent",
+            "storage": "SQLite + FTS5",
+            "avg_importance": 0
+          },
+          {
+            "name": "S4",
+            "label": "World Model",
+            "entries": 3,
+            "max": null,
+            "ttl": "permanent",
+            "storage": "SQLite",
+            "edges": 4
+          },
+          {
+            "name": "S5",
+            "label": "Event/Trace",
+            "entries": 1,
+            "max": null,
+            "ttl": "permanent",
+            "storage": "SQLite",
+            "events": 1,
+            "traces": 0
+          }
+        ],
+        "total_entries": 5
+      }
+    },
+    {
+      "name": "entries status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "seed visible in browse",
+      "passed": true,
+      "actual": {
+        "tier": "S2",
+        "entries": [
+          {
+            "id": "g2-memory",
+            "content": "G2隔离标记",
+            "summary": "fixture",
+            "source": "chat",
+            "priority": 2,
+            "tags": "[]",
+            "created_at": "2026-10-09",
+            "expires_at": "2999-01-01",
+            "tier": "S2",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "user_statement",
+              "source": "chat",
+              "source_event_id": "g2-event"
+            }
+          }
+        ],
+        "total": 1,
+        "limit": 50,
+        "offset": 0
+      }
+    },
+    {
+      "name": "search status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "seed visible in read-only search",
+      "passed": true,
+      "actual": {
+        "query": "G2隔离标记",
+        "results": {
+          "S2": [
+            {
+              "id": "g2-memory",
+              "content": "G2隔离标记",
+              "summary": "fixture",
+              "source": "chat",
+              "tier": "S2"
+            }
+          ]
+        },
+        "total": 1
+      }
+    },
+    {
+      "name": "empty-search status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "graph status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "graph seeded records",
+      "passed": true,
+      "actual": {
+        "S1": {
+          "available": true,
+          "total": 0,
+          "matched": 0,
+          "shown": 0
+        },
+        "S2": {
+          "available": true,
+          "total": 1,
+          "matched": 1,
+          "shown": 1
+        },
+        "S3": {
+          "available": true,
+          "total": 0,
+          "matched": 0,
+          "shown": 0
+        },
+        "S4": {
+          "available": true,
+          "total": 3,
+          "matched": 3,
+          "shown": 3
+        },
+        "S5": {
+          "available": true,
+          "total": 1,
+          "matched": 1,
+          "shown": 1
+        }
+      }
+    },
+    {
+      "name": "explicit provenance relation",
+      "passed": true,
+      "actual": [
+        {
+          "source": "S4:g2-world-0",
+          "target": "S4:g2-world-1",
+          "relation": "owns",
+          "kind": "stored_relation",
+          "weight": 0.9,
+          "provenance": {
+            "schema_version": 1,
+            "epistemic_status": "unknown",
+            "source": "",
+            "source_event_id": ""
+          },
+          "timestamp": "2026-10-09",
+          "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476"
+        },
+        {
+          "source": "S4:g2-world-0",
+          "target": "S4:g2-world-1",
+          "relation": "reviews",
+          "kind": "stored_relation",
+          "weight": 0.9,
+          "provenance": {
+            "schema_version": 1,
+            "epistemic_status": "unknown",
+            "source": "",
+            "source_event_id": ""
+          },
+          "timestamp": "2026-10-09",
+          "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889"
+        },
+        {
+          "source": "S4:g2-world-0",
+          "target": "S4:g2-world-2",
+          "relation": "uses",
+          "kind": "stored_relation",
+          "weight": 0.9,
+          "provenance": {
+            "schema_version": 1,
+            "epistemic_status": "unknown",
+            "source": "",
+            "source_event_id": ""
+          },
+          "timestamp": "2026-10-09",
+          "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01"
+        },
+        {
+          "source": "S2:g2-memory",
+          "target": "S5:g2-event",
+          "relation": "source_event",
+          "kind": "provenance",
+          "weight": 0.5,
+          "id": "ba858b42e906f9f13de77d857e8d2407796b56509af5013cf519a7e0633362e3"
+        }
+      ]
+    },
+    {
+      "name": "detail status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "detail id",
+      "passed": true,
+      "actual": "S4:g2-world-0"
+    },
+    {
+      "name": "neighbors-0 status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "neighbors-1 status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "neighbors-2 status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "pages preserve distinct relations",
+      "passed": true,
+      "actual": [
+        {
+          "schema_version": "1.0",
+          "center": "S4:g2-world-0",
+          "nodes": [
+            {
+              "id": "S4:g2-world-0",
+              "record_id": "g2-world-0",
+              "tier": "S4",
+              "label": "G2隔离实体0",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+              "obsidian_uri": null
+            },
+            {
+              "id": "S4:g2-world-1",
+              "record_id": "g2-world-1",
+              "tier": "S4",
+              "label": "G2隔离实体1",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+              "obsidian_uri": null
+            }
+          ],
+          "edges": [
+            {
+              "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476",
+              "source": "S4:g2-world-0",
+              "target": "S4:g2-world-1",
+              "relation": "owns",
+              "kind": "stored_relation",
+              "weight": 0.9,
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "timestamp": "2026-10-09"
+            }
+          ],
+          "limit": 1,
+          "offset": 0,
+          "next_offset": 1,
+          "has_more": true,
+          "generated_at": "2026-10-08T16:15:43.091141+00:00",
+          "warnings": [],
+          "scope": {
+            "hops": 1,
+            "query_independent": true,
+            "session_available": true,
+            "scan_truncated": false,
+            "page_limit_reached": false,
+            "missing_endpoints": 1,
+            "incomplete": false,
+            "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+          },
+          "obsidian": {
+            "vault_detected": false,
+            "index_available": false,
+            "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+            "mode": "one_way_mirror"
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "center": "S4:g2-world-0",
+          "nodes": [
+            {
+              "id": "S4:g2-world-0",
+              "record_id": "g2-world-0",
+              "tier": "S4",
+              "label": "G2隔离实体0",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+              "obsidian_uri": null
+            },
+            {
+              "id": "S4:g2-world-1",
+              "record_id": "g2-world-1",
+              "tier": "S4",
+              "label": "G2隔离实体1",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+              "obsidian_uri": null
+            }
+          ],
+          "edges": [
+            {
+              "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889",
+              "source": "S4:g2-world-0",
+              "target": "S4:g2-world-1",
+              "relation": "reviews",
+              "kind": "stored_relation",
+              "weight": 0.9,
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "timestamp": "2026-10-09"
+            }
+          ],
+          "limit": 1,
+          "offset": 1,
+          "next_offset": 2,
+          "has_more": true,
+          "generated_at": "2026-10-08T16:15:43.097264+00:00",
+          "warnings": [],
+          "scope": {
+            "hops": 1,
+            "query_independent": true,
+            "session_available": true,
+            "scan_truncated": false,
+            "page_limit_reached": false,
+            "missing_endpoints": 1,
+            "incomplete": false,
+            "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+          },
+          "obsidian": {
+            "vault_detected": false,
+            "index_available": false,
+            "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+            "mode": "one_way_mirror"
+          }
+        },
+        {
+          "schema_version": "1.0",
+          "center": "S4:g2-world-0",
+          "nodes": [
+            {
+              "id": "S4:g2-world-0",
+              "record_id": "g2-world-0",
+              "tier": "S4",
+              "label": "G2隔离实体0",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+              "obsidian_uri": null
+            },
+            {
+              "id": "S4:g2-world-2",
+              "record_id": "g2-world-2",
+              "tier": "S4",
+              "label": "G2隔离实体2",
+              "content": "{}",
+              "content_truncated": false,
+              "kind": "task",
+              "timestamp": "2026-10-09",
+              "source": "",
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "field_provenance": {
+                "name": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                },
+                "type": {
+                  "schema_version": 1,
+                  "epistemic_status": "unknown",
+                  "source": "",
+                  "source_event_id": ""
+                }
+              },
+              "source_event_ids": [],
+              "note_path": "EVA-Memory/notes/S4-G2隔离实体2-13fbbb74d1615f341e91.md",
+              "obsidian_uri": null
+            }
+          ],
+          "edges": [
+            {
+              "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01",
+              "source": "S4:g2-world-0",
+              "target": "S4:g2-world-2",
+              "relation": "uses",
+              "kind": "stored_relation",
+              "weight": 0.9,
+              "provenance": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "timestamp": "2026-10-09"
+            }
+          ],
+          "limit": 1,
+          "offset": 2,
+          "next_offset": null,
+          "has_more": false,
+          "generated_at": "2026-10-08T16:15:43.101268+00:00",
+          "warnings": [],
+          "scope": {
+            "hops": 1,
+            "query_independent": true,
+            "session_available": true,
+            "scan_truncated": false,
+            "page_limit_reached": false,
+            "missing_endpoints": 1,
+            "incomplete": false,
+            "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+          },
+          "obsidian": {
+            "vault_detected": false,
+            "index_available": false,
+            "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+            "mode": "one_way_mirror"
+          }
+        }
+      ]
+    },
+    {
+      "name": "empty-graph status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "valid empty projection",
+      "passed": true,
+      "actual": {
+        "node_limit": 420,
+        "edge_limit": 1800,
+        "matched_nodes": 0,
+        "nodes_truncated": false,
+        "stored_world_edges": 4,
+        "eligible_world_edges": 0,
+        "dangling_world_edges": 1,
+        "edges_truncated": false,
+        "session_available": true,
+        "selection": "balanced tiers; recent world/working, important long-term, conversation events first; explicit source events included"
+      }
+    },
+    {
+      "name": "missing-detail status",
+      "passed": true,
+      "actual": 404
+    },
+    {
+      "name": "invalid-tier status",
+      "passed": true,
+      "actual": 422
+    },
+    {
+      "name": "unavailable-graph status",
+      "passed": true,
+      "actual": 503
+    },
+    {
+      "name": "recovered-graph status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "recovery preserved projection",
+      "passed": true,
+      "actual": {
+        "nodes": 5
+      }
+    },
+    {
+      "name": "runtime status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "observed runtime consumer",
+      "passed": true,
+      "actual": {
+        "schema_version": 1,
+        "mode": "legacy",
+        "consumer_type": "core.cognition_loop.CognitionLoop",
+        "processor_type": "core.event_processor.EventProcessor",
+        "phase": "running",
+        "accepting_events": true,
+        "consumer_running": true,
+        "execution_idle": true,
+        "event_bus": {
+          "queue_size": 0,
+          "max_queue_size": 10000,
+          "published": 0,
+          "persisted": 0,
+          "persist_failures": 0,
+          "consecutive_failures": 0,
+          "persist_healthy": true,
+          "dropped": 0,
+          "evicted_background": 0,
+          "rejected_full": 0,
+          "overflow_policy": "drop_oldest",
+          "closed": false,
+          "accepting": true,
+          "rejected_closed": 0
+        },
+        "consumer": {
+          "worker_count": 1,
+          "total_processed": 0,
+          "total_errors": 0,
+          "consecutive_errors": 0,
+          "active_events": 0,
+          "stopping": false,
+          "agent_worker": {
+            "backend": "thread",
+            "max_workers": 4,
+            "timeout_sec": 120.0,
+            "submitted": 0,
+            "completed": 0,
+            "timed_out": 0,
+            "pending": 0
+          }
+        },
+        "processor": {
+          "total_processed": 0,
+          "total_errors": 0,
+          "consecutive_errors": 0,
+          "active_events": 0,
+          "stopping": false,
+          "agent_worker": {
+            "backend": "thread",
+            "max_workers": 4,
+            "timeout_sec": 120.0,
+            "submitted": 0,
+            "completed": 0,
+            "timed_out": 0,
+            "pending": 0
+          }
+        },
+        "worker": {
+          "backend": "thread",
+          "max_workers": 4,
+          "timeout_sec": 120.0,
+          "submitted": 0,
+          "completed": 0,
+          "timed_out": 0,
+          "pending": 0
+        },
+        "shutdown": {
+          "completed_steps": [],
+          "errors": {},
+          "pending_rejections": 0
+        },
+        "requested": {
+          "enable_minimal_brain": false,
+          "enable_mvsc_pipeline": false,
+          "enable_business_goals": false,
+          "enable_processing_episodes": false,
+          "enable_durable_requests": false,
+          "resume_durable_requests": false,
+          "enable_action_context": false
+        },
+        "extensions": {
+          "mvsc": {
+            "requested": false,
+            "status": "disabled",
+            "attached": false,
+            "is_http_consumer": false
+          },
+          "business_goals": {
+            "requested": false,
+            "attached": false,
+            "receipt_observer_errors": 0,
+            "business_verifier_attached": false
+          },
+          "processing_episodes": {
+            "requested": false,
+            "attached": false
+          },
+          "durable_requests": {
+            "requested": false,
+            "attached": false
+          },
+          "request_recovery": {
+            "attached": false
+          }
+        }
+      }
+    },
+    {
+      "name": "diagnostic status",
+      "passed": true,
+      "actual": 200
+    },
+    {
+      "name": "mock model health not asserted",
+      "passed": true,
+      "actual": {
+        "score": 83,
+        "overall": "degraded",
+        "timestamp": "2026-10-09T00:15:43",
+        "checks": [
+          {
+            "name": "db_integrity",
+            "passed": true,
+            "detail": "integrity OK, 16 tables: _migrations, episodic_memory, events, executor_audit, long_term_memory, long_term_memory_fts, long_term_memory_fts_config, long_term_memory_fts_data, long_term_memory_fts_docsize, long_term_memory_fts_idx, memory_items, persona_profiles",
+            "recommendation": ""
+          },
+          {
+            "name": "snapshot",
+            "passed": true,
+            "detail": "no snapshot found (normal on first boot)",
+            "recommendation": ""
+          },
+          {
+            "name": "config",
+            "passed": true,
+            "detail": "missing: constitution.yaml, config\\policy.yaml, config\\persona.yaml, config\\executors.yaml, config\\storage.yaml",
+            "recommendation": "restore missing config files"
+          },
+          {
+            "name": "memory_tiers",
+            "passed": true,
+            "detail": "S1=0 S2=1 S3_active=0 S4_e=3 S4_ed=4 S5_ev=1",
+            "recommendation": ""
+          },
+          {
+            "name": "runtime",
+            "passed": true,
+            "detail": "events=0 results=0 policy=dormant",
+            "recommendation": ""
+          },
+          {
+            "name": "llm",
+            "passed": false,
+            "detail": "no LLM API key configured — using MockLLM (echo mode). Provider: mock",
+            "recommendation": "set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable"
+          }
+        ],
+        "failed_count": 1
+      }
+    },
+    {
+      "name": "seeded persistent rows unchanged by reads",
+      "passed": true,
+      "actual": {
+        "tables": [
+          "events",
+          "working_memory",
+          "world_entities",
+          "world_edges"
+        ],
+        "scope": "Only seeded rows; not a blanket assertion about all lifecycle persistence"
+      }
+    },
+    {
+      "name": "no guarded external access",
+      "passed": true,
+      "actual": []
+    }
+  ],
+  "responses": {
+    "tiers": {
+      "url": "/api/memory/tiers",
+      "params": {
+        "format": "explorer"
+      },
+      "status": 200,
+      "body": {
+        "tiers": [
+          {
+            "name": "S1",
+            "label": "Session",
+            "entries": 0,
+            "max": 200,
+            "ttl": "30 min",
+            "storage": "in-memory",
+            "hits": 0,
+            "misses": 0
+          },
+          {
+            "name": "S2",
+            "label": "Working",
+            "entries": 1,
+            "max": 500,
+            "ttl": "72 hours",
+            "storage": "SQLite",
+            "expired": 0
+          },
+          {
+            "name": "S3",
+            "label": "Long-term",
+            "entries": 0,
+            "max": 10000,
+            "ttl": "permanent",
+            "storage": "SQLite + FTS5",
+            "avg_importance": 0
+          },
+          {
+            "name": "S4",
+            "label": "World Model",
+            "entries": 3,
+            "max": null,
+            "ttl": "permanent",
+            "storage": "SQLite",
+            "edges": 4
+          },
+          {
+            "name": "S5",
+            "label": "Event/Trace",
+            "entries": 1,
+            "max": null,
+            "ttl": "permanent",
+            "storage": "SQLite",
+            "events": 1,
+            "traces": 0
+          }
+        ],
+        "total_entries": 5
+      }
+    },
+    "entries": {
+      "url": "/api/memory/entries/S2",
+      "params": {
+        "limit": 50
+      },
+      "status": 200,
+      "body": {
+        "tier": "S2",
+        "entries": [
+          {
+            "id": "g2-memory",
+            "content": "G2隔离标记",
+            "summary": "fixture",
+            "source": "chat",
+            "priority": 2,
+            "tags": "[]",
+            "created_at": "2026-10-09",
+            "expires_at": "2999-01-01",
+            "tier": "S2",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "user_statement",
+              "source": "chat",
+              "source_event_id": "g2-event"
+            }
+          }
+        ],
+        "total": 1,
+        "limit": 50,
+        "offset": 0
+      }
+    },
+    "search": {
+      "url": "/api/memory/search",
+      "params": null,
+      "status": 200,
+      "body": {
+        "query": "G2隔离标记",
+        "results": {
+          "S2": [
+            {
+              "id": "g2-memory",
+              "content": "G2隔离标记",
+              "summary": "fixture",
+              "source": "chat",
+              "tier": "S2"
+            }
+          ]
+        },
+        "total": 1
+      }
+    },
+    "empty-search": {
+      "url": "/api/memory/search",
+      "params": null,
+      "status": 200,
+      "body": {
+        "query": "g2-no-match-unique",
+        "results": {},
+        "total": 0
+      }
+    },
+    "graph": {
+      "url": "/api/memory/graph",
+      "params": {
+        "limit": 50
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "generated_at": "2026-10-08T16:15:43.081891+00:00",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S2:g2-memory",
+            "record_id": "g2-memory",
+            "tier": "S2",
+            "label": "fixture",
+            "content": "G2隔离标记",
+            "content_truncated": false,
+            "kind": "工作记忆",
+            "timestamp": "2026-10-09",
+            "source": "chat",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "user_statement",
+              "source": "chat",
+              "source_event_id": "g2-event"
+            },
+            "field_provenance": {},
+            "source_event_ids": [
+              "g2-event"
+            ],
+            "note_path": "EVA-Memory/notes/S2-fixture-931ff82e69d92231de08.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S5:g2-event",
+            "record_id": "g2-event",
+            "tier": "S5",
+            "label": "G2隔离标记",
+            "content": "{\n  \"text\": \"G2隔离标记\"\n}",
+            "content_truncated": false,
+            "kind": "user_message",
+            "timestamp": "2026-10-09",
+            "source": "chat",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "chat",
+              "source_event_id": ""
+            },
+            "field_provenance": {},
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S5-G2隔离标记-6e5d2c6d9e74c9e9754e.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-2",
+            "record_id": "g2-world-2",
+            "tier": "S4",
+            "label": "G2隔离实体2",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体2-13fbbb74d1615f341e91.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "owns",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476"
+          },
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "reviews",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889"
+          },
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-2",
+            "relation": "uses",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01"
+          },
+          {
+            "source": "S2:g2-memory",
+            "target": "S5:g2-event",
+            "relation": "source_event",
+            "kind": "provenance",
+            "weight": 0.5,
+            "id": "ba858b42e906f9f13de77d857e8d2407796b56509af5013cf519a7e0633362e3"
+          }
+        ],
+        "counts": {
+          "S1": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S2": {
+            "available": true,
+            "total": 1,
+            "matched": 1,
+            "shown": 1
+          },
+          "S3": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S4": {
+            "available": true,
+            "total": 3,
+            "matched": 3,
+            "shown": 3
+          },
+          "S5": {
+            "available": true,
+            "total": 1,
+            "matched": 1,
+            "shown": 1
+          }
+        },
+        "query": "",
+        "tiers": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "warnings": [],
+        "scope": {
+          "node_limit": 50,
+          "edge_limit": 1800,
+          "matched_nodes": 5,
+          "nodes_truncated": false,
+          "stored_world_edges": 4,
+          "eligible_world_edges": 3,
+          "dangling_world_edges": 1,
+          "edges_truncated": false,
+          "session_available": true,
+          "selection": "balanced tiers; recent world/working, important long-term, conversation events first; explicit source events included"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "detail": {
+      "url": "/api/memory/graph/node",
+      "params": {
+        "tier": "S4",
+        "record_id": "g2-world-0"
+      },
+      "status": 200,
+      "body": {
+        "id": "S4:g2-world-0",
+        "record_id": "g2-world-0",
+        "tier": "S4",
+        "label": "G2隔离实体0",
+        "content": "{}",
+        "content_truncated": false,
+        "kind": "task",
+        "timestamp": "2026-10-09",
+        "source": "",
+        "provenance": {
+          "schema_version": 1,
+          "epistemic_status": "unknown",
+          "source": "",
+          "source_event_id": ""
+        },
+        "field_provenance": {
+          "name": {
+            "schema_version": 1,
+            "epistemic_status": "unknown",
+            "source": "",
+            "source_event_id": ""
+          },
+          "type": {
+            "schema_version": 1,
+            "epistemic_status": "unknown",
+            "source": "",
+            "source_event_id": ""
+          }
+        },
+        "source_event_ids": [],
+        "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+        "obsidian_uri": null
+      }
+    },
+    "neighbors-0": {
+      "url": "/api/memory/graph/neighbors",
+      "params": {
+        "tier": "S4",
+        "record_id": "g2-world-0",
+        "limit": 1,
+        "offset": 0
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "owns",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 0,
+        "next_offset": 1,
+        "has_more": true,
+        "generated_at": "2026-10-08T16:15:43.091141+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "neighbors-1": {
+      "url": "/api/memory/graph/neighbors",
+      "params": {
+        "tier": "S4",
+        "record_id": "g2-world-0",
+        "limit": 1,
+        "offset": 1
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "reviews",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 1,
+        "next_offset": 2,
+        "has_more": true,
+        "generated_at": "2026-10-08T16:15:43.097264+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "neighbors-2": {
+      "url": "/api/memory/graph/neighbors",
+      "params": {
+        "tier": "S4",
+        "record_id": "g2-world-0",
+        "limit": 1,
+        "offset": 2
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-2",
+            "record_id": "g2-world-2",
+            "tier": "S4",
+            "label": "G2隔离实体2",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体2-13fbbb74d1615f341e91.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-2",
+            "relation": "uses",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 2,
+        "next_offset": null,
+        "has_more": false,
+        "generated_at": "2026-10-08T16:15:43.101268+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "neighbor-pages": [
+      {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "owns",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 0,
+        "next_offset": 1,
+        "has_more": true,
+        "generated_at": "2026-10-08T16:15:43.091141+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "reviews",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 1,
+        "next_offset": 2,
+        "has_more": true,
+        "generated_at": "2026-10-08T16:15:43.097264+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      },
+      {
+        "schema_version": "1.0",
+        "center": "S4:g2-world-0",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-2",
+            "record_id": "g2-world-2",
+            "tier": "S4",
+            "label": "G2隔离实体2",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体2-13fbbb74d1615f341e91.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01",
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-2",
+            "relation": "uses",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09"
+          }
+        ],
+        "limit": 1,
+        "offset": 2,
+        "next_offset": null,
+        "has_more": false,
+        "generated_at": "2026-10-08T16:15:43.101268+00:00",
+        "warnings": [],
+        "scope": {
+          "hops": 1,
+          "query_independent": true,
+          "session_available": true,
+          "scan_truncated": false,
+          "page_limit_reached": false,
+          "missing_endpoints": 1,
+          "incomplete": false,
+          "selection": "stored incident relations and explicit event sources; active records only; pages may change"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    ],
+    "empty-graph": {
+      "url": "/api/memory/graph",
+      "params": {
+        "q": "g2-no-match-unique"
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "generated_at": "2026-10-08T16:15:43.105452+00:00",
+        "nodes": [],
+        "edges": [],
+        "counts": {
+          "S1": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S2": {
+            "available": true,
+            "total": 1,
+            "matched": 0,
+            "shown": 0
+          },
+          "S3": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S4": {
+            "available": true,
+            "total": 3,
+            "matched": 0,
+            "shown": 0
+          },
+          "S5": {
+            "available": true,
+            "total": 1,
+            "matched": 0,
+            "shown": 0
+          }
+        },
+        "query": "g2-no-match-unique",
+        "tiers": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "warnings": [],
+        "scope": {
+          "node_limit": 420,
+          "edge_limit": 1800,
+          "matched_nodes": 0,
+          "nodes_truncated": false,
+          "stored_world_edges": 4,
+          "eligible_world_edges": 0,
+          "dangling_world_edges": 1,
+          "edges_truncated": false,
+          "session_available": true,
+          "selection": "balanced tiers; recent world/working, important long-term, conversation events first; explicit source events included"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "missing-detail": {
+      "url": "/api/memory/graph/node",
+      "params": {
+        "tier": "S4",
+        "record_id": "g2-no-match-unique"
+      },
+      "status": 404,
+      "body": {
+        "detail": "memory record not found or expired"
+      }
+    },
+    "invalid-tier": {
+      "url": "/api/memory/graph",
+      "params": {
+        "tiers": "invalid"
+      },
+      "status": 422,
+      "body": {
+        "detail": "unknown memory tier"
+      }
+    },
+    "unavailable-graph": {
+      "url": "/api/memory/graph",
+      "params": null,
+      "status": 503,
+      "body": {
+        "detail": "memory graph unavailable; database could not be read"
+      }
+    },
+    "recovered-graph": {
+      "url": "/api/memory/graph",
+      "params": {
+        "limit": 50
+      },
+      "status": 200,
+      "body": {
+        "schema_version": "1.0",
+        "generated_at": "2026-10-08T16:15:43.120808+00:00",
+        "nodes": [
+          {
+            "id": "S4:g2-world-0",
+            "record_id": "g2-world-0",
+            "tier": "S4",
+            "label": "G2隔离实体0",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体0-da5166c0fecca53e01bd.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S2:g2-memory",
+            "record_id": "g2-memory",
+            "tier": "S2",
+            "label": "fixture",
+            "content": "G2隔离标记",
+            "content_truncated": false,
+            "kind": "工作记忆",
+            "timestamp": "2026-10-09",
+            "source": "chat",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "user_statement",
+              "source": "chat",
+              "source_event_id": "g2-event"
+            },
+            "field_provenance": {},
+            "source_event_ids": [
+              "g2-event"
+            ],
+            "note_path": "EVA-Memory/notes/S2-fixture-931ff82e69d92231de08.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S5:g2-event",
+            "record_id": "g2-event",
+            "tier": "S5",
+            "label": "G2隔离标记",
+            "content": "{\n  \"text\": \"G2隔离标记\"\n}",
+            "content_truncated": false,
+            "kind": "user_message",
+            "timestamp": "2026-10-09",
+            "source": "chat",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "chat",
+              "source_event_id": ""
+            },
+            "field_provenance": {},
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S5-G2隔离标记-6e5d2c6d9e74c9e9754e.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-1",
+            "record_id": "g2-world-1",
+            "tier": "S4",
+            "label": "G2隔离实体1",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体1-3254d223fc62c7c3bdd2.md",
+            "obsidian_uri": null
+          },
+          {
+            "id": "S4:g2-world-2",
+            "record_id": "g2-world-2",
+            "tier": "S4",
+            "label": "G2隔离实体2",
+            "content": "{}",
+            "content_truncated": false,
+            "kind": "task",
+            "timestamp": "2026-10-09",
+            "source": "",
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "field_provenance": {
+              "name": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              },
+              "type": {
+                "schema_version": 1,
+                "epistemic_status": "unknown",
+                "source": "",
+                "source_event_id": ""
+              }
+            },
+            "source_event_ids": [],
+            "note_path": "EVA-Memory/notes/S4-G2隔离实体2-13fbbb74d1615f341e91.md",
+            "obsidian_uri": null
+          }
+        ],
+        "edges": [
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "owns",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "e7d803378ef39d1497b56eee5ab08fea57e9e5f04a86982f0b509b2eafd9a476"
+          },
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-1",
+            "relation": "reviews",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "7286e26057cc1c814a3017304d688fe28dcfc6733196c248ba729d8425dc5889"
+          },
+          {
+            "source": "S4:g2-world-0",
+            "target": "S4:g2-world-2",
+            "relation": "uses",
+            "kind": "stored_relation",
+            "weight": 0.9,
+            "provenance": {
+              "schema_version": 1,
+              "epistemic_status": "unknown",
+              "source": "",
+              "source_event_id": ""
+            },
+            "timestamp": "2026-10-09",
+            "id": "599b13e2bd186f7bea1c5b9f1de7be95b499d6dcb4161c24486c350d92f18b01"
+          },
+          {
+            "source": "S2:g2-memory",
+            "target": "S5:g2-event",
+            "relation": "source_event",
+            "kind": "provenance",
+            "weight": 0.5,
+            "id": "ba858b42e906f9f13de77d857e8d2407796b56509af5013cf519a7e0633362e3"
+          }
+        ],
+        "counts": {
+          "S1": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S2": {
+            "available": true,
+            "total": 1,
+            "matched": 1,
+            "shown": 1
+          },
+          "S3": {
+            "available": true,
+            "total": 0,
+            "matched": 0,
+            "shown": 0
+          },
+          "S4": {
+            "available": true,
+            "total": 3,
+            "matched": 3,
+            "shown": 3
+          },
+          "S5": {
+            "available": true,
+            "total": 1,
+            "matched": 1,
+            "shown": 1
+          }
+        },
+        "query": "",
+        "tiers": [
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5"
+        ],
+        "warnings": [],
+        "scope": {
+          "node_limit": 50,
+          "edge_limit": 1800,
+          "matched_nodes": 5,
+          "nodes_truncated": false,
+          "stored_world_edges": 4,
+          "eligible_world_edges": 3,
+          "dangling_world_edges": 1,
+          "edges_truncated": false,
+          "session_available": true,
+          "selection": "balanced tiers; recent world/working, important long-term, conversation events first; explicit source events included"
+        },
+        "obsidian": {
+          "vault_detected": false,
+          "index_available": false,
+          "index_uri": "obsidian://open?vault=run-q352czik&file=EVA-Memory%2FIndex.md",
+          "mode": "one_way_mirror"
+        }
+      }
+    },
+    "runtime": {
+      "url": "/api/runtime",
+      "params": null,
+      "status": 200,
+      "body": {
+        "schema_version": 1,
+        "mode": "legacy",
+        "consumer_type": "core.cognition_loop.CognitionLoop",
+        "processor_type": "core.event_processor.EventProcessor",
+        "phase": "running",
+        "accepting_events": true,
+        "consumer_running": true,
+        "execution_idle": true,
+        "event_bus": {
+          "queue_size": 0,
+          "max_queue_size": 10000,
+          "published": 0,
+          "persisted": 0,
+          "persist_failures": 0,
+          "consecutive_failures": 0,
+          "persist_healthy": true,
+          "dropped": 0,
+          "evicted_background": 0,
+          "rejected_full": 0,
+          "overflow_policy": "drop_oldest",
+          "closed": false,
+          "accepting": true,
+          "rejected_closed": 0
+        },
+        "consumer": {
+          "worker_count": 1,
+          "total_processed": 0,
+          "total_errors": 0,
+          "consecutive_errors": 0,
+          "active_events": 0,
+          "stopping": false,
+          "agent_worker": {
+            "backend": "thread",
+            "max_workers": 4,
+            "timeout_sec": 120.0,
+            "submitted": 0,
+            "completed": 0,
+            "timed_out": 0,
+            "pending": 0
+          }
+        },
+        "processor": {
+          "total_processed": 0,
+          "total_errors": 0,
+          "consecutive_errors": 0,
+          "active_events": 0,
+          "stopping": false,
+          "agent_worker": {
+            "backend": "thread",
+            "max_workers": 4,
+            "timeout_sec": 120.0,
+            "submitted": 0,
+            "completed": 0,
+            "timed_out": 0,
+            "pending": 0
+          }
+        },
+        "worker": {
+          "backend": "thread",
+          "max_workers": 4,
+          "timeout_sec": 120.0,
+          "submitted": 0,
+          "completed": 0,
+          "timed_out": 0,
+          "pending": 0
+        },
+        "shutdown": {
+          "completed_steps": [],
+          "errors": {},
+          "pending_rejections": 0
+        },
+        "requested": {
+          "enable_minimal_brain": false,
+          "enable_mvsc_pipeline": false,
+          "enable_business_goals": false,
+          "enable_processing_episodes": false,
+          "enable_durable_requests": false,
+          "resume_durable_requests": false,
+          "enable_action_context": false
+        },
+        "extensions": {
+          "mvsc": {
+            "requested": false,
+            "status": "disabled",
+            "attached": false,
+            "is_http_consumer": false
+          },
+          "business_goals": {
+            "requested": false,
+            "attached": false,
+            "receipt_observer_errors": 0,
+            "business_verifier_attached": false
+          },
+          "processing_episodes": {
+            "requested": false,
+            "attached": false
+          },
+          "durable_requests": {
+            "requested": false,
+            "attached": false
+          },
+          "request_recovery": {
+            "attached": false
+          }
+        }
+      }
+    },
+    "diagnostic": {
+      "url": "/health/diagnostic",
+      "params": null,
+      "status": 200,
+      "body": {
+        "score": 83,
+        "overall": "degraded",
+        "timestamp": "2026-10-09T00:15:43",
+        "checks": [
+          {
+            "name": "db_integrity",
+            "passed": true,
+            "detail": "integrity OK, 16 tables: _migrations, episodic_memory, events, executor_audit, long_term_memory, long_term_memory_fts, long_term_memory_fts_config, long_term_memory_fts_data, long_term_memory_fts_docsize, long_term_memory_fts_idx, memory_items, persona_profiles",
+            "recommendation": ""
+          },
+          {
+            "name": "snapshot",
+            "passed": true,
+            "detail": "no snapshot found (normal on first boot)",
+            "recommendation": ""
+          },
+          {
+            "name": "config",
+            "passed": true,
+            "detail": "missing: constitution.yaml, config\\policy.yaml, config\\persona.yaml, config\\executors.yaml, config\\storage.yaml",
+            "recommendation": "restore missing config files"
+          },
+          {
+            "name": "memory_tiers",
+            "passed": true,
+            "detail": "S1=0 S2=1 S3_active=0 S4_e=3 S4_ed=4 S5_ev=1",
+            "recommendation": ""
+          },
+          {
+            "name": "runtime",
+            "passed": true,
+            "detail": "events=0 results=0 policy=dormant",
+            "recommendation": ""
+          },
+          {
+            "name": "llm",
+            "passed": false,
+            "detail": "no LLM API key configured — using MockLLM (echo mode). Provider: mock",
+            "recommendation": "set ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY environment variable"
+          }
+        ],
+        "failed_count": 1
+      }
+    }
+  },
+  "error": null,
+  "blockedAuditEvents": [],
+  "scope": "Actual ASGI TestClient and full isolated app/bootstrap/SQLite, MockLLM, no browser or native network claim",
+  "controlHooks": [
+    "Known fixture rows seeded into isolated database",
+    "One graph read source temporarily replaced with a nonexistent path inside sandbox, then restored"
+  ]
+}

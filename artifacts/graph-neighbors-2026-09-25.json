@@ -1,0 +1,69 @@
+{
+  "backup_directory": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z",
+  "status": "deployed_and_verified",
+  "backup_files": [
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\eva.db",
+      "sha256": "52754220e73eea3a3f3c971254868d3bc0d50907bfe7c4ae1739baa67b57ea14"
+    },
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\mvsc_event_store.db",
+      "sha256": "0ca0dd0c8e3cb66620722dc47e9382d911a25fb21f241676423e08ef77f8ecc9"
+    },
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\profile.json",
+      "sha256": "7aa4e50e6f6a3c84d774a61488845c8e29de6ece816b056b7d7f7407fa75fc08"
+    },
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\self_model.json",
+      "sha256": "6ac27a90133ca36fa08c3923d6aa5cdfc09fdd52ce9e70f613eb6704719e9dff"
+    },
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\persona.json",
+      "sha256": "4bfefea992ec2643b41d2d43fbab9b97d3f87474fdac5c220bc8e41496fdc60c"
+    },
+    {
+      "path": "D:\\EVA-ai\\.cloudflare\\backups\\graph-neighbors-20260925T035609Z\\latest.json",
+      "sha256": "810fb326be5d07ff1363849d2df4d15cf66afef46091bb4a5580487e9aed78ad"
+    }
+  ],
+  "old_pid": 23412,
+  "tests": {
+    "python_passed": 1381,
+    "javascript_passed": 47,
+    "ruff": "passed",
+    "preflight": "passed with ephemeral port and backup database"
+  },
+  "source_hashes": {
+    "memory/graph_neighbors.py": "f528cbb2a056acaa41f4f7e4391383cd3ba91326bf1bc511f1922819c1ae15a0",
+    "app/api_routes/routes_memory_graph.py": "46489764ff83ee3710b8ae900a719d2b9f9bcd54dbc59ca904e7a4aa1979db43",
+    "ui/web/static/memory_graph.js": "76e3061baad3233764844bfb40a4ccbd1f0c7d86ad4636aabe2253a035f8da1a",
+    "ui/web/static/memory_graph.css": "487fb0bcd64fc1a58e99d1749160d5ceeaecb061e0250b5bb657e6f8727c9ed5",
+    "ui/web/templates/memory_graph.html": "87962b5072c720b07dd2424d287013aba9893d3e9264b5361e13381cc633b2fa",
+    "tests/test_memory_graph.py": "c7273f798c2da9cbf9c43ab7d75117f821a9565b2c51a2518e0ac325c11d4643",
+    "tests/js/test_memory_graph.cjs": "ddc9a04710fee93e2b6a32b032f56b167a56e1297d8f1ca6d2f5862ce57d188e",
+    "tests/js/test_memory_graph_interactions.cjs": "a09a2c6df2fd847cdb532040038e282cf7448d94c70a0f74b333ce1183279de9"
+  },
+  "browser": {
+    "loopback_preview": true,
+    "search_expansion": "1 node / 0 edges -> 2 nodes / 1 edge",
+    "event_reverse_lookup": "2 nodes / 1 edge -> 5 nodes / 4 edges",
+    "medium_width_controls_unobscured": true,
+    "viewport_390x844_overflow": false,
+    "console_errors": []
+  },
+  "verified_at": "2026-09-25T04:09:08.208879+00:00",
+  "new_pid": 27264,
+  "production_checks": {
+    "runtime_phase": "running",
+    "forward_edges": 1,
+    "reverse_edges": 5,
+    "neighbor_status": 200,
+    "anonymous_local": 401,
+    "anonymous_public": 302,
+    "static_files_match": true,
+    "tunnel_connections": [
+      "cloudflared_tunnel_ha_connections 4"
+    ]
+  }
+}

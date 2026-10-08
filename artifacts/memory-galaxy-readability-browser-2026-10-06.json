@@ -1,0 +1,159 @@
+{
+  "observed_at": "2026-10-06T14:19:45.234Z",
+  "synthetic_preview": true,
+  "url": "http://127.0.0.1:8779/memory",
+  "desktop": {
+    "localControls": {
+      "bottom": 345.72918701171875,
+      "height": 183.39584350585935,
+      "left": 300,
+      "right": 974,
+      "top": 162.33334350585938,
+      "width": 674,
+      "x": 300,
+      "y": 162.33334350585938
+    },
+    "memoryCanvas": {
+      "bottom": 686.3333740234375,
+      "height": 330.60418701171875,
+      "left": 280,
+      "right": 994,
+      "top": 355.72918701171875,
+      "width": 714,
+      "x": 280,
+      "y": 355.72918701171875
+    },
+    "zoomLevel": "128%"
+  },
+  "mobile": {
+    "localControls": {
+      "bottom": 395.5520935058594,
+      "height": 233.8854217529297,
+      "left": 51,
+      "right": 382,
+      "top": 161.6666717529297,
+      "width": 331,
+      "x": 51,
+      "y": 161.6666717529297
+    },
+    "memoryCanvas": {
+      "bottom": 810.3333435058594,
+      "height": 407.78125,
+      "left": 43,
+      "right": 390,
+      "top": 402.5520935058594,
+      "width": 347,
+      "x": 43,
+      "y": 402.5520935058594
+    },
+    "zoomLevel": "104%"
+  },
+  "mobile_expanded": {
+    "inspector": {
+      "bottom": 813.0000457763672,
+      "height": 176.9166717529297,
+      "left": 43,
+      "right": 390,
+      "top": 636.0833740234375,
+      "width": 347,
+      "x": 43,
+      "y": 636.0833740234375
+    },
+    "localControls": {
+      "bottom": 481.6666717529297,
+      "height": 320,
+      "left": 51,
+      "right": 382,
+      "top": 161.6666717529297,
+      "width": 331,
+      "x": 51,
+      "y": 161.6666717529297
+    },
+    "memoryCanvas": {
+      "bottom": 810.3333740234375,
+      "height": 321.66668701171875,
+      "left": 43,
+      "right": 390,
+      "top": 488.6666870117187,
+      "width": 347,
+      "x": 43,
+      "y": 488.6666870117187
+    },
+    "zoomIn": {
+      "bottom": 618.4166870117188,
+      "height": 44,
+      "left": 204.33334350585935,
+      "right": 240.33334350585935,
+      "top": 574.4166870117188,
+      "width": 36,
+      "x": 204.33334350585935,
+      "y": 574.4166870117188
+    }
+  },
+  "small_mobile_expanded": {
+    "inspector": {
+      "bottom": 537.0000305175781,
+      "height": 130.70834350585938,
+      "left": 43,
+      "right": 320,
+      "top": 406.2916870117187,
+      "width": 277,
+      "x": 43,
+      "y": 406.2916870117187
+    },
+    "localControls": {
+      "bottom": 289.6666717529297,
+      "height": 128,
+      "left": 51,
+      "right": 312,
+      "top": 161.6666717529297,
+      "width": 261,
+      "x": 51,
+      "y": 161.6666717529297
+    },
+    "memoryCanvas": {
+      "bottom": 534.3333587646484,
+      "height": 237.6666717529297,
+      "left": 43,
+      "right": 320,
+      "top": 296.66668701171875,
+      "width": 277,
+      "x": 43,
+      "y": 296.66668701171875
+    },
+    "zoomIn": {
+      "bottom": 388.625,
+      "height": 44,
+      "left": 134.33334350585938,
+      "right": 170.33334350585938,
+      "top": 344.625,
+      "width": 36,
+      "x": 134.33334350585938,
+      "y": 344.625
+    }
+  },
+  "actual_canvas_click": {
+    "point": [
+      715,
+      496
+    ],
+    "selected": "品牌规则 · 3",
+    "center_retained": "模块化标识 · 1",
+    "path": "2 步连接"
+  },
+  "three_layer_expansion": {
+    "nodes": 17,
+    "edges": 16
+  },
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "console_warnings_and_errors": [],
+  "viewport_reset": true,
+  "original_theme_restored": true,
+  "limitations": [
+    "Synthetic browser fixture, not real memories",
+    "No authenticated public browser or physical-phone acceptance"
+  ]
+}

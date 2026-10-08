@@ -1,0 +1,110 @@
+[
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 320,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 768,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "light",
+    "lang": "zh",
+    "width": 1440,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 320,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 768,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  },
+  {
+    "theme": "light",
+    "lang": "en",
+    "width": 1440,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 320,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 768,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "zh",
+    "width": 1440,
+    "cancel": "取消审阅",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "变体\t深色背景\t单色\nPNG 尺寸\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 320,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 768,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  },
+  {
+    "theme": "dark",
+    "lang": "en",
+    "width": 1440,
+    "cancel": "Cancel review",
+    "overflow": false,
+    "reviewHidden": false,
+    "rows": "Variant\tDark\tMonochrome\nPNG size\t512px\t1024px"
+  }
+]

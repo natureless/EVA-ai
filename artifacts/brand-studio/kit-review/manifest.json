@@ -1,0 +1,340 @@
+{
+  "formatVersion": 1,
+  "brand": "EVA",
+  "selected": {
+    "order": 2,
+    "variant": "primary",
+    "view": "iso",
+    "size": 1024
+  },
+  "clearSpaceRatio": 0.25,
+  "assetState": "solved",
+  "pngIncluded": true,
+  "files": [
+    {
+      "path": "svg/2x2/primary/front.svg",
+      "bytes": 1024,
+      "crc32": "98434373"
+    },
+    {
+      "path": "svg/2x2/primary/side.svg",
+      "bytes": 1024,
+      "crc32": "7bc707e4"
+    },
+    {
+      "path": "svg/2x2/primary/top.svg",
+      "bytes": 1024,
+      "crc32": "8b514ca1"
+    },
+    {
+      "path": "svg/2x2/primary/iso.svg",
+      "bytes": 2656,
+      "crc32": "8ac04113"
+    },
+    {
+      "path": "svg/2x2/primary/oblique.svg",
+      "bytes": 2656,
+      "crc32": "48a4ddd3"
+    },
+    {
+      "path": "svg/2x2/primary/bottom.svg",
+      "bytes": 1024,
+      "crc32": "c8feab9b"
+    },
+    {
+      "path": "svg/2x2/monochrome/front.svg",
+      "bytes": 1024,
+      "crc32": "b2296b8c"
+    },
+    {
+      "path": "svg/2x2/monochrome/side.svg",
+      "bytes": 1024,
+      "crc32": "0cadc107"
+    },
+    {
+      "path": "svg/2x2/monochrome/top.svg",
+      "bytes": 1024,
+      "crc32": "7990ac2e"
+    },
+    {
+      "path": "svg/2x2/monochrome/iso.svg",
+      "bytes": 2656,
+      "crc32": "7b9c29e6"
+    },
+    {
+      "path": "svg/2x2/monochrome/oblique.svg",
+      "bytes": 2656,
+      "crc32": "28470120"
+    },
+    {
+      "path": "svg/2x2/monochrome/bottom.svg",
+      "bytes": 1024,
+      "crc32": "a67a3cfe"
+    },
+    {
+      "path": "svg/2x2/dark/front.svg",
+      "bytes": 1024,
+      "crc32": "7228499f"
+    },
+    {
+      "path": "svg/2x2/dark/side.svg",
+      "bytes": 1024,
+      "crc32": "6f9fe764"
+    },
+    {
+      "path": "svg/2x2/dark/top.svg",
+      "bytes": 1024,
+      "crc32": "d10d3916"
+    },
+    {
+      "path": "svg/2x2/dark/iso.svg",
+      "bytes": 2656,
+      "crc32": "5b644991"
+    },
+    {
+      "path": "svg/2x2/dark/oblique.svg",
+      "bytes": 2656,
+      "crc32": "9eb4a194"
+    },
+    {
+      "path": "svg/2x2/dark/bottom.svg",
+      "bytes": 1024,
+      "crc32": "60053e4d"
+    },
+    {
+      "path": "svg/2x2/light/front.svg",
+      "bytes": 1024,
+      "crc32": "98434373"
+    },
+    {
+      "path": "svg/2x2/light/side.svg",
+      "bytes": 1024,
+      "crc32": "7bc707e4"
+    },
+    {
+      "path": "svg/2x2/light/top.svg",
+      "bytes": 1024,
+      "crc32": "8b514ca1"
+    },
+    {
+      "path": "svg/2x2/light/iso.svg",
+      "bytes": 2656,
+      "crc32": "8ac04113"
+    },
+    {
+      "path": "svg/2x2/light/oblique.svg",
+      "bytes": 2656,
+      "crc32": "48a4ddd3"
+    },
+    {
+      "path": "svg/2x2/light/bottom.svg",
+      "bytes": 1024,
+      "crc32": "c8feab9b"
+    },
+    {
+      "path": "svg/3x3/primary/front.svg",
+      "bytes": 2044,
+      "crc32": "f3e8e811"
+    },
+    {
+      "path": "svg/3x3/primary/side.svg",
+      "bytes": 2044,
+      "crc32": "31cd33c4"
+    },
+    {
+      "path": "svg/3x3/primary/top.svg",
+      "bytes": 2044,
+      "crc32": "3b112ca6"
+    },
+    {
+      "path": "svg/3x3/primary/iso.svg",
+      "bytes": 5716,
+      "crc32": "7376b802"
+    },
+    {
+      "path": "svg/3x3/primary/oblique.svg",
+      "bytes": 5716,
+      "crc32": "87121784"
+    },
+    {
+      "path": "svg/3x3/primary/bottom.svg",
+      "bytes": 2044,
+      "crc32": "0f67a4c7"
+    },
+    {
+      "path": "svg/3x3/monochrome/front.svg",
+      "bytes": 2044,
+      "crc32": "d87f3203"
+    },
+    {
+      "path": "svg/3x3/monochrome/side.svg",
+      "bytes": 2044,
+      "crc32": "745d772a"
+    },
+    {
+      "path": "svg/3x3/monochrome/top.svg",
+      "bytes": 2044,
+      "crc32": "e774132c"
+    },
+    {
+      "path": "svg/3x3/monochrome/iso.svg",
+      "bytes": 5716,
+      "crc32": "ce6bc642"
+    },
+    {
+      "path": "svg/3x3/monochrome/oblique.svg",
+      "bytes": 5716,
+      "crc32": "d2547a5d"
+    },
+    {
+      "path": "svg/3x3/monochrome/bottom.svg",
+      "bytes": 2044,
+      "crc32": "d1cad371"
+    },
+    {
+      "path": "svg/3x3/dark/front.svg",
+      "bytes": 2044,
+      "crc32": "fac6cb10"
+    },
+    {
+      "path": "svg/3x3/dark/side.svg",
+      "bytes": 2044,
+      "crc32": "c5d955bd"
+    },
+    {
+      "path": "svg/3x3/dark/top.svg",
+      "bytes": 2044,
+      "crc32": "8d860813"
+    },
+    {
+      "path": "svg/3x3/dark/iso.svg",
+      "bytes": 5716,
+      "crc32": "15b71ec0"
+    },
+    {
+      "path": "svg/3x3/dark/oblique.svg",
+      "bytes": 5716,
+      "crc32": "f93e57d5"
+    },
+    {
+      "path": "svg/3x3/dark/bottom.svg",
+      "bytes": 2044,
+      "crc32": "a798fd85"
+    },
+    {
+      "path": "svg/3x3/light/front.svg",
+      "bytes": 2044,
+      "crc32": "f3e8e811"
+    },
+    {
+      "path": "svg/3x3/light/side.svg",
+      "bytes": 2044,
+      "crc32": "31cd33c4"
+    },
+    {
+      "path": "svg/3x3/light/top.svg",
+      "bytes": 2044,
+      "crc32": "3b112ca6"
+    },
+    {
+      "path": "svg/3x3/light/iso.svg",
+      "bytes": 5716,
+      "crc32": "7376b802"
+    },
+    {
+      "path": "svg/3x3/light/oblique.svg",
+      "bytes": 5716,
+      "crc32": "87121784"
+    },
+    {
+      "path": "svg/3x3/light/bottom.svg",
+      "bytes": 2044,
+      "crc32": "0f67a4c7"
+    },
+    {
+      "path": "icons/favicon-16.svg",
+      "bytes": 1261,
+      "crc32": "b46f3b50"
+    },
+    {
+      "path": "icons/favicon-32.svg",
+      "bytes": 1261,
+      "crc32": "b96bcea6"
+    },
+    {
+      "path": "icons/favicon-48.svg",
+      "bytes": 1261,
+      "crc32": "1b5f2ae2"
+    },
+    {
+      "path": "selected/eva-selected.svg",
+      "bytes": 2658,
+      "crc32": "e5f4d5a8"
+    },
+    {
+      "path": "selected/eva-selected.png",
+      "bytes": 67596,
+      "crc32": "18082e88"
+    },
+    {
+      "path": "icons/favicon-16.png",
+      "bytes": 686,
+      "crc32": "a080d820"
+    },
+    {
+      "path": "icons/favicon-32.png",
+      "bytes": 1388,
+      "crc32": "f67fa31a"
+    },
+    {
+      "path": "icons/favicon-48.png",
+      "bytes": 2153,
+      "crc32": "e4880616"
+    },
+    {
+      "path": "components/logo-tokens.js",
+      "bytes": 3963,
+      "crc32": "85ca6a41"
+    },
+    {
+      "path": "components/cube-state.js",
+      "bytes": 6758,
+      "crc32": "b51d72ed"
+    },
+    {
+      "path": "components/cube-animator.js",
+      "bytes": 6131,
+      "crc32": "c8c8e0bf"
+    },
+    {
+      "path": "components/cube-logo.js",
+      "bytes": 6466,
+      "crc32": "68495ff5"
+    },
+    {
+      "path": "components/cube-geometry.css",
+      "bytes": 3460,
+      "crc32": "a3fb803b"
+    },
+    {
+      "path": "components/eva-logo.css",
+      "bytes": 523,
+      "crc32": "1f4115db"
+    },
+    {
+      "path": "tokens.json",
+      "bytes": 1739,
+      "crc32": "11696966"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1858,
+      "crc32": "323360c2"
+    },
+    {
+      "path": "preview.html",
+      "bytes": 12428,
+      "crc32": "2249d85a"
+    }
+  ]
+}

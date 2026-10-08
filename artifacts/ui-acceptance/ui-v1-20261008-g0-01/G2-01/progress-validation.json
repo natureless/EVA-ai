@@ -1,0 +1,22 @@
+{
+  "recordedAt": "2026-10-08T15:17:50.554564+00:00",
+  "sourceHashesUnchanged": true,
+  "sealedG0Unchanged": true,
+  "taskCount": 30,
+  "statusCounts": {
+    "passed": 5,
+    "unverified": 1,
+    "planned": 24
+  },
+  "evidenceHashes": {
+    "CURRENT.md": "6fde7761b2355c48992da4f8f8a3074fba059aa7fe88f3d556e0443bfce0da47",
+    "progress.json": "98d39f6852c19a3d8dcf29fbf3a0f50fe887d997b190fbdd293f8ebd33b962c5",
+    "status-history.jsonl": "5fa187091d9a1d72809368f3f9d27911bb28e9fefea0da564eede1d1be79fa48",
+    "G1-01/environment-check.json": "0596cc66d01b3e7c65c6435ca45b74821a11aa27cc2458b41fa7d737025d0208",
+    "G2-01/README.md": "b6c060c24df4b348e5f8371a2a678f6df10e2a6f18136f0a8ecfdca2ce56d40c",
+    "G2-01/attempts.json": "4a98055519d91434a66e74cd11eee2a741848ee0ad4d03a7321f85dc30664fda",
+    "G2-01/run_isolated_service.py": "2c8c77539e31ff9f26a293398133223fa4091b1e82f9d3ddcf11a03b3a996b10",
+    "G2-01/run-g3a196yw/environment.json": "232a86cb46207b6cc0d812d2a962ffdf1c41e241955aa913b27d4d687802cc57",
+    "G2-01/run-g3a196yw/readiness.json": "d16c57ac5be7ddedb26bb77e12feee3d3d32875d2a37a8221f3e906690d76a1d"
+  }
+}

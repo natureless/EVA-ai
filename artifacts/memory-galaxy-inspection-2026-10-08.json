@@ -1,0 +1,55 @@
+{
+  "client_date": "2026-10-08",
+  "status": "implemented_and_origin_verified_public_browser_pending",
+  "changes": [
+    "Floating node details within the immersive map",
+    "Collapsing details preserves selection, local center, path and zoom, including late detail responses",
+    "Expandable local relation navigation with existing filters and exploration controls",
+    "Exclusive mobile detail and navigation drawers leave the upper canvas usable",
+    "Selected node camera positioning avoids drawers and the top HUD",
+    "Directory navigation returns from immersive mode to the regular map"
+  ],
+  "validation": {
+    "javascript": {"passed": 426, "failed": 0, "command": "node --test tests/js/*.cjs"},
+    "interaction_suite": {"passed": 86, "failed": 0},
+    "python_targeted": {"passed": 34, "failed": 0, "paths": ["tests/test_memory_graph.py", "tests/test_ui_release.py"]},
+    "origin_checks": {"passed": 12, "checks": ["Memory page HTTP 200", "Four template version references", "Four served static asset byte comparisons", "Three immersive interaction controls"]}
+  },
+  "assets": [
+    {"path": "ui/web/static/memory_graph.css", "version": 19, "bytes": 38667, "sha256": "bd3646c27728927440529121f01220ee82f0ec56a686273e7542cabeff0201c6"},
+    {"path": "ui/web/static/memory_galaxy.js", "version": 2, "bytes": 8446, "sha256": "f290adf765347117422f1380b688ddf2b996960560ff2d27c2ac12e79baf3f3c"},
+    {"path": "ui/web/static/memory_galaxy_renderer.js", "version": 2, "bytes": 13703, "sha256": "5d8062cc7cb5cd1c43cae53848b103f0aa92c7f943a6419cd2ae12bc9c80840d"},
+    {"path": "ui/web/static/memory_graph.js", "version": 25, "bytes": 78910, "sha256": "aef7a16ba229f9c42e40d3e87a76befacabdd1218d22482902079d90b2f9dcb9"}
+  ],
+  "browser": {
+    "target": "http://127.0.0.1:8779/memory",
+    "data": "synthetic preview fixture, not production memories",
+    "fixture_nodes": 75,
+    "fixture_edges": 100,
+    "local_expansion": {"depth": 2, "nodes": 9, "edges": 8},
+    "viewports": [{"width": 1280, "height": 720}, {"width": 390, "height": 844}, {"width": 320, "height": 568}],
+    "horizontal_overflow": false,
+    "console_warnings_and_errors": [],
+    "verified": ["Node details", "Detail collapse and reopen", "Local expansion", "Relation navigation", "Node focus", "Mobile exclusive drawers", "Selected sphere above mobile drawer", "Dark native select controls"],
+    "screenshots": [
+      "artifacts/memory-galaxy-inspection-desktop-2026-10-08.jpg",
+      "artifacts/memory-galaxy-inspection-local-2026-10-08.jpg",
+      "artifacts/memory-galaxy-inspection-mobile-2026-10-08.jpg",
+      "artifacts/memory-galaxy-inspection-small-2026-10-08.jpg"
+    ],
+    "viewport_reset": true,
+    "temporary_tab_closed": true,
+    "public_authenticated_browser_verified": false,
+    "physical_phone_verified": false
+  },
+  "runtime": {
+    "production_port": 8000,
+    "production_pid": 17984,
+    "production_restarted": false,
+    "preview_port": 8779,
+    "preview_pid": 34100,
+    "preview_stopped_and_port_closed": true,
+    "memory_writes": false,
+    "model_requests": false
+  }
+}

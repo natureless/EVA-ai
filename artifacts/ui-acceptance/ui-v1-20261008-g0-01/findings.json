@@ -1,0 +1,149 @@
+{
+  "candidateId": "ui-v1-20261008-g0-01",
+  "findings": [
+    {
+      "id": "G0-F01",
+      "priority": "P0",
+      "kind": "confirmed-contract-gap",
+      "summary": "聊天 maxlength=32000，API ChatRequest.text max_length=4000；客户端没有同名 4000 限制。",
+      "refs": [
+        {
+          "path": "ui/web/templates/chat.html",
+          "line": 104
+        },
+        {
+          "path": "app/api_routes/routes_chat.py",
+          "line": 35
+        }
+      ],
+      "tasks": [
+        "G2-02",
+        "G2-03",
+        "G4-01"
+      ],
+      "decision": "在隔离联调验证 4000／4001／长草稿；后续修复需保持草稿及明确错误，不自动截断。"
+    },
+    {
+      "id": "G0-F02",
+      "priority": "P0",
+      "kind": "confirmed-side-effect-contract",
+      "summary": "GET goals/by-task 和相关 get_goal 会 _reconcile/record_receipt；GET api/state 更新内存计数。",
+      "refs": [
+        {
+          "path": "app/api_routes/routes_goals.py",
+          "line": 61
+        },
+        {
+          "path": "app/api_routes/routes_goals.py",
+          "line": 109
+        },
+        {
+          "path": "app/api_routes/routes_chat.py",
+          "line": 330
+        }
+      ],
+      "tasks": [
+        "G2-05",
+        "G2-07"
+      ],
+      "decision": "修正接口分类；同步已有回执不等于执行新检查。该行为本身不判为代码缺陷。"
+    },
+    {
+      "id": "G0-F03",
+      "priority": "P1",
+      "kind": "confirmed-locale-coverage-gap",
+      "summary": "MAP、目标创建、MVSC、受限提示没有共享 I18N 脚本和 langBtn；不能宣称全部子界面完整中英。",
+      "refs": [
+        {
+          "path": "ui/web/templates/memory_graph.html",
+          "line": 144
+        },
+        {
+          "path": "ui/web/templates/mvsc_dashboard.html",
+          "line": 1
+        },
+        {
+          "path": "ui/web/templates/service_unavailable.html",
+          "line": 1
+        }
+      ],
+      "tasks": [
+        "G1-04",
+        "G2-04",
+        "G2-05",
+        "G2-07",
+        "G4-02"
+      ],
+      "decision": "登记实际语言支持范围；子状态文案纳入统一语言改造或明确延期，现有主题接入不代表翻译完成。"
+    },
+    {
+      "id": "G0-F04",
+      "priority": "P1",
+      "kind": "confirmed-route-scope",
+      "summary": "dashboard.html 仅固定预览 /dashboard 路由；完整 routes_ui 默认 / 返回 index.html（星图）。",
+      "refs": [
+        {
+          "path": "scripts/preview_cube_chat.py",
+          "line": 77
+        },
+        {
+          "path": "app/api_routes/routes_ui.py",
+          "line": 14
+        }
+      ],
+      "tasks": [
+        "G2-07",
+        "G5-04"
+      ],
+      "decision": "旧监控保留为待确认交付入口；不新增路由来补造已有产品能力。"
+    },
+    {
+      "id": "G0-F05",
+      "priority": "P0",
+      "kind": "integration-risk-unverified",
+      "summary": "新聊天／星图走 EvaHttp；settings、app、memory_explorer、MVSC 内联仍有直接 fetch。认证失效处理一致性未实测。",
+      "refs": [
+        {
+          "path": "ui/web/static/http.js",
+          "line": 4
+        },
+        {
+          "path": "ui/web/static/settings.js",
+          "line": 32
+        },
+        {
+          "path": "ui/web/static/memory_explorer.js",
+          "line": 28
+        }
+      ],
+      "tasks": [
+        "G2-03",
+        "G2-07",
+        "G4-01"
+      ],
+      "decision": "隔离环境测试 401、登录页及 JSON 错误；源码差异不是已经复现的认证缺陷。"
+    },
+    {
+      "id": "G0-F06",
+      "priority": "P1",
+      "kind": "keyboard-risk-unverified",
+      "summary": "运行和旧监控 data-card 卡片标题绑定 click；当前模板该入口非原生 button，键盘折叠需实测。",
+      "refs": [
+        {
+          "path": "ui/web/static/settings.js",
+          "line": 248
+        },
+        {
+          "path": "ui/web/templates/settings.html",
+          "line": 122
+        }
+      ],
+      "tasks": [
+        "G1-04",
+        "G4-02"
+      ],
+      "decision": "登记键盘覆盖风险；不把静态检查当作屏幕阅读器实测。"
+    }
+  ],
+  "status": "source findings; browser/service reproduction explicitly scoped per item"
+}
